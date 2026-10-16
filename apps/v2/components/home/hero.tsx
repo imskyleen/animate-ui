@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { IconSwap } from '@/components/docs/icon-swap';
+import { useIntroDone } from '@/components/home/intro';
 import {
   MANAGER_GROUP,
   MANAGER_NAMES,
@@ -21,13 +22,15 @@ import { LIBRARIES } from '@/lib/libraries';
 const command = (manager: Manager) =>
   `${MANAGERS[manager].dlx} @animate-ui/cli@latest animate all`;
 
-const rise = (index: number) => ({
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: ease.out, delay: index * 0.08 },
+const rise = (index: number, done: boolean) => ({
+  initial: { opacity: 0, y: 20, filter: 'blur(10px)' },
+  animate: done
+    ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+    : { opacity: 0, y: 20, filter: 'blur(10px)' },
+  transition: { duration: 0.7, ease: ease.out, delay: index * 0.09 },
 });
 
-function CopyCommand() {
+export function CopyCommand() {
   const [copied, setCopied] = useState(false);
   const [manager, setManager] = useSyncedValue(MANAGER_NAMES, {
     groupId: MANAGER_GROUP,
@@ -84,10 +87,11 @@ function CopyCommand() {
 }
 
 export function Hero() {
+  const done = useIntroDone();
   return (
     <ReducedMotionConfig>
       <section className="flex flex-col items-center px-5 pt-32 text-center md:pt-40">
-        <motion.div {...rise(0)}>
+        <motion.div {...rise(0, done)}>
           <Link
             href="/docs/changelog"
             className="mb-8 inline-flex items-center gap-2 rounded-full bg-accent py-1 pr-3 pl-1 text-sm text-neutral-600 dark:text-neutral-400"
@@ -100,14 +104,14 @@ export function Hero() {
         </motion.div>
 
         <motion.h1
-          {...rise(1)}
+          {...rise(1, done)}
           className="max-w-[800px] text-4xl font-medium text-balance md:text-6xl"
         >
           Animate your shadcn/ui components in one command
         </motion.h1>
 
         <motion.p
-          {...rise(2)}
+          {...rise(2, done)}
           className="mt-5 max-w-[620px] text-lg text-balance text-muted-foreground"
         >
           Drop-in animated primitives for Radix UI, Base UI and React Aria. Swap
@@ -115,7 +119,7 @@ export function Hero() {
         </motion.p>
 
         <motion.div
-          {...rise(3)}
+          {...rise(3, done)}
           className="mt-8 flex max-w-full flex-col items-center gap-4"
         >
           <CopyCommand />
@@ -136,7 +140,7 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          {...rise(4)}
+          {...rise(4, done)}
           className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
         >
           {LIBRARIES.filter((library) => library.peer).map(
