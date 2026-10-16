@@ -70,6 +70,29 @@ test.describe('animate-ui button', () => {
       .toBeCloseTo(1, 3);
   });
 
+  test('the press runs in the browser, off the main thread (a transform animation, rule A9)', async ({
+    page,
+  }) => {
+    await open(page);
+    await page.getByRole('button', { name: 'Button', exact: true }).hover();
+    await page.mouse.down();
+    await expect
+      .poll(() =>
+        page.evaluate((sel) => {
+          const el = document.querySelector(sel)!;
+          return el
+            .getAnimations()
+            .some((animation) =>
+              (animation.effect as KeyframeEffect)
+                .getKeyframes()
+                .some((frame) => 'transform' in frame),
+            );
+        }, SELECTOR),
+      )
+      .toBe(true);
+    await page.mouse.up();
+  });
+
   test(
     'the press springs to its scale quickly',
     { tag: '@timing' },
