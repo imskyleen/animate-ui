@@ -11,6 +11,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@animate-ui/react/primitives/tabs';
+import { ShimmeringText } from '@animate-ui/react/primitives/texts/shimmering';
 import { TypingText } from '@animate-ui/react/primitives/texts/typing';
 import {
   blur,
@@ -20,7 +21,6 @@ import {
   useShouldReduceMotion,
 } from '@animate-ui/react/utils/motion';
 import {
-  CheckmarkCircle02Icon,
   FloppyDiskIcon,
   Loading03Icon,
   SparklesIcon,
@@ -32,6 +32,9 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 
 import { CopyCommand } from '@/components/home/hero';
+import { ArrowRight01 } from '@/registry/hugeicons/arrow-right-01';
+import { CheckmarkCircle02 } from '@/registry/hugeicons/checkmark-circle-02';
+import { Loading03 } from '@/registry/hugeicons/loading-03';
 import { Notification01 } from '@/registry/hugeicons/notification-01';
 
 const TYPE_MS = 26;
@@ -59,7 +62,7 @@ type Scenario = {
   prompt: string;
   steps: string[];
   result: string;
-  Preview: ComponentType<{ playing: boolean }>;
+  Preview: ComponentType<{ playing: boolean; working: boolean }>;
 };
 
 function SavePreview({ playing }: { playing: boolean }) {
@@ -238,43 +241,85 @@ const FINDINGS = [
   },
 ];
 
-function ReviewPreview({ playing }: { playing: boolean }) {
+function ReviewPreview({
+  playing,
+  working,
+}: {
+  playing: boolean;
+  working: boolean;
+}) {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-1 text-sm">
-      <div className="mb-2 flex items-center justify-between px-1 text-xs text-muted-foreground">
-        <span>14 animations</span>
-        <span>4 to fix</span>
-      </div>
-      {FINDINGS.map((finding, index) => (
-        <motion.div
-          key={finding.where}
-          initial={false}
-          animate={
-            playing
-              ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-              : { opacity: 0.35, y: 0, filter: 'blur(0px)' }
-          }
-          transition={{
-            duration: 0.35,
-            ease: ease.out,
-            delay: playing ? index * 0.12 : 0,
-          }}
-          className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2"
-        >
-          <div className="flex min-w-0 flex-1 flex-col">
-            <span className="font-medium">{finding.where}</span>
-            <span className="truncate text-xs text-muted-foreground">
-              {finding.fact}
-            </span>
-          </div>
-          <span className={`shrink-0 text-xs font-medium ${finding.tone}`}>
-            {finding.verdict}
-          </span>
-        </motion.div>
-      ))}
+    <div className="flex min-h-[18rem] w-full max-w-sm flex-col justify-center text-sm">
+      <AnimatePresence mode="popLayout" initial={false}>
+        {playing ? (
+          <motion.div
+            key="report"
+            initial="hidden"
+            animate="shown"
+            exit="hidden"
+            variants={{
+              hidden: { opacity: 0, filter: blur.surface },
+              shown: {
+                opacity: 1,
+                filter: 'blur(0px)',
+                transition: { staggerChildren: 0.12 },
+              },
+            }}
+            className="flex flex-col gap-1"
+          >
+            <motion.div
+              variants={ROW}
+              className="mb-2 flex items-center justify-between px-1 text-xs text-muted-foreground"
+            >
+              <span>14 animations</span>
+              <span>4 to fix</span>
+            </motion.div>
+            {FINDINGS.map((finding) => (
+              <motion.div
+                key={finding.where}
+                variants={ROW}
+                className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2"
+              >
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <span className="font-medium">{finding.where}</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {finding.fact}
+                  </span>
+                </div>
+                <span
+                  className={`shrink-0 text-xs font-medium ${finding.tone}`}
+                >
+                  {finding.verdict}
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : working ? (
+          <motion.div
+            key="working"
+            initial={{ opacity: 0, filter: blur.surface }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, filter: blur.surface }}
+            transition={{ duration: 0.3, ease: ease.out }}
+            className="text-center"
+          >
+            <ShimmeringText text="Reviewing your app…" />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
+
+const ROW = {
+  hidden: { opacity: 0, y: 8, filter: blur.surface },
+  shown: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.35, ease: ease.out },
+  },
+};
 
 const SCENARIOS: Scenario[] = [
   {
@@ -365,7 +410,7 @@ function useScenarioClock(
 
 function StepIcon({ done }: { done: boolean }) {
   return (
-    <span className="relative mt-0.5 flex size-4 shrink-0 items-center justify-center">
+    <span className="relative flex h-5 w-4 shrink-0 items-center justify-center">
       <AnimatePresence mode="popLayout" initial={false}>
         {done ? (
           <motion.span
@@ -375,11 +420,7 @@ function StepIcon({ done }: { done: boolean }) {
             transition={spring.pop}
             className="inline-flex text-emerald-500"
           >
-            <HugeiconsIcon
-              icon={CheckmarkCircle02Icon}
-              strokeWidth={2}
-              size={16}
-            />
+            <CheckmarkCircle02 animate size={16} />
           </motion.span>
         ) : (
           <motion.span
@@ -388,13 +429,7 @@ function StepIcon({ done }: { done: boolean }) {
             transition={{ duration: 0.15, ease: ease.out }}
             className="inline-flex text-muted-foreground"
           >
-            <motion.span
-              className="inline-flex"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 0.8, ease: 'linear', repeat: Infinity }}
-            >
-              <HugeiconsIcon icon={Loading03Icon} strokeWidth={2} size={16} />
-            </motion.span>
+            <Loading03 animate size={16} />
           </motion.span>
         )}
       </AnimatePresence>
@@ -425,8 +460,14 @@ function ScenarioPane({
   return (
     <div className="grid min-h-[380px] md:grid-cols-[1.05fr_1fr]">
       <div className="flex flex-col gap-4 border-b p-5 md:border-r md:border-b-0 md:p-6">
-        <div className="flex items-start gap-3 rounded-xl bg-accent/60 px-4 py-3 text-sm">
-          <span className="mt-px text-muted-foreground select-none">›</span>
+        <div className="flex items-start gap-2.5 rounded-xl bg-accent/60 px-4 py-3 text-sm leading-5">
+          <span className="flex h-5 shrink-0 items-center text-muted-foreground">
+            <ArrowRight01
+              animate={progress >= 0}
+              animation="default-loop"
+              size={16}
+            />
+          </span>
           {running ? (
             <TypingText
               key={`${scenario.id}-typing`}
@@ -444,7 +485,7 @@ function ScenarioPane({
               <motion.li
                 key={step}
                 {...STEP_IN}
-                className="flex items-start gap-3 text-muted-foreground"
+                className="flex items-start gap-3 leading-5 text-muted-foreground"
               >
                 <StepIcon done={progress > index} />
                 <span className={progress > index ? 'text-foreground' : ''}>
@@ -480,7 +521,10 @@ function ScenarioPane({
           </span>
         </div>
         <div className="flex flex-1 items-center justify-center p-6">
-          <Preview playing={running && finished} />
+          <Preview
+            playing={running && finished}
+            working={running && !finished}
+          />
         </div>
       </div>
     </div>
