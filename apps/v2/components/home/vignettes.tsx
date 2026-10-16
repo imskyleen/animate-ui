@@ -13,12 +13,6 @@ import {
 } from '@animate-ui/react/primitives/tabs';
 import { SlidingNumber } from '@animate-ui/react/primitives/texts/sliding-number';
 import {
-  TextBoldIcon,
-  TextItalicIcon,
-  TextUnderlineIcon,
-} from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
-import {
   createContext,
   use,
   useEffect,
@@ -35,10 +29,19 @@ import {
   AccordionTrigger,
 } from '@/demos/radix-ui/accordion';
 import { Checkbox } from '@/demos/radix-ui/checkbox';
+import {
+  createToastManager,
+  Toast,
+  ToastClose,
+  ToastContent,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+  useToastManager,
+} from '@/demos/base-ui/toast';
 import { Progress } from '@/demos/radix-ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/demos/radix-ui/radio-group';
 import { Switch } from '@/demos/radix-ui/switch';
-import { ToggleGroup, ToggleGroupItem } from '@/demos/radix-ui/toggle-group';
 import { Clapperboard } from '@/registry/hugeicons/clapperboard';
 import { Favourite } from '@/registry/hugeicons/favourite';
 import { Notification01 } from '@/registry/hugeicons/notification-01';
@@ -243,41 +246,45 @@ function RadioVignette() {
   );
 }
 
-const FORMATS: string[][] = [
-  ['bold'],
-  ['bold', 'italic'],
-  ['italic', 'underline'],
-  [],
+const NOTIFICATIONS = [
+  { title: 'Event created' },
+  { title: 'Changes saved' },
+  { title: 'Invite sent' },
 ];
 
-function ToggleVignette() {
-  const [step, setStep] = useState(0);
-  const [value, setValue] = useState<string[] | null>(null);
+function ToastStack() {
+  const { toasts } = useToastManager();
+  return toasts.map((item) => (
+    <Toast key={item.id} toast={item}>
+      <ToastContent className="py-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <ToastTitle />
+        </div>
+        <ToastClose />
+      </ToastContent>
+    </Toast>
+  ));
+}
+
+function ToastVignette() {
+  const [manager] = useState(() => createToastManager());
+  const nextRef = useRef(0);
   useAutoplay(
     () => {
-      setValue(null);
-      setStep((s) => (s + 1) % FORMATS.length);
+      manager.add({ ...NOTIFICATIONS[nextRef.current]!, timeout: 4200 });
+      nextRef.current = (nextRef.current + 1) % NOTIFICATIONS.length;
     },
-    1200,
-    400,
+    1600,
+    300,
   );
   return (
-    <ToggleGroup
-      type="multiple"
-      variant="outline"
-      value={value ?? FORMATS[step]!}
-      onValueChange={setValue}
-    >
-      <ToggleGroupItem value="bold" aria-label="Toggle bold">
-        <HugeiconsIcon icon={TextBoldIcon} strokeWidth={2} />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="italic" aria-label="Toggle italic">
-        <HugeiconsIcon icon={TextItalicIcon} strokeWidth={2} />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="underline" aria-label="Toggle underline">
-        <HugeiconsIcon icon={TextUnderlineIcon} strokeWidth={2} />
-      </ToggleGroupItem>
-    </ToggleGroup>
+    <ToastProvider toastManager={manager} limit={2}>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+        <ToastViewport className="absolute inset-x-4 bottom-4 w-auto max-w-none sm:right-4 sm:left-4 sm:w-auto">
+          <ToastStack />
+        </ToastViewport>
+      </div>
+    </ToastProvider>
   );
 }
 
@@ -356,6 +363,6 @@ export const VIGNETTES: { title: string; Vignette: ComponentType }[] = [
   { title: 'Sliding Number', Vignette: CounterVignette },
   { title: 'Radio Group', Vignette: RadioVignette },
   { title: 'Icons', Vignette: IconsVignette },
-  { title: 'Toggle Group', Vignette: ToggleVignette },
+  { title: 'Toast', Vignette: ToastVignette },
   { title: 'Progress', Vignette: ProgressVignette },
 ];
