@@ -4,7 +4,7 @@ Imports and base-library wiring: [README.md](README.md).
 
 Purpose: spatial, the selection moves between items.
 
-- A shared element with `layoutId` (Animate UI's `Highlight` in children mode) on `spring.selection`: the new surface slides from the previous one while the old copy fades out 200ms later. A spring keeps fast clicking smooth: it retargets with its velocity.
+- A shared element with `layoutId` (Animate UI's `Highlight` in children mode) on `spring.selection`: the new surface slides from the previous one. Hand it over: the previous copy goes in the same frame and the new one starts at full opacity, so one surface moves. Only a highlight appearing from nothing fades in, and one going away with no item taking it fades out. Two copies crossfading (the old one fading out inside `AnimatePresence` while the new one fades in) shows a doubled surface on a translucent or bordered highlight. A spring keeps fast clicking smooth: it retargets with its velocity.
 - The keyboard moves it like a click.
 - The labels stay above it: `relative z-10` on each label. Without it, a surface moving to a later item passes over the earlier items' labels (it's later in the DOM). Check a frame mid-move.
 - Never follow an item by animating `top`, `left`, `width` or `height`.

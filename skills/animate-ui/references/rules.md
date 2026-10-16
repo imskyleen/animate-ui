@@ -99,6 +99,8 @@ animate={{ top: bounds.top, left: bounds.left, width: bounds.width, height: boun
 <motion.div layoutId="highlight" transition={spring.highlight} />
 ```
 
+A shared element moves one surface: when another item takes it, drop the previous copy in the same frame (no `exit` fade on it) and don't fade the new one in, or the two crossfade into a doubled surface (`recipes/indicator.md`).
+
 Height is the one exception, where content must push what's below: disclosures (`transition.disclosure`), heights following their content (`spring.height`) and tab panels' heights gliding from the previous panel's (`transition.panelHeight`, Motion's layout curve). And a menubar's popover handed to the next menu resizes to it (`width`/`height`, a Web Animation for its move on `spring.morph`, A16): a scale would change its items' size. A tabs indicator resizes too (`width`/`height` on a Web Animation, its `translate` on the compositor) when the tabs' sizes differ: a scale would distort the active tab's border, radius and shadow it copies. Keep blur light (`blur.icon`, `blur.disclosure`, `blur.surface`, `blur.panel`); large blurs are expensive to paint.
 
 Hover feedback isn't motion: a color, background, border or shadow changing on hover is one short repaint of one element. Transition those properties by name (`transition-colors`, `transition-shadow`, or `transition: background-color, box-shadow` on `transition.color`), never `all`. Whatever moves on hover (a card's lift, an image zooming inside its card) still goes through `transform`.
