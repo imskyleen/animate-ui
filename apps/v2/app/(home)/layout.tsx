@@ -1,10 +1,11 @@
-import { SiteHeader } from '@/components/layout/header';
+import { HomeHeader } from '@/components/home/home-header';
+import { IntroProvider } from '@/components/home/intro';
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <>
-      <SiteHeader />
+    <IntroProvider>
+      <HomeHeader />
       <main className="flex flex-1 flex-col">{children}</main>
-    </>
+    </IntroProvider>
   );
 }

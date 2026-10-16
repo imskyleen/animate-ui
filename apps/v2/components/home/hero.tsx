@@ -90,7 +90,7 @@ export function Hero() {
   const done = useIntroDone();
   return (
     <ReducedMotionConfig>
-      <section className="flex flex-col items-center px-5 pt-32 text-center md:pt-40">
+      <section className="flex flex-col items-center px-5 pt-36 text-center md:pt-44">
         <motion.div {...rise(0, done)}>
           <Link
             href="/docs/changelog"

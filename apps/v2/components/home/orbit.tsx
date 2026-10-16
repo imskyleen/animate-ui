@@ -26,7 +26,7 @@ const STAGE = { width: 1200, height: 780 };
 const CARD = { width: 300, height: 176 };
 const GAP = 16;
 const COLUMNS = 3;
-const RADIUS = { x: 470, y: 250 };
+const RADIUS = { x: 400, y: 240 };
 const COUNT = VIGNETTES.length;
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -56,7 +56,7 @@ function useStageScale() {
         Math.min(
           1,
           window.innerWidth / STAGE.width,
-          window.innerHeight / STAGE.height,
+          (window.innerHeight - 80) / STAGE.height,
         ),
       );
     update();
@@ -114,12 +114,12 @@ function OrbitCard({
     ([e, s, t, d]: number[]) => {
       const angle = (index / COUNT) * Math.PI * 2 + t! + d! * (1 - s!);
       const depth = (Math.sin(angle) + 1) / 2;
-      const reach = 1 + (1 - e!) * 1.4;
+      const reach = 0.3 + 0.7 * e!;
       const orbit = {
         x: Math.cos(angle) * RADIUS.x * reach,
         y: Math.sin(angle) * RADIUS.y * reach + 30,
         scale: 0.7 + 0.3 * depth,
-        blur: (1 - depth) * 1.6 + (1 - e!) * 10,
+        blur: (1 - depth) * 1.6 + (1 - e!) * 8,
         opacity: (0.55 + 0.45 * depth) * e!,
         rotateY: -Math.cos(angle) * 24,
       };
@@ -201,7 +201,7 @@ function OrbitStage() {
   const scale = useStageScale();
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start start', 'end end'],
+    offset: ['start 80px', 'end end'],
   });
   const progress = useSpring(scrollYProgress, {
     stiffness: 160,
@@ -233,9 +233,9 @@ function OrbitStage() {
     <section
       ref={ref}
       data-slot="home-orbit"
-      className="relative mt-24 h-[420vh]"
+      className="relative mt-24 h-[320vh]"
     >
-      <div className="sticky top-0 flex h-dvh items-center justify-center overflow-hidden">
+      <div className="sticky top-20 flex h-[calc(100dvh-5rem)] items-center justify-center overflow-hidden">
         <div
           className="relative shrink-0"
           style={{

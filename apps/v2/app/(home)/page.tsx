@@ -1,13 +1,12 @@
 import Link from 'next/link';
 
 import { Hero } from '@/components/home/hero';
-import { IntroProvider } from '@/components/home/intro';
 import { OneCommand } from '@/components/home/one-command';
 import { Orbit } from '@/components/home/orbit';
 
 export default function HomePage() {
   return (
-    <IntroProvider>
+    <>
       <Hero />
       <Orbit />
       <OneCommand />
@@ -29,6 +28,6 @@ export default function HomePage() {
           </a>
         </span>
       </footer>
-    </IntroProvider>
+    </>
   );
 }

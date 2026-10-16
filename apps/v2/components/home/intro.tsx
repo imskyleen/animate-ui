@@ -2,6 +2,7 @@
 
 import { ease, useShouldReduceMotion } from '@animate-ui/react/utils/motion';
 import { AnimatePresence, motion } from 'motion/react';
+import { cn } from 'cn';
 import { createContext, use, useEffect, useState, type ReactNode } from 'react';
 
 const WORDMARK =
@@ -12,13 +13,64 @@ const MARK =
 
 const DRAW = 1.3;
 const FILL = 0.45;
-const HOLD = 0.35;
-const LEAVE = 0.55;
+const HOLD = 0.3;
+const GLIDE = 0.75;
 
-const IntroContext = createContext(true);
+export const LOGO_GLIDE = {
+  type: 'spring',
+  stiffness: 150,
+  damping: 24,
+  mass: 0.9,
+} as const;
+
+const IntroContext = createContext({ playing: false, done: true });
 
 export function useIntroDone() {
-  return use(IntroContext);
+  return use(IntroContext).done;
+}
+
+export function useIntroPlaying() {
+  return use(IntroContext).playing;
+}
+
+export function FullLogo({
+  draw = false,
+  className,
+}: {
+  draw?: boolean;
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 4932.44 822.54"
+      aria-hidden="true"
+      className={cn('block', className)}
+    >
+      {[MARK, WORDMARK].map((d, index) => (
+        <motion.path
+          key={d.slice(0, 12)}
+          d={d}
+          stroke="currentColor"
+          strokeWidth={10}
+          fill="currentColor"
+          initial={draw ? { pathLength: 0, fillOpacity: 0 } : false}
+          animate={{ pathLength: 1, fillOpacity: 1 }}
+          transition={{
+            pathLength: {
+              duration: DRAW - index * 0.2,
+              delay: index * 0.2,
+              ease: 'easeInOut',
+            },
+            fillOpacity: {
+              duration: FILL,
+              delay: DRAW - 0.15,
+              ease: ease.out,
+            },
+          }}
+        />
+      ))}
+    </svg>
+  );
 }
 
 export function IntroProvider({ children }: { children: ReactNode }) {
@@ -30,7 +82,7 @@ export function IntroProvider({ children }: { children: ReactNode }) {
     if (reduce) return;
     const root = document.documentElement;
     root.style.overflow = 'hidden';
-    const leave = setTimeout(
+    const glide = setTimeout(
       () => setPlaying(false),
       (DRAW + FILL + HOLD) * 1000,
     );
@@ -39,19 +91,21 @@ export function IntroProvider({ children }: { children: ReactNode }) {
         root.style.overflow = '';
         setDone(true);
       },
-      (DRAW + FILL + HOLD + LEAVE * 0.4) * 1000,
+      (DRAW + FILL + HOLD + GLIDE * 0.45) * 1000,
     );
     return () => {
-      clearTimeout(leave);
+      clearTimeout(glide);
       clearTimeout(finish);
       root.style.overflow = '';
     };
   }, [reduce]);
 
+  const intro = playing && !reduce;
+
   return (
-    <IntroContext value={done || Boolean(reduce)}>
+    <IntroContext value={{ playing: intro, done: done || Boolean(reduce) }}>
       <AnimatePresence>
-        {playing && !reduce && (
+        {intro && (
           <motion.div
             key="intro"
             data-slot="home-intro"
@@ -59,7 +113,7 @@ export function IntroProvider({ children }: { children: ReactNode }) {
             className="fixed inset-0 z-[60] flex items-center justify-center bg-background motion-reduce:hidden"
             exit={{
               opacity: 0,
-              transition: { duration: LEAVE, ease: ease.out },
+              transition: { duration: GLIDE * 0.8, ease: ease.out },
             }}
           >
             <motion.div
@@ -72,43 +126,23 @@ export function IntroProvider({ children }: { children: ReactNode }) {
                 ease: ease.out,
               }}
             />
-            <motion.svg
-              viewBox="0 0 4932.44 822.54"
-              className="relative w-[min(78vw,640px)] text-foreground"
-              exit={{
-                scale: 1.08,
-                opacity: 0,
-                filter: 'blur(12px)',
-                transition: { duration: LEAVE, ease: ease.out },
-              }}
-            >
-              {[MARK, WORDMARK].map((d, index) => (
-                <motion.path
-                  key={d.slice(0, 12)}
-                  d={d}
-                  stroke="currentColor"
-                  strokeWidth={10}
-                  fill="currentColor"
-                  initial={{ pathLength: 0, fillOpacity: 0 }}
-                  animate={{ pathLength: 1, fillOpacity: 1 }}
-                  transition={{
-                    pathLength: {
-                      duration: DRAW - index * 0.2,
-                      delay: index * 0.2,
-                      ease: 'easeInOut',
-                    },
-                    fillOpacity: {
-                      duration: FILL,
-                      delay: DRAW - 0.15,
-                      ease: ease.out,
-                    },
-                  }}
-                />
-              ))}
-            </motion.svg>
           </motion.div>
         )}
       </AnimatePresence>
+      {intro && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[61] flex items-center justify-center motion-reduce:hidden"
+        >
+          <motion.div
+            layoutId="home-logo"
+            transition={{ layout: LOGO_GLIDE }}
+            className="w-[min(78vw,640px)] text-foreground"
+          >
+            <FullLogo draw />
+          </motion.div>
+        </div>
+      )}
       {children}
     </IntroContext>
   );

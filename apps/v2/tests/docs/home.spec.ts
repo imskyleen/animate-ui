@@ -127,3 +127,65 @@ test.describe('on a phone', () => {
     await expect(cards.nth(4)).toBeInViewport();
   });
 });
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 1280, height: 640 },
+])
+  test(`nothing in the orbit is ever cut off, at ${viewport.width}×${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+      timeout: 5000,
+    });
+    const orbit = page.locator('[data-slot="home-orbit"]');
+    const { top, height } = await orbit.evaluate((section) => ({
+      top: section.offsetTop,
+      height: section.offsetHeight,
+    }));
+    const cut: string[] = [];
+    for (let step = 0; step <= 24; step++) {
+      const y =
+        top - viewport.height + ((height + viewport.height) * step) / 24;
+      await page.evaluate((to) => window.scrollTo(0, to), y);
+      await page.waitForTimeout(250);
+      cut.push(
+        ...(await page.evaluate(() => {
+          const header = document
+            .querySelector('[data-slot="home-header"]')!
+            .getBoundingClientRect().bottom;
+          const section = document
+            .querySelector('[data-slot="home-orbit"]')!
+            .getBoundingClientRect();
+          if (section.bottom < innerHeight - 1) return [];
+          const opacity = (el: Element) => {
+            let value = 1;
+            for (let node: Element | null = el; node; node = node.parentElement)
+              value *= Number(getComputedStyle(node).opacity);
+            return value;
+          };
+          return [
+            ...document.querySelectorAll(
+              '[data-slot="orbit-card"], [data-slot="home-orbit"] h2',
+            ),
+          ]
+            .filter((el) => opacity(el) > 0.02)
+            .filter((el) => {
+              const box = el.getBoundingClientRect();
+              return (
+                box.left < -1 ||
+                box.right > innerWidth + 1 ||
+                box.bottom > innerHeight + 1 ||
+                (box.top < header - 1 && box.bottom > header + 1)
+              );
+            })
+            .map(
+              (el) => `${Math.round(scrollY)}: ${el.textContent!.slice(0, 20)}`,
+            );
+        })),
+      );
+    }
+    expect(cut).toEqual([]);
+  });
