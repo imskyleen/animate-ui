@@ -73,7 +73,7 @@ The umbrella entries (`radix-ui`, `@base-ui/react`, `react-aria-components`) re-
 - shadcn/ui's keyframes (`animate-accordion-down`, `animate-collapsible-up`…);
 - each primitive's own CSS transitions: Base UI's `data-starting-style` and `data-ending-style` classes, React Aria's `data-entering` and `data-exiting` ones, and heights read from CSS variables (`h-(--accordion-panel-height)`).
 
-3. **On Tailwind CSS 3, a modal's centering.** There, `translate-x-[-50%] translate-y-[-50%]` set the `transform` property, which Motion replaces as it animates the modal, so `animate` centers it with margins instead: `left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]` becomes `inset-0 m-auto h-fit`. Tailwind CSS 4's translate classes use the separate `translate` property, which composes with Motion's, so they're kept. The version comes from `tailwindcss` in your `package.json`, else from `components.json` (a `tailwind.config` path means 3) or a `tailwind.config.*` file.
+3. **On Tailwind CSS 3, a modal's centering.** There, `translate-x-[-50%] translate-y-[-50%]` set the `transform` property, which Motion replaces as it animates the modal, so `animate` centers it with margins instead: `left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]` becomes `inset-0 m-auto h-fit`. Tailwind CSS 4's translate classes use the separate `translate` property, which composes with Motion's, so they're kept. The version comes from `tailwindcss` in your `package.json`, else from `components.json` (a `tailwind.config` path means 3) or a `tailwind.config.*` file, else from the file's own classes (bare `data-open:` variants and `(--var)` values only exist in Tailwind CSS 4).
 
 The rest of the file stays as it is: your styles, parts, props and markup.
 

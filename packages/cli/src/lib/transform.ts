@@ -83,6 +83,8 @@ function specifierName(specifier: t.ImportSpecifier | t.ExportSpecifier) {
 
 export type TransformOptions = { tailwind?: 3 | 4 };
 
+const TAILWIND_4_SYNTAX = /[\w-]\((--[\w-]+)\)|(^|[\s"'`:])data-[a-z][\w-]*:/;
+
 export function transform(
   code: string,
   file = 'file.tsx',
@@ -238,6 +240,7 @@ export function transform(
 
   const removedClasses: string[] = [];
   const centering: string[] = [];
+  const tailwind = options.tailwind ?? (TAILWIND_4_SYNTAX.test(code) ? 4 : 3);
 
   if (swapped.length > 0) {
     const extra = swapped.flatMap((primitive) => primitive.strip ?? []);
@@ -251,7 +254,7 @@ export function transform(
       const end = node.end! - quoted;
       const result = stripClasses(code.slice(start, end), extra);
       const centered =
-        options.tailwind === 3
+        tailwind === 3
           ? centerWithMargins(result.value)
           : { value: result.value, replaced: [] as string[] };
       if (result.removed.length === 0 && centered.replaced.length === 0) return;

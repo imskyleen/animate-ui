@@ -115,3 +115,17 @@ test('the centering is replaced only when all four classes are there', () => {
     ).value,
   ).toBe('fixed w-full inset-0 m-auto h-fit');
 });
+
+test('version unknown: the classes tell it (bare data-*: variants and (--var) values only exist in Tailwind 4)', () => {
+  const v3 = run(project({}));
+  expect(v3.code).toContain('inset-0 m-auto h-fit');
+  const root = project({});
+  writeFileSync(
+    path.join(root, 'components', 'ui', 'dialog.tsx'),
+    DIALOG_V3.replaceAll('data-[state=open]:', 'data-open:').replaceAll(
+      'data-[state=closed]:',
+      'data-closed:',
+    ),
+  );
+  expect(run(root).code).toContain('translate-x-[-50%] translate-y-[-50%]');
+});
