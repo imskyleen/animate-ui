@@ -635,3 +635,60 @@ test('the cards reach the grid within a third of a screen of scroll', async ({
   }
   expect(end - inOrbit).toBeLessThan(viewport * 0.33);
 });
+
+for (const height of [900, 760])
+  test(`in the orbit grid, the tabs highlight glides along its list, at 1440×${height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height });
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+      timeout: 5000,
+    });
+    await page
+      .locator('[data-slot="home-orbit"]')
+      .evaluate((section: HTMLElement) =>
+        window.scrollTo(
+          0,
+          section.offsetTop + section.offsetHeight - window.innerHeight - 5,
+        ),
+      );
+    await page.waitForTimeout(1500);
+    const card = page
+      .locator('[data-slot="orbit-card"]')
+      .filter({ hasText: 'Tabs' });
+    await card.hover();
+    let worst = 0;
+    for (const name of ['Reports', 'Overview', 'Analytics', 'Overview']) {
+      await page.evaluate(() => {
+        const samples: number[] = [];
+        (window as unknown as { samples: number[] }).samples = samples;
+        const root = [
+          ...document.querySelectorAll('[data-slot="orbit-card"]'),
+        ].find((element) => element.textContent!.includes('Tabs'))!;
+        const start = performance.now();
+        const tick = () => {
+          const highlight = root
+            .querySelector('[data-slot="motion-highlight"]')!
+            .getBoundingClientRect();
+          const list = root
+            .querySelector('[data-slot="tabs-list"]')!
+            .getBoundingClientRect();
+          samples.push(highlight.top - list.top);
+          if (performance.now() - start < 700) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+      await card.getByRole('tab', { name }).click();
+      await page.waitForTimeout(900);
+      const samples = await page.evaluate(
+        () => (window as unknown as { samples: number[] }).samples,
+      );
+      const rest = samples.at(-1)!;
+      worst = Math.max(
+        worst,
+        ...samples.map((value) => Math.abs(value - rest)),
+      );
+    }
+    expect(worst).toBeLessThanOrEqual(2);
+  });

@@ -5,6 +5,7 @@ import { animate, type Transition } from 'motion/react';
 
 import { motionTokens, toCssTiming } from '../utils/motion';
 import { glideFrom, stopGlide, whenLanded } from './glide';
+import { screenScale } from './screen-scale';
 
 const CHIP_SCALE = 0.5;
 const CHIP_TRANSITION: Transition = motionTokens.spring.pop;
@@ -137,6 +138,7 @@ function leaveThrough(
   { copy, rect, transition, reduce }: Leaving,
 ) {
   copies.add(copy);
+  const [sx, sy] = screenScale(container);
   for (const element of [
     copy,
     ...copy.querySelectorAll('[id], [data-testid]'),
@@ -154,14 +156,14 @@ function leaveThrough(
     left: '0px',
     margin: '0px',
     boxSizing: 'border-box',
-    width: `${rect.width}px`,
-    height: `${rect.height}px`,
+    width: `${rect.width / sx}px`,
+    height: `${rect.height / sy}px`,
     pointerEvents: 'none',
   });
   container.appendChild(copy);
   const at = copy.getBoundingClientRect();
-  copy.style.left = `${rect.left - at.left}px`;
-  copy.style.top = `${rect.top - at.top}px`;
+  copy.style.left = `${(rect.left - at.left) / sx}px`;
+  copy.style.top = `${(rect.top - at.top) / sy}px`;
   if (typeof copy.animate !== 'function') return copy.remove();
   const { duration, easing } = toCssTiming(transition);
   const animation = copy.animate(

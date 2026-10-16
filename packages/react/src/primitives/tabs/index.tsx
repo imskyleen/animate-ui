@@ -17,6 +17,7 @@ import {
 } from '../effects/highlight';
 import { getStrictContext } from '../../utils/strict-context';
 import { Slot, type WithAsChild } from '../slot';
+import { layoutHeight } from '../../internal/screen-scale';
 
 type TabsOrientation = 'horizontal' | 'vertical';
 
@@ -411,7 +412,7 @@ function TabsContents({
     const container = containerRef.current;
     if (!pane || !container) return 0;
 
-    const base = pane.getBoundingClientRect().height || 0;
+    const base = layoutHeight(pane);
 
     const cs = getComputedStyle(container);
     const isBorderBox = cs.boxSizing === 'border-box';

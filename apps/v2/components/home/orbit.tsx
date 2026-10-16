@@ -5,13 +5,16 @@ import {
   motion,
   useAnimationFrame,
   useMotionValue,
+  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
   type MotionValue,
 } from 'motion/react';
 import {
+  useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -87,6 +90,16 @@ function Card({ title, Vignette }: { title: string; Vignette: ComponentType }) {
   );
 }
 
+type Placement = {
+  x: number;
+  y: number;
+  scale: number;
+  blur: number;
+  opacity: number;
+  rotateY: number;
+  z: number;
+};
+
 function OrbitCard({
   index,
   enter,
@@ -136,36 +149,33 @@ function OrbitCard({
     },
   );
 
-  const x = useTransform(place, (p) => round(p.x, 1));
-  const y = useTransform(place, (p) => round(p.y, 1));
-  const scale = useTransform(place, (p) => round(p.scale, 3));
-  const opacity = useTransform(place, (p) => round(p.opacity, 3));
-  const rotateY = useTransform(place, (p) => round(p.rotateY, 2));
-  const filter = useTransform(place, (p) =>
-    p.blur > 0.05 ? `blur(${round(p.blur, 1)}px)` : 'none',
-  );
-  const zIndex = useTransform(place, (p) => p.z);
+  const ref = useRef<HTMLDivElement>(null);
+  const apply = useCallback((p: Placement) => {
+    const element = ref.current;
+    if (!element) return;
+    element.style.transform = `perspective(900px) translate(${round(p.x, 1)}px, ${round(p.y, 1)}px) scale(${round(p.scale, 3)}) rotateY(${round(p.rotateY, 2)}deg)`;
+    element.style.opacity = String(round(p.opacity, 3));
+    element.style.filter =
+      p.blur > 0.05 ? `blur(${round(p.blur, 1)}px)` : 'none';
+    element.style.zIndex = String(p.z);
+  }, []);
+  useMotionValueEvent(place, 'change', apply);
+  useLayoutEffect(() => apply(place.get()), [apply, place]);
 
   return (
-    <motion.div
+    <div
+      ref={ref}
       className="absolute top-1/2 left-1/2"
       style={{
         width: CARD.width,
         height: CARD.height,
         marginLeft: -CARD.width / 2,
         marginTop: -CARD.height / 2,
-        x,
-        y,
-        scale,
-        opacity,
-        rotateY,
-        filter,
-        zIndex,
-        transformPerspective: 900,
+        opacity: 0,
       }}
     >
       <Card title={title} Vignette={Vignette} />
-    </motion.div>
+    </div>
   );
 }
 

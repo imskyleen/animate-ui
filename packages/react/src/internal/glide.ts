@@ -3,6 +3,7 @@
 import type { Transition } from 'motion/react';
 
 import { toCssTiming } from '../utils/motion';
+import { screenScale } from './screen-scale';
 
 type Glide = {
   animation: Animation;
@@ -25,8 +26,9 @@ function glideFrom(
   if (typeof element.animate !== 'function') return;
   stopGlide(element);
   end ??= element.getBoundingClientRect();
-  const x = start.left - end.left;
-  const y = start.top - end.top;
+  const [sx, sy] = screenScale(element.parentElement);
+  const x = (start.left - end.left) / sx;
+  const y = (start.top - end.top) / sy;
   if (Math.abs(x) < 0.5 && Math.abs(y) < 0.5) return;
   const { duration, easing } = toCssTiming(glide);
   const animation = element.animate(

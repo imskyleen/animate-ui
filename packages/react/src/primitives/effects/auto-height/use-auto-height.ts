@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { layoutHeight } from '../../../internal/screen-scale';
 
 type AutoHeightOptions = {
   includeParentBox?: boolean;
@@ -22,7 +23,7 @@ export function useAutoHeight<T extends HTMLElement = HTMLDivElement>(
     const el = ref.current;
     if (!el) return 0;
 
-    const base = el.getBoundingClientRect().height || 0;
+    const base = layoutHeight(el);
 
     let extra = 0;
 
