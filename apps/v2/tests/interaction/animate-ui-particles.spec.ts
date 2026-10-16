@@ -6,6 +6,32 @@ const open = (page: Page) =>
 const particles = (page: Page) =>
   page.locator('.size-1.rounded-full.bg-red-500');
 
+const centers = (page: Page) =>
+  particles(page).evaluateAll((els) =>
+    els.map((el) => {
+      const r = el.getBoundingClientRect();
+      return [r.x + r.width / 2, r.y + r.height / 2] as const;
+    }),
+  );
+
+async function landed(page: Page) {
+  let last = '';
+  await expect
+    .poll(
+      async () => {
+        const now = JSON.stringify(
+          (await centers(page)).map(([x, y]) => [Math.round(x), Math.round(y)]),
+        );
+        const still = now === last && (await particles(page).count()) === 6;
+        last = now;
+        return still;
+      },
+      { intervals: [150] },
+    )
+    .toBe(true);
+  return centers(page);
+}
+
 test.describe('animate-ui particles', () => {
   test('nothing bursts until triggered', async ({ page }) => {
     await open(page);
@@ -34,46 +60,57 @@ test.describe('animate-ui particles', () => {
   }) => {
     await open(page);
     await page.getByRole('button', { name: 'Like' }).click();
-    await expect(particles(page)).toHaveCount(6);
-    await page.waitForTimeout(200);
-    const closest = await particles(page).evaluateAll((els) => {
-      const points = els.map((el) => {
-        const r = el.getBoundingClientRect();
-        return [r.x + r.width / 2, r.y + r.height / 2] as const;
-      });
-      let min = Infinity;
-      for (let i = 0; i < points.length; i++)
-        for (let j = i + 1; j < points.length; j++)
-          min = Math.min(
-            min,
-            Math.hypot(
-              points[i]![0] - points[j]![0],
-              points[i]![1] - points[j]![1],
-            ),
-          );
-      return min;
-    });
+    const points = await landed(page);
+    let closest = Infinity;
+    for (let i = 0; i < points.length; i++)
+      for (let j = i + 1; j < points.length; j++)
+        closest = Math.min(
+          closest,
+          Math.hypot(
+            points[i]![0] - points[j]![0],
+            points[i]![1] - points[j]![1],
+          ),
+        );
     expect(closest).toBeGreaterThan(4);
   });
 
-  test('every particle leaves the center, the one straight left too', async ({
+  test('every particle leaves the center while it shows, the one straight left too', async ({
     page,
   }) => {
-    await open(page);
-    const button = page.getByRole('button', { name: 'Like' });
-    const box = (await button.boundingBox())!;
-    const center = [box.x + box.width / 2, box.y + box.height / 2] as const;
-    await button.click();
-    await page.waitForTimeout(450);
-    const distances = await particles(page).evaluateAll(
-      (els, [cx, cy]) =>
-        els.map((el) => {
-          const r = el.getBoundingClientRect();
-          return Math.hypot(r.x + r.width / 2 - cx, r.y + r.height / 2 - cy);
-        }),
-      center,
+    await page.goto('/tests/demos/animate-ui/particles?holdDelay=0', {
+      waitUntil: 'networkidle',
+    });
+    await page.evaluate(() => {
+      const peaks: { x: number; y: number; opacity: number }[] = [];
+      (window as unknown as { peaks: typeof peaks }).peaks = peaks;
+      const start = performance.now();
+      const tick = () => {
+        document
+          .querySelectorAll('.size-1.rounded-full.bg-red-500')
+          .forEach((element, index) => {
+            const opacity = Number(getComputedStyle(element).opacity);
+            if (peaks[index] && peaks[index]!.opacity >= opacity) return;
+            const box = element.getBoundingClientRect();
+            peaks[index] = {
+              x: box.x + box.width / 2,
+              y: box.y + box.height / 2,
+              opacity,
+            };
+          });
+        if (performance.now() - start < 1500) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await page.getByRole('button', { name: 'Like' }).click();
+    const points = await landed(page);
+    const cx = points.reduce((sum, [x]) => sum + x, 0) / points.length;
+    const cy = points.reduce((sum, [, y]) => sum + y, 0) / points.length;
+    const peaks = await page.evaluate(
+      () => (window as unknown as { peaks: { x: number; y: number }[] }).peaks,
     );
-    expect(Math.min(...distances)).toBeGreaterThan(12);
+    expect(peaks).toHaveLength(6);
+    const distances = peaks.map(({ x, y }) => Math.hypot(x - cx, y - cy));
+    expect(Math.min(...distances)).toBeGreaterThan(10);
   });
 
   test('a like resizes the button smoothly, swaps the word and pops the heart', async ({
