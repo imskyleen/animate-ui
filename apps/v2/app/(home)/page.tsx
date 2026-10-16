@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { Hero } from '@/components/home/hero';
-import { OneCommand } from '@/components/home/one-command';
+import { AISection } from '@/components/home/ai-section';
 import { Orbit } from '@/components/home/orbit';
 
 export default function HomePage() {
@@ -9,7 +9,7 @@ export default function HomePage() {
     <>
       <Hero />
       <Orbit />
-      <OneCommand />
+      <AISection />
 
       <footer className="mx-auto mt-24 flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-4 border-t px-5 py-8 text-sm text-muted-foreground">
         <span>Animate UI is open source under the MIT license.</span>

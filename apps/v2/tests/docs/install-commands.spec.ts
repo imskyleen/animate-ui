@@ -79,11 +79,17 @@ test('the home command follows the chosen package manager', async ({
   await managers.getByRole('tab', { name: 'pnpm' }).click();
   await expect(
     page.getByText('pnpm dlx @animate-ui/cli@latest animate all'),
-  ).toHaveCount(2);
+  ).toHaveCount(1);
+  await expect(
+    page.getByText('pnpm dlx skills add imskyleen/animate-ui'),
+  ).toHaveCount(1);
   await managers.getByRole('tab', { name: 'bun' }).click();
   await expect(
     page.getByText('bun x @animate-ui/cli@latest animate all'),
-  ).toHaveCount(2);
+  ).toHaveCount(1);
+  await expect(
+    page.getByText('bun x skills add imskyleen/animate-ui'),
+  ).toHaveCount(1);
   await page.goto('/docs/installation', { waitUntil: 'networkidle' });
   await expect(
     page.getByRole('tab', { name: 'bun', selected: true }).first(),

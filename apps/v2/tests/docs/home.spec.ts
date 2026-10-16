@@ -692,3 +692,36 @@ for (const height of [900, 760])
     }
     expect(worst).toBeLessThanOrEqual(2);
   });
+
+test('the AI section plays a request through to its result, then keeps the tab picked', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  const section = page.locator('[data-slot="home-ai"]');
+  const demo = section.locator('[data-slot="ai-demo"]');
+  await demo.scrollIntoViewIfNeeded();
+  const active = demo.locator(
+    '[data-slot="tabs-content"][data-state="active"]',
+  );
+  await expect(active).toContainText(
+    "Make my save button show it's loading, then a quick Saved.",
+    { timeout: 6000 },
+  );
+  await expect(active.getByText('Edited')).toBeVisible({ timeout: 8000 });
+  await expect(active.getByRole('button')).toContainText(/Saving…|Saved/, {
+    timeout: 4000,
+  });
+
+  await demo.getByRole('tab', { name: 'Review' }).click();
+  await expect(active).toContainText('npx @animate-ui/cli audit', {
+    timeout: 8000,
+  });
+  await expect(active.getByText('Report ready')).toBeVisible({
+    timeout: 8000,
+  });
+  await page.waitForTimeout(6500);
+  await expect(demo.getByRole('tab', { name: 'Review' })).toHaveAttribute(
+    'data-state',
+    'active',
+  );
+});

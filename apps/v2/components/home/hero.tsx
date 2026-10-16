@@ -31,8 +31,7 @@ import {
 import { useSyncedValue } from '@/components/docs/tabs';
 import { LIBRARIES } from '@/lib/libraries';
 
-const command = (manager: Manager) =>
-  `${MANAGERS[manager].dlx} @animate-ui/cli@latest animate all`;
+const animateAll = (dlx: string) => `${dlx} @animate-ui/cli@latest animate all`;
 
 const rise = (index: number, done: boolean) => ({
   initial: { opacity: 0, y: 20, filter: 'blur(10px)' },
@@ -42,7 +41,12 @@ const rise = (index: number, done: boolean) => ({
   transition: { duration: 0.7, ease: ease.out, delay: index * 0.09 },
 });
 
-export function CopyCommand() {
+export function CopyCommand({
+  command: build = animateAll,
+}: {
+  command?: (dlx: string) => string;
+}) {
+  const command = (manager: Manager) => build(MANAGERS[manager].dlx);
   const [manager, setManager] = useSyncedValue(MANAGER_NAMES, {
     groupId: MANAGER_GROUP,
     persist: true,
