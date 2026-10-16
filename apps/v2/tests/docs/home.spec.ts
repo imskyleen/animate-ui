@@ -725,3 +725,39 @@ test('the AI section plays a request through to its result, then keeps the tab p
     'active',
   );
 });
+
+test('clicking fast through the AI demo tabs never blinks the highlight', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  const demo = page.locator('[data-slot="ai-demo"]');
+  await demo.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+  await demo.evaluate((element) => {
+    const list = element.querySelector('[data-slot="tabs-list"]')!;
+    const samples: number[] = [];
+    (window as unknown as { samples: number[] }).samples = samples;
+    const start = performance.now();
+    const tick = () => {
+      samples.push(
+        Math.max(
+          0,
+          ...[...list.querySelectorAll('[data-slot="motion-highlight"]')].map(
+            (highlight) => Number(getComputedStyle(highlight).opacity),
+          ),
+        ),
+      );
+      if (performance.now() - start < 1600) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  for (const name of ['Review', 'Todo list', 'Bell icon', 'Save button']) {
+    await demo.getByRole('tab', { name }).click();
+    await page.waitForTimeout(90);
+  }
+  await page.waitForTimeout(1500);
+  const samples = await page.evaluate(
+    () => (window as unknown as { samples: number[] }).samples,
+  );
+  expect(Math.min(...samples)).toBeGreaterThan(0.9);
+});

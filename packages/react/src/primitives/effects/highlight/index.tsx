@@ -41,6 +41,7 @@ type HighlightContextType<T extends string> = {
   mode: HighlightMode;
   activeValue: T | null;
   previousValue: T | null;
+  changes: number;
   setActiveValue: (value: T | null) => void;
   setBounds: (bounds: DOMRect) => void;
   clearBounds: () => void;
@@ -275,9 +276,14 @@ function Highlight<T extends React.ElementType = 'div'>({
   const [values, setValues] = React.useState<{
     current: string | null;
     previous: string | null;
-  }>({ current: activeValue ?? null, previous: null });
+    changes: number;
+  }>({ current: activeValue ?? null, previous: null, changes: 0 });
   if (values.current !== (activeValue ?? null))
-    setValues({ current: activeValue ?? null, previous: values.current });
+    setValues({
+      current: activeValue ?? null,
+      previous: values.current,
+      changes: values.changes + 1,
+    });
   const [boundsState, setBoundsState] = React.useState<Bounds | null>(null);
   const [activeClassNameState, setActiveClassNameState] =
     React.useState<string>('');
@@ -382,6 +388,7 @@ function Highlight<T extends React.ElementType = 'div'>({
         mode,
         activeValue,
         previousValue: values.previous,
+        changes: values.changes,
         setActiveValue: safeSetActiveValue,
         id,
         hover,
@@ -481,6 +488,7 @@ function HighlightItem<T extends React.ElementType>({
   const {
     activeValue,
     previousValue,
+    changes,
     setActiveValue,
     mode,
     setBounds,
@@ -649,9 +657,10 @@ function HighlightItem<T extends React.ElementType>({
           ...handlers,
         },
         <>
-          <AnimatePresence initial={false} mode="wait" custom={handOff}>
+          <AnimatePresence initial={false} custom={handOff}>
             {isActive && !isDisabled && (
               <motion.div
+                key={handedTo ? `to-${changes}` : 'rest'}
                 layoutId={`transition-background-${contextId}`}
                 data-slot="motion-highlight"
                 style={{
@@ -706,9 +715,10 @@ function HighlightItem<T extends React.ElementType>({
       {...handlers}
     >
       {mode === 'children' && (
-        <AnimatePresence initial={false} mode="wait" custom={handOff}>
+        <AnimatePresence initial={false} custom={handOff}>
           {isActive && !isDisabled && (
             <motion.div
+              key={handedTo ? `to-${changes}` : 'rest'}
               layoutId={`transition-background-${contextId}`}
               data-slot="motion-highlight"
               style={{
