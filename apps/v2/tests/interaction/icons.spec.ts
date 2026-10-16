@@ -891,3 +891,28 @@ test.describe('lucide defaults, as hugeicons', () => {
       await named(page, [kept]);
     });
 });
+
+test('a looping full turn starts each lap from rest instead of kicking backwards', async ({
+  page,
+}) => {
+  await open(page);
+  const svg = page.getByTestId('loop-turn').locator('svg');
+  const degrees = await svg.evaluate(
+    (el) =>
+      new Promise<number[]>((resolve) => {
+        const samples: number[] = [];
+        const start = performance.now();
+        const tick = () => {
+          const match = (el as SVGElement).style.transform.match(
+            /rotate\((-?[\d.]+)deg\)/,
+          );
+          samples.push(match ? Number(match[1]) : 0);
+          if (performance.now() - start < 6000) requestAnimationFrame(tick);
+          else resolve(samples);
+        };
+        requestAnimationFrame(tick);
+      }),
+  );
+  expect(Math.max(...degrees)).toBeGreaterThan(350);
+  expect(Math.min(...degrees)).toBeGreaterThanOrEqual(-1);
+});

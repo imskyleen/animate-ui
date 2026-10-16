@@ -299,13 +299,13 @@ function CounterVignette() {
   );
 }
 
-const ICONS: [string, ComponentType<{ size?: number }>][] = [
+const ICONS: [string, ComponentType<{ size?: number }>, string?][] = [
   ['bell', Bell],
   ['heart', Heart],
   ['settings', Settings],
   ['send', Send],
   ['sparkles', Sparkles],
-  ['refresh', RefreshCw],
+  ['refresh', RefreshCw, 'rotate'],
 ];
 
 function IconsVignette() {
@@ -313,9 +313,10 @@ function IconsVignette() {
   const reduce = useShouldReduceMotion();
   return (
     <div className="grid grid-cols-3 gap-x-8 gap-y-5">
-      {ICONS.map(([name, Icon], index) => (
+      {ICONS.map(([name, Icon, animation], index) => (
         <AnimateIcon
           key={name}
+          animation={animation}
           animate={!paused && !reduce}
           loop
           loopDelay={600 + index * 150}

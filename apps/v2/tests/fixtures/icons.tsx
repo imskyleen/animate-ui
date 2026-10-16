@@ -6,6 +6,7 @@ import { AnimateIcon } from '@animate-ui/react/icons';
 import { Bell } from '@/registry/icons/bell';
 import { CirclePlus } from '@/registry/icons/circle-plus';
 import { Fingerprint } from '@/registry/icons/fingerprint';
+import { RefreshCw } from '@/registry/icons/refresh-cw';
 
 export default function IconsFixture() {
   const [play, setPlay] = React.useState(false);
@@ -15,6 +16,11 @@ export default function IconsFixture() {
 
   return (
     <div className="flex flex-col items-start gap-10">
+      <section data-testid="loop-turn">
+        <AnimateIcon animate loop loopDelay={300} animation="rotate">
+          <RefreshCw size={48} />
+        </AnimateIcon>
+      </section>
       <section data-testid="hover">
         <Bell animateOnHover size={48} />
       </section>

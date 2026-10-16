@@ -19,6 +19,11 @@ import {
   useShouldReduceMotion,
 } from '../utils/motion';
 
+const settleVelocity = () =>
+  new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+  );
+
 function cn(...classNames: unknown[]) {
   return classNames.filter(Boolean).join(' ');
 }
@@ -307,6 +312,7 @@ function AnimateIconRoot({
           return;
         }
         await startAnim('initial', 'set');
+        await settleVelocity();
       }
 
       isAnimateInProgressRef.current = true;
