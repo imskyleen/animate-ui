@@ -561,7 +561,7 @@ test('the cards head straight to their grid places, without one more turn', asyn
   await page.evaluate((to) => window.scrollTo(0, to), end);
   await page.waitForTimeout(800);
   const final = await centers();
-  const start = top - viewport + height * 0.76;
+  const start = top - viewport + height * 0.86;
   const distances: number[][] = [];
   for (let i = 0; i <= 10; i++) {
     await page.evaluate(
@@ -583,4 +583,55 @@ test('the cards head straight to their grid places, without one more turn', asyn
         .filter((growth) => growth > 4),
     );
   expect(away).toEqual([]);
+});
+
+test('the cards reach the grid within a third of a screen of scroll', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+    timeout: 5000,
+  });
+  const orbit = page.locator('[data-slot="home-orbit"]');
+  const { top, height, viewport } = await orbit.evaluate(
+    (section: HTMLElement) => ({
+      top: section.offsetTop,
+      height: section.offsetHeight,
+      viewport: window.innerHeight,
+    }),
+  );
+  const centers = () =>
+    page.locator('[data-slot="orbit-card"]').evaluateAll((els) =>
+      els.map((el) => {
+        const frame = el
+          .closest('[data-slot="home-orbit"] > div')!
+          .getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        return [
+          box.left + box.width / 2 - frame.left,
+          box.top + box.height / 2 - frame.top,
+        ];
+      }),
+    );
+  const end = top + height - viewport;
+  await page.evaluate((to) => window.scrollTo(0, to), end);
+  await page.waitForTimeout(800);
+  const final = await centers();
+  let inOrbit = top;
+  for (let y = end - 40; y > top; y -= 40) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await page.waitForTimeout(400);
+    const now = await centers();
+    const mean =
+      now.reduce(
+        (sum, [x, cy], card) =>
+          sum + Math.hypot(x! - final[card]![0]!, cy! - final[card]![1]!),
+        0,
+      ) / now.length;
+    if (mean > 150) {
+      inOrbit = y;
+      break;
+    }
+  }
+  expect(end - inOrbit).toBeLessThan(viewport * 0.33);
 });

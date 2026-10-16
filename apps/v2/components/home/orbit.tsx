@@ -211,21 +211,21 @@ function OrbitStage() {
   const drift = useMotionValue(0);
 
   const enter = useTransform(progress, (p) => smooth(clamp((p - 0.12) / 0.25)));
-  const settle = useTransform(progress, (p) => clamp((p - 0.76) / 0.22));
-  const turn = useTransform(progress, (p) => clamp(p / 0.76) * Math.PI * 1.1);
+  const settle = useTransform(progress, (p) => clamp((p - 0.86) / 0.12));
+  const turn = useTransform(progress, (p) => clamp(p / 0.86) * Math.PI * 1.1);
   useAnimationFrame((_, delta) => {
     if (settle.get() === 0) drift.set(drift.get() + delta * 0.00008);
   });
 
   const logoScale = useTransform(
     progress,
-    [0, 0.3, 0.76, 0.9],
+    [0, 0.3, 0.86, 0.95],
     [0.8, 1, 1, 0.3],
   );
-  const logoOpacity = useTransform(progress, [0, 0.76, 0.88], [1, 1, 0]);
-  const logoRotate = useTransform(progress, [0, 0.9], [-60, 240]);
-  const logoTilt = useTransform(progress, [0, 0.45, 0.9], [24, -12, 24]);
-  const glow = useTransform(progress, [0, 0.3, 0.76, 0.9], [0.5, 1, 1, 0]);
+  const logoOpacity = useTransform(progress, [0, 0.86, 0.94], [1, 1, 0]);
+  const logoRotate = useTransform(progress, [0, 0.95], [-60, 240]);
+  const logoTilt = useTransform(progress, [0, 0.48, 0.95], [24, -12, 24]);
+  const glow = useTransform(progress, [0, 0.3, 0.86, 0.95], [0.5, 1, 1, 0]);
 
   return (
     <section
@@ -242,10 +242,10 @@ function OrbitStage() {
             transform: `scale(${scale})`,
           }}
         >
-          <Headline progress={progress} range={[-0.01, 0, 0.68, 0.78]}>
+          <Headline progress={progress} range={[-0.01, 0, 0.78, 0.87]}>
             Every primitive, alive.
           </Headline>
-          <Headline progress={progress} range={[0.84, 0.96, 1, 1.01]}>
+          <Headline progress={progress} range={[0.9, 0.97, 1, 1.01]}>
             Go ahead, play with them.
           </Headline>
 
