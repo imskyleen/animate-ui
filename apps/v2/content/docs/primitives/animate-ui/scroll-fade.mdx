@@ -44,11 +44,11 @@ function Sidebar() {
 
 - An edge fades only when there is content past it: none at the edge you're at, none at all when nothing overflows. The fade follows the scroll position directly, with no lag: over the first half of `size` scrolled away from an edge (20px by default), that edge goes from sharp to faded, and back as you return. The fade keeps its depth (`size`); only how much the edge clears changes.
 - On page load, the fade is already in place: nothing animates in.
-- The items shrink into the fade with it: each one scales toward 95% (`shrink`, 0.05) by how deep its center sits in a faded edge, following the scroll the same way. The items are the children of the first element holding several (a list's items, through its `ul`), and a group among them is opened up: a `ul`, `ol`, `role="list"` or `role="group"`, or an element holding one (a section with its title and list), shrinks line by line, never as a whole. They're shrunk with the `scale` property so their own `transform` stays.
+- The items shrink and blur into the fade with it: from 1.75 times `size` away from a faded edge, each one eases toward 97% (`shrink`, 0.03) and a 4px blur (`blur`) as its center nears the edge, following the scroll the same way. Their places are measured when the layout changes, never while scrolling, and they're written once per frame. The items are the children of the first element holding several (a list's items, through its `ul`), and a group among them is opened up: a `ul`, `ol`, `role="list"` or `role="group"`, or an element holding one (a section with its title and list), shrinks line by line, never as a whole. They're shrunk with the `scale` property so their own `transform` stays.
 - It's a `mask-image`, so the content itself dissolves: it works on any background, in light and dark.
 - Scrolling never re-renders React: the amounts are motion values written to CSS variables (`--scroll-fade-top`, `--scroll-fade-bottom`, `--scroll-fade-left`, `--scroll-fade-right`, from 0 to 1).
 - When the content changes size without a scroll (items added or removed), the edges ease to their new amount (200ms, `transition`).
-- Under reduced motion, the fade follows the scroll position the same way, and jumps when the content changes size; nothing shrinks.
+- Under reduced motion, the fade and the blur follow the scroll position the same way, and jump when the content changes size; nothing shrinks.
 
 ## API Reference
 
@@ -78,7 +78,13 @@ function Sidebar() {
       description:
         'How much the items shrink at the deepest of the fade (0 turns it off).',
       type: 'number',
-      default: '0.05',
+      default: '0.03',
+    },
+    blur: {
+      description:
+        'Blur of the items at the deepest of the fade, in pixels (0 turns it off).',
+      type: 'number',
+      default: '4',
     },
     transition: {
       description:
@@ -100,4 +106,4 @@ function Sidebar() {
 
 ### useScrollFade
 
-`useScrollFade(ref, options)` applies the fade to the element of `ref`. It takes the options of `ScrollFade` (`orientation`, `size`, `shrink`, `transition`, `enabled`) and returns the motion values of each edge (`top`, `bottom`, `left`, `right`). It doesn't set the overflow: the element must already scroll.
+`useScrollFade(ref, options)` applies the fade to the element of `ref`. It takes the options of `ScrollFade` (`orientation`, `size`, `shrink`, `blur`, `transition`, `enabled`) and returns the motion values of each edge (`top`, `bottom`, `left`, `right`). It doesn't set the overflow: the element must already scroll.

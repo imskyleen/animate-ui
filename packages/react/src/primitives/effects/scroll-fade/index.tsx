@@ -3,6 +3,8 @@
 import * as React from 'react';
 import {
   animate,
+  cancelFrame,
+  frame,
   useMotionValue,
   type MotionValue,
   type Transition,
@@ -25,6 +27,7 @@ type UseScrollFadeOptions = {
   orientation?: ScrollFadeOrientation;
   size?: number;
   shrink?: number;
+  blur?: number;
   transition?: Transition;
   enabled?: boolean;
 };
@@ -56,6 +59,11 @@ const MASKS: Record<ScrollFadeOrientation, string> = {
 };
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+const smooth = (value: number) => value * value * (3 - 2 * value);
+
+const ZONE = 1.75;
+
+type ItemSlot = { item: HTMLElement; x: number; y: number };
 
 const GROUP = 'ul, ol, [role="list"], [role="group"]';
 
@@ -100,7 +108,8 @@ function useScrollFade(
   {
     orientation = 'vertical',
     size = 40,
-    shrink = 0.05,
+    shrink = 0.03,
+    blur = 4,
     transition: transitionProp,
     enabled = true,
   }: UseScrollFadeOptions = {},
@@ -139,35 +148,81 @@ function useScrollFade(
 
     const shrunk = new Set<HTMLElement>();
     const restore = () => {
-      for (const item of shrunk) item.style.removeProperty('scale');
+      for (const item of shrunk) {
+        item.style.removeProperty('scale');
+        item.style.removeProperty('filter');
+      }
       shrunk.clear();
     };
-    const shrinkItems = () => {
-      if (!shrink || reduceRef.current) return restore();
+
+    let slots: ItemSlot[] = [];
+    let width = 0;
+    let height = 0;
+    const measureItems = () => {
+      if (!shrink && !blur) {
+        slots = [];
+        return;
+      }
       const box = el.getBoundingClientRect();
-      for (const item of itemsOf(el)) {
+      width = el.clientWidth;
+      height = el.clientHeight;
+      slots = itemsOf(el).map((item) => {
         const rect = item.getBoundingClientRect();
+        return {
+          item,
+          x: rect.left + rect.width / 2 - box.left + el.scrollLeft,
+          y: rect.top + rect.height / 2 - box.top + el.scrollTop,
+        };
+      });
+    };
+
+    const zone = size * ZONE;
+    const reach = (distance: number) =>
+      zone > 0 ? smooth(clamp01(1 - distance / zone)) : 0;
+
+    const paintItems = () => {
+      const scale = reduceRef.current ? 0 : shrink;
+      if (!slots.length || (!scale && !blur)) return restore();
+      const scrollX = el.scrollLeft;
+      const scrollY = el.scrollTop;
+      for (const { item, x, y } of slots) {
         let depth = 0;
         if (vertical) {
-          const center = rect.top + rect.height / 2;
+          const center = y - scrollY;
           depth = Math.max(
-            clamp01(1 - (center - box.top) / size) * values.top.get(),
-            clamp01(1 - (box.bottom - center) / size) * values.bottom.get(),
+            reach(center) * values.top.get(),
+            reach(height - center) * values.bottom.get(),
           );
         }
         if (horizontal) {
-          const center = rect.left + rect.width / 2;
+          const center = x - scrollX;
           depth = Math.max(
             depth,
-            clamp01(1 - (center - box.left) / size) * values.left.get(),
-            clamp01(1 - (box.right - center) / size) * values.right.get(),
+            reach(center) * values.left.get(),
+            reach(width - center) * values.right.get(),
           );
         }
         if (depth > 0.001) {
-          item.style.scale = String(1 - shrink * depth);
+          if (scale) item.style.scale = String(1 - scale * depth);
+          else item.style.removeProperty('scale');
+          if (blur) item.style.filter = `blur(${(blur * depth).toFixed(2)}px)`;
           shrunk.add(item);
-        } else if (shrunk.delete(item)) item.style.removeProperty('scale');
+        } else if (shrunk.delete(item)) {
+          item.style.removeProperty('scale');
+          item.style.removeProperty('filter');
+        }
       }
+    };
+
+    let scheduled = false;
+    const runPaint = () => {
+      scheduled = false;
+      paintItems();
+    };
+    const shrinkItems = () => {
+      if (scheduled) return;
+      scheduled = true;
+      frame.render(runPaint);
     };
 
     const write = () => {
@@ -225,12 +280,16 @@ function useScrollFade(
       write();
     };
 
+    measureItems();
     measure(true);
 
     const onScroll = () => measure(true);
     el.addEventListener('scroll', onScroll, { passive: true });
 
-    const resizeObserver = new ResizeObserver(() => measure(false));
+    const resizeObserver = new ResizeObserver(() => {
+      measureItems();
+      measure(false);
+    });
     const observeChildren = () => {
       resizeObserver.disconnect();
       resizeObserver.observe(el);
@@ -239,12 +298,14 @@ function useScrollFade(
     observeChildren();
     const mutationObserver = new MutationObserver(() => {
       observeChildren();
+      measureItems();
       measure(false);
     });
-    mutationObserver.observe(el, { childList: true });
+    mutationObserver.observe(el, { childList: true, subtree: true });
 
     return () => {
       el.removeEventListener('scroll', onScroll);
+      cancelFrame(runPaint);
       resizeObserver.disconnect();
       mutationObserver.disconnect();
       unsubscribe.forEach((off) => off());
@@ -253,7 +314,7 @@ function useScrollFade(
       for (const name of Object.values(VAR)) el.style.removeProperty(name);
       for (const edge of EDGES) values[edge].jump(0);
     };
-  }, [ref, enabled, orientation, size, shrink, values]);
+  }, [ref, enabled, orientation, size, shrink, blur, values]);
 
   return values;
 }
@@ -279,6 +340,7 @@ function ScrollFade({
   orientation = 'vertical',
   size,
   shrink,
+  blur,
   transition,
   enabled,
   style,
@@ -299,6 +361,7 @@ function ScrollFade({
     orientation,
     size,
     shrink,
+    blur,
     transition,
     enabled,
   });

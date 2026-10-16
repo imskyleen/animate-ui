@@ -198,20 +198,22 @@ test.describe('animate-ui scroll fade', () => {
         ),
       );
 
-  test('items shrink into the fade, by how deep they sit in it, down to 95%', async ({
+  test('items shrink into the fade, by how deep they sit in it, down to 97%', async ({
     page,
   }) => {
     await open(page);
     let s = await scales(page, 'long');
-    expect(s[0]).toBe(1);
-    expect(s[3]).toBe(1);
-    expect(s[4]).toBeCloseTo(0.975, 2);
+    expect(s.slice(0, 3)).toEqual([1, 1, 1]);
+    expect(s[3]).toBeLessThan(1);
+    expect(s[4]).toBeLessThan(s[3]!);
+    expect(s[5]).toBeLessThanOrEqual(s[4]!);
+    expect(s[5]).toBeCloseTo(0.97, 2);
     await scrollTo(page, 'long', 'middle');
     await settled(page, 'long', { top: 1, bottom: 1 });
     s = await scales(page, 'long');
     const shrunk = s.filter((value) => value < 1);
     expect(shrunk.length).toBeGreaterThanOrEqual(2);
-    for (const value of shrunk) expect(value).toBeGreaterThanOrEqual(0.95);
+    for (const value of shrunk) expect(value).toBeGreaterThanOrEqual(0.97);
     await scrollTo(page, 'long', 'start');
     await settled(page, 'long', { top: 0, bottom: 1 });
     s = await scales(page, 'long');
@@ -247,6 +249,67 @@ test.describe('animate-ui scroll fade', () => {
     await expect.poll(async () => (await shrunk()).length).toBeGreaterThan(0);
     const tags = await shrunk();
     expect(tags.every((tag) => tag === 'LI' || tag === 'P')).toBe(true);
+  });
+
+  test('scrolling never reads the items back: their places are measured once, not every frame', async ({
+    page,
+  }) => {
+    await open(page);
+    await page.getByTestId('long').evaluate((el) => {
+      const counter = { reads: 0 };
+      (window as unknown as { counter: typeof counter }).counter = counter;
+      const read = Element.prototype.getBoundingClientRect;
+      Element.prototype.getBoundingClientRect = function () {
+        if (el.contains(this)) counter.reads++;
+        return read.call(this);
+      };
+    });
+    const box = (await page.getByTestId('long').boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    for (let i = 0; i < 20; i++) {
+      await page.mouse.wheel(0, 20);
+      await page.waitForTimeout(16);
+    }
+    await page.waitForTimeout(300);
+    const reads = await page.evaluate(
+      () => (window as unknown as { counter: { reads: number } }).counter.reads,
+    );
+    expect(reads).toBe(0);
+    const scales = await page
+      .getByTestId('long')
+      .evaluate(
+        (el) =>
+          [...el.children].filter((child) => (child as HTMLElement).style.scale)
+            .length,
+      );
+    expect(scales).toBeGreaterThan(0);
+  });
+
+  test('blur: items deep in the fade blur, those in the middle stay sharp', async ({
+    page,
+  }) => {
+    await page.goto('/tests/demos/animate-ui/scroll-fade?blur=4', {
+      waitUntil: 'networkidle',
+    });
+    const items = page.locator('[data-slot="scroll-fade"] li');
+    await expect
+      .poll(() => items.last().evaluate((item) => item.style.filter))
+      .toMatch(/blur\((?:[3-4](?:\.\d+)?)px\)/);
+    expect(await items.first().evaluate((item) => item.style.filter)).toBe('');
+  });
+
+  test('reduced motion keeps the blur, only the shrinking goes', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/tests/demos/animate-ui/scroll-fade?blur=4', {
+      waitUntil: 'networkidle',
+    });
+    const last = page.locator('[data-slot="scroll-fade"] li').last();
+    await expect
+      .poll(() => last.evaluate((item) => item.style.filter))
+      .toMatch(/blur\(/);
+    expect(await last.evaluate((item) => item.style.scale)).toBe('');
   });
 
   test('reduced motion: nothing shrinks, the fade alone stays', async ({

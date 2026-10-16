@@ -97,7 +97,7 @@ export function TOC({ container }: TOCProps) {
   const active = useActiveAnchors();
   const list = useRef<HTMLDivElement>(null);
   const scroll = useRef<HTMLDivElement>(null);
-  useScrollFade(scroll, { size: 24 });
+  useScrollFade(scroll, { size: 24, blur: 0 });
 
   if (items.length === 0)
     return (
