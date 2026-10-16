@@ -70,7 +70,7 @@ function Sidebar() {
     },
     size: {
       description:
-        'Depth of the fade, in pixels, once an edge is fully faded. An edge fades in once you scroll 16 pixels away from it (or `size`, when smaller).',
+        'Depth of the fade, in pixels, once an edge is fully faded. An edge fades in over the first half of `size` scrolled away from it.',
       type: 'number',
       default: '40',
     },
@@ -90,7 +90,7 @@ function Sidebar() {
       description:
         'How the edges ease when the content changes size without a scroll (a Motion transition, `duration` in seconds). Scrolling itself is followed directly.',
       type: 'Transition',
-      default: '{ duration: 0.2, ease: easeOut }',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
     },
     enabled: {
       description: 'Apply the fade.',

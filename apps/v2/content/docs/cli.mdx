@@ -172,6 +172,7 @@ Some changes need you. `migrate` lists them with their file and line, marked `!`
 - **v1-only parts and hooks** (`DropdownMenuHighlight`, `useAccordionItem`…): in an import mixing them with parts v2 has, the parts move and the v1-only names stay on the v1 file. Their parent is v2 now, so they throw at runtime: remove them (v2 parts animate themselves: style their `data-state` attributes or control the state yourself), or replace the component with shadcn/ui's and run `animate`.
 - **Motion props** (`initial`, `animate`, `layoutId`…): v2 parts aren't motion components. Animated parts take `transition` and `exitTransition` instead.
 - **No v2 equivalent**: Files, Preview Link Card, the Headless UI primitives (Headless UI isn't supported in v2) and a few hooks (`use-auto-height`, `use-data-state`, `use-motion-value-state`) stay yours and keep working.
+- **Registry buttons**: the Flip and Liquid buttons are files you add with shadcn in v2 (`npx shadcn@latest add @animate-ui/buttons-flip`, `@animate-ui/buttons-liquid`): their imports stay on the v1 file, which keeps working, and the manual step gives the command.
 
 Your v1 components (`components/animate-ui/components/…`) keep working on v2. The CLI also suggests swapping each one for shadcn/ui's and running `animate`.
 

@@ -36,11 +36,11 @@ import { Dialog } from '@animate-ui/react/primitives/radix-ui'; // [!code ++]
 
 The imports mirror the library's:
 
-| Library    | Umbrella import                           | Per primitive                                       |
-| ---------- | ----------------------------------------- | --------------------------------------------------- |
-| Radix UI   | `@animate-ui/react/primitives/radix-ui`   | `@animate-ui/react/primitives/radix-ui/<primitive>` |
-| Base UI    | `@animate-ui/react/primitives/base-ui`    | `@animate-ui/react/primitives/base-ui/<primitive>`  |
-| React Aria | `@animate-ui/react/primitives/react-aria` |                                                     |
+| Library    | Umbrella import                           | Per primitive                                                                                          |
+| ---------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Radix UI   | `@animate-ui/react/primitives/radix-ui`   | `@animate-ui/react/primitives/radix-ui/<primitive>`                                                    |
+| Base UI    | `@animate-ui/react/primitives/base-ui`    | `@animate-ui/react/primitives/base-ui/<primitive>`                                                     |
+| React Aria | `@animate-ui/react/primitives/react-aria` | `@animate-ui/react/primitives/react-aria/<primitive>` (Preview Link Card only comes from its own path) |
 
 The umbrella imports re-export everything else from the library (`Slot`, `Label`, `Field`…), so an import mixing animated and plain parts keeps working. In a shadcn/ui project, the [CLI](/docs/cli) makes the change for you.
 
