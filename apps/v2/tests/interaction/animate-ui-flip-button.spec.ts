@@ -110,3 +110,26 @@ test.describe('animate-ui flip button', () => {
     await expect.poll(async () => (await sample(page, BACK)).opacity).toBe(1);
   });
 });
+
+test('flip button: the press runs in the browser, off the main thread (rule A9)', async ({
+  page,
+}) => {
+  await open(page);
+  await page.locator(BUTTON).first().hover();
+  await page.mouse.down();
+  await expect
+    .poll(() =>
+      page.evaluate((sel) => {
+        const el = document.querySelector(sel)!;
+        return el
+          .getAnimations()
+          .some((animation) =>
+            (animation.effect as KeyframeEffect)
+              .getKeyframes()
+              .some((frame) => 'transform' in frame),
+          );
+      }, BUTTON),
+    )
+    .toBe(true);
+  await page.mouse.up();
+});

@@ -107,3 +107,26 @@ test.describe('animate-ui liquid button', () => {
     await page.mouse.up();
   });
 });
+
+test('liquid button: the press runs in the browser, off the main thread (rule A9)', async ({
+  page,
+}) => {
+  await open(page);
+  await page.locator(SELECTOR).first().hover();
+  await page.mouse.down();
+  await expect
+    .poll(() =>
+      page.evaluate((sel) => {
+        const el = document.querySelector(sel)!;
+        return el
+          .getAnimations()
+          .some((animation) =>
+            (animation.effect as KeyframeEffect)
+              .getKeyframes()
+              .some((frame) => 'transform' in frame),
+          );
+      }, SELECTOR),
+    )
+    .toBe(true);
+  await page.mouse.up();
+});

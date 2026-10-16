@@ -113,9 +113,12 @@ function RippleButtonContent({
         ref={buttonRef}
         data-slot="ripple-button"
         onClick={handleClick}
-        whileTap={{ scale: reduce ? 1 : tapScale }}
+        initial={reduce ? undefined : { transform: 'scale(1)' }}
+        whileTap={reduce ? undefined : { transform: `scale(${tapScale})` }}
         whileHover={
-          reduce || hoverScale === 1 ? undefined : { scale: hoverScale }
+          reduce || hoverScale === 1
+            ? undefined
+            : { transform: `scale(${hoverScale})` }
         }
         transition={transition ?? defaultTransition}
         style={{

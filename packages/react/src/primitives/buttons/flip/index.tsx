@@ -87,9 +87,10 @@ function FlipButtonContent({
     <FlipButtonProvider value={{ from, isVertical, rotateAxis }}>
       <Component
         data-slot="flip-button"
+        variants={reduce ? undefined : { initial: { transform: 'scale(1)' } }}
         initial="initial"
         whileHover="hover"
-        whileTap={{ scale: reduce ? 1 : tapScale }}
+        whileTap={reduce ? undefined : { transform: `scale(${tapScale})` }}
         transition={transition ?? defaultTransition}
         style={{
           display: 'inline-grid',

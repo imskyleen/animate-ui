@@ -57,9 +57,12 @@ function LiquidButtonContent({
 
   return (
     <Component
-      whileTap={{ scale: reduce ? 1 : tapScale }}
+      initial={reduce ? undefined : { transform: 'scale(1)' }}
+      whileTap={reduce ? undefined : { transform: `scale(${tapScale})` }}
       whileHover={{
-        ...(reduce || hoverScale === 1 ? null : { scale: hoverScale }),
+        ...(reduce || hoverScale === 1
+          ? null
+          : { transform: `scale(${hoverScale})` }),
         '--liquid-button-fill-width': '100%',
         '--liquid-button-fill-height': '100%',
         '--liquid-button-delay': delay,
