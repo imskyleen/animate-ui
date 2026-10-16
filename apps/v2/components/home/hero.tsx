@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { IconSwap } from '@/components/docs/icon-swap';
+import { HeroTitle } from '@/components/home/hero-title';
 import { useIntroDone } from '@/components/home/intro';
 import {
   MANAGER_GROUP,
@@ -103,15 +104,10 @@ export function Hero() {
           </Link>
         </motion.div>
 
-        <motion.h1
-          {...rise(1, done)}
-          className="max-w-[800px] text-4xl font-medium text-balance md:text-6xl"
-        >
-          Animate your shadcn/ui components in one command
-        </motion.h1>
+        <HeroTitle done={done} />
 
         <motion.p
-          {...rise(2, done)}
+          {...rise(5, done)}
           className="mt-5 max-w-[620px] text-lg text-balance text-muted-foreground"
         >
           Drop-in animated primitives for Radix UI, Base UI and React Aria. Swap
@@ -119,7 +115,7 @@ export function Hero() {
         </motion.p>
 
         <motion.div
-          {...rise(3, done)}
+          {...rise(6, done)}
           className="mt-8 flex max-w-full flex-col items-center gap-4"
         >
           <CopyCommand />
@@ -140,7 +136,7 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          {...rise(4, done)}
+          {...rise(7, done)}
           className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
         >
           {LIBRARIES.filter((library) => library.peer).map(

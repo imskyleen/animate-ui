@@ -15,11 +15,9 @@ test('the intro draws the logo, then gives the page and its scroll back', async 
   expect(
     await page.evaluate(() => document.documentElement.style.overflow),
   ).toBe('');
-  await expect(
-    page.getByRole('heading', {
-      name: 'Animate your shadcn/ui components in one command',
-    }),
-  ).toHaveCSS('opacity', '1');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'components in one command',
+  );
 });
 
 test('scrolling through the orbit settles the cards in a playable 3-column grid', async ({
@@ -32,7 +30,7 @@ test('scrolling through the orbit settles the cards in a playable 3-column grid'
   const orbit = page.locator('[data-slot="home-orbit"]');
   const cards = page.locator('[data-slot="orbit-card"]');
   await expect(cards).toHaveCount(9);
-  await orbit.evaluate((section) =>
+  await orbit.evaluate((section: HTMLElement) =>
     window.scrollTo(
       0,
       section.offsetTop + section.offsetHeight - window.innerHeight - 10,
@@ -65,7 +63,7 @@ test('a hovered card stops playing by itself', async ({ page }) => {
     timeout: 5000,
   });
   const orbit = page.locator('[data-slot="home-orbit"]');
-  await orbit.evaluate((section) =>
+  await orbit.evaluate((section: HTMLElement) =>
     window.scrollTo(
       0,
       section.offsetTop + section.offsetHeight - window.innerHeight - 10,
@@ -94,7 +92,7 @@ test.describe('reduced motion', () => {
     await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0);
     const orbit = page.locator('[data-slot="home-orbit"]');
     expect(
-      await orbit.evaluate((section) => section.offsetHeight),
+      await orbit.evaluate((section: HTMLElement) => section.offsetHeight),
     ).toBeLessThan(1400);
     const tabs = page
       .locator('[data-slot="orbit-card"]')
@@ -141,7 +139,7 @@ for (const viewport of [
       timeout: 5000,
     });
     const orbit = page.locator('[data-slot="home-orbit"]');
-    const { top, height } = await orbit.evaluate((section) => ({
+    const { top, height } = await orbit.evaluate((section: HTMLElement) => ({
       top: section.offsetTop,
       height: section.offsetHeight,
     }));
@@ -189,3 +187,84 @@ for (const viewport of [
     }
     expect(cut).toEqual([]);
   });
+
+test('the hero cycles the library name with Rolling Text while the rest of the title stays still', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+    timeout: 5000,
+  });
+  const heading = page.getByRole('heading', { level: 1 });
+  await expect(heading).toContainText('Animate your');
+  await expect(heading).toContainText('components in one command');
+  const library = heading.locator(
+    '[data-slot="hero-library"] [data-slot="rolling-text"]',
+  );
+  await expect(library).toHaveCount(1);
+  const shown = () =>
+    library.evaluate((el) => el.querySelector('.sr-only')!.textContent!.trim());
+  const lines = () =>
+    heading.evaluate((el) =>
+      [...el.children]
+        .filter((child) => child.getAttribute('data-slot') !== 'hero-library')
+        .map((child) => {
+          const box = child.getBoundingClientRect();
+          return `${Math.round(box.left)},${Math.round(box.top)},${Math.round(box.width)}`;
+        })
+        .join('|'),
+    );
+  await page.waitForTimeout(1500);
+  const first = await shown();
+  const layout = await lines();
+  await expect.poll(shown, { timeout: 5000 }).not.toBe(first);
+  for (let i = 0; i < 6; i++) {
+    expect(await lines()).toBe(layout);
+    await page.waitForTimeout(60);
+  }
+});
+
+test('the orbit headline waits for the logo, and the grid does not hold the scroll for long', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+    timeout: 5000,
+  });
+  const orbit = page.locator('[data-slot="home-orbit"]');
+  const { top, height, viewport } = await orbit.evaluate(
+    (section: HTMLElement) => ({
+      top: section.offsetTop,
+      height: section.offsetHeight,
+      viewport: window.innerHeight,
+    }),
+  );
+  const headline = orbit.getByRole('heading', {
+    name: 'Every primitive, alive.',
+  });
+  await page.evaluate((y) => window.scrollTo(0, y), top - 80 + viewport * 0.2);
+  await page.waitForTimeout(600);
+  expect(
+    Number(await headline.evaluate((el) => getComputedStyle(el).opacity)),
+  ).toBeLessThan(0.2);
+
+  const end = top + height - viewport;
+  const settled = async () =>
+    page.locator('[data-slot="orbit-card"]').evaluateAll((els) =>
+      els.every((el) => {
+        const wrapper = el.parentElement!;
+        return (
+          getComputedStyle(wrapper).transform === 'none' ||
+          /matrix\(1, 0, 0, 1,/.test(getComputedStyle(wrapper).transform)
+        );
+      }),
+    );
+  let firstSettled = end;
+  for (let y = end; y > top; y -= 40) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await page.waitForTimeout(200);
+    if (!(await settled())) break;
+    firstSettled = y;
+  }
+  expect(end - firstSettled).toBeLessThan(viewport * 0.35);
+});

@@ -2,6 +2,15 @@
 
 import { useShouldReduceMotion } from '@animate-ui/react/utils/motion';
 import { AnimateIcon } from '@animate-ui/react/icons';
+import {
+  Tabs as AnimateTabs,
+  TabsContent,
+  TabsContents,
+  TabsHighlight,
+  TabsHighlightItem,
+  TabsList,
+  TabsTrigger,
+} from '@animate-ui/react/primitives/tabs';
 import { SlidingNumber } from '@animate-ui/react/primitives/texts/sliding-number';
 import {
   TextBoldIcon,
@@ -29,7 +38,6 @@ import { Checkbox } from '@/demos/radix-ui/checkbox';
 import { Progress } from '@/demos/radix-ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/demos/radix-ui/radio-group';
 import { Switch } from '@/demos/radix-ui/switch';
-import { Tabs, TabsList, TabsTrigger } from '@/demos/radix-ui/tabs';
 import { ToggleGroup, ToggleGroupItem } from '@/demos/radix-ui/toggle-group';
 import { Bell } from '@/registry/icons/bell';
 import { Heart } from '@/registry/icons/heart';
@@ -91,25 +99,60 @@ function SwitchVignette() {
   );
 }
 
-const TABS = ['Overview', 'Analytics', 'Reports'];
+const TABS = [
+  {
+    value: 'overview',
+    label: 'Overview',
+    text: '12 active projects, 3 tasks due.',
+  },
+  {
+    value: 'analytics',
+    label: 'Analytics',
+    text: 'Page views up 25% this week.',
+  },
+  {
+    value: 'reports',
+    label: 'Reports',
+    text: '5 reports are ready to export.',
+  },
+];
 
 function TabsVignette() {
-  const [value, setValue] = useState(TABS[0]!);
+  const [value, setValue] = useState(TABS[0]!.value);
   useAutoplay(
-    () => setValue((v) => TABS[(TABS.indexOf(v) + 1) % TABS.length]!),
-    1400,
+    () =>
+      setValue((v) => {
+        const index = TABS.findIndex((tab) => tab.value === v);
+        return TABS[(index + 1) % TABS.length]!.value;
+      }),
+    1600,
     300,
   );
   return (
-    <Tabs value={value} onValueChange={setValue}>
-      <TabsList>
+    <AnimateTabs value={value} onValueChange={setValue} className="w-60">
+      <TabsHighlight className="absolute inset-0 z-0 rounded-md border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30">
+        <TabsList className="inline-flex h-8 w-fit items-center rounded-lg bg-muted p-[3px] text-muted-foreground">
+          {TABS.map((tab) => (
+            <TabsHighlightItem key={tab.value} value={tab.value}>
+              <TabsTrigger
+                value={tab.value}
+                className="relative z-10 inline-flex h-full items-center justify-center rounded-md px-2 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors duration-300 hover:text-foreground data-[state=active]:text-foreground dark:text-muted-foreground dark:data-[state=active]:text-foreground"
+              >
+                {tab.label}
+              </TabsTrigger>
+            </TabsHighlightItem>
+          ))}
+        </TabsList>
+      </TabsHighlight>
+      <TabsContents className="mt-2 rounded-lg text-xs ring-1 ring-foreground/10">
         {TABS.map((tab) => (
-          <TabsTrigger key={tab} value={tab}>
-            {tab}
-          </TabsTrigger>
+          <TabsContent key={tab.value} value={tab.value} className="p-3">
+            <p className="font-medium">{tab.label}</p>
+            <p className="text-muted-foreground">{tab.text}</p>
+          </TabsContent>
         ))}
-      </TabsList>
-    </Tabs>
+      </TabsContents>
+    </AnimateTabs>
   );
 }
 

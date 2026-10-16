@@ -211,29 +211,29 @@ function OrbitStage() {
   const drift = useMotionValue(0);
   useAnimationFrame((_, delta) => drift.set(drift.get() + delta * 0.00008));
 
-  const enter = useTransform(progress, (p) => smooth(clamp(p / 0.2)));
-  const settle = useTransform(progress, (p) => clamp((p - 0.6) / 0.18));
-  const turn = useTransform(progress, (p) => clamp(p / 0.78) * Math.PI * 1.1);
+  const enter = useTransform(progress, (p) => smooth(clamp((p - 0.06) / 0.24)));
+  const settle = useTransform(progress, (p) => clamp((p - 0.66) / 0.22));
+  const turn = useTransform(progress, (p) => clamp(p / 0.88) * Math.PI * 1.1);
 
   const logoScale = useTransform(
     progress,
-    [0, 0.2, 0.6, 0.74],
-    [0.5, 1, 1, 0.3],
+    [0, 0.14, 0.64, 0.8],
+    [0.4, 1, 1, 0.3],
   );
   const logoOpacity = useTransform(
     progress,
-    [0, 0.12, 0.62, 0.72],
+    [0, 0.1, 0.66, 0.78],
     [0, 1, 1, 0],
   );
-  const logoRotate = useTransform(progress, [0, 0.74], [-60, 240]);
-  const logoTilt = useTransform(progress, [0, 0.37, 0.74], [24, -12, 24]);
-  const glow = useTransform(progress, [0, 0.2, 0.6, 0.74], [0, 1, 1, 0]);
+  const logoRotate = useTransform(progress, [0, 0.8], [-60, 240]);
+  const logoTilt = useTransform(progress, [0, 0.4, 0.8], [24, -12, 24]);
+  const glow = useTransform(progress, [0, 0.14, 0.64, 0.8], [0, 1, 1, 0]);
 
   return (
     <section
       ref={ref}
       data-slot="home-orbit"
-      className="relative mt-24 h-[320vh]"
+      className="relative mt-24 h-[300vh]"
     >
       <div className="sticky top-20 flex h-[calc(100dvh-5rem)] items-center justify-center overflow-hidden">
         <div
@@ -244,10 +244,10 @@ function OrbitStage() {
             transform: `scale(${scale})`,
           }}
         >
-          <Headline progress={progress} range={[0.04, 0.14, 0.52, 0.62]}>
+          <Headline progress={progress} range={[0.12, 0.28, 0.56, 0.66]}>
             Every primitive, alive.
           </Headline>
-          <Headline progress={progress} range={[0.66, 0.76, 1, 1.01]}>
+          <Headline progress={progress} range={[0.74, 0.86, 1, 1.01]}>
             Go ahead, play with them.
           </Headline>
 
