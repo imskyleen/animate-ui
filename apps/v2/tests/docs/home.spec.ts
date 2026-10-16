@@ -502,22 +502,31 @@ for (const { width, ownLine } of [
     else expect(Math.abs(offset.start)).toBeLessThan(2);
   });
 
-test('the header shows the GitHub stars button, its count fetched on the server', async ({
+test('the header shows the GitHub stars button with a count fetched on the server, or the GitHub link when GitHub is unreachable', async ({
   page,
 }) => {
+  const browserCalls: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('api.github.com'))
+      browserCalls.push(request.url());
+  });
   await page.goto('/', { waitUntil: 'networkidle' });
   await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
     timeout: 5000,
   });
-  const stars = page
+  const link = page
     .locator('[data-slot="home-header"]')
-    .getByRole('link', { name: /^GitHub, \d+ stars$/ });
-  await expect(stars).toBeVisible();
-  await expect(stars).toHaveAttribute(
-    'href',
-    'https://github.com/imskyleen/animate-ui',
-  );
-  await expect(stars).not.toHaveAttribute('aria-busy', 'true');
+    .getByRole('link', { name: /^GitHub(, \d+ stars)?$/ });
+  await expect(link).toBeVisible();
+  const name = await link.getAttribute('aria-label');
+  if (name !== 'GitHub') {
+    await expect(link).toHaveAttribute(
+      'href',
+      'https://github.com/imskyleen/animate-ui',
+    );
+    await expect(link).not.toHaveAttribute('aria-busy', 'true');
+  }
+  expect(browserCalls).toEqual([]);
 });
 
 test('the cards head straight to their grid places, without one more turn', async ({

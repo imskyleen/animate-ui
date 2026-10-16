@@ -14,6 +14,9 @@
         ".next/**",
         "!.next/cache/**",
         "dist/**"
+      ],
+      "env": [
+        "GITHUB_TOKEN"
       ]
     },
     "lint": {
