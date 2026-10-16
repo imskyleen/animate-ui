@@ -26,6 +26,19 @@ const animations = {
         },
       },
     },
+    tassel: {
+      initial: { rotate: 0, transformOrigin: '50% 0%' },
+      animate: {
+        rotate: [0, 12, -8, 4, 0],
+        transformOrigin: '50% 0%',
+        transition: {
+          duration: 0.9,
+          delay: 0.1,
+          times: [0, 0.3, 0.6, 0.85, 1],
+          ease: 'easeInOut',
+        },
+      },
+    },
     part: {},
   } satisfies Record<string, Variants>,
 } as const;
@@ -56,7 +69,7 @@ function IconComponent({ size, ...props }: GraduationCapProps) {
         />
         <motion.path
           d="M22 10v6"
-          variants={variants.part}
+          variants={variants.tassel}
           initial="initial"
           animate={controls}
         />

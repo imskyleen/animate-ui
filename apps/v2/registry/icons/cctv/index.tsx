@@ -17,13 +17,11 @@ const animations = {
     group: {
       initial: {
         rotate: 0,
-        y: 0,
-        x: 0,
+        transformOrigin: '9px 15px',
       },
       animate: {
-        rotate: [0, -20, -20, 15, 15, 0],
-        y: [0, -0.5, -0.5, 0, 0, 0],
-        x: [0, 0, 0, 0.5, 0.5, 0],
+        rotate: [0, -11, -11, 15, 15, 0],
+        transformOrigin: '9px 15px',
         transition: {
           duration: 1.8,
           ease: 'easeInOut',
@@ -66,7 +64,12 @@ function IconComponent({ size, ...props }: CctvProps) {
       strokeLinejoin="round"
       {...props}
     >
-      <motion.g variants={variants.group} initial="initial" animate={controls}>
+      <motion.g
+        variants={variants.group}
+        initial="initial"
+        animate={controls}
+        style={{ transformBox: 'view-box' }}
+      >
         <motion.path
           d="M16.75 12h3.632a1 1 0 0 1 .894 1.447l-2.034 4.069a1 1 0 0 1-1.708.134l-2.124-2.97"
           variants={variants.path1}

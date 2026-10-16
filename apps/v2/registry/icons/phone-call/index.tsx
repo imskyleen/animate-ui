@@ -15,7 +15,14 @@ type PhoneCallProps = IconProps<keyof typeof animations>;
 const animations = {
   default: (() => {
     const animation: Record<string, Variants> = {
-      phone: {},
+      phone: {
+        initial: { rotate: 0, scale: 1 },
+        animate: {
+          rotate: [0, -10, 10, -10, 10, 0],
+          scale: [1, 0.88, 0.88, 0.88, 0.88, 1],
+          transition: { duration: 0.7, ease: 'easeInOut' },
+        },
+      },
     };
 
     for (let i = 1; i <= 2; i++) {
@@ -37,7 +44,14 @@ const animations = {
   })() satisfies Record<string, Variants>,
   blink: (() => {
     const animation: Record<string, Variants> = {
-      phone: {},
+      phone: {
+        initial: { rotate: 0, scale: 1 },
+        animate: {
+          rotate: [0, -10, 10, -10, 10, 0],
+          scale: [1, 0.88, 0.88, 0.88, 0.88, 1],
+          transition: { duration: 0.7, ease: 'easeInOut' },
+        },
+      },
     };
 
     for (let i = 1; i <= 2; i++) {

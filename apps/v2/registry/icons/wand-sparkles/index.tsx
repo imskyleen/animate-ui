@@ -15,11 +15,16 @@ type WandSparklesProps = IconProps<keyof typeof animations>;
 const animations = {
   default: {
     wand: {
-      initial: { x: 0, y: 0 },
+      initial: { rotate: 0, scale: 1, transformOrigin: '0% 100%' },
       animate: {
-        x: [0, -0.3, 0.3, -0.3, 0],
-        y: [0, 0.3, -0.3, 0.3, 0],
-        transition: { duration: 0.5, ease: 'easeInOut' },
+        rotate: [0, -10, 4, 0],
+        scale: [1, 0.9, 0.97, 1],
+        transformOrigin: '0% 100%',
+        transition: {
+          duration: 0.6,
+          ease: 'easeInOut',
+          times: [0, 0.4, 0.75, 1],
+        },
       },
     },
     sparkle1: {
@@ -27,7 +32,7 @@ const animations = {
       animate: {
         scale: [1, 0.2, 1.15, 1],
         opacity: [1, 0.4, 1, 1],
-        transition: { duration: 0.5, ease: 'easeInOut' },
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.15 },
       },
     },
     sparkle2: {
@@ -35,7 +40,7 @@ const animations = {
       animate: {
         scale: [1, 0.2, 1.15, 1],
         opacity: [1, 0.4, 1, 1],
-        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.12 },
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.27 },
       },
     },
     sparkle3: {
@@ -43,7 +48,7 @@ const animations = {
       animate: {
         scale: [1, 0.2, 1.15, 1],
         opacity: [1, 0.4, 1, 1],
-        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.24 },
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.39 },
       },
     },
   } satisfies Record<string, Variants>,

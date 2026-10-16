@@ -14,11 +14,11 @@ type ThermometerProps = IconProps<keyof typeof animations>;
 
 const animations = {
   default: {
-    group: {
-      initial: { rotate: 0, transformOrigin: '50% 100%' },
+    tube: {},
+    bulb: {
+      initial: { scale: 1 },
       animate: {
-        rotate: [0, -6, 6, -3, 0],
-        transformOrigin: '50% 100%',
+        scale: [1, 1.06, 1, 1.04, 1],
         transition: { duration: 0.7, ease: 'easeInOut' },
       },
     },
@@ -42,9 +42,19 @@ function IconComponent({ size, ...props }: ThermometerProps) {
       strokeLinejoin="round"
       {...props}
     >
-      <motion.g variants={variants.group} initial="initial" animate={controls}>
-        <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z" />
-      </motion.g>
+      <motion.path
+        d="M10 14.54V4a2 2 0 0 1 4 0v10.54"
+        variants={variants.tube}
+        initial="initial"
+        animate={controls}
+      />
+      <motion.path
+        d="M14 14.54a4 4 0 1 1-4 0"
+        style={{ transformBox: 'view-box', transformOrigin: '12px 18px' }}
+        variants={variants.bulb}
+        initial="initial"
+        animate={controls}
+      />
     </motion.svg>
   );
 }
