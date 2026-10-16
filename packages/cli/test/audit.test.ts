@@ -263,3 +263,17 @@ test('the report prints facts per file, then totals, and as JSON', () => {
     'src/styles.css',
   ]);
 });
+
+test('a file that does not parse is named, not silently skipped', () => {
+  write(
+    'src/broken.tsx',
+    'export const X = () => <div className="transition-all" \n',
+  );
+  const report = runAudit(root);
+  expect(report.unreadable).toEqual(['src/broken.tsx']);
+  const lines: string[] = [];
+  audit([], { cwd: root, log: (line) => lines.push(line) });
+  expect(lines.join('\n')).toContain(
+    "Couldn't parse, so not read: src/broken.tsx",
+  );
+});

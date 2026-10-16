@@ -36,6 +36,7 @@ export type AuditReport = {
   filesWithMotion: string[];
   facts: Fact[];
   reducedMotion: { files: string[]; project: string[] };
+  unreadable: string[];
 };
 
 const SOURCE = ['.tsx', '.jsx', '.ts', '.js', '.mts', '.mjs'];
@@ -567,7 +568,7 @@ function stringsIn(node: Node): string[] {
   return [];
 }
 
-function auditScript(file: string, text: string, facts: Fact[]) {
+function auditScript(file: string, text: string, facts: Fact[]): boolean {
   const textOf = (node: Node | undefined) =>
     node && node.start != null && node.end != null
       ? text.slice(node.start, node.end)
@@ -580,7 +581,7 @@ function auditScript(file: string, text: string, facts: Fact[]) {
       errorRecovery: true,
     });
   } catch {
-    return;
+    return false;
   }
 
   const objects = new Map<string, t.ObjectExpression>();
@@ -910,16 +911,20 @@ function auditScript(file: string, text: string, facts: Fact[]) {
     }
   });
   auditClasses(file, segments, facts);
+  return true;
 }
 
-export function auditFile(file: string, text: string): Fact[] {
+export function auditFile(
+  file: string,
+  text: string,
+): { facts: Fact[]; readable: boolean } {
   const facts: Fact[] = [];
   const extension = path.extname(file);
-  if (STYLES.includes(extension)) auditCss(file, text, facts);
-  else {
-    auditScript(file, text, facts);
+  if (STYLES.includes(extension)) {
+    auditCss(file, text, facts);
+    return { facts, readable: true };
   }
-  return facts;
+  return { facts, readable: auditScript(file, text, facts) };
 }
 
 const MOTION_KINDS: FactKind[] = [
@@ -936,13 +941,15 @@ export function audit(root: string, targets: string[] = []): AuditReport {
   const filesWithMotion: string[] = [];
   const reducedFiles: string[] = [];
   const project: string[] = [];
+  const unreadable: string[] = [];
   const relative = (file: string) =>
     path.relative(root, file) || path.basename(file);
 
   for (const file of files) {
     const text = readFileSync(file, 'utf8');
     const name = relative(file);
-    const found = auditFile(name, text);
+    const { facts: found, readable } = auditFile(name, text);
+    if (!readable) unreadable.push(name);
     const reduced = REDUCED.some((pattern) => pattern.test(text));
     if (reduced) reducedFiles.push(name);
     if (PROJECT_REDUCED.some((pattern) => pattern.test(text)))
@@ -966,5 +973,6 @@ export function audit(root: string, targets: string[] = []): AuditReport {
     filesWithMotion,
     facts,
     reducedMotion: { files: reducedFiles, project },
+    unreadable,
   };
 }

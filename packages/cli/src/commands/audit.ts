@@ -118,5 +118,9 @@ export function audit(targets: string[], options: AuditOptions) {
         : ' · none project-wide'
     }`,
   );
+  if (report.unreadable.length)
+    log(
+      `\n${styleText('yellow', '!')} Couldn't parse, so not read: ${report.unreadable.join(', ')}`,
+    );
   return 0;
 }
