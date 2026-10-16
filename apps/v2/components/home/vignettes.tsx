@@ -339,8 +339,8 @@ function ProgressVignette() {
     <div className="flex w-56 flex-col gap-3">
       <div className="flex justify-between text-sm">
         <span>Uploading</span>
-        <span className="text-muted-foreground tabular-nums">
-          {STEPS[step]}%
+        <span className="inline-flex text-muted-foreground tabular-nums">
+          <SlidingNumber number={STEPS[step]!} />%
         </span>
       </div>
       <Progress value={STEPS[step]} />
