@@ -760,3 +760,48 @@ test('a file it cannot write is named and skipped, the others still migrated', a
   expect(output).not.toContain(`✔ ${PAGE}`);
   expect(read(PAGE)).toBe(before);
 });
+
+test('a migrated texts or effects primitive is deleted, not kept as still imported by its own v2 import', async () => {
+  const files = [
+    `${V1}/primitives/texts/gradient.tsx`,
+    `${V1}/primitives/effects/blur.tsx`,
+  ];
+  for (const file of files) {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(
+      path.join(root, file),
+      production.get(`src/${file.slice(4)}`)!,
+    );
+  }
+  writeFileSync(
+    path.join(root, 'src/app/texts.tsx'),
+    [
+      "import { GradientText } from '@/components/animate-ui/primitives/texts/gradient';",
+      "import { Blur } from '@/components/animate-ui/primitives/effects/blur';",
+      'export const a = [GradientText, Blur];',
+      '',
+    ].join('\n'),
+  );
+  const { output } = await run(['all'], { delete: true });
+  expect(readFileSync(path.join(root, 'src/app/texts.tsx'), 'utf8')).toContain(
+    "'@animate-ui/react/primitives/texts/gradient'",
+  );
+  for (const file of files) {
+    expect(output).not.toContain(`${file}: still imported`);
+    expect(existsSync(path.join(root, file))).toBe(false);
+  }
+});
+
+test("the registry button step uses the project's package runner", async () => {
+  const file = `${V1}/primitives/buttons/liquid.tsx`;
+  mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+  writeFileSync(path.join(root, file), production.get(`src/${file.slice(4)}`)!);
+  writeFileSync(
+    path.join(root, 'src/app/liquid.tsx'),
+    "import { LiquidButton } from '@/components/animate-ui/primitives/buttons/liquid';\nexport const a = LiquidButton;\n",
+  );
+  const { output } = await run(['all']);
+  expect(output).toContain(
+    'pnpm dlx shadcn@latest add @animate-ui/buttons-liquid',
+  );
+});

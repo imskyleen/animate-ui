@@ -211,6 +211,7 @@ function walk(dir: string, out: string[]) {
 
 export function listAuditFiles(root: string, targets: string[]) {
   const files: string[] = [];
+  if (!existsSync(root)) throw new Error(`No folder at ${root}.`);
   const starts = targets.length ? targets : ['.'];
   for (const target of starts) {
     const full = path.resolve(root, target);

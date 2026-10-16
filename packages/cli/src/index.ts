@@ -6,6 +6,11 @@ import { animate } from './commands/animate';
 import { audit } from './commands/audit';
 import { migrate } from './commands/migrate';
 
+process.stdout.on('error', (error: NodeJS.ErrnoException) => {
+  if (error.code === 'EPIPE') process.exit(0);
+  throw error;
+});
+
 const HELP = `Usage: animate-ui <command> [components...] [options]
 
 Commands:

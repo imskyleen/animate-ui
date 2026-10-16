@@ -1,7 +1,12 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { readJson, readPathConfig, resolveWithConfig } from './tsconfig';
+import {
+  parseJsonc,
+  readJson,
+  readPathConfig,
+  resolveWithConfig,
+} from './tsconfig';
 
 export type Project = {
   root: string;
@@ -74,7 +79,15 @@ export function loadProject(cwd: string): Project {
       `No components.json in ${root}. Run this in a shadcn/ui project (or pass --cwd).`,
     );
   }
-  const aliases = readJson(configFile).aliases ?? {};
+  let config: { aliases?: Record<string, string> };
+  try {
+    config = parseJsonc(readFileSync(configFile, 'utf8'));
+  } catch (error) {
+    throw new Error(
+      `components.json in ${root} isn't valid JSON${error instanceof Error ? `: ${error.message}` : ''}.`,
+    );
+  }
+  const aliases = config.aliases ?? {};
   const uiAlias: string =
     aliases.ui ?? `${aliases.components ?? '@/components'}/ui`;
 

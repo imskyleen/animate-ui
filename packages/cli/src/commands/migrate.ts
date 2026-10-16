@@ -268,6 +268,7 @@ export async function migrate(components: string[], options: MigrateOptions) {
     pattern: RegExp,
   ) =>
     [...code.matchAll(pattern)].some(([, specifier]) => {
+      if (specifier!.startsWith(`${PACKAGE}/`)) return false;
       const target = project.resolve(from, specifier!);
       const own = stripExtension(candidate);
       return (

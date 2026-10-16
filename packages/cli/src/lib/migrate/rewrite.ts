@@ -36,7 +36,8 @@ export type RewriteResult = {
 };
 
 export type RewriteContext = {
-  project: Pick<MigrateProject, 'resolve' | 'classify'>;
+  project: Pick<MigrateProject, 'resolve' | 'classify'> &
+    Partial<Pick<MigrateProject, 'dlx'>>;
   file: string;
   selected: (module: V1Module) => boolean;
 };
@@ -303,7 +304,7 @@ function rewriteLf(code: string, context: RewriteContext): RewriteResult {
       found.add(key);
       manual(
         node,
-        `${key} is a registry component in v2, not part of ${PACKAGE}: add it with \`npx shadcn@latest add @animate-ui/${item}\` and import it from \`@/components/animate-ui/${key}\`. The v1 file keeps working meanwhile.`,
+        `${key} is a registry component in v2, not part of ${PACKAGE}: add it with \`${project.dlx ?? 'npx'} shadcn@latest add @animate-ui/${item}\` and import it from \`@/components/animate-ui/${key}\`. The v1 file keeps working meanwhile.`,
       );
       return undefined;
     }
