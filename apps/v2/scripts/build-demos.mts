@@ -18,7 +18,8 @@ const toProject = (source: string) =>
       /@\/components\/ui\/(?:base-ui|react-aria)\/(?:rhea\/)?/g,
       '@/components/ui/',
     )
-    .replace(/@\/registry\//g, '@/components/animate-ui/');
+    .replace(/@\/registry\//g, '@/components/animate-ui/')
+    .replace(/@\/demos\/[\w-]+\/([\w-]+)/g, '@/components/$1-demo');
 
 const toAlias = (target: string) =>
   target
@@ -84,11 +85,12 @@ for (const library of readdirSync(demosDir)) {
       const relative = path.relative(root, absolute);
       files.push({
         path: relative,
-        type: isDemo
-          ? 'registry:component'
-          : relative.startsWith('hooks/')
-            ? 'registry:hook'
-            : 'registry:ui',
+        type:
+          isDemo || relative.startsWith('demos/')
+            ? 'registry:component'
+            : relative.startsWith('hooks/')
+              ? 'registry:hook'
+              : 'registry:ui',
         target: toAlias(
           isDemo
             ? `components/${name}-demo.tsx`

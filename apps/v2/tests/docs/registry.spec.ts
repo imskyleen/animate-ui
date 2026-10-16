@@ -56,6 +56,22 @@ test('every registry file lands where components.json points', async () => {
   expect(stray).toEqual([]);
 });
 
+test('a demo that imports another demo installs it as a demo, and imports it there', () => {
+  for (const library of ['base-ui', 'radix-ui', 'react-aria']) {
+    const item = JSON.parse(
+      readFileSync(join(OUT, `demo-${library}-questionnaire.json`), 'utf8'),
+    );
+    const targets = item.files.map((file: { target: string }) => file.target);
+    expect(targets).toContain('@components/toast-demo.tsx');
+    const demo = item.files.find(
+      (file: { target: string }) =>
+        file.target === '@components/questionnaire-demo.tsx',
+    );
+    expect(demo.content).toContain('from "@/components/toast-demo"');
+    expect(demo.content).not.toContain('@/demos/');
+  }
+});
+
 test('the shadcn MCP finds items in the @animate-ui registry', async ({
   baseURL,
 }) => {
