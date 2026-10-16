@@ -62,7 +62,7 @@ function VersionMenu() {
               <a
                 href={version.url}
                 aria-current={version.id === 'v2' ? 'page' : undefined}
-                className="flex items-center justify-between rounded-md px-2 py-1.5 text-muted-foreground outline-none transition-colors data-highlighted:bg-accent data-highlighted:text-foreground aria-[current=page]:text-foreground"
+                className="flex items-center justify-between rounded-[9px] px-2 py-1.5 text-muted-foreground outline-none transition-colors data-highlighted:bg-accent data-highlighted:text-foreground aria-[current=page]:text-foreground"
               >
                 <span>
                   {version.label}

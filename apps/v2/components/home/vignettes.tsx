@@ -133,13 +133,13 @@ function TabsVignette() {
   );
   return (
     <AnimateTabs value={value} onValueChange={setValue} className="w-60">
-      <TabsHighlight className="absolute inset-0 z-0 rounded-md border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30">
+      <TabsHighlight className="absolute inset-0 z-0 rounded-[7px] border border-transparent bg-background shadow-sm dark:border-input dark:bg-input/30">
         <TabsList className="inline-flex h-8 w-fit items-center rounded-lg bg-muted p-[3px] text-muted-foreground">
           {TABS.map((tab) => (
             <TabsHighlightItem key={tab.value} value={tab.value}>
               <TabsTrigger
                 value={tab.value}
-                className="relative z-10 inline-flex h-full items-center justify-center rounded-md px-2 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors duration-300 hover:text-foreground data-[state=active]:text-foreground dark:text-muted-foreground dark:data-[state=active]:text-foreground"
+                className="relative z-10 inline-flex h-full items-center justify-center rounded-[7px] px-2 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors duration-300 hover:text-foreground data-[state=active]:text-foreground dark:text-muted-foreground dark:data-[state=active]:text-foreground"
               >
                 {tab.label}
               </TabsTrigger>
@@ -178,10 +178,11 @@ function AccordionVignette() {
     >
       {QUESTIONS.map(([question, answer], index) => (
         <AccordionItem key={question} value={String(index)}>
-          <AccordionTrigger className="py-2 text-sm">
+          {/* Open, its answer sits closer (the card is short): the gap shrinks with the trigger's own transition. */}
+          <AccordionTrigger className="py-2 text-sm aria-expanded:pb-1">
             {question}
           </AccordionTrigger>
-          <AccordionContent className="text-xs text-muted-foreground">
+          <AccordionContent className="pb-2 text-xs text-muted-foreground">
             {answer}
           </AccordionContent>
         </AccordionItem>
@@ -279,7 +280,7 @@ function ToastVignette() {
   );
   return (
     <ToastProvider toastManager={manager} limit={2}>
-      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
         <ToastViewport className="absolute inset-x-4 bottom-4 w-auto max-w-none sm:right-4 sm:left-4 sm:w-auto">
           <ToastStack />
         </ToastViewport>

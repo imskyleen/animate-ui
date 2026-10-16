@@ -119,7 +119,7 @@ export function CopyPage({
                   href={item.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-muted-foreground outline-none transition-colors data-highlighted:bg-accent data-highlighted:text-foreground"
+                  className="flex items-center gap-2 rounded-[9px] px-2 py-1.5 text-muted-foreground outline-none transition-colors data-highlighted:bg-accent data-highlighted:text-foreground"
                 >
                   {item.icon}
                   {item.title}

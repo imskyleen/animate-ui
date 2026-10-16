@@ -515,12 +515,13 @@ function ScenarioPane({
         </AnimatePresence>
       </div>
       <div className="relative flex flex-col rounded-lg bg-background">
-        <div className="flex items-center gap-2 px-5 pt-4">
+        {/* Over the pane, not above it: the preview below is centred in the whole pane. */}
+        <div className="absolute top-4 left-5 flex items-center gap-2">
           <span className="rounded-md bg-accent px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
             localhost:3000
           </span>
         </div>
-        <div className="flex flex-1 items-center justify-center p-6">
+        <div className="flex flex-1 items-center justify-center px-6 py-11">
           <Preview
             playing={running && finished}
             working={running && !finished}
@@ -619,7 +620,7 @@ export function AISection() {
                 ~/my-app
               </span>
             </div>
-            <TabsContents>
+            <TabsContents className="rounded-lg">
               {SCENARIOS.map((scenario) => (
                 <TabsContent key={scenario.id} value={scenario.id}>
                   <ScenarioPane

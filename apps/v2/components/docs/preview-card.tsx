@@ -83,7 +83,7 @@ export function PreviewCard({
         data-slot="preview-card"
         className="flex flex-col rounded-2xl bg-accent p-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-background">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-background">
           {preview && (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}

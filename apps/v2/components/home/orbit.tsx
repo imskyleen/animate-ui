@@ -76,9 +76,9 @@ function Card({ title, Vignette }: { title: string; Vignette: ComponentType }) {
       data-slot="orbit-card"
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      className="flex size-full flex-col rounded-2xl bg-accent p-1.5"
+      className="flex size-full flex-col rounded-xl bg-accent p-1"
     >
-      <div className="relative flex flex-1 flex-col rounded-xl bg-background">
+      <div className="relative flex flex-1 flex-col rounded-lg bg-background">
         <span className="absolute top-2.5 left-3.5 text-xs font-medium text-muted-foreground">
           {title}
         </span>
