@@ -39,12 +39,12 @@ import { Progress } from '@/demos/radix-ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/demos/radix-ui/radio-group';
 import { Switch } from '@/demos/radix-ui/switch';
 import { ToggleGroup, ToggleGroupItem } from '@/demos/radix-ui/toggle-group';
-import { Bell } from '@/registry/icons/bell';
-import { Heart } from '@/registry/icons/heart';
-import { RefreshCw } from '@/registry/icons/refresh-cw';
-import { Send } from '@/registry/icons/send';
-import { Settings } from '@/registry/icons/settings';
-import { Sparkles } from '@/registry/icons/sparkles';
+import { Clapperboard } from '@/registry/hugeicons/clapperboard';
+import { Favourite } from '@/registry/hugeicons/favourite';
+import { Notification01 } from '@/registry/hugeicons/notification-01';
+import { Sent } from '@/registry/hugeicons/sent';
+import { Settings02 } from '@/registry/hugeicons/settings-02';
+import { Sparkles } from '@/registry/hugeicons/sparkles';
 
 const PausedContext = createContext(false);
 
@@ -300,12 +300,12 @@ function CounterVignette() {
 }
 
 const ICONS: [string, ComponentType<{ size?: number }>][] = [
-  ['bell', Bell],
-  ['heart', Heart],
-  ['settings', Settings],
-  ['send', Send],
+  ['notification', Notification01],
+  ['favourite', Favourite],
+  ['settings', Settings02],
+  ['sent', Sent],
   ['sparkles', Sparkles],
-  ['refresh', RefreshCw],
+  ['clapperboard', Clapperboard],
 ];
 
 function IconsVignette() {
