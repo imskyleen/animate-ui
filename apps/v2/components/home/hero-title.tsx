@@ -7,6 +7,7 @@ import {
 import { SplittingText } from '@animate-ui/react/primitives/texts/splitting';
 import { ease } from '@animate-ui/react/utils/motion';
 import { motion } from 'motion/react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 const LIBRARIES = ['shadcn/ui', 'Radix UI', 'Base UI', 'React Aria'];
 
@@ -38,10 +39,36 @@ function Line({
   );
 }
 
+function useOwnLine(ref: React.RefObject<HTMLElement | null>, done: boolean) {
+  const [ownLine, setOwnLine] = useState(false);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    const line = element?.parentElement;
+    if (!element || !line) return;
+    const measure = () => {
+      const first = line.firstElementChild as HTMLElement | null;
+      if (!first) return;
+      const size = parseFloat(getComputedStyle(element).fontSize);
+      setOwnLine(element.offsetTop - first.offsetTop > size * 0.5);
+    };
+    measure();
+    void document.fonts.ready.then(measure);
+    const observer = new ResizeObserver(measure);
+    observer.observe(line);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, done]);
+  return ownLine;
+}
+
 function Library({ done }: { done: boolean }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const ownLine = useOwnLine(ref, done);
   return (
     <motion.span
+      ref={ref}
       data-slot="hero-library"
+      data-own-line={ownLine ? '' : undefined}
       className="inline-block"
       initial={WORD_IN.initial}
       animate={done ? WORD_IN.animate : WORD_IN.initial}
@@ -51,7 +78,7 @@ function Library({ done }: { done: boolean }) {
         text={done ? LIBRARIES : LIBRARIES.slice(0, 1)}
         duration={2600}
         delay={1400}
-        align="start"
+        align={ownLine ? 'center' : 'start'}
         style={{ display: 'inline-block', overflow: 'clip' }}
       >
         <RotatingText className="text-neutral-500 dark:text-neutral-400" />

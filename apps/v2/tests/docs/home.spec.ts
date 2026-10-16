@@ -308,7 +308,23 @@ test('the command block is built from Animate UI tabs, copy button and buttons',
   await managers.getByRole('tab', { name: 'bun' }).click();
   await expect.poll(highlight).toBeGreaterThan(before + 20);
 
+  const active = hero.locator(
+    '[data-slot="tabs-contents"] [data-slot="tabs-content"][data-state="active"]',
+  );
+  await expect(active).toHaveCount(1);
+  await expect(active).toContainText(
+    'bun x @animate-ui/cli@latest animate all',
+  );
   const copy = hero.locator('[data-slot="copy-button"]');
+  expect(
+    await copy.evaluate((el) => ({
+      inPane: !!el.closest('[data-slot="tabs-content"]'),
+      opaque:
+        /^(rgb|oklab|lab|oklch|color)\((?!.*\/ ?0?\.\d)/.test(
+          getComputedStyle(el).backgroundColor,
+        ) && getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)',
+    })),
+  ).toEqual({ inPane: false, opaque: true });
   await copy.click();
   await expect(copy).toHaveAttribute('data-copied', '');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
@@ -403,3 +419,39 @@ test('nothing covers the logo while it glides into the header', async ({
   expect(seen).toBeGreaterThan(10);
   expect(covered).toEqual([]);
 });
+
+for (const { width, ownLine } of [
+  { width: 1440, ownLine: false },
+  { width: 390, ownLine: true },
+])
+  test(`at ${width}px the library name is ${ownLine ? 'centered on its own line' : 'inline and starts right after "your"'}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await expect(page.locator('[data-slot="home-intro"]')).toHaveCount(0, {
+      timeout: 5000,
+    });
+    await page.waitForTimeout(900);
+    const library = page.locator('[data-slot="hero-library"]');
+    if (ownLine) await expect(library).toHaveAttribute('data-own-line', '');
+    else await expect(library).not.toHaveAttribute('data-own-line');
+    const offset = await library.evaluate((el) => {
+      const container = el
+        .querySelector('[data-slot="rotating-text-container"]')!
+        .getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(
+        el.querySelector('[data-slot="rotating-text"]')!,
+      );
+      const word = range.getBoundingClientRect();
+      return {
+        start: Math.round(word.left - container.left),
+        center: Math.round(
+          word.left + word.width / 2 - (container.left + container.width / 2),
+        ),
+      };
+    });
+    if (ownLine) expect(Math.abs(offset.center)).toBeLessThan(3);
+    else expect(Math.abs(offset.start)).toBeLessThan(2);
+  });

@@ -8,6 +8,8 @@ import {
 } from '@animate-ui/react/primitives/buttons/copy';
 import {
   Tabs,
+  TabsContent,
+  TabsContents,
   TabsHighlight,
   TabsHighlightItem,
   TabsList,
@@ -45,44 +47,56 @@ export function CopyCommand() {
     groupId: MANAGER_GROUP,
     persist: true,
   });
-  const COMMAND = command(manager as Manager);
   return (
-    <div className="flex max-w-full flex-col items-center gap-2">
-      <Tabs value={manager} onValueChange={setManager}>
-        <TabsHighlight className="absolute inset-0 z-0 rounded-md bg-accent">
-          <TabsList
-            aria-label="Package manager"
-            className="inline-flex items-center gap-1 text-xs"
-          >
-            {MANAGER_NAMES.map((name) => (
-              <TabsHighlightItem key={name} value={name}>
-                <TabsTrigger
-                  value={name}
-                  className="relative z-10 rounded-md px-2 py-1 text-muted-foreground transition-colors duration-300 hover:text-foreground data-[state=active]:text-foreground"
-                >
-                  {name}
-                </TabsTrigger>
-              </TabsHighlightItem>
-            ))}
-          </TabsList>
-        </TabsHighlight>
-      </Tabs>
-      <CopyButton
-        content={COMMAND}
-        aria-label="Copy the command"
-        className="group flex h-11 max-w-full items-center gap-3 rounded-xl border bg-accent/40 pr-3 pl-4 font-mono text-sm transition-colors hover:bg-accent"
-      >
-        <span className="text-muted-foreground select-none">$</span>
-        <span className="truncate">{COMMAND}</span>
-        <CopyButtonIcon
-          className="text-muted-foreground group-hover:text-foreground"
-          icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} size={16} />}
-          copiedIcon={
-            <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} size={16} />
-          }
-        />
-      </CopyButton>
-    </div>
+    <Tabs
+      value={manager}
+      onValueChange={setManager}
+      className="flex w-[min(100%,30rem)] flex-col items-center gap-2"
+    >
+      <TabsHighlight className="absolute inset-0 z-0 rounded-md bg-accent">
+        <TabsList
+          aria-label="Package manager"
+          className="inline-flex items-center gap-1 text-xs"
+        >
+          {MANAGER_NAMES.map((name) => (
+            <TabsHighlightItem key={name} value={name}>
+              <TabsTrigger
+                value={name}
+                className="relative z-10 rounded-md px-2 py-1 text-muted-foreground transition-colors duration-300 hover:text-foreground data-[state=active]:text-foreground"
+              >
+                {name}
+              </TabsTrigger>
+            </TabsHighlightItem>
+          ))}
+        </TabsList>
+      </TabsHighlight>
+      <div className="relative w-full">
+        <TabsContents className="rounded-xl border bg-accent/40 font-mono text-sm">
+          {MANAGER_NAMES.map((name) => (
+            <TabsContent
+              key={name}
+              value={name}
+              className="flex h-11 items-center gap-3 pr-12 pl-4"
+            >
+              <span className="text-muted-foreground select-none">$</span>
+              <span className="truncate">{command(name as Manager)}</span>
+            </TabsContent>
+          ))}
+        </TabsContents>
+        <CopyButton
+          content={command(manager as Manager)}
+          aria-label="Copy the command"
+          className="absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg bg-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] text-muted-foreground transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:right-full before:w-6 before:bg-linear-to-l before:from-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] before:to-transparent after:pointer-events-none after:absolute after:inset-y-0 after:left-full after:w-1.5 after:bg-[color-mix(in_oklab,var(--color-accent)_40%,var(--color-background))] hover:bg-accent hover:text-foreground"
+        >
+          <CopyButtonIcon
+            icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} size={16} />}
+            copiedIcon={
+              <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} size={16} />
+            }
+          />
+        </CopyButton>
+      </div>
+    </Tabs>
   );
 }
 
