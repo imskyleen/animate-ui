@@ -57,12 +57,24 @@ const MASKS: Record<ScrollFadeOrientation, string> = {
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
+const GROUP = 'ul, ol, [role="list"], [role="group"]';
+
+function collectItems(parent: Element, items: HTMLElement[]) {
+  for (const child of parent.children) {
+    if (!(child instanceof HTMLElement)) continue;
+    const isGroup =
+      child.matches(GROUP) ||
+      Array.from(child.children).some((inner) => inner.matches(GROUP));
+    if (isGroup) collectItems(child, items);
+    else items.push(child);
+  }
+  return items;
+}
+
 function itemsOf(el: HTMLElement) {
   let parent: Element = el;
   while (parent.children.length === 1) parent = parent.children[0]!;
-  return Array.from(parent.children).filter(
-    (child): child is HTMLElement => child instanceof HTMLElement,
-  );
+  return collectItems(parent, []);
 }
 
 function setMask(el: HTMLElement, mask: string | null) {

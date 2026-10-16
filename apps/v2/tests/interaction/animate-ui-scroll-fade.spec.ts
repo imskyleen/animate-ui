@@ -231,6 +231,24 @@ test.describe('animate-ui scroll fade', () => {
     expect(rows.some((value) => value < 1 && value >= 0.95)).toBe(true);
   });
 
+  test('in a list split into groups, the lines shrink one by one, never a whole group', async ({
+    page,
+  }) => {
+    await open(page);
+    await scrollTo(page, 'grouped', 'middle');
+    const shrunk = () =>
+      page
+        .getByTestId('grouped')
+        .evaluate((el) =>
+          [...el.querySelectorAll<HTMLElement>('*')]
+            .filter((child) => child.style.scale)
+            .map((child) => child.tagName),
+        );
+    await expect.poll(async () => (await shrunk()).length).toBeGreaterThan(0);
+    const tags = await shrunk();
+    expect(tags.every((tag) => tag === 'LI' || tag === 'P')).toBe(true);
+  });
+
   test('reduced motion: nothing shrinks, the fade alone stays', async ({
     page,
   }) => {

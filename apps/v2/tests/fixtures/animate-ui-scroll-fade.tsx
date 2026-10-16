@@ -56,6 +56,20 @@ export default function ScrollFadeFixture() {
         ))}
       </ScrollFade>
       <AsChild />
+      <ScrollFade data-testid="grouped" className="h-[200px] w-60 border">
+        {['Components', 'Buttons', 'Texts', 'Effects'].map((title) => (
+          <section key={title} data-group={title} className="mb-4">
+            <p className="h-8 px-2 leading-8 font-medium">{title}</p>
+            <ul>
+              {Array.from({ length: 5 }, (_, i) => (
+                <li key={i} className="h-8 px-2 leading-8">
+                  {title} {i + 1}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </ScrollFade>
     </div>
   );
 }
