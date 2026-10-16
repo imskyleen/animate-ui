@@ -49,7 +49,7 @@ Each step below is one unit; asked again, take another step from where it is.
 | subtler · plus discret                  | distances halved, starting scales twice as close to 1 (0.9 → 0.95), blur one step down; time unchanged                                                                                |
 | bolder · plus marqué                    | a changing text: one level up (rules B9); otherwise distances ×1.5, starting scales twice as far from 1 (0.95 → 0.9, never below 0.7 for a popup), add `blur.surface`; time unchanged |
 
-A playful press may also go one scale deeper (a card's 0.985 → 0.97): a big bounce on a 1.5% press barely shows. A word about leaving ("leave quickly") changes the surface's exit, not its overlay, which still clears like it came.
+A playful press may also go one scale deeper (a card's 0.985 → 0.97): a big bounce on a 1.5% press barely shows. A word about leaving ("leave quickly") changes the surface's exit, not its overlay, which still clears like it came. A dialog's or a sheet's exit (`transition.dismiss`) is already quick: keep it, and step it (×0.85) only when asked again.
 
 "Faster" or "slower" for **everything** is `tempo` (SKILL.md, § Pace); for one component, change its own transition.
 
@@ -80,7 +80,7 @@ node <skill>/scripts/css-timing.mjs '{"type":"spring","visualDuration":0.4,"boun
 
 It prints the duration, the easing (a spring becomes the `linear()` curve it plays) and a ready `transition` line. In code, `toCssTiming(transition)` from `@animate-ui/react/utils/motion` returns the same `{ duration, easing }`. Put the curve in a CSS variable when several rules share it, and keep the reduced-motion rule beside it (`@media (prefers-reduced-motion: reduce)`: travel zeroed, fades kept).
 
-An element toggled with `display: none` animates both ways with `@starting-style` and `transition-behavior: allow-discrete`: the open rule carries the entrance, the closed rule the exit (an exiting element takes the closed rule's transition), and `display` transitions for as long as the longest of them.
+An element toggled with `display: none` animates both ways with `@starting-style` and `transition-behavior: allow-discrete`: the open rule carries the entrance, the closed rule the exit (an exiting element takes the closed rule's transition), and `display` transitions for as long as the longest of them: in the open rule that's the entrance's longest, in the closed rule the exit's.
 
 ```css
 :root {
@@ -120,4 +120,25 @@ An element toggled with `display: none` animates both ways with `@starting-style
 }
 ```
 
-Browsers without `@starting-style` open and close at once, still usable.
+The overlay brings its color in from `transparent` (never its opacity over a backdrop blur), and clears the same way:
+
+```css
+.modal-backdrop {
+  transition:
+    background-color var(--overlay),
+    display 400ms allow-discrete;
+}
+@starting-style {
+  .modal-backdrop[data-open='true'] {
+    background-color: transparent;
+  }
+}
+.modal-backdrop[data-open='false'] {
+  display: none;
+  background-color: transparent;
+}
+```
+
+When the JS only adds or removes the attribute, write `[data-open]` and `:not([data-open])` instead of the values. At rest, keep the open state's own values (`transform: none`, `filter: none`): a transform or a filter left at rest makes the modal the containing block of its fixed children.
+
+Browsers without `@starting-style` open and close at once, still usable. Check it without a browser by reading: every animated property is `transform`, `opacity`, `filter` or a color; each state's `transition` lists them by name; the closed rule carries the exit; the reduced-motion block zeroes the travel and keeps the fades.

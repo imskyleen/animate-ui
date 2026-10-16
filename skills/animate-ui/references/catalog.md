@@ -1,21 +1,21 @@
 # What Animate UI already ships
 
-Check this list before writing motion by hand: when one of these does the job, use it instead of rebuilding it. Primitives come with `@animate-ui/react` (no extra install). Backgrounds and icons are files added to the project with the shadcn CLI, from the `@animate-ui` registry (`"registries": { "@animate-ui": "https://animate-ui.com/r/{name}.json" }` in `components.json`). Each one's page on animate-ui.com shows its props.
+Check this list before writing motion by hand: when one of these does the job, use it instead of rebuilding it. Primitives come with `@animate-ui/react` (no extra install). Backgrounds and icons are files added to the project with the shadcn CLI, from the `@animate-ui` registry (`"registries": { "@animate-ui": "https://animate-ui.com/r/{name}.json" }` in `components.json`). Each one's page on animate-ui.com shows its props; without network, read them from the package's types: `node_modules/@animate-ui/react/dist/primitives/<path>/index.d.ts`.
 
 ## Entrances and scroll
 
-| Need                                                   | Use             | Import                                             |
-| ------------------------------------------------------ | --------------- | -------------------------------------------------- |
-| Fade elements in on load or when they scroll into view | Fade            | `@animate-ui/react/primitives/effects/fade`        |
-| Slide them into place                                  | Slide           | `@animate-ui/react/primitives/effects/slide`       |
-| Bring them into focus out of a blur                    | Blur            | `@animate-ui/react/primitives/effects/blur`        |
-| Scale them up into place                               | Zoom            | `@animate-ui/react/primitives/effects/zoom`        |
-| Any mix of fade, blur, slide and zoom, staggered       | Effect          | `@animate-ui/react/primitives/effects/effect`      |
-| Text coming in by character, word or line              | Splitting Text  | `@animate-ui/react/primitives/texts/splitting`     |
-| Text typed out, with a cursor                          | Typing Text     | `@animate-ui/react/primitives/texts/typing`        |
-| A scroll container whose edges fade where there's more | Scroll Fade     | `@animate-ui/react/primitives/effects/scroll-fade` |
-| A bar following the scroll position                    | Scroll Progress | `@animate-ui/react/primitives/scroll-progress`     |
-| A container whose height follows its content           | Auto Height     | `@animate-ui/react/primitives/effects/auto-height` |
+| Need                                                   | Use                                                                                        | Import                                             |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Fade elements in on load or when they scroll into view | Fade                                                                                       | `@animate-ui/react/primitives/effects/fade`        |
+| Slide them into place                                  | Slide                                                                                      | `@animate-ui/react/primitives/effects/slide`       |
+| Bring them into focus out of a blur                    | Blur                                                                                       | `@animate-ui/react/primitives/effects/blur`        |
+| Scale them up into place                               | Zoom                                                                                       | `@animate-ui/react/primitives/effects/zoom`        |
+| Any mix of fade, blur, slide and zoom, staggered       | `Effect` (one element), `Effects` (its children one after the other, `holdDelay` ms apart) | `@animate-ui/react/primitives/effects/effect`      |
+| Text coming in by character, word or line              | Splitting Text                                                                             | `@animate-ui/react/primitives/texts/splitting`     |
+| Text typed out, with a cursor                          | Typing Text                                                                                | `@animate-ui/react/primitives/texts/typing`        |
+| A scroll container whose edges fade where there's more | Scroll Fade                                                                                | `@animate-ui/react/primitives/effects/scroll-fade` |
+| A bar following the scroll position                    | Scroll Progress                                                                            | `@animate-ui/react/primitives/scroll-progress`     |
+| A container whose height follows its content           | Auto Height                                                                                | `@animate-ui/react/primitives/effects/auto-height` |
 
 ## Numbers and changing text
 

@@ -2,7 +2,7 @@
 
 Read [README.md](README.md) first: keep the user's markup, use the project's colors, keep the recipe's values.
 
-Purpose: continuity, the list stays the same list while it changes.
+Purpose: continuity, the list stays the same list while it changes. Also for notifications, messages or results shown in the page; toasts fixed to a screen edge are `../recipes/toast.md`. An item the user closes leaves like any removed item, on `transition.fade`.
 
 ```tsx
 'use client';

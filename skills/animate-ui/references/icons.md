@@ -12,11 +12,13 @@ Ask the level like any animation (SKILL.md § 3), with what each would do on thi
 - **More**: a fuller gesture: the motion with its follow-through (a rumble before the lift, a wiggle after the pop, the flame flickering as the rocket rises), or its `-loop` version.
 - **Expressive**: it keeps going or adds a moment: `loop` with a `loopDelay` while it's visible, a `draw` alternate before the gesture, or a burst of Particles (catalog) around it on a rare success.
 
-"Subtle", "discret", "light" is the first level at the amplitudes below (don't shrink them further); "lively", "vivant", "really ring", "plus animé" the second (a ring gets more and longer swings: `[0, 20, -16, 13, -10, 7, -4, 2, 0]` over 1.2s); "in a loop", "en boucle", "all the time" the third.
+A verb naming the gesture ("rings", "spins", "bounces on hover") says what moves, not how much: it doesn't answer the level. "Subtle", "discret", "light" is the first level at the amplitudes below (don't shrink them further); "lively", "vivant", "really ring", "plus animé" the second (a ring gets more and longer swings: `[0, 20, -16, 13, -10, 7, -4, 2, 0]` over 1.2s); "in a loop", "en boucle", "all the time" the third.
 
 ## The file
 
 One file per icon in the project's components folder, under `animate-ui/icons/<name>.tsx`: where `components.json`'s `components` alias points (the registry puts its icons there), else `components/` or `src/components/` like the project's other components. It imports the core from `@animate-ui/react/icons` (install `@animate-ui/react` and `motion` if missing, SKILL.md § 2).
+
+The example is the registry's Lucide bell, its pieces renamed.
 
 ```tsx
 'use client';
@@ -121,6 +123,7 @@ Take the icon's real SVG (the library's package source, its site's "copy SVG", o
 - A filled outline drawn beside 2-wide strokes gets `fill="currentColor"` and `strokeWidth={0.5}` so it isn't thinner than them.
 - `<line>`, `<circle>`, `<rect>`, `<polyline>` become `motion.line`, `motion.circle`… and can animate their own attributes (`x2`, `r`, `points`).
 - Another grid's amplitudes: only distances (`x`, `y`, a `d` morph) scale with the grid; scales, rotations and percentages stay as they are.
+- A piece that starts with a relative `m` in the middle of a path becomes its own path starting with the absolute `M` of the same point; the rest of its values stay.
 - Name the component as the user calls the icon (their file name or their word), else the library's name (`ShoppingCart`, `Notification01` for Hugeicons' numbered names), and export it also as `<Name>Icon`.
 - Replace the old usage (`<img src={rocket}>`, the library's component) with the new icon; leave the original file and its imports' type declarations in place, and say so in the output.
 - An icon beside a label that says the same thing is decoration: `aria-hidden` on it (the props pass through to the svg). An icon that carries its own meaning (verified, error, new) takes `role="img"` and an `aria-label`. Alone in a button, the button takes the `aria-label`.
@@ -184,7 +187,7 @@ The principles every registry icon follows:
   - The state's out-and-back version is the same name with `-loop` (`default-loop`, `pointing-loop`): `[0, '25%', 0]` in twice the time.
 - **Damped swings.** Each swing smaller than the last, ending at rest: a bell `[0, 20, -10, 10, -5, 3, 0]`, a magnifier `[0, 17, -10, 5, -1, 0]` from `bottom right`, a tag `[0, 8, -6, 3, 0]`, a hop `y: [0, -2, 0, -0.8, 0]` with `times: [0, 0.3, 0.55, 0.75, 1]`.
 - **A pop squashes first.** `scale: [1, 0.9, 1.2, 1]` over 0.6s on a shape with room around it (heart, star); a shape that fills the grid pops only as far as the grid allows (`[1, 0.92, 1.04, 1]` on a wallet): its largest frame, half the stroke included, stays inside.
-- **Small amplitudes.** Moves of 0.5 to 4 units on the 24 grid (a rumble 0.3), wiggles of 3 to 20°, a squash or skew along one axis (`scaleY`, `skewX`) of 5% at most. Full turns only for what turns: 360° for a refresh (the way its arrow points), 60° for a snowflake, 90° for a plus or a cross, a gear `[0, 90, 180]` over 1.25s.
+- **Small amplitudes.** Moves of 0.5 to 4 units on the 24 grid (a rumble 0.3; a clapper hidden inside its bell may swing to 6, one hanging below its rim stays within 4), wiggles of 3 to 20°, a squash or skew along one axis (`scaleY`, `skewX`) of 5% at most. Full turns only for what turns: 360° for a refresh (the way its arrow points), 60° for a snowflake, 90° for a plus or a cross, a gear `[0, 90, 180]` over 1.25s.
 - **Inside the grid.** Every frame of every piece and `motion.g` stays inside the viewBox, half the stroke width included (a `group` on the `<motion.svg>` turns the whole box instead; nothing gets cut): an icon that would cross the edge moves less or shrinks a little while it moves (an hourglass turns 180° through `scale: [1, 0.75, 0.75, 1]`). A flight out (`out`) is the exception: `x: [0, '150%', '-150%', 0]` with `times: [0, 0.5, 0.5, 1]` leaves and comes back from the other side.
 - **The right pivot.** Set `transformOrigin` on what swings or turns, from the piece's own box: `top center` for a bell, `bottom left` or `50% 100%` for what sways from its base (a flame, a droplet), `50% 0%` for a canopy, the lens' center for a magnifier's zoom. For a pivot fixed in the icon (a clock's center, a hinge), `style={{ transformBox: 'view-box' }}` with the origin in grid units (`'12px 12px'`).
 - **Timing.** 0.6s for most gestures, 0.3s for a state, 0.2s for a blink, 0.4 to 0.8s for draws, 1 to 1.8s for oscillations and loaders. `easeInOut` almost everywhere; `easeOut` for what appears or grows; `linear` only for continuous spins. A spring (`{ type: 'spring', stiffness: 150, damping: 25 }`, 200/20 for a menu turning into a cross) where a piece should settle.
@@ -207,7 +210,7 @@ A state that comes from data rather than a gesture (unread notifications fill th
 ## Triggers
 
 - On the icon: `animateOnHover`, `animateOnTap`, `animateOnView` (once by default; `animateOnViewOnce={false}` replays each time it comes back, `animateOnViewMargin` starts it earlier or later), `animate`.
-- From a parent: `<AnimateIcon animateOnHover asChild>` around a button or a card, so the whole target triggers it.
+- From a parent: `<AnimateIcon animateOnHover asChild>` (`import { AnimateIcon } from '@animate-ui/react/icons'`) around a button or a card, so the whole target triggers it. `AnimateIcon` and the icon file are client components already; the file using them needs no `'use client'` of its own.
 - Played on view, the icon starts as it touches the viewport; its `initial` stays the rest state (a draw doesn't start hidden), so under reduced motion or before the trigger it shows whole.
 - Inside something that has its own entrance (a card fading in), `delay` by about that entrance's length so the icon plays once it's there.
 
