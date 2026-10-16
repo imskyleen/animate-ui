@@ -768,7 +768,7 @@ test('the toast card keeps a few toasts while the window is in the background, i
   await page.goto('/', { waitUntil: 'networkidle' });
   await page
     .locator('[data-slot="home-orbit"]')
-    .evaluate((section) =>
+    .evaluate((section: HTMLElement) =>
       window.scrollTo(
         0,
         section.offsetTop + section.offsetHeight - window.innerHeight - 5,
