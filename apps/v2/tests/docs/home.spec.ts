@@ -761,3 +761,27 @@ test('clicking fast through the AI demo tabs never blinks the highlight', async 
   );
   expect(Math.min(...samples)).toBeGreaterThan(0.9);
 });
+
+test('the toast card keeps a few toasts while the window is in the background, instead of piling them up', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+  await page
+    .locator('[data-slot="home-orbit"]')
+    .evaluate((section) =>
+      window.scrollTo(
+        0,
+        section.offsetTop + section.offsetHeight - window.innerHeight - 5,
+      ),
+    );
+  await page.mouse.move(5, 5);
+  const card = page
+    .locator('[data-slot="orbit-card"]')
+    .filter({ hasText: 'Toast' });
+  await expect(card.locator('[data-slot="toast"]').first()).toBeAttached();
+  await page.evaluate(() => window.dispatchEvent(new FocusEvent('blur')));
+  await page.waitForTimeout(12000);
+  expect(await card.locator('[data-slot="toast"]').count()).toBeLessThanOrEqual(
+    4,
+  );
+});

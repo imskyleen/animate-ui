@@ -270,9 +270,14 @@ function ToastStack() {
 function ToastVignette() {
   const [manager] = useState(() => createToastManager());
   const nextRef = useRef(0);
+  const shownRef = useRef<string[]>([]);
   useAutoplay(
     () => {
-      manager.add({ ...NOTIFICATIONS[nextRef.current]!, timeout: 4200 });
+      const shown = shownRef.current;
+      shown.push(
+        manager.add({ ...NOTIFICATIONS[nextRef.current]!, timeout: 4200 }),
+      );
+      while (shown.length > 3) manager.close(shown.shift()!);
       nextRef.current = (nextRef.current + 1) % NOTIFICATIONS.length;
     },
     1600,
