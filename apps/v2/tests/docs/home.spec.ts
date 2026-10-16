@@ -172,11 +172,17 @@ for (const viewport of [
             .filter((el) => opacity(el) > 0.02)
             .filter((el) => {
               const box = el.getBoundingClientRect();
+              const frame = el
+                .closest('[data-slot="home-orbit"] > div')!
+                .getBoundingClientRect();
               return (
-                box.left < -1 ||
-                box.right > innerWidth + 1 ||
-                box.bottom > innerHeight + 1 ||
-                (box.top < header - 1 && box.bottom > header + 1)
+                box.left < frame.left - 1 ||
+                box.right > frame.right + 1 ||
+                box.top < frame.top - 1 ||
+                box.bottom > frame.bottom + 1 ||
+                (section.top <= header + 1 &&
+                  box.top < header - 1 &&
+                  box.bottom > header + 1)
               );
             })
             .map(
@@ -240,7 +246,7 @@ test('the hero cycles the library name inline with Rotating Text while the rest 
   }
 });
 
-test('the orbit headline waits for the logo, and the grid does not hold the scroll for long', async ({
+test('scrolling from the hero through the orbit never shows an empty screen, and the grid does not hold the scroll for long', async ({
   page,
 }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
@@ -255,14 +261,36 @@ test('the orbit headline waits for the logo, and the grid does not hold the scro
       viewport: window.innerHeight,
     }),
   );
-  const headline = orbit.getByRole('heading', {
-    name: 'Every primitive, alive.',
-  });
-  await page.evaluate((y) => window.scrollTo(0, y), top - 80 + viewport * 0.2);
-  await page.waitForTimeout(600);
-  expect(
-    Number(await headline.evaluate((el) => getComputedStyle(el).opacity)),
-  ).toBeLessThan(0.2);
+  const empty: number[] = [];
+  for (let y = 0; y <= top + height - viewport; y += viewport / 5) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await page.waitForTimeout(300);
+    const shown = await page.evaluate(() => {
+      const header = document
+        .querySelector('[data-slot="home-header"]')!
+        .getBoundingClientRect().bottom;
+      const opacity = (el: Element) => {
+        let value = 1;
+        for (let node: Element | null = el; node; node = node.parentElement)
+          value *= Number(getComputedStyle(node).opacity);
+        return value;
+      };
+      return [
+        ...document.querySelectorAll(
+          'main h1, [data-slot="home-orbit"] h2, [data-slot="home-orbit"] svg, [data-slot="orbit-card"]',
+        ),
+      ].some((el) => {
+        const box = el.getBoundingClientRect();
+        return (
+          opacity(el) > 0.5 &&
+          box.bottom > header + 40 &&
+          box.top < innerHeight - 40
+        );
+      });
+    });
+    if (!shown) empty.push(Math.round(y));
+  }
+  expect(empty).toEqual([]);
 
   const end = top + height - viewport;
   const settled = async () =>
