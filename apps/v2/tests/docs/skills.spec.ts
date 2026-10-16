@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { expect, test } from '../test';
@@ -39,4 +39,33 @@ test('the repository holds one skill the skills CLI finds: skills/animate-ui', (
   const description = frontmatter.match(/^description: (.+)$/m)?.[1] ?? '';
   expect(description.length).toBeGreaterThan(0);
   expect(description.length).toBeLessThanOrEqual(1024);
+});
+
+test('every file the skill points to exists', () => {
+  const root = join(SKILLS, 'animate-ui');
+  const files = readdirSync(root, { recursive: true, encoding: 'utf8' })
+    .filter((file) => file.endsWith('.md'))
+    .map((file) => join(root, file));
+  const missing: string[] = [];
+  for (const file of files) {
+    const text = readFileSync(file, 'utf8');
+    const targets = [
+      ...[...text.matchAll(/\]\(([^)#\s]+\.md)\)/g)].map((match) => match[1]!),
+      ...[
+        ...text.matchAll(
+          /`((?:\.\.\/|references\/|recipes\/|interactions\/|scripts\/)[\w./-]+?\.(?:md|mjs))`/g,
+        ),
+      ].map((match) => match[1]!),
+    ];
+    for (const target of targets) {
+      const candidates = [
+        join(file, '..', target),
+        join(root, target),
+        join(root, 'references', target),
+      ];
+      if (!candidates.some((candidate) => existsSync(candidate)))
+        missing.push(`${file.slice(root.length + 1)} → ${target}`);
+    }
+  }
+  expect(missing).toEqual([]);
 });

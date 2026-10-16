@@ -1,0 +1,13 @@
+# Page (hero, sections, feature grids, stats)
+
+Imports and base-library wiring: [README.md](README.md).
+
+Purpose: delight on arrival, continuity while scrolling. Start from the catalog (`../catalog.md`):
+
+- The hero's main heading is there on first paint, unanimated: it's what a reader (and a crawler) needs first. Its subtitle and buttons may come in after it, one after the other: `Effects` (fade + blur + slide) with `holdDelay={100}` on load. Effect's defaults are made for showcases (a 100px slide, a 10px blur): on a page, set `slide={{ offset: 16 }}` and `blur={{ initialBlur: 2 }}` for lines of text (`initialBlur: 4` for cards). `Effects` wraps each child in an element of its own; pass `asChild` inside a grid or a flex row so the children stay the layout's items.
+- Sections below the fold come in as they scroll into view: the same components with `inView` (once by default).
+- Stats count up with `CountingNumber` (`inView`); it shows its value at once under reduced motion and screen readers read the value, never the ticking.
+- These primitives are client components already: a server page can use them and stay a server component.
+- Buttons press (`Button` from the catalog, or [press.md](press.md)); headings may use a text effect from the catalog, one per page at most.
+
+By hand, the same values: fade on `transition.reveal`, rise a few pixels (16px at most) on `spring.entrance`, out of `blur.icon` for lines of text or `blur.surface` for cards, 80–100ms between items, `whileInView` with `viewport={{ once: true }}`. Keep the page's main text visible in the server HTML: animate decorations and what's below the fold, not the first line a reader needs.

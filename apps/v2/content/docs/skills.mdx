@@ -8,9 +8,14 @@ Skills give AI assistants like Claude Code, Cursor or Codex project-aware knowle
 For example, you can ask your AI assistant to:
 
 - _"Animate my shadcn dialog and dropdown menu."_
-- _"Make this notification panel slide in like an Animate UI sheet."_
-- _"Add a press animation to every button."_
-- _"Review the motion in `components/command-menu.tsx`."_
+- _"Make my save button show it's loading, then a quick Saved."_
+- _"Animate my todo list when I add or remove a task."_
+- _"When I click a recipe card, open it into a detail view and close it back."_
+- _"Turn this Phosphor bell into an animated icon that rings on hover."_
+- _"Make the menu feel snappier."_ or _"Rends les toasts plus doux."_
+- _"Reproduce the animation from this video on my card, keep my styles."_
+- _"Review the animations in my app: what feels slow or janky?"_
+- _"Give me this spring as CSS for my stylesheet."_
 - _"Slow every animation down a little."_
 - _"Migrate this project from Animate UI v1."_
 
@@ -34,7 +39,7 @@ Every component takes the shortest path to its animation:
 
 - **shadcn/ui components**: runs `@animate-ui/cli animate`, which swaps their primitives for Animate UI's and removes the CSS animations Motion replaces.
 - **Built on Radix UI, Base UI or React Aria**: swaps the import to `@animate-ui/react`, keeping every part, prop and data attribute.
-- **Anything else**: animates it with Motion, following Animate UI's recipes and tokens.
+- **Anything else**: animates it with Motion, following Animate UI's recipes and tokens, or uses a component from the catalog when one already does it.
 - **Animate UI v1 projects**: runs `@animate-ui/cli migrate`, then walks through the manual steps it lists.
 
 ### Motion Tokens
@@ -45,14 +50,34 @@ The values every Animate UI primitive moves with: springs, tweens and curves by 
 
 How each kind of component animates: overlays, menus, modals, sheets and drawers, disclosures, moving indicators, presses and swaps, and the components a base library drives with CSS variables. Each recipe shows how to wire Motion into Radix UI, Base UI, React Aria or plain markup.
 
+### Interactions
+
+Ready patterns for what people ask for by name: a button showing loading then success, a list adding and removing items, a drag to reorder, a card opening into a larger view, a skeleton giving way to content, a counting badge, a field shaking on an error, a row swiped away, a grid filtered or sorted, the steps of a form, a banner pushing the page. Each one is applied to your markup and styles, not pasted over them.
+
+### Animated Icons
+
+How to turn any icon, from Lucide, Hugeicons, Tabler, Phosphor, Heroicons or your own SVG, into an animated icon that works with `AnimateIcon` and every trigger (hover, tap, in view, loop, speed). Each part moves like the real object, smooth before literal, inside the icon's grid, whatever the style: outline, solid, duotone, multicolor or pixel.
+
+### Feel and Levels
+
+Words like _snappy_, _calm_, _bouncy_, _plus doux_ or _plus vif_ turn into the same values every time, and "faster" or "bouncier" are steps it can repeat. When you don't say how much motion you want, it asks: **subtle** (the default), **more**, or **expressive**. It can also give any spring or curve as CSS for a stylesheet.
+
+### Reproduce
+
+Show it a link, a video or a GIF: it measures the motion (what moves, how far, how long, on which curve or spring) and copies only that onto your component, which keeps its own look.
+
+### Review
+
+It reviews the motion you already have from facts, not guesses: `npx @animate-ui/cli audit` lists what moves in your project, what each property costs the browser and the patterns worth a look (`transition: all`, ease-in entrances, long durations, hover scales, missing reduced-motion paths…). The skill then judges each fact against how often the element is used and what it's for, ranks what to fix first and says which facts are fine.
+
 ### Motion Rules
 
-Quality rules that must pass (reduced motion, keyboard, hover-capable pointers, trigger-anchored origins, performance, interruptions) and style defaults it can tune on purpose (springs first, ease-out, press-only scales, blur to bridge a swap). It uses them to review the motion you already have, too.
+Quality rules that must pass (reduced motion, keyboard, hover-capable pointers, trigger-anchored origins, performance, interruptions, nothing stretching as it resizes) and style defaults it can tune on purpose (springs first, ease-out, press-only scales, blur to bridge a swap, text that fades rather than scales).
 
 ## How It Works
 
-1. **Gate**: the skill first decides whether the component should animate at all, from how often it's used. Writing no motion code is a valid outcome.
-2. **Path detection**: it finds what the component is built on, and picks the CLI, an import swap or a recipe.
+1. **Gate and level**: when you ask for an animation, you get one. How often the component is used decides its form (a menu opened all day stays quick, a rare success can be expressive), and the level you pick sets how much it moves. On an open request ("make the page feel alive"), it may suggest less motion where motion would only add a wait.
+2. **Path detection**: it finds what the component is built on and picks the CLI, an import swap, a recipe or an interaction pattern, after checking whether an Animate UI component already does the job.
 3. **Token use**: every value comes from `@animate-ui/react/utils/motion`, never a hand-typed spring, so your animations stay coherent and follow your `tempo`.
 4. **Verification**: it checks reduced motion, the keyboard path, interruptions and origins before it's done, then tells you the path, the recipe and any default it changed.
 

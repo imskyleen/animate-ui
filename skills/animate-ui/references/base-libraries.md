@@ -134,7 +134,7 @@ function PopoverContentMotion({
 
 Remove `forceMount` and `asChild` from the public props type since the component owns them. This is the accepted exception to "same props". If the original puts a `data-slot` on the Portal (shadcn does: `data-slot="popover-portal"`), keep it next to `forceMount`.
 
-Tooltip: the same, from `scale.tooltip` (0.7). shadcn's `Tooltip` gives each tooltip its own Provider, so Radix's grouping (`data-state="instant-open"`) never applies: track the warm-up yourself (see the Overlay recipe).
+Tooltip: the same, from `scale.tooltip` (0.7). shadcn's `Tooltip` gives each tooltip its own Provider, so Radix's grouping (`data-state="instant-open"`) never applies: track the warm-up yourself (see `recipes/overlay.md`).
 
 ## 3. Base UI (`@base-ui/react`)
 

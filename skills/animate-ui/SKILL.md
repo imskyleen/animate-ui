@@ -11,18 +11,18 @@ Its motion is springy and alive, but coherent: nearly everything moves on a spri
 
 ## 1. Pick the path
 
-| The request is about…                                                          | Do this                                  |
-| ------------------------------------------------------------------------------ | ---------------------------------------- |
-| A shadcn/ui component (the project has `components.json`)                      | **A. Run the CLI**                       |
-| A component hand-built on Radix UI, Base UI or React Aria                      | **B. Swap the import**                   |
-| Custom, plain markup, another library, or a primitive Animate UI doesn't cover | **C. Animate it with the rules**         |
-| An Animate UI v1 project (`components/animate-ui/...` files)                   | **D. Migrate**                           |
-| An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                               |
-| Reviewing existing motion, finding slow or janky animations                    | **R. Review**                            |
-| An animation to reproduce: a link, a video, a GIF                              | **E. Reproduce it**                      |
-| A feel in words ("snappier", "plus doux", "bouncy") or CSS for a token         | **`references/feel.md`**                 |
-| An interaction by name: a loading button, a list, a swipe, a banner…           | **C**, from `references/interactions.md` |
-| An icon to animate, from any library or SVG                                    | **`references/icons.md`**                |
+| The request is about…                                                          | Do this                                |
+| ------------------------------------------------------------------------------ | -------------------------------------- |
+| A shadcn/ui component (the project has `components.json`)                      | **A. Run the CLI**                     |
+| A component hand-built on Radix UI, Base UI or React Aria                      | **B. Swap the import**                 |
+| Custom, plain markup, another library, or a primitive Animate UI doesn't cover | **C. Animate it with the rules**       |
+| An Animate UI v1 project (`components/animate-ui/...` files)                   | **`references/migrate.md`**            |
+| An app already on Animate UI: faster, slower, calmer                           | **§ Pace**                             |
+| Reviewing existing motion, finding slow or janky animations                    | **`references/review.md`**             |
+| An animation to reproduce: a link, a video, a GIF                              | **`references/reproduce.md`**          |
+| A feel in words ("snappier", "plus doux", "bouncy") or CSS for a token         | **`references/feel.md`**               |
+| An interaction by name: a loading button, a list, a swipe, a banner…           | **C**, from `references/interactions/` |
+| An icon to animate, from any library or SVG                                    | **`references/icons.md`**              |
 
 Before writing motion by hand, check `references/catalog.md`: entrances, scroll reveals, counters, text effects, buttons, backgrounds and icons already ship, and using one beats rebuilding it.
 
@@ -38,8 +38,8 @@ The gate (§ Gate, under C) decides how much a component moves, and when to stop
 
 - **An explicit request is always honored.** Asked to animate something, animate it: the gate only picks the form, the shortest one when the component is used all day (a command palette on ⌘K gets a quick fade and slight scale, never a wait), and the output says why in one line. Never answer an explicit request with no motion.
 - **An open request** ("make the page feel alive", "what do you think of the motion") may end with less motion, or none where motion would only add a wait. "Review it, then fix it" on something that already moves is explicit: keep it moving, in its right form.
-- **Ask the level when it isn't given.** A request to animate something that names no level, feel or reference ("anime ma liste", "add an animation to this button") gets one question before any code: which level, **subtle**, **more** or **expressive** (`references/feel.md`, § Levels), each with what it would look like on this component in a few words, the one the gate suggests marked as recommended. Don't ask when the request already says it ("subtle", "bouncy", "plus animé", a feel word, a link or a video), on A, B, D and § Pace, or when nobody can answer (a non-interactive run): take **subtle** and say so in the output.
-- On **A** and **B** the gate only chooses which components to run: the primitives bring their own tokens. **D** and **§ Pace** skip it.
+- **Ask the level when it isn't given.** A request to animate something that names no level, feel or reference ("anime ma liste", "add an animation to this button") gets one question before any code: which level, **subtle**, **more** or **expressive** (`references/feel.md`, § Levels), each with what it would look like on this component in a few words, the one the gate suggests marked as recommended. Don't ask when the request already says it ("subtle", "bouncy", "plus animé", a feel word, a link or a video), on A, B, a migration and § Pace, or when nobody can answer (a non-interactive run): take **subtle** and say so in the output.
+- On **A** and **B** the gate only chooses which components to run: the primitives bring their own tokens. Migrating (`references/migrate.md`) and **§ Pace** skip it.
 
 ## A. shadcn/ui components: run the CLI
 
@@ -82,7 +82,7 @@ To make every animation faster or slower at once, wrap the app in `AnimateUIProv
 
 1. **Know the technique.** Motion's documentation and examples (motion.dev) show how most interactions are built; when a tool can read them, learn the technique there, then write it with Animate UI's tokens and rules. Present the result as the user's animation, not as someone's example.
 2. **Catalog first**: if `references/catalog.md` has it (a counter, an entrance, a scroll reveal, a text effect, a button effect), use that.
-3. **Gate** (below), then classify the component and start from the matching recipe: `references/recipes.md` for overlays, menus, controls, cards, toasts and pages; `references/interactions.md` for interactions asked by name (a status button, a list that adds and removes, a drag to reorder, a card opening into a view, a skeleton, a counting badge, a field in error, a swipe to delete, a filtered grid, form steps, a banner).
+3. **Gate** (below), then classify the component and start from the matching recipe: `references/recipes/<kind>.md` (the table below) for overlays, menus, controls, cards, toasts and pages; `references/interactions/` for interactions asked by name (a status button, a list that adds and removes, a drag to reorder, a card opening into a view, a skeleton, a counting badge, a field in error, a swipe to delete, a filtered grid, form steps, a banner).
 4. If it renders a Radix UI, Base UI or React Aria overlay, prefer composing Animate UI's primitive over re-wiring presence yourself. A hand-rolled overlay stays hand-rolled unless the user asks: animating it doesn't mean moving it onto a library (that would change its focus, modality and dismissal), so wire Motion into it as it is, the way `references/base-libraries.md` shows for plain markup, and mention in the output what a primitive would add.
 5. Motion runs in client components: put `'use client'` on the file that animates, and keep a server page server-side by moving the animated part into its own client component. Content that enters on mount starts hidden in the server HTML; keep that for what is below the fold or decorative, never for the page's main text on first paint.
 6. When the user describes a feel ("snappy", "calme", "more bounce"), read it with `references/feel.md` before picking values. For CSS without Motion (a stylesheet, Tailwind, a server component), print a token's timing with `node <skill>/scripts/css-timing.mjs <token>` (the script ships with this skill) from the project's folder, so it loads the project's `@animate-ui/react`.
@@ -102,22 +102,22 @@ Keyboard navigation animates like the pointer. Name the purpose in one word: fee
 
 ### Kinds of component
 
-| Kind                                                                           | Examples                                                                | Recipe     |
-| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ---------- |
-| Anchored overlay                                                               | Popover, Tooltip, Hover Card, Preview Card                              | Overlay    |
-| Anchored list                                                                  | Dropdown Menu, Context Menu, Menubar, Select, Combobox, Navigation Menu | Menu       |
-| Centered overlay                                                               | Dialog, Alert Dialog                                                    | Modal      |
-| Edge overlay                                                                   | Sheet, Drawer                                                           | Sheet      |
-| Disclosure                                                                     | Accordion, Collapsible                                                  | Disclosure |
-| Moving indicator                                                               | Tabs, Toggle Group, Pagination, Navigation Menu indicator               | Indicator  |
-| Steps of a flow                                                                | Questionnaire                                                           | Steps      |
-| Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio                                 | Press      |
-| Pressable surface                                                              | Clickable card, tile, list row                                          | Card       |
-| Centered list opened by a shortcut                                             | Command palette, spotlight search                                       | Palette    |
-| Messages stacking at an edge, hand-built                                       | Toasts, snackbars, notifications                                        | Toast      |
-| Page content                                                                   | Hero, sections, feature grids, stats                                    | Page       |
-| Two states swapping in place                                                   | Copy → copied, sun → moon, a changing label (rules B9)                  | Swap       |
-| Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                                         | CSS-driven |
+| Kind                                                                           | Examples                                                                | Recipe                  |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ----------------------- |
+| Anchored overlay                                                               | Popover, Tooltip, Hover Card, Preview Card                              | `recipes/overlay.md`    |
+| Anchored list                                                                  | Dropdown Menu, Context Menu, Menubar, Select, Combobox, Navigation Menu | `recipes/menu.md`       |
+| Centered overlay                                                               | Dialog, Alert Dialog                                                    | `recipes/modal.md`      |
+| Edge overlay                                                                   | Sheet, Drawer                                                           | `recipes/sheet.md`      |
+| Disclosure                                                                     | Accordion, Collapsible                                                  | `recipes/disclosure.md` |
+| Moving indicator                                                               | Tabs, Toggle Group, Pagination, Navigation Menu indicator               | `recipes/indicator.md`  |
+| Steps of a flow                                                                | Questionnaire                                                           | `recipes/steps.md`      |
+| Pressable                                                                      | Button, Toggle, Checkbox, Switch, Radio                                 | `recipes/press.md`      |
+| Pressable surface                                                              | Clickable card, tile, list row                                          | `recipes/card.md`       |
+| Centered list opened by a shortcut                                             | Command palette, spotlight search                                       | `recipes/palette.md`    |
+| Messages stacking at an edge, hand-built                                       | Toasts, snackbars, notifications                                        | `recipes/toast.md`      |
+| Page content                                                                   | Hero, sections, feature grids, stats                                    | `recipes/page.md`       |
+| Two states swapping in place                                                   | Copy → copied, sun → moon, a changing label (rules B9)                  | `recipes/swap.md`       |
+| Gesture or stack the library drives with CSS variables (Base UI Drawer, Toast) |                                                                         | `recipes/css-driven.md` |
 
 ### The rules in short
 
@@ -131,58 +131,6 @@ Keyboard navigation animates like the pointer. Name the purpose in one word: fee
 - Warm tooltips show at once (and the one they replace goes at once).
 - A menubar's popover moves to the next menu and resizes (`spring.morph`: it starts gently and eases in without going past, keeping its speed from menu to menu) instead of closing and reopening, its content changing in place: the content stays where it is on screen while the popover slides over it, the previous items leaving `shift.handoff` (6px) away from where it goes as they fade out (`transition.handoffOut`), the next ones arriving from there on `spring.handoff` and fading in behind them (`transition.handoffIn`): from File to Edit, File's leave to the left, Edit's come from the right. One popover on screen at every frame, each menu's content once (a menu coming back takes its leaving items back from where they are), and the triggers share one highlight gliding from trigger to trigger (internal/menu-handoff.ts, internal/item-highlight.tsx).
 - The keyboard animates like the pointer; hover only on hover-capable fine pointers; re-triggering retargets, never restarts; loops pause off screen.
-
-## R. Review existing motion
-
-Start from facts, then judge them yourself: the CLI reads the code, it doesn't know what each element is for.
-
-1. **Collect.** Run `pnpm dlx @animate-ui/cli@latest audit` from the project (no install needed; `--json` for a long report, paths to narrow it: `audit src/components`). Per file and line, it lists what each element animates with the cost of each property (**compositor**: transform strings, opacity, filter; **main-thread**: Motion's `x`, `y`, `scale`, `rotate` shorthands, smooth but written by JavaScript each frame, A9; **paint**: colors, shadows, SVG strokes; **layout**: width, height, top, margins), and patterns: `transition: all`, ease-in (saying when the element enters), durations of 400ms or more, hover scales, scales from 0, positioned popups scaling without an origin, CSS transitions on an element Motion also animates, a `motion.h1` hidden on first paint, CSS hovers that move outside `@media (hover: hover)`, endless loops (and whether a `motion-reduce:` class sits beside them), `layout` props, `will-change`, and files that move without a reduced-motion path.
-2. **Judge each fact in context.** Open the code it points to and decide with the gate table (§ Gate, under C: how often it's used, its purpose), `references/rules.md`, and `references/recipes.md` for the component's own rules (a page's main heading is there on first paint; a disclosure's height is allowed) and the fix:
-   - A cost matters where it runs often or on a large area: a `height` on an accordion is the disclosure exception; a `width` on every row of a list is a jank risk; a color on a small button is fine. Main-thread shorthands are fine for a one-off entrance and worth a transform string on a press or anything continuous (A9).
-   - A long duration is right on a page entrance or a rare success, wrong on a menu, a tooltip, a hover or anything keyboard-driven.
-   - `transition: all` is a bug when the element also changes layout properties or is animated by Motion, harmless on a color-only hover; name what it should list instead.
-   - Ease-in on something entering or reacting is a bug; on an element leaving for good it may be deliberate.
-   - A hover scale on a pressable is a rule break (B4); on a card's image inside its clip it's allowed.
-   - A loop pauses off screen and under reduced motion (A4); a loading spinner keeps saying it's loading: slower, or an opacity pulse instead of the turn.
-   - "No reduced-motion path" in a file can be covered higher up (a `MotionConfig reducedMotion`, Animate UI's primitives, a global CSS rule the report lists as project-wide): check before calling it missing.
-   - Hand-typed values that match no token are one minor finding for the whole review (cohesion, B8), not one per line.
-   - What the CLI can't see: pointer or scroll values going through React state (A10), the keyboard not animating like the pointer (A2), popups from a library growing from the wrong origin (A6), hovers wired in JavaScript without a pointer check (A3). Look for them in the files that move.
-3. **Rank.** Impact is how often it's felt times how bad it is: first what's slow or janky on things used all day (menus, buttons, inputs, navigation), then what breaks for some users (no reduced-motion path, a hover stuck on touch, a heading hidden on first paint), then occasional surfaces (dialogs, toasts, lists that update), then rare moments and polish.
-4. **Report.** Findings in that order, each with `file:line`, what it does now, why it matters there, and the fix with its token. Without `@animate-ui/react` in the project, give each token's value beside its name (`tokens.md`) and say that installing it brings them; `css-timing.mjs` needs the package, so a CSS fix without it uses the tween tokens' curves. List the facts you dismissed and why, one line each. Never paste the raw report as the review, and never give a score.
-5. **Fix** what the user asks for, with the C path, and run the audit again to show the facts that changed.
-
-## E. Reproduce an animation from a link or a video
-
-The user shows an animation they like (a site, a video, a GIF, a screen recording) and wants it on their component. Copy **only the motion**: which properties move, from where to where, for how long, on which curve or spring, in which order. Their component keeps its own look (colors, sizes, radius, type, layout, content) unless they ask for that too.
-
-1. **Read the motion.**
-   - A link: open it in a browser tool when there is one and read what drives the animation: CSS `transition`, `animation` and `@keyframes`, inline Motion or GSAP props in the scripts, or `element.getAnimations()` (keyframes, `duration`, `easing`) while it plays. Trigger it the way a user would (hover, click, scroll). A page that can't be opened: ask for a recording.
-   - A video or GIF: look at it frame by frame (extract frames with `ffmpeg -i in.mp4 -vf fps=60 frame_%03d.png` when available, and view them). Note each moving element's properties (position, scale, rotation, opacity, blur, clip), start and end values, when each one starts and ends (frame count ÷ fps), and whether it goes past its end and comes back (a spring) or eases in (a curve). To measure rather than eyeball, dump raw frames (`ffmpeg -i in.mp4 -f rawvideo -pix_fmt rgb24 -`), track each element's bounding box and center per frame (the center isn't fooled by a blur widening the box), and fit the curve or spring to those points. Recordings repeat frames (two identical frames are one), and an element fading in from 0 is invisible for its first frames: its real start sits further out than the first frame you can see, so extrapolate it.
-2. **Translate it.** A measured value within about 10% of a token made for the same role (a surface's blur, a press's scale, a toast's spring) uses the token: it stays coherent with the rest of the app. Otherwise keep the measured value: the user asked for that animation. Write a spring as `{ type: 'spring', visualDuration, bounce }` (`visualDuration`: when it looks settled; `bounce`: how far it goes past, about 0.1 for a barely visible overshoot, 0.3 for one of about 5% of the travel, 0.5 for a clear bounce back), a tween as its duration and `cubic-bezier`, and pass both through `useTempoTransition()` so `tempo` paces them like the tokens. Offsets between properties (the movement starting 100ms after the fade) are part of the motion: keep them.
-3. **Apply the rules anyway.** It gets a reduced-motion path, animates `transform`, `opacity` and `filter` (a reference moving `top` or `width` becomes a transform or a `layout` animation), and stays interruptible. A reference that breaks one (an ease-in entrance, a hover scale on a button) is reproduced as asked; say in the output what the rule would change.
-4. **Fill in what the reference doesn't show** from the matching recipe (a toast's exit, a menu's exit), or else by replaying the entrance (B5); and reduced motion from the rules.
-5. **Output** what was measured (properties, durations, curve or spring), which values became tokens and which stayed measured, and what wasn't visible in the reference (the exit, reduced motion) and how it was filled in.
-
-## D. Animate UI v1 projects: migrate
-
-```bash
-pnpm add @animate-ui/react motion
-pnpm dlx @animate-ui/cli@latest migrate all --dry-run
-pnpm dlx @animate-ui/cli@latest migrate all
-```
-
-Dependencies: v1's Base UI primitives were built on Base UI's beta (`@base-ui-components/react`), v2's on Base UI 1, so a project using them adds `@base-ui/react` (the CLI says so) and removes the beta once nothing imports it; the same goes for `@headlessui/react` once its components are rebuilt.
-
-It rewrites imports of the copied v1 primitives, icon core and libs to `@animate-ui/react`, maps v1 export names to the v2 parts, and lists manual steps (v1-only props, Headless UI primitives, which v2 doesn't support). The migration is partial where it must be: in an import mixing mappable parts with v1-only ones (`DropdownMenuHighlight`, context hooks like `useAccordionItem`), the mappable parts move to v2 and the v1-only names stay imported from the v1 file, each with a manual step. Those read v1's context, so they throw at runtime once their parent is v2: remove them (v2 parts animate themselves; use `data-state` attributes or controlled state), or replace the component with shadcn/ui's + `animate-ui animate`. Common cases:
-
-- `useAccordionItem()` to know whether an item is open: control the accordion (`value`/`onValueChange`) and compare, or style the item with `data-[state=open]:` classes.
-- `DropdownMenuHighlight` / `DropdownMenuHighlightItem`: drop them and give the items their own background (`focus:bg-accent`, as shadcn/ui's do); v2's highlight glides behind them and takes that background.
-- Headless UI primitives (v2 doesn't support them): rebuild on the matching Base UI part (a Disclosure on `Collapsible` from `@animate-ui/react/primitives/base-ui/collapsible`, a Menu on `Menu`, a Dialog on `Dialog`).
-- A v1 part given a Motion prop (`initial`, `animate`, `layoutId`) that v2's part doesn't take: drop it, v2's part animates itself.
-- A child reading its parent's state after `useAccordionItem()` goes: `group` on the parent, `group-data-[state=open]:` on the child.
-- A v1 sheet positioned by its own inline styles: v2's slides from its `data-side` but doesn't position it, so add the edge classes (`fixed inset-y-0 right-0`, `left-0`, `inset-x-0 top-0`, `bottom-0`).
-
-At the end it lists the v1 files `@animate-ui/react` replaces that nothing imports anymore (and the ones still imported, by what). In a terminal it asks about each one (delete it, delete it and all the others, keep it, keep them all); `--delete` deletes them all and `--keep` keeps them all without asking. Non-interactive runs (CI, an agent's shell) keep them: pass `--delete` once the manual steps are done. It only removes the files `@animate-ui/react` replaces; v1 files a manual step made unused (a Headless UI primitive you rebuilt, and the v1 helpers only it imported, such as `lib/get-strict-context`) are yours to delete after checking nothing imports them; a rerun of `migrate` lists the ones `@animate-ui/react` replaces.
 
 ## Verify
 
@@ -199,8 +147,8 @@ The change (CLI run, import swap or code), then in a few lines:
 
 - **A, B**: what the CLI or the swap changed, the packages to add, and what was left on purpose.
 - **C**: the level (asked, or subtle by default), the gate result (and why, when it shortened or skipped motion), the catalog item or recipe used, the tokens, and any style default changed and why.
-- **D**: the manual steps done and left, and the files deleted or kept.
-- **E**: what was measured, the tokens it became or the values kept, and what the reference didn't show.
+- **Migrate**: the manual steps done and left, and the files deleted or kept.
+- **Reproduce**: what was measured, the tokens it became or the values kept, and what the reference didn't show.
 - **Icon**: the file and where it went, what the icon does and why it means that, the level, the usages replaced, the original files left, and any technique or rule of `icons.md` adapted or set aside.
-- **R**: the findings (file:line, why, fix), the facts dismissed and why, and the audit's before/after when fixes were made.
+- **Review**: the findings (file:line, why, fix), the facts dismissed and why, and the audit's before/after when fixes were made.
 - **Pace**: the tempo set and where.
