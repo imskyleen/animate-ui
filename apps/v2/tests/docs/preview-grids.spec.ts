@@ -77,6 +77,55 @@ test('hovered, a card plays its clip; left, it is back at its first frame', asyn
   await expect(video).toHaveClass(/invisible/);
 });
 
+test('hovered, a card shows a stop button; stopped, it is back at its first frame, and play resumes it', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives', { waitUntil: 'networkidle' });
+  const root = page.locator('[data-slot="preview-card-root"]').first();
+  const video = root.locator('video');
+  const button = root.locator('[data-slot="preview-card-play"]');
+  await expect(button).toHaveCSS('opacity', '0');
+  await root.hover();
+  await expect(button).toHaveCSS('opacity', '1');
+  await expect(button).toHaveAccessibleName('Stop preview');
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.currentTime))
+    .toBeGreaterThan(0.2);
+  await button.click();
+  await expect(button).toHaveAccessibleName('Play preview');
+  await expect
+    .poll(() =>
+      video.evaluate((el: HTMLVideoElement) => [el.paused, el.currentTime]),
+    )
+    .toEqual([true, 0]);
+  await expect(page).toHaveURL(/\/docs\/primitives$/);
+  await button.click();
+  await expect(button).toHaveAccessibleName('Stop preview');
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.paused))
+    .toBe(false);
+  await page.mouse.move(0, 0);
+  await expect
+    .poll(() =>
+      video.evaluate((el: HTMLVideoElement) => [el.paused, el.currentTime]),
+    )
+    .toEqual([true, 0]);
+  await expect(button).toHaveCSS('opacity', '0');
+});
+
+test('every video card has one play button, outside its link', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives', { waitUntil: 'networkidle' });
+  const cards = await page.locator('[data-slot="preview-card"]').count();
+  await expect(page.locator('[data-slot="preview-card-play"]')).toHaveCount(
+    cards,
+  );
+  await expect(page.locator('[data-slot="preview-card"] button')).toHaveCount(
+    0,
+  );
+});
+
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
   test('hovered, a card stays still', async ({ page }) => {
@@ -87,6 +136,19 @@ test.describe('reduced motion', () => {
     expect(
       await card.locator('video').evaluate((el: HTMLVideoElement) => el.paused),
     ).toBe(true);
+  });
+  test('the play button still plays it', async ({ page }) => {
+    await page.goto('/docs/backgrounds', { waitUntil: 'networkidle' });
+    const root = page.locator('[data-slot="preview-card-root"]').first();
+    const button = root.locator('[data-slot="preview-card-play"]');
+    await root.hover();
+    await expect(button).toHaveAccessibleName('Play preview');
+    await button.click();
+    await expect
+      .poll(() =>
+        root.locator('video').evaluate((el: HTMLVideoElement) => el.paused),
+      )
+      .toBe(false);
   });
 });
 

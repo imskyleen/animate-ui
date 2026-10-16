@@ -24,13 +24,152 @@ function ffmpegPath() {
 }
 const FFMPEG = ffmpegPath();
 
+const OUTPUT = { width: 840, height: 630 };
+const FILL = 0.78;
+const MAX_ZOOM = 1.6;
 const VIEWPORT = { width: 400, height: 300 };
 const LARGE = { width: 480, height: 360 };
 
+const zoomed = (size: { width: number; height: number }, zoom: number) => ({
+  width: Math.round(size.width / zoom),
+  height: Math.round(size.height / zoom),
+});
+
+const POPUPS = new Set([
+  'alert-dialog',
+  'combobox',
+  'context-menu',
+  'dialog',
+  'drawer',
+  'dropdown-menu',
+  'hover-card',
+  'menubar',
+  'navigation-menu',
+  'popover',
+  'preview-link-card',
+  'select',
+  'sheet',
+  'toast',
+  'tooltip',
+]);
+
+async function measure(
+  preview: Preview,
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  viewport: { width: number; height: number },
+) {
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+  await page.goto(`${BASE}${preview.demo}`, { waitUntil: 'networkidle' });
+  await settle(page, preview);
+  const box = await page.evaluate(() => {
+    const main = document.querySelector('main');
+    if (!main) return null;
+    let left = Infinity;
+    let top = Infinity;
+    let right = -Infinity;
+    let bottom = -Infinity;
+    for (const element of main.querySelectorAll('*')) {
+      const style = getComputedStyle(element);
+      if (style.visibility === 'hidden' || style.display === 'none') continue;
+      const painted =
+        element.childElementCount === 0 ||
+        /^(BUTTON|INPUT|SVG|IMG|CANVAS|VIDEO|svg)$/.test(element.tagName) ||
+        parseFloat(style.borderTopWidth) > 0 ||
+        style.backgroundColor !== 'rgba(0, 0, 0, 0)';
+      if (!painted) continue;
+      const rect = element.getBoundingClientRect();
+      if (rect.width <= 2 || rect.height <= 2) continue;
+      if (rect.width >= innerWidth - 1 && rect.height >= innerHeight - 1)
+        continue;
+      left = Math.min(left, rect.left);
+      top = Math.min(top, rect.top);
+      right = Math.max(right, rect.right);
+      bottom = Math.max(bottom, rect.bottom);
+    }
+    return Number.isFinite(left) ? { left, top, right, bottom } : null;
+  });
+  await context.close();
+  return box;
+}
+
+async function fitZoom(
+  preview: Preview,
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+) {
+  if (preview.zoom === false || preview.id.startsWith('backgrounds/')) return 1;
+  if (POPUPS.has(preview.id.split('/').pop()!)) return 1;
+  const viewport = preview.viewport ?? VIEWPORT;
+  const base = await measure(preview, browser, viewport);
+  if (!base) return 1;
+  const fill = preview.nowrap ? 0.68 : FILL;
+  const width = base.right - base.left;
+  const height = base.bottom - base.top;
+  let zoom = Math.max(
+    1,
+    Math.min(
+      MAX_ZOOM,
+      (viewport.width * fill) / width,
+      (viewport.height * fill) / height,
+    ),
+  );
+  while (zoom > 1) {
+    const size = zoomed(viewport, zoom);
+    const box = await measure(preview, browser, size);
+    if (
+      box &&
+      box.left >= 8 &&
+      box.top >= 8 &&
+      box.right <= size.width - 8 &&
+      box.bottom <= size.height - 8 &&
+      box.bottom - box.top <= height * 1.04 &&
+      box.right - box.left <= width * 1.04
+    )
+      break;
+    zoom = Math.max(1, zoom - 0.1);
+  }
+  return zoom;
+}
+
+const CURSOR = `
+(() => {
+  const mount = () => {
+    if (document.getElementById('__preview-cursor')) return;
+    const cursor = document.createElement('div');
+    cursor.id = '__preview-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    cursor.style.cssText =
+      'position:fixed;left:0;top:0;z-index:2147483647;pointer-events:none;translate:-60px -60px;will-change:translate';
+    cursor.innerHTML =
+      '<div style="transform-origin:3px 2px;transition:scale 120ms cubic-bezier(0.23,1,0.32,1)"><svg width="22" height="24" viewBox="0 0 22 24" style="display:block;filter:drop-shadow(0 1.5px 2px rgba(0,0,0,0.35))"><path d="M3 2.2v17.6c0 .7.8 1 1.3.5l4.4-4.6 3.3 6.4c.3.5.9.7 1.4.5l2-1c.5-.3.7-.9.4-1.4l-3.2-6.3h6.3c.7 0 1.1-.8.6-1.3L4.3 1.6C3.8 1.1 3 1.5 3 2.2Z" fill="#F59E0B" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>';
+    document.documentElement.appendChild(cursor);
+    const inner = cursor.firstElementChild;
+    window.__previewCursor = (x, y) => {
+      cursor.style.translate = x + 'px ' + y + 'px';
+    };
+    addEventListener('mousemove', (event) => {
+      cursor.style.translate = event.clientX + 'px ' + event.clientY + 'px';
+    }, true);
+    addEventListener('mousedown', () => { inner.style.scale = '0.82'; }, true);
+    addEventListener('mouseup', () => { inner.style.scale = '1'; }, true);
+  };
+  if (document.readyState === 'loading')
+    addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();
+`;
+
 const HIDE_DEV = 'nextjs-portal{display:none!important}';
 
-async function settle(page: Page) {
-  await page.addStyleTag({ content: HIDE_DEV });
+const layout = (preview?: Preview) =>
+  HIDE_DEV +
+  (preview?.shift
+    ? `main{padding-${preview.shift > 0 ? 'bottom' : 'top'}:${Math.abs(preview.shift)}px!important}`
+    : '') +
+  (preview?.nowrap ? 'main,main *{text-wrap-mode:nowrap!important}' : '');
+
+async function settle(page: Page, preview?: Preview) {
+  await page.addStyleTag({ content: layout(preview) });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(400);
 }
@@ -41,12 +180,17 @@ type Preview = {
   mount?: boolean;
   play?: (page: Page) => Promise<void>;
   tail?: number;
+  shift?: number;
+  cursor?: false;
+  zoom?: false;
+  nowrap?: true;
   viewport?: { width: number; height: number };
 };
 
 const wait = (page: Page, ms: number) => page.waitForTimeout(ms);
 
-const pointer = { x: 4, y: 4 };
+const pointer = { x: -40, y: -40 };
+const size = { width: 0, height: 0 };
 
 async function glide(page: Page, x: number, y: number, ms = 250) {
   const steps = Math.max(1, Math.round(ms / 16));
@@ -54,8 +198,20 @@ async function glide(page: Page, x: number, y: number, ms = 250) {
   for (let i = 1; i <= steps; i++) {
     const t = i / steps;
     const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-    await page.mouse.move(from.x + (x - from.x) * e, from.y + (y - from.y) * e);
-    await page.waitForTimeout(16);
+    const px = from.x + (x - from.x) * e;
+    const py = from.y + (y - from.y) * e;
+    if (px >= 0 && py >= 0 && px < size.width && py < size.height)
+      await page.mouse.move(px, py);
+    await page.evaluate(
+      ([cx, cy]) =>
+        (
+          window as unknown as {
+            __previewCursor?: (x: number, y: number) => void;
+          }
+        ).__previewCursor?.(cx!, cy!),
+      [px, py],
+    );
+    await page.waitForTimeout(12);
   }
   pointer.x = x;
   pointer.y = y;
@@ -66,13 +222,56 @@ async function pointAt(page: Page, target: ReturnType<Page['locator']>) {
   await glide(page, box.x + box.width / 2, box.y + box.height / 2);
 }
 
-async function press(page: Page, target: ReturnType<Page['locator']>) {
+async function press(
+  page: Page,
+  target: ReturnType<Page['locator']>,
+  hold = 160,
+) {
   await pointAt(page, target);
   await wait(page, 120);
-  await target.click();
+  await page.mouse.down();
+  await wait(page, hold);
+  await page.mouse.up();
 }
 
-const away = (page: Page) => glide(page, 4, 4, 300);
+const away = (page: Page) =>
+  glide(page, size.width + 90, size.height * 0.75, 450);
+
+async function clickAt(page: Page, x: number, y: number) {
+  await glide(page, x, y, 350);
+  await wait(page, 100);
+  await page.mouse.down();
+  await wait(page, 90);
+  await page.mouse.up();
+}
+
+const clickOutside = (page: Page) =>
+  clickAt(page, size.width - 18, size.height - 18);
+
+async function hoverItems(
+  page: Page,
+  items: ReturnType<Page['locator']>,
+  count = 3,
+) {
+  const visible = items.filter({ visible: true });
+  const total = Math.min(count, await visible.count());
+  for (let i = 0; i < total; i++) {
+    await pointAt(page, visible.nth(i));
+    await wait(page, 380);
+  }
+}
+
+const menuItems = (page: Page) =>
+  page.locator('[role="menu"] [role="menuitem"]');
+
+async function dismiss(page: Page) {
+  const close = page
+    .locator('[role="dialog"], [role="alertdialog"]')
+    .getByRole('button', { name: /^(cancel|close)$/i })
+    .filter({ visible: true });
+  if (await close.count()) await press(page, close.first());
+  else await clickOutside(page);
+}
 
 const buttons = (page: Page) => page.locator('main button:visible');
 
@@ -85,7 +284,7 @@ const openClose =
   async (page: Page) => {
     await press(page, trigger(page));
     await wait(page, hold);
-    await page.keyboard.press('Escape');
+    await dismiss(page);
     await away(page);
   };
 
@@ -102,11 +301,32 @@ const clickThrough =
   async (page: Page) => {
     const all = targets(page);
     const count = await all.count();
-    for (let i = 1; i < count; i++) {
-      await press(page, all.nth(i));
+    let start = 0;
+    for (let i = 0; i < count; i++)
+      if (
+        await all
+          .nth(i)
+          .evaluate(
+            (el) =>
+              el.getAttribute('aria-checked') === 'true' ||
+              el.getAttribute('aria-selected') === 'true' ||
+              el.getAttribute('aria-pressed') === 'true' ||
+              ['active', 'checked', 'on'].includes(
+                el.getAttribute('data-state') ?? '',
+              ) ||
+              el.hasAttribute('data-checked') ||
+              el.hasAttribute('data-pressed') ||
+              el.hasAttribute('data-selected'),
+          )
+      ) {
+        start = i;
+        break;
+      }
+    for (let step = 1; step < count; step++) {
+      await press(page, all.nth((start + step) % count));
       await wait(page, hold);
     }
-    await press(page, all.first());
+    await press(page, all.nth(start));
     await away(page);
   };
 
@@ -151,11 +371,9 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     async play(page) {
       await press(page, page.locator('main input').first());
       await wait(page, 500);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 250);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 700);
-      await page.keyboard.press('Escape');
+      await hoverItems(page, page.locator('[role="option"]'));
+      await wait(page, 300);
+      await clickOutside(page);
       await away(page);
     },
   },
@@ -167,11 +385,9 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await pointAt(page, area);
       await area.click({ button: 'right' });
       await wait(page, 400);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 250);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 700);
-      await page.keyboard.press('Escape');
+      await hoverItems(page, menuItems(page));
+      await wait(page, 300);
+      await clickOutside(page);
       await away(page);
     },
   },
@@ -181,11 +397,9 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     async play(page) {
       await press(page, buttons(page).first());
       await wait(page, 400);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 250);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 700);
-      await page.keyboard.press('Escape');
+      await hoverItems(page, menuItems(page));
+      await wait(page, 300);
+      await clickOutside(page);
       await away(page);
     },
   },
@@ -199,7 +413,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await wait(page, 600);
       await pointAt(page, triggers.nth(2));
       await wait(page, 600);
-      await page.keyboard.press('Escape');
+      await clickOutside(page);
       await away(page);
     },
   },
@@ -215,6 +429,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await away(page);
     },
     tail: 900,
+    viewport: { width: 640, height: 480 },
   },
   pagination: {
     async play(page) {
@@ -231,7 +446,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     },
     viewport: { width: 320, height: 240 },
   },
-  popover: { play: openClose() },
+  popover: { play: openClose(), shift: 230 },
   questionnaire: {
     async play(page) {
       const main = page.locator('main');
@@ -254,6 +469,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   },
   'preview-link-card': {
     play: hoverOver((page) => page.locator('main a').first()),
+    shift: -170,
   },
   progress: { mount: true, tail: 1600 },
   'radio-group': { play: clickThrough(role('radio')) },
@@ -261,11 +477,9 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     async play(page) {
       await press(page, role('combobox')(page).first());
       await wait(page, 400);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 250);
-      await page.keyboard.press('ArrowDown');
-      await wait(page, 700);
-      await page.keyboard.press('Escape');
+      await hoverItems(page, page.locator('[role="option"]'), 2);
+      await wait(page, 300);
+      await clickOutside(page);
       await away(page);
     },
   },
@@ -291,7 +505,15 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await away(page);
     },
   },
-  switch: { play: toggle((page) => role('switch')(page).first()) },
+  switch: {
+    async play(page) {
+      const target = role('switch')(page).first();
+      await press(page, target, 420);
+      await wait(page, 900);
+      await press(page, target, 420);
+      await away(page);
+    },
+  },
   tabs: { play: clickThrough(role('tab'), 800) },
   toast: {
     async play(page) {
@@ -346,7 +568,10 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     },
   },
   'counting-number': { play: replay(2000) },
-  cursor: { play: sweep((page) => page.locator('main > *').first()) },
+  cursor: {
+    play: sweep((page) => page.locator('main > *').first()),
+    cursor: false,
+  },
   effect: { play: replay() },
   fade: { play: replay() },
   'flip-button': { play: hoverOver((page) => buttons(page).first(), 900) },
@@ -359,7 +584,11 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   'image-zoom': { play: sweep((page) => page.locator('main img').first()) },
   'liquid-button': { play: hoverOver((page) => buttons(page).first(), 1000) },
   magnetic: { play: sweep((page) => buttons(page).first()) },
-  'morphing-text': { mount: true, tail: 3000 },
+  'morphing-text': {
+    mount: true,
+    tail: 3000,
+    viewport: { width: 560, height: 420 },
+  },
   'motion-grid': { mount: true, tail: 2500 },
   particles: { play: toggle((page) => buttons(page).first(), 900) },
   'pinned-list': {
@@ -434,12 +663,30 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     play: toggle((page) => buttons(page).first(), 1100),
   },
   'theme-toggler': { play: toggle((page) => buttons(page).first(), 1100) },
-  tilt: { play: sweep((page) => page.locator('main > *').first()) },
-  'typing-text': { mount: true, tail: 2800 },
+  tilt: {
+    play: sweep((page) => page.locator('main > *').first()),
+    viewport: { width: 560, height: 420 },
+  },
+  'typing-text': {
+    mount: true,
+    tail: 2800,
+    zoom: false,
+    viewport: { width: 640, height: 480 },
+  },
   zoom: { play: replay() },
 };
 
 const LIBRARIES = ['base-ui', 'radix-ui', 'react-aria', 'animate-ui'];
+
+const TEXTS = new Set([
+  'gradient-text',
+  'highlight-text',
+  'morphing-text',
+  'rolling-text',
+  'rotating-text',
+  'shimmering-text',
+  'splitting-text',
+]);
 
 const ROOMY = new Set([
   'accordion',
@@ -490,6 +737,7 @@ function previews(): Preview[] {
     id: `primitives/${slug}`,
     demo: `/tests/demos/${library}/${slug}`,
     ...(ROOMY.has(slug) ? { viewport: LARGE } : {}),
+    ...(TEXTS.has(slug) ? { nowrap: true as const } : {}),
     ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
   }));
   for (const file of readdirSync(path.join(docs, 'backgrounds')))
@@ -499,8 +747,8 @@ function previews(): Preview[] {
         id: `backgrounds/${slug}`,
         demo: `/tests/demos/backgrounds/${slug}`,
         play: async (page) => {
-          await glide(page, VIEWPORT.width * 0.3, VIEWPORT.height * 0.4, 600);
-          await glide(page, VIEWPORT.width * 0.7, VIEWPORT.height * 0.6, 900);
+          await glide(page, size.width * 0.3, size.height * 0.4, 600);
+          await glide(page, size.width * 0.7, size.height * 0.6, 900);
           await away(page);
         },
         tail: 1200,
@@ -515,18 +763,23 @@ async function record(
   preview: Preview,
   theme: 'light' | 'dark',
   browser: Awaited<ReturnType<typeof chromium.launch>>,
+  zoom: number,
 ) {
+  const viewport = zoomed(preview.viewport ?? VIEWPORT, zoom);
+  size.width = viewport.width;
+  size.height = viewport.height;
   const context = await browser.newContext({
-    viewport: preview.viewport ?? VIEWPORT,
-    deviceScaleFactor: 2,
+    viewport,
+    deviceScaleFactor: OUTPUT.width / viewport.width,
     colorScheme: theme,
   });
+  if (preview.cursor !== false) await context.addInitScript(CURSOR);
   const page = await context.newPage();
   await page.goto(`${BASE}${preview.demo}`, { waitUntil: 'networkidle' });
-  await settle(page);
-  await page.mouse.move(4, 4);
-  pointer.x = 4;
-  pointer.y = 4;
+  await settle(page, preview);
+  pointer.x = viewport.width + 90;
+  pointer.y = viewport.height * 0.75;
+  await page.mouse.move(pointer.x, pointer.y);
 
   const cdp = await context.newCDPSession(page);
   const frames: { data: Buffer; time: number }[] = [];
@@ -543,15 +796,15 @@ async function record(
     cdp.send('Page.startScreencast', {
       format: 'jpeg',
       quality: 92,
-      maxWidth: 840,
-      maxHeight: 630,
+      maxWidth: OUTPUT.width,
+      maxHeight: OUTPUT.height,
     });
 
   if (preview.mount) {
     await page.reload({ waitUntil: 'commit' });
     await startScreencast();
     await page.waitForLoadState('domcontentloaded');
-    await page.addStyleTag({ content: HIDE_DEV });
+    await page.addStyleTag({ content: layout(preview) });
     await page.waitForLoadState('networkidle');
     if (preview.play) await preview.play(page);
   } else {
@@ -617,18 +870,14 @@ const chosen = only.length
   : all;
 const browser = await chromium.launch({
   channel: 'chromium',
-  args: [
-    '--enable-gpu',
-    '--ignore-gpu-blocklist',
-    '--use-angle=metal',
-    '--force-device-scale-factor=2',
-  ],
+  args: ['--enable-gpu', '--ignore-gpu-blocklist', '--use-angle=metal'],
 });
 for (const preview of chosen) {
+  const zoom = await fitZoom(preview, browser);
   for (const theme of ['light', 'dark'] as const) {
     try {
-      await record(preview, theme, browser);
-      console.log(`✓ ${preview.id} ${theme}`);
+      await record(preview, theme, browser, zoom);
+      console.log(`✓ ${preview.id} ${theme} ×${zoom.toFixed(2)}`);
     } catch (error) {
       console.log(
         `✗ ${preview.id} ${theme}: ${(error as Error).message.split('\n')[0]}`,

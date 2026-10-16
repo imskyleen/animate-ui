@@ -95,9 +95,13 @@ test.describe('animate-ui icon button', () => {
       .toEqual([0, 0, 0, 0, 0, 0]);
   });
 
-  test('a second click starts the burst over', async ({ page }) => {
+  test('a second click empties the heart without a burst, a third bursts again', async ({
+    page,
+  }) => {
     await open(page);
     await button(page).click();
+    await expect(button(page)).toHaveAttribute('aria-pressed', 'true');
+    await expect(button(page).locator('svg')).toHaveCSS('fill', /^lab\(55/);
     await expect
       .poll(() =>
         particles(page).evaluateAll((els) =>
@@ -105,6 +109,14 @@ test.describe('animate-ui icon button', () => {
         ),
       )
       .toEqual([0, 0, 0, 0, 0, 0]);
+    const quiet = recordParticles(page, 400);
+    await button(page).click();
+    expect((await quiet).flat().every((p) => p.opacity === 0)).toBe(true);
+    await expect(button(page)).toHaveAttribute('aria-pressed', 'false');
+    await expect(button(page).locator('svg')).toHaveCSS(
+      'fill',
+      'rgba(0, 0, 0, 0)',
+    );
     const recording = recordParticles(page, 400);
     await button(page).click();
     const frames = await recording;

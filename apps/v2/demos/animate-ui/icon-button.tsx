@@ -1,12 +1,14 @@
 "use client"
 
+import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
+import { motion, useReducedMotion } from "motion/react"
 import {
   IconButton,
   IconButtonParticles,
 } from "@animate-ui/react/primitives/buttons/icon"
-import { StarIcon } from "@hugeicons/core-free-icons"
+import { FavouriteIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 const iconButtonVariants = cva(
@@ -36,7 +38,7 @@ const iconButtonVariants = cva(
 export const controls = {
   IconButton: {
     variant: {
-      value: "default",
+      value: "outline",
       options: {
         default: "default",
         accent: "accent",
@@ -52,16 +54,39 @@ export const controls = {
 }
 
 export default function IconButtonDemo({
-  variant = "default",
+  variant = "outline",
   size = "default",
 }: VariantProps<typeof iconButtonVariants>) {
+  const [liked, setLiked] = React.useState(false)
+  const reduce = useReducedMotion()
+
   return (
     <IconButton
-      aria-label="Star"
+      aria-label="Like"
+      aria-pressed={liked}
+      onClick={() => setLiked((value) => !value)}
       className={cn(iconButtonVariants({ variant, size }))}
     >
-      <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
-      <IconButtonParticles className="text-neutral-500" />
+      <motion.span
+        className="inline-flex"
+        initial={false}
+        animate={{ scale: reduce ? 1 : liked ? [1, 1.3, 1] : [1, 0.85, 1] }}
+        transition={{
+          duration: 0.4,
+          times: [0, 0.4, 1],
+          ease: ["easeOut", [0.34, 1.56, 0.64, 1]],
+        }}
+      >
+        <HugeiconsIcon
+          icon={FavouriteIcon}
+          strokeWidth={2}
+          className={cn(
+            "fill-transparent transition-[fill,color] duration-200 ease-out",
+            liked && "fill-red-500 text-red-500"
+          )}
+        />
+      </motion.span>
+      {liked && <IconButtonParticles className="text-red-500" />}
     </IconButton>
   )
 }
