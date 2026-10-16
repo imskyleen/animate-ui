@@ -7,7 +7,7 @@ description: A button that cycles the theme, its icon turning into the next one.
 
 ## Installation
 
-<Installation />
+<RegistryInstallation name="buttons-theme-toggler" />
 
 ## Usage
 
@@ -20,7 +20,7 @@ import {
   ThemeTogglerButtonIcon,
   type Resolved,
   type ThemeSelection,
-} from '@animate-ui/react/primitives/buttons/theme-toggler';
+} from '@/components/animate-ui/buttons/theme-toggler';
 
 export function ThemeButton() {
   const { theme, resolvedTheme, setTheme } = useTheme();
@@ -54,6 +54,16 @@ Each click applies the next theme of `modes` at once, through `setTheme`. For a 
 
 <TypeTable
   type={{
+    variant: {
+      description: 'Look of the button.',
+      type: "'default' | 'accent' | 'outline' | 'ghost' | null",
+      default: "'default'",
+    },
+    size: {
+      description: 'Size of the square button.',
+      type: "'default' | 'sm' | 'lg' | null",
+      default: "'default'",
+    },
     theme: {
       description: 'The selected theme.',
       type: "'light' | 'dark' | 'system'",

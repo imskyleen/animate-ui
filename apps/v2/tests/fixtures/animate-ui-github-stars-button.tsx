@@ -6,7 +6,7 @@ import {
   GitHubStarsButtonLogo,
   GitHubStarsButtonNumber,
   GitHubStarsButtonParticles,
-} from '@animate-ui/react/primitives/buttons/github-stars';
+} from '@/registry/buttons/github-stars';
 import { StarIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 

@@ -5,7 +5,7 @@ import {
   FlipButtonBack,
   FlipButtonFront,
   type FlipDirection,
-} from "@animate-ui/react/primitives/buttons/flip"
+} from "@/registry/buttons/flip"
 
 export const controls = {
   FlipButton: {
@@ -25,11 +25,11 @@ export default function FlipButtonDemo({
   tapScale?: number
 }) {
   return (
-    <FlipButton from={from} tapScale={tapScale} className="text-sm font-medium">
-      <FlipButtonFront className="bg-primary text-primary-foreground h-10 rounded-lg px-4">
+    <FlipButton from={from} tapScale={tapScale}>
+      <FlipButtonFront>
         Front
       </FlipButtonFront>
-      <FlipButtonBack className="bg-muted text-foreground h-10 rounded-lg px-4">
+      <FlipButtonBack>
         Back Button
       </FlipButtonBack>
     </FlipButton>

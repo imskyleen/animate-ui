@@ -9,12 +9,6 @@ import {
   SunMediumIcon,
   Tick02Icon,
 } from '@hugeicons/core-free-icons';
-import {
-  ThemeTogglerButton,
-  ThemeTogglerButtonIcon,
-  type Resolved,
-  type ThemeSelection,
-} from '@animate-ui/react/primitives/buttons/theme-toggler';
 import { DropdownMenu } from '@animate-ui/react/primitives/radix-ui';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
@@ -27,6 +21,12 @@ import { useSyncExternalStore, type ComponentProps } from 'react';
 
 import { AnimateUILogo } from '@/lib/libraries';
 import { docsVersions, gitConfig } from '@/lib/shared';
+import {
+  ThemeTogglerButton,
+  ThemeTogglerButtonIcon,
+  type Resolved,
+  type ThemeSelection,
+} from '@/registry/buttons/theme-toggler';
 
 export const NAV_ITEMS = [
   { title: 'Home', url: '/' },
@@ -146,11 +146,27 @@ export function ThemeToggle({ className }: { className?: string }) {
       setTheme={setTheme}
       modes={['light', 'dark']}
       aria-label="Toggle theme"
+      variant={null}
+      size={null}
       className={cn(iconButton, className)}
     >
       <ThemeTogglerButtonIcon
-        light={<HugeiconsIcon icon={SunMediumIcon} strokeWidth={2} size={18} />}
-        dark={<HugeiconsIcon icon={Moon02Icon} strokeWidth={2} size={18} />}
+        light={
+          <HugeiconsIcon
+            icon={SunMediumIcon}
+            strokeWidth={2}
+            size={18}
+            className="size-[18px]"
+          />
+        }
+        dark={
+          <HugeiconsIcon
+            icon={Moon02Icon}
+            strokeWidth={2}
+            size={18}
+            className="size-[18px]"
+          />
+        }
       />
     </ThemeTogglerButton>
   );

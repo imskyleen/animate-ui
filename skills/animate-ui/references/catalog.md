@@ -1,6 +1,6 @@
 # What Animate UI already ships
 
-Check this list before writing motion by hand: when one of these does the job, use it instead of rebuilding it. Primitives come with `@animate-ui/react` (no extra install). Backgrounds and icons are files added to the project with the shadcn CLI, from the `@animate-ui` registry (`"registries": { "@animate-ui": "https://animate-ui.com/r/{name}.json" }` in `components.json`). Each one's page on animate-ui.com shows its props; without network, read them from the package's types: `node_modules/@animate-ui/react/dist/primitives/<path>/index.d.ts`.
+Check this list before writing motion by hand: when one of these does the job, use it instead of rebuilding it. Primitives come with `@animate-ui/react` (no extra install). Backgrounds, icons and a few styled buttons are files added to the project with the shadcn CLI, from the `@animate-ui` registry (`"registries": { "@animate-ui": "https://animate-ui.com/r/{name}.json" }` in `components.json`). Each one's page on animate-ui.com shows its props; without network, read them from the package's types: `node_modules/@animate-ui/react/dist/primitives/<path>/index.d.ts`.
 
 ## Entrances and scroll
 
@@ -35,40 +35,44 @@ Counting Number for stats and Rotating Text for words cycling on a timer fit eve
 
 ## Buttons and feedback
 
-| Need                                               | Use                                 | Import                                                                                                     |
-| -------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| A button that presses down                         | Button                              | `@animate-ui/react/primitives/buttons/button`                                                              |
-| Copy to clipboard, icon swapping for a check       | Copy Button                         | `@animate-ui/react/primitives/buttons/copy`                                                                |
-| A like or favorite that bursts                     | Icon Button                         | `@animate-ui/react/primitives/buttons/icon`                                                                |
-| A button showing loading, success, error           | `interactions/status-button.md`     |                                                                                                            |
-| A burst of particles around anything               | Particles                           | `@animate-ui/react/primitives/effects/particles`                                                           |
-| A ripple from the click point                      | Ripple Button                       | `@animate-ui/react/primitives/buttons/ripple`                                                              |
-| A fill rising on hover                             | Liquid Button                       | `@animate-ui/react/primitives/buttons/liquid`                                                              |
-| A button flipping to its back face                 | Flip Button                         | `@animate-ui/react/primitives/buttons/flip`                                                                |
-| A theme switch (button, or a wipe across the page) | Theme Toggler Button, Theme Toggler | `@animate-ui/react/primitives/buttons/theme-toggler`, `@animate-ui/react/primitives/effects/theme-toggler` |
-| A visual effect where the pointer clicks           | Click                               | `@animate-ui/react/primitives/effects/click`                                                               |
-| A light sweeping across an element                 | Shine                               | `@animate-ui/react/primitives/effects/shine`                                                               |
-| Loading and status dots                            | Motion Grid                         | `@animate-ui/react/primitives/motion-grid`                                                                 |
+| Need                                               | Use                                 | Import                                                                                                                                   |
+| -------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| A button that presses down                         | Button                              | `@animate-ui/react/primitives/buttons/button`                                                                                            |
+| Copy to clipboard, icon swapping for a check       | Copy Button                         | `@animate-ui/react/primitives/buttons/copy`                                                                                              |
+| A like or favorite that bursts                     | Icon Button                         | `@animate-ui/react/primitives/buttons/icon`                                                                                              |
+| A button showing loading, success, error           | `interactions/status-button.md`     |                                                                                                                                          |
+| A burst of particles around anything               | Particles                           | `@animate-ui/react/primitives/effects/particles`                                                                                         |
+| A ripple from the click point                      | Ripple Button                       | `@animate-ui/react/primitives/buttons/ripple`                                                                                            |
+| A fill rising on hover                             | Liquid Button                       | registry `buttons-liquid` → `@/components/animate-ui/buttons/liquid`                                                                     |
+| A button flipping to its back face                 | Flip Button                         | registry `buttons-flip` → `@/components/animate-ui/buttons/flip`                                                                         |
+| A theme switch (button, or a wipe across the page) | Theme Toggler Button, Theme Toggler | registry `buttons-theme-toggler` → `@/components/animate-ui/buttons/theme-toggler`, `@animate-ui/react/primitives/effects/theme-toggler` |
+| A visual effect where the pointer clicks           | Click                               | `@animate-ui/react/primitives/effects/click`                                                                                             |
+| A light sweeping across an element                 | Shine                               | `@animate-ui/react/primitives/effects/shine`                                                                                             |
+| Loading and status dots                            | Motion Grid                         | `@animate-ui/react/primitives/motion-grid`                                                                                               |
 
 Icon Button: render the particles only while liked, aim them at the icon (`side`, `sideOffset`) and color them with a `text-*` class. A label toggling between two words beside it is Morphing Text, with a `min-width` for the longer word.
 
 ## Pointer and layout
 
-| Need                                                                  | Use                               | Import                                                                                           |
-| --------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------ |
-| One background gliding between items (nav, lists, segmented controls) | Highlight                         | `@animate-ui/react/primitives/effects/highlight`                                                 |
-| Tabs with a gliding highlight and sliding panels                      | Tabs                              | `@animate-ui/react/primitives/tabs`                                                              |
-| Tooltips sharing one popup that moves between triggers                | Tooltip                           | `@animate-ui/react/primitives/tooltip`                                                           |
-| Overlapping avatars, the hovered one rising                           | Avatar Group                      | `@animate-ui/react/primitives/avatar-group`                                                      |
-| Items gliding between a pinned and an unpinned group                  | Pinned List                       | `@animate-ui/react/primitives/pinned-list`                                                       |
-| A card tilting toward the pointer                                     | Tilt                              | `@animate-ui/react/primitives/effects/tilt`                                                      |
-| An element pulled toward the pointer                                  | Magnetic                          | `@animate-ui/react/primitives/effects/magnetic`                                                  |
-| An image zooming where the pointer is                                 | Image Zoom                        | `@animate-ui/react/primitives/effects/image-zoom`                                                |
-| A custom cursor or a label following it                               | Cursor                            | `@animate-ui/react/primitives/cursor`                                                            |
-| A draggable element pulled back by a spring                           | Spring                            | `@animate-ui/react/primitives/spring`                                                            |
-| A code block that can type itself out                                 | Code Block                        | `@animate-ui/react/primitives/code-block`                                                        |
-| A one-time code input (drop-in for `input-otp`)                       | Input OTP                         | `@animate-ui/react/primitives/input-otp`                                                         |
-| A repository's GitHub stars, counted up                               | GitHub Stars, GitHub Stars Button | `@animate-ui/react/primitives/github-stars`, `@animate-ui/react/primitives/buttons/github-stars` |
+| Need                                                                  | Use                               | Import                                                                                                                        |
+| --------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| One background gliding between items (nav, lists, segmented controls) | Highlight                         | `@animate-ui/react/primitives/effects/highlight`                                                                              |
+| Tabs with a gliding highlight and sliding panels                      | Tabs                              | `@animate-ui/react/primitives/tabs`                                                                                           |
+| Tooltips sharing one popup that moves between triggers                | Tooltip                           | `@animate-ui/react/primitives/tooltip`                                                                                        |
+| Overlapping avatars, the hovered one rising                           | Avatar Group                      | `@animate-ui/react/primitives/avatar-group`                                                                                   |
+| Items gliding between a pinned and an unpinned group                  | Pinned List                       | `@animate-ui/react/primitives/pinned-list`                                                                                    |
+| A card tilting toward the pointer                                     | Tilt                              | `@animate-ui/react/primitives/effects/tilt`                                                                                   |
+| An element pulled toward the pointer                                  | Magnetic                          | `@animate-ui/react/primitives/effects/magnetic`                                                                               |
+| An image zooming where the pointer is                                 | Image Zoom                        | `@animate-ui/react/primitives/effects/image-zoom`                                                                             |
+| A custom cursor or a label following it                               | Cursor                            | `@animate-ui/react/primitives/cursor`                                                                                         |
+| A draggable element pulled back by a spring                           | Spring                            | `@animate-ui/react/primitives/spring`                                                                                         |
+| A code block that can type itself out                                 | Code Block                        | `@animate-ui/react/primitives/code-block`                                                                                     |
+| A one-time code input (drop-in for `input-otp`)                       | Input OTP                         | `@animate-ui/react/primitives/input-otp`                                                                                      |
+| A repository's GitHub stars, counted up                               | GitHub Stars, GitHub Stars Button | `@animate-ui/react/primitives/github-stars`, registry `buttons-github-stars` → `@/components/animate-ui/buttons/github-stars` |
+
+## Buttons (registry files)
+
+Liquid Button, Flip Button, Theme Toggler Button and GitHub Stars Button are styled files, not package exports: add them with `<dlx> shadcn@latest add @animate-ui/buttons-<name>` (`liquid`, `flip`, `theme-toggler`, `github-stars`); they land in `components/animate-ui/buttons/` and take `variant` and `size` where their page lists them.
 
 ## Backgrounds (registry files)
 

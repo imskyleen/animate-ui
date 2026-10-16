@@ -8,14 +8,15 @@ import {
   type Variant,
 } from 'motion/react';
 
-import { getStrictContext } from '../../../utils/strict-context';
+import { Slot, type WithAsChild } from '@animate-ui/react/primitives/slot';
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
-} from '../../../utils/motion';
-import { Slot, type WithAsChild } from '../../slot';
-import { SCALE_SPRING, TAP_SCALE } from '../_button';
+} from '@animate-ui/react/utils/motion';
+import { getStrictContext } from '@animate-ui/react/utils/strict-context';
+import { cn } from 'cn';
 
 const FACE_TRANSITION: Transition = {
   type: 'spring',
@@ -70,14 +71,15 @@ function FlipButton(props: FlipButtonProps) {
 
 function FlipButtonContent({
   from = 'top',
-  tapScale = TAP_SCALE,
+  tapScale = motionTokens.scale.press,
   asChild = false,
   transition,
   style,
+  className,
   ...props
 }: FlipButtonProps) {
   const reduce = useShouldReduceMotion();
-  const defaultTransition = useTempoTransition(SCALE_SPRING);
+  const defaultTransition = useTempoTransition(motionTokens.spring.press);
   const isVertical = from === 'top' || from === 'bottom';
   const rotateAxis = isVertical ? 'rotateX' : 'rotateY';
 
@@ -87,6 +89,10 @@ function FlipButtonContent({
     <FlipButtonProvider value={{ from, isVertical, rotateAxis }}>
       <Component
         data-slot="flip-button"
+        className={cn(
+          'text-sm font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-lg',
+          className,
+        )}
         variants={reduce ? undefined : { initial: { transform: 'scale(1)' } }}
         initial="initial"
         whileHover="hover"
@@ -110,6 +116,7 @@ function FlipButtonFront({
   transition,
   asChild = false,
   style,
+  className,
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
@@ -140,6 +147,10 @@ function FlipButtonFront({
   return (
     <Component
       data-slot="flip-button-front"
+      className={cn(
+        'h-10 rounded-lg bg-primary px-4 text-primary-foreground',
+        className,
+      )}
       variants={frontVariants}
       transition={transition ?? defaultTransition}
       style={{
@@ -158,6 +169,7 @@ function FlipButtonBack({
   transition,
   asChild = false,
   style,
+  className,
   ...props
 }: FlipButtonFaceProps) {
   const { from, isVertical, rotateAxis } = useFlipButton();
@@ -188,6 +200,7 @@ function FlipButtonBack({
   return (
     <Component
       data-slot="flip-button-back"
+      className={cn('h-10 rounded-lg bg-muted px-4 text-foreground', className)}
       aria-hidden
       variants={backVariants}
       transition={transition ?? defaultTransition}

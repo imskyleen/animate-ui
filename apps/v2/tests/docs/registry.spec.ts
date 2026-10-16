@@ -113,3 +113,29 @@ test('no registry component shadows a global name', () => {
   }
   expect(shadowing).toEqual([]);
 });
+
+test('the styled buttons and code block are registry files, not package exports', () => {
+  const PACKAGE = join(__dirname, '../../../../packages/react/src/primitives');
+  for (const name of ['liquid', 'flip', 'github-stars', 'theme-toggler']) {
+    const item = JSON.parse(
+      readFileSync(join(OUT, `buttons-${name}.json`), 'utf8'),
+    ) as {
+      dependencies: string[];
+      files: { target: string; content: string }[];
+    };
+    expect(item.files[0]!.target).toBe(
+      `@components/animate-ui/buttons/${name}.tsx`,
+    );
+    expect(item.dependencies).toContain('@animate-ui/react');
+    expect(item.files[0]!.content).not.toMatch(/from '\.\.?\//);
+    expect(existsSync(join(PACKAGE, 'buttons', name))).toBe(false);
+  }
+  const block = JSON.parse(
+    readFileSync(join(OUT, 'components-code-block.json'), 'utf8'),
+  ) as { dependencies: string[]; files: { target: string }[] };
+  expect(block.files[0]!.target).toBe(
+    '@components/animate-ui/components/code-block.tsx',
+  );
+  expect(block.dependencies).toContain('shiki');
+  expect(existsSync(join(PACKAGE, 'code-block'))).toBe(true);
+});

@@ -7,7 +7,7 @@ description: A button showing a repository's GitHub stars, counted up with a fil
 
 ## Installation
 
-<Installation />
+<RegistryInstallation name="buttons-github-stars" />
 
 ## Usage
 
@@ -18,7 +18,7 @@ import {
   GitHubStarsButtonLogo,
   GitHubStarsButtonNumber,
   GitHubStarsButtonParticles,
-} from '@animate-ui/react/primitives/buttons/github-stars';
+} from '@/components/animate-ui/buttons/github-stars';
 
 export function Stars() {
   return (
@@ -50,6 +50,16 @@ A button built on [GitHub Stars](/docs/primitives/animate-ui/github-stars): its 
 
 <TypeTable
   type={{
+    variant: {
+      description: 'Look of the button.',
+      type: "'default' | 'accent' | 'outline' | 'ghost' | null",
+      default: "'default'",
+    },
+    size: {
+      description: 'Height and padding of the button.',
+      type: "'default' | 'sm' | 'lg' | null",
+      default: "'default'",
+    },
     username: {
       description: 'Owner of the repository.',
       type: 'string',

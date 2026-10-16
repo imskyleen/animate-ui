@@ -6,6 +6,7 @@ import type { MigrateProject, V1Module } from './project';
 import {
   HEADLESS_PRIMITIVES,
   PRIMITIVES,
+  REGISTRY_PRIMITIVES,
   UNSUPPORTED_PRIMITIVES,
   UNSUPPORTED_UTILITIES,
   UTILITIES,
@@ -294,6 +295,15 @@ function rewriteLf(code: string, context: RewriteContext): RewriteResult {
       manual(
         node,
         `Headless UI isn't supported in v2: rebuild ${name ? `the ${name}` : 'this'} on Base UI (${PACKAGE}/primitives/base-ui/…) or React Aria (${PACKAGE}/primitives/react-aria). The v1 file keeps working meanwhile.`,
+      );
+      return undefined;
+    }
+    const item = REGISTRY_PRIMITIVES[key];
+    if (module.kind === 'primitive' && item) {
+      found.add(key);
+      manual(
+        node,
+        `${key} is a registry component in v2, not part of ${PACKAGE}: add it with \`npx shadcn@latest add @animate-ui/${item}\` and import it from \`@/components/animate-ui/${key}\`. The v1 file keeps working meanwhile.`,
       );
       return undefined;
     }

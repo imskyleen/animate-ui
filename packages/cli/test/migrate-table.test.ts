@@ -9,6 +9,7 @@ import { rewrite } from '../src/lib/migrate/rewrite';
 import {
   HEADLESS_PRIMITIVES,
   PRIMITIVES,
+  REGISTRY_PRIMITIVES,
   UNSUPPORTED_PRIMITIVES,
   UNSUPPORTED_UTILITIES,
   UTILITIES,
@@ -99,7 +100,7 @@ describe('every v1 module is handled', () => {
       expect(PRIMITIVES[id]).toBeUndefined();
       return;
     }
-    if (UNSUPPORTED_PRIMITIVES.includes(id)) {
+    if (UNSUPPORTED_PRIMITIVES.includes(id) || id in REGISTRY_PRIMITIVES) {
       expect(PRIMITIVES[id]).toBeUndefined();
       return;
     }

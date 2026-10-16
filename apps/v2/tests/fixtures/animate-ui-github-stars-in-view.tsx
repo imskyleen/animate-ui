@@ -4,7 +4,7 @@ import * as React from 'react';
 import {
   GitHubStarsButton,
   GitHubStarsButtonNumber,
-} from '@animate-ui/react/primitives/buttons/github-stars';
+} from '@/registry/buttons/github-stars';
 
 export default function GitHubStarsInViewFixture() {
   const [repo, setRepo] = React.useState('animate-ui');

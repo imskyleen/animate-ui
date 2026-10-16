@@ -1,7 +1,7 @@
 'use client';
 
 import { CopyButton } from '@animate-ui/react/primitives/buttons/copy';
-import { LiquidButton } from '@animate-ui/react/primitives/buttons/liquid';
+import { LiquidButton } from '@/registry/buttons/liquid';
 import { Click } from '@animate-ui/react/primitives/effects/click';
 import { Shine } from '@animate-ui/react/primitives/effects/shine';
 

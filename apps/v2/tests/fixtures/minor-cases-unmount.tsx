@@ -5,7 +5,7 @@ import {
   FlipButton,
   FlipButtonBack,
   FlipButtonFront,
-} from '@animate-ui/react/primitives/buttons/flip';
+} from '@/registry/buttons/flip';
 import {
   RippleButton,
   RippleButtonRipples,

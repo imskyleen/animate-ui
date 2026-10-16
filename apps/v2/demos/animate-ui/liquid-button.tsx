@@ -1,6 +1,6 @@
 "use client"
 
-import { LiquidButton } from "@animate-ui/react/primitives/buttons/liquid"
+import { LiquidButton } from "@/registry/buttons/liquid"
 
 export const controls = {
   LiquidButton: {
@@ -24,7 +24,6 @@ export default function LiquidButtonDemo({
       delay={`${delay}s`}
       fillHeight={`${fillHeight}px`}
       tapScale={tapScale}
-      className="text-primary hover:text-primary-foreground h-10 overflow-hidden rounded-lg px-4 text-sm font-medium [--liquid-button-background-color:var(--muted)] [--liquid-button-color:var(--primary)]"
     >
       Liquid Button
     </LiquidButton>

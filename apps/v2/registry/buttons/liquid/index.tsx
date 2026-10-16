@@ -3,13 +3,14 @@
 import * as React from 'react';
 import { motion, type HTMLMotionProps, type Transition } from 'motion/react';
 
+import { Slot, type WithAsChild } from '@animate-ui/react/primitives/slot';
 import {
+  motionTokens,
   ReducedMotionConfig,
   useShouldReduceMotion,
   useTempoTransition,
-} from '../../../utils/motion';
-import { Slot, type WithAsChild } from '../../slot';
-import { SCALE_SPRING, TAP_SCALE } from '../_button';
+} from '@animate-ui/react/utils/motion';
+import { cn } from 'cn';
 
 const HOVER_TRANSITION: Transition = {
   scale: { duration: 0.3, ease: 'easeOut' },
@@ -19,7 +20,7 @@ const HOVER_TRANSITION: Transition = {
 };
 
 const DEFAULT_TRANSITION: Transition = {
-  scale: SCALE_SPRING,
+  scale: motionTokens.spring.press,
   default: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
 };
 
@@ -44,10 +45,11 @@ function LiquidButtonContent({
   delay = '0.3s',
   fillHeight = '3px',
   hoverScale = 1,
-  tapScale = TAP_SCALE,
+  tapScale = motionTokens.scale.press,
   asChild = false,
   transition,
   style,
+  className,
   ...props
 }: LiquidButtonProps) {
   const reduce = useShouldReduceMotion();
@@ -69,6 +71,11 @@ function LiquidButtonContent({
         transition: hoverTransition,
       }}
       transition={transition ?? defaultTransition}
+      data-slot="liquid-button"
+      className={cn(
+        'inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-lg px-4 text-sm font-medium whitespace-nowrap text-primary outline-none [--liquid-button-background-color:var(--muted)] [--liquid-button-color:var(--primary)] hover:text-primary-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
+        className,
+      )}
       style={
         {
           '--liquid-button-fill-width': '-1%',

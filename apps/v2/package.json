@@ -11,7 +11,7 @@
     "test:interaction": "playwright test tests/interaction",
     "test": "playwright test --grep-invert @timing; status=$?; playwright test --grep @timing --workers=1 && exit $status",
     "icons": "node scripts/build-icons.mts",
-    "registry": "node scripts/build-icons.mts && node scripts/build-backgrounds.mts && node scripts/build-demos.mts && node scripts/build-catalog.mts"
+    "registry": "node scripts/build-icons.mts && node scripts/build-ui.mts && node scripts/build-demos.mts && node scripts/build-catalog.mts"
   },
   "dependencies": {
     "@animate-ui/react": "workspace:*",

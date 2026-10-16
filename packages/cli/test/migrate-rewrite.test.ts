@@ -278,6 +278,17 @@ describe('rewrite', () => {
     expect(found).toEqual(['hooks/use-auto-height']);
   });
 
+  test('a v1 button that became a registry component stays, pointing at the registry', () => {
+    const source =
+      "import { LiquidButton } from '@/components/animate-ui/primitives/buttons/liquid';\n";
+    const { code, manual, found } = run(source);
+    expect(code).toBe(source);
+    expect(manual.map((step) => step.message)).toEqual([
+      'buttons/liquid is a registry component in v2, not part of @animate-ui/react: add it with `npx shadcn@latest add @animate-ui/buttons-liquid` and import it from `@/components/animate-ui/buttons/liquid`. The v1 file keeps working meanwhile.',
+    ]);
+    expect(found).toEqual(['buttons/liquid']);
+  });
+
   test("SpringProvider's dragElastic is reported for removal", () => {
     const { manual } = run(
       [

@@ -94,7 +94,12 @@ for (const library of readdirSync(demosDir)) {
         target: toAlias(
           isDemo
             ? `components/${name}-demo.tsx`
-            : toProject(`@/${relative}`).slice(2),
+            : toProject(`@/${relative}`)
+                .slice(2)
+                .replace(
+                  /^(components\/animate-ui\/[\w-]+\/[\w-]+)\/index\.tsx$/,
+                  '$1.tsx',
+                ),
         ),
         content: toProject(source),
       });

@@ -221,29 +221,6 @@ export const PRIMITIVES: Record<string, Migration> = {
     types: { ButtonProps: 'ButtonProps' },
     unmapped: [],
   },
-  'buttons/flip': {
-    module: 'primitives/buttons/flip',
-    values: {
-      FlipButton: 'FlipButton',
-      FlipButtonBack: 'FlipButtonBack',
-      FlipButtonFront: 'FlipButtonFront',
-      useFlipButton: 'useFlipButton',
-    },
-    types: {
-      FlipButtonBackProps: 'FlipButtonBackProps',
-      FlipButtonContextType: 'FlipButtonContextType',
-      FlipButtonFrontProps: 'FlipButtonFrontProps',
-      FlipButtonProps: 'FlipButtonProps',
-      FlipDirection: 'FlipDirection',
-    },
-    unmapped: [],
-  },
-  'buttons/liquid': {
-    module: 'primitives/buttons/liquid',
-    values: { LiquidButton: 'LiquidButton' },
-    types: { LiquidButtonProps: 'LiquidButtonProps' },
-    unmapped: [],
-  },
   'buttons/ripple': {
     module: 'primitives/buttons/ripple',
     values: {
@@ -1166,6 +1143,11 @@ export const UNSUPPORTED_PRIMITIVES = [
   'base/preview-link-card',
 ];
 
+export const REGISTRY_PRIMITIVES: Record<string, string> = {
+  'buttons/flip': 'buttons-flip',
+  'buttons/liquid': 'buttons-liquid',
+};
+
 export const HEADLESS_PRIMITIVES = [
   'checkbox',
   'dialog',
@@ -1378,7 +1360,6 @@ const EXTRAS: Record<string, Partial<Migration>> = {
   },
   'buttons/button': { notes: { Button: HOVER_SCALE } },
   'buttons/ripple': { notes: { RippleButton: HOVER_SCALE } },
-  'buttons/liquid': { notes: { LiquidButton: HOVER_SCALE } },
   'base/progress': {
     props: { ProgressValue: COUNTING_NUMBER },
     notes: {

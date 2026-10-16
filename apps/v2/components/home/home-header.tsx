@@ -1,12 +1,6 @@
 'use client';
 
 import { ease } from '@animate-ui/react/utils/motion';
-import {
-  GitHubStarsButton,
-  GitHubStarsButtonIcon,
-  GitHubStarsButtonNumber,
-  GitHubStarsButtonParticles,
-} from '@animate-ui/react/primitives/buttons/github-stars';
 import { GithubIcon, StarIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { cn } from 'cn';
@@ -14,6 +8,12 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 
 import { GitHubLink, ThemeToggle } from '@/components/layout/header';
+import {
+  GitHubStarsButton,
+  GitHubStarsButtonIcon,
+  GitHubStarsButtonNumber,
+  GitHubStarsButtonParticles,
+} from '@/registry/buttons/github-stars';
 import { gitConfig } from '@/lib/shared';
 
 import { FullLogo, LOGO_GLIDE, useIntroPlaying } from './intro';
@@ -29,6 +29,8 @@ function Stars({ stars }: { stars: number }) {
     <GitHubStarsButton
       value={stars}
       asChild
+      variant={null}
+      size={null}
       className="group inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
     >
       <a
@@ -37,7 +39,12 @@ function Stars({ stars }: { stars: number }) {
         rel="noreferrer noopener"
         aria-label={`GitHub, ${stars} stars`}
       >
-        <HugeiconsIcon icon={GithubIcon} strokeWidth={2} size={18} />
+        <HugeiconsIcon
+          icon={GithubIcon}
+          strokeWidth={2}
+          size={18}
+          className="size-[18px]"
+        />
         <GitHubStarsButtonNumber className="tabular-nums" />
         <GitHubStarsButtonParticles className="text-yellow-500">
           <GitHubStarsButtonIcon

@@ -19,6 +19,7 @@ import {
 import {
   HEADLESS_PRIMITIVES,
   PRIMITIVES,
+  REGISTRY_PRIMITIVES,
   UNSUPPORTED_PRIMITIVES,
   UNSUPPORTED_UTILITIES,
   UTILITIES,
@@ -43,7 +44,11 @@ function selectionName(module: V1Module) {
 
 function knownNames() {
   const names = new Set(['icons', 'icon']);
-  for (const key of [...Object.keys(PRIMITIVES), ...UNSUPPORTED_PRIMITIVES])
+  for (const key of [
+    ...Object.keys(PRIMITIVES),
+    ...Object.keys(REGISTRY_PRIMITIVES),
+    ...UNSUPPORTED_PRIMITIVES,
+  ])
     names.add(key.split('/')[1]!);
   for (const name of HEADLESS_PRIMITIVES) names.add(name);
   for (const id of [...Object.keys(UTILITIES), ...UNSUPPORTED_UTILITIES]) {
