@@ -7,8 +7,9 @@ const ANIMATED = [
   'gravity-stars',
   'hole',
   'stars',
+  'topography',
 ] as const;
-const CANVAS = ['fireworks', 'gravity-stars', 'hole'];
+const CANVAS = ['fireworks', 'gravity-stars', 'hole', 'topography'];
 
 async function open(page: Page) {
   const errors: string[] = [];
@@ -246,6 +247,137 @@ test.describe('backgrounds', () => {
       const resting = await color();
       await cell.hover();
       await expect.poll(color).not.toBe(resting);
+    });
+  });
+
+  test.describe('topography', () => {
+    const inCircle = (
+      section: Locator,
+      center: { x: number; y: number },
+      inner: number,
+      outer: number,
+    ) =>
+      section.locator('canvas').evaluate(
+        (canvas: HTMLCanvasElement, { center, inner, outer }) => {
+          const ratio = canvas.width / canvas.clientWidth;
+          const { data } = canvas
+            .getContext('2d')!
+            .getImageData(0, 0, canvas.width, canvas.height);
+          let count = 0;
+          for (let y = 0; y < canvas.height; y++)
+            for (let x = 0; x < canvas.width; x++) {
+              const d = Math.hypot(x / ratio - center.x, y / ratio - center.y);
+              if (
+                d >= inner &&
+                d < outer &&
+                data[(y * canvas.width + x) * 4 + 3]! > 40
+              )
+                count++;
+            }
+          return count;
+        },
+        { center, inner, outer },
+      );
+
+    test('the relief rises on mount: the lines bloom out', async ({ page }) => {
+      await page.goto('/tests/fixtures/backgrounds');
+      const section = page.getByTestId('topography');
+      await section.locator('canvas').waitFor();
+      await show(section);
+      const early = await paintedPixels(section);
+      await page.waitForTimeout(2500);
+      expect(early).toBeLessThan((await paintedPixels(section)) * 0.75);
+    });
+
+    test('a peak rises under the cursor, its rings tight around it, and sinks when it leaves', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(2000);
+      const box = (await section.boundingBox())!;
+      const spot = { x: 320, y: 200 };
+      const before = await inCircle(section, spot, 0, 70);
+      await page.mouse.move(box.x + spot.x - 60, box.y + spot.y);
+      await page.mouse.move(box.x + spot.x, box.y + spot.y, { steps: 5 });
+      await expect
+        .poll(() => inCircle(section, spot, 0, 70), { timeout: 3000 })
+        .toBeGreaterThan(before * 1.5 + 50);
+      const raised = await inCircle(section, spot, 0, 70);
+      await page.mouse.move(box.x + box.width + 40, box.y - 40);
+      await expect
+        .poll(() => inCircle(section, spot, 0, 70), { timeout: 4000 })
+        .toBeLessThan(raised * 0.7);
+    });
+
+    test('a click sends a wave out from the point, which fades away', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(2000);
+      const box = (await section.boundingBox())!;
+      const spot = { x: 320, y: 200 };
+      await page.mouse.move(box.x + spot.x, box.y + spot.y);
+      await page.waitForTimeout(1500);
+      const quiet = await inCircle(section, spot, 90, 190);
+      await page.mouse.down();
+      await page.mouse.up();
+      await page.waitForTimeout(250);
+      const wave = await inCircle(section, spot, 90, 190);
+      expect(wave).toBeGreaterThan(quiet * 1.3);
+      await page.waitForTimeout(3000);
+      expect(await inCircle(section, spot, 90, 190)).toBeLessThan(wave);
+    });
+
+    test('lineColor paints the lines; the default takes the text color', async ({
+      page,
+    }) => {
+      await open(page);
+      const colors = async (id: string) => {
+        const section = page.getByTestId(id);
+        await show(section);
+        await page.waitForTimeout(2000);
+        return section
+          .locator('canvas')
+          .evaluate((canvas: HTMLCanvasElement) => {
+            const { data } = canvas
+              .getContext('2d')!
+              .getImageData(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < data.length; i += 4)
+              if (data[i + 3]! > 200)
+                return [data[i], data[i + 1], data[i + 2]];
+            return null;
+          });
+      };
+      expect(await colors('topography-red')).toEqual([255, 0, 0]);
+      const text = await page.getByTestId('topography').evaluate((el) => {
+        const probe = document.createElement('canvas').getContext('2d')!;
+        probe.fillStyle = getComputedStyle(el).color;
+        probe.fillRect(0, 0, 1, 1);
+        return [...probe.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+      });
+      const painted = (await colors('topography'))!;
+      painted.forEach((channel, i) =>
+        expect(Math.abs(channel! - text[i]!)).toBeLessThanOrEqual(2),
+      );
+    });
+
+    test('reduced motion: no peak and no wave', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(500);
+      const still = await frame(section);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + 300, box.y + 200, { steps: 5 });
+      await page.mouse.down();
+      await page.mouse.up();
+      await page.waitForTimeout(800);
+      expect(await frame(section)).toBe(still);
     });
   });
 });

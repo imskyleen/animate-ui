@@ -7,6 +7,7 @@ import { GravityStarsBackground } from '@/registry/backgrounds/gravity-stars';
 import { HexagonBackground } from '@/registry/backgrounds/hexagon';
 import { HoleBackground } from '@/registry/backgrounds/hole';
 import { StarsBackground } from '@/registry/backgrounds/stars';
+import { TopographyBackground } from '@/registry/backgrounds/topography';
 
 const BACKGROUNDS = {
   bubble: <BubbleBackground interactive className="absolute inset-0" />,
@@ -18,6 +19,10 @@ const BACKGROUNDS = {
   hexagon: <HexagonBackground className="absolute inset-0" />,
   hole: <HoleBackground className="absolute inset-0" />,
   stars: <StarsBackground className="absolute inset-0" />,
+  topography: <TopographyBackground className="absolute inset-0" />,
+  'topography-red': (
+    <TopographyBackground className="absolute inset-0" lineColor="#ff0000" />
+  ),
 };
 
 export default function BackgroundsFixture() {
