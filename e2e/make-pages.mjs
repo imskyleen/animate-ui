@@ -18,7 +18,6 @@ for (const name of NAMES) {
   // Keep the demo's imports (minus the primitive's), drop the component code.
   const imports = (head.match(/^import[\s\S]*?from\s+["'][^"']+["']\n?/gm) || [])
 ;
-  // Names the kept imports already bind (local names).
   const bound = new Set(
     imports.flatMap((line) =>
       (line.match(/\{([^}]*)\}/)?.[1] ?? '').split(',').map((spec) => spec.trim().replace(/^type\s+/, '').split(/\s+as\s+/).pop()).filter(Boolean),

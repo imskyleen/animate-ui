@@ -9,8 +9,6 @@ const { chromium } = require('@playwright/test');
 
 const PORTS = { radix: 4201, base: 4202, aria: 4203 };
 
-// Opacity of an element times its ancestors': overlays often animate a
-// wrapper around the element that carries the role.
 function cumulativeOpacity(selector) {
   let el = document.querySelector(selector);
   let opacity = 1;

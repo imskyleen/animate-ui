@@ -117,7 +117,6 @@ function build({ dir, prefix, target }: (typeof LIBRARIES)[number]) {
       ),
       '];',
       '',
-      '/** Every category an icon is in, by title. */',
       `export const CATEGORIES: { id: string; title: string }[] = ${JSON.stringify(
         [...new Set(list.flatMap((icon) => icon.categories))]
           .map((id) => {
@@ -128,7 +127,6 @@ function build({ dir, prefix, target }: (typeof LIBRARIES)[number]) {
           .sort((a, b) => a.title.localeCompare(b.title)),
       )};`,
       '',
-      '/** The icon component a loaded module exports (its name, whatever the casing). */',
       'export function iconComponent(mod: Record<string, unknown>, name: string) {',
       "  const target = name.replace(/-/g, '').toLowerCase();",
       '  const key = Object.keys(mod).find((k) => k.toLowerCase() === target);',

@@ -410,10 +410,8 @@ export const ICONS: IconEntry[] = [
   { name: "zoom-out", title: "Zoom Out", keywords: ["magnifying glass","minus","zoom","search","shrink"], categories: ["accessibility","layout","text"], added: "2026-10-13", load: () => import('./zoom-out') },
 ];
 
-/** Every category an icon is in, by title. */
 export const CATEGORIES: { id: string; title: string }[] = [{"id":"accessibility","title":"Accessibility"},{"id":"account","title":"Accounts & access"},{"id":"arrows","title":"Arrows"},{"id":"buildings","title":"Buildings"},{"id":"charts","title":"Charts"},{"id":"development","title":"Coding & development"},{"id":"communication","title":"Communication"},{"id":"connectivity","title":"Connectivity"},{"id":"cursors","title":"Cursors"},{"id":"design","title":"Design"},{"id":"devices","title":"Devices"},{"id":"emoji","title":"Emoji"},{"id":"files","title":"File icons"},{"id":"finance","title":"Finance"},{"id":"food-beverage","title":"Food & beverage"},{"id":"gaming","title":"Gaming"},{"id":"home","title":"Home"},{"id":"layout","title":"Layout"},{"id":"mail","title":"Mail"},{"id":"math","title":"Mathematics"},{"id":"medical","title":"Medical"},{"id":"multimedia","title":"Multimedia"},{"id":"navigation","title":"Navigation & Places"},{"id":"notifications","title":"Notifications"},{"id":"photography","title":"Photography"},{"id":"science","title":"Science"},{"id":"seasons","title":"Seasons"},{"id":"security","title":"Security"},{"id":"shapes","title":"Shapes"},{"id":"social","title":"Social"},{"id":"sports","title":"Sports"},{"id":"sustainability","title":"Sustainability"},{"id":"text","title":"Text formatting"},{"id":"time","title":"Time & calendar"},{"id":"tools","title":"Tools"},{"id":"transportation","title":"Transportation"},{"id":"travel","title":"Travel"},{"id":"weather","title":"Weather"}];
 
-/** The icon component a loaded module exports (its name, whatever the casing). */
 export function iconComponent(mod: Record<string, unknown>, name: string) {
   const target = name.replace(/-/g, '').toLowerCase();
   const key = Object.keys(mod).find((k) => k.toLowerCase() === target);

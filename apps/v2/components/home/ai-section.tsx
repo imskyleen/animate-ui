@@ -515,7 +515,6 @@ function ScenarioPane({
         </AnimatePresence>
       </div>
       <div className="relative flex h-[25rem] flex-col rounded-lg bg-background md:h-auto bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:16px_16px]">
-        {/* Over the pane, not above it: the preview below is centred in the whole pane. */}
         <div className="absolute top-4 left-5 flex items-center gap-2">
           <span className="rounded-md bg-accent px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
             localhost:3000

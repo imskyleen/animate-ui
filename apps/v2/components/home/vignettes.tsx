@@ -178,7 +178,6 @@ function AccordionVignette() {
     >
       {QUESTIONS.map(([question, answer], index) => (
         <AccordionItem key={question} value={String(index)}>
-          {/* Open, its answer sits closer (the card is short): the gap shrinks with the trigger's own transition. */}
           <AccordionTrigger className="py-2 text-sm aria-expanded:pb-1">
             {question}
           </AccordionTrigger>

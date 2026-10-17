@@ -1,5 +1,3 @@
-// Shared by the migrate tests: the v1 fixture project and a TypeScript check
-// of code against the @animate-ui/react sources.
 import {
   cpSync,
   mkdtempSync,
@@ -29,7 +27,6 @@ export function copyFixture(name = 'v1-project') {
   return root;
 }
 
-/** Every file of a directory with its content, by relative path. */
 export function snapshot(root: string) {
   const files: Record<string, string> = {};
   for (const entry of readdirSync(root, {
