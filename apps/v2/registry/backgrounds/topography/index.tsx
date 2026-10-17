@@ -3,8 +3,6 @@
 import * as React from 'react';
 import {
   animate,
-  cancelFrame,
-  frame,
   motionValue,
   useInView,
   useMotionValue,
@@ -20,8 +18,7 @@ import {
 import { usePageVisible } from '@animate-ui/react/utils/use-page-visible';
 import { cn } from 'cn';
 
-const CELL = 8;
-const RELAX = 2;
+const CELL = 10;
 const FEATURE = 280;
 const RANGE = 0.95;
 const HILL_RADIUS = 90;
@@ -89,192 +86,72 @@ function noise(x: number, y: number, z: number) {
   );
 }
 
-type Contours = {
-  segments: Float64Array;
-  count: number;
-  used: Uint8Array;
-  first: Int32Array;
-  second: Int32Array;
-  points: Float64Array;
-  scratch: Float64Array;
-};
-
-function createContours(edges: number): Contours {
-  return {
-    segments: new Float64Array(0),
-    count: 0,
-    used: new Uint8Array(0),
-    first: new Int32Array(edges).fill(-1),
-    second: new Int32Array(edges).fill(-1),
-    points: new Float64Array(0),
-    scratch: new Float64Array(0),
-  };
-}
-
-function addSegment(
-  c: Contours,
-  edgeA: number,
-  xA: number,
-  yA: number,
-  edgeB: number,
-  xB: number,
-  yB: number,
-) {
-  if ((c.count + 1) * 6 > c.segments.length) {
-    const capacity = Math.max(256, c.count * 2);
-    const segments = new Float64Array(capacity * 6);
-    segments.set(c.segments);
-    c.segments = segments;
-    c.used = new Uint8Array(capacity);
-    c.points = new Float64Array(capacity * 4 + 16);
-    c.scratch = new Float64Array(capacity * 4 + 16);
-  }
-  const o = c.count * 6;
-  const s = c.segments;
-  s[o] = edgeA;
-  s[o + 1] = xA;
-  s[o + 2] = yA;
-  s[o + 3] = edgeB;
-  s[o + 4] = xB;
-  s[o + 5] = yB;
-  c.count++;
-}
-
-function link(c: Contours, edge: number, segment: number) {
-  if (c.first[edge]! < 0) c.first[edge] = segment;
-  else c.second[edge] = segment;
-}
-
-function neighbour(c: Contours, edge: number, segment: number) {
-  const a = c.first[edge]!;
-  const next = a === segment ? c.second[edge]! : a;
-  return next >= 0 && !c.used[next] ? next : -1;
-}
-
-function traceLevel(path: Path2D, c: Contours) {
-  const s = c.segments;
-  const pts = c.points;
-  for (let i = 0; i < c.count; i++) {
-    c.used[i] = 0;
-    link(c, s[i * 6]!, i);
-    link(c, s[i * 6 + 3]!, i);
-  }
-  const middle = (pts.length >> 2) << 1;
-  for (let start = 0; start < c.count; start++) {
-    if (c.used[start]) continue;
-    c.used[start] = 1;
-    const o = start * 6;
-    let head = middle;
-    let tail = middle;
-    pts[tail++] = s[o + 1]!;
-    pts[tail++] = s[o + 2]!;
-    pts[tail++] = s[o + 4]!;
-    pts[tail++] = s[o + 5]!;
-    let current = start;
-    let edge = s[o + 3]!;
+function trace(path: Path2D, segments: number[]) {
+  const count = segments.length / 6;
+  const ends = new Map<number, number[]>();
+  for (let s = 0; s < count; s++)
+    for (const side of [0, 3]) {
+      const edge = segments[s * 6 + side]!;
+      const list = ends.get(edge);
+      if (list) list.push(s);
+      else ends.set(edge, [s]);
+    }
+  const used = new Uint8Array(count);
+  const walk = (s: number, edge: number, into: number[]) => {
     for (;;) {
-      const next = neighbour(c, edge, current);
-      if (next < 0) break;
-      c.used[next] = 1;
-      const n = next * 6;
-      const far = s[n] === edge ? 3 : 0;
-      pts[tail++] = s[n + far + 1]!;
-      pts[tail++] = s[n + far + 2]!;
-      edge = s[n + far]!;
-      current = next;
+      const next = ends.get(edge)?.find((n) => n !== s && !used[n]);
+      if (next === undefined) return edge;
+      used[next] = 1;
+      const o = next * 6;
+      const far = segments[o] === edge ? 3 : 0;
+      into.push(segments[o + far + 1]!, segments[o + far + 2]!);
+      s = next;
+      edge = segments[o + far]!;
     }
-    const closed = edge === s[o] && tail - head > 6;
-    if (closed) tail -= 2;
-    else {
-      current = start;
-      edge = s[o]!;
-      for (;;) {
-        const next = neighbour(c, edge, current);
-        if (next < 0) break;
-        c.used[next] = 1;
-        const n = next * 6;
-        const far = s[n] === edge ? 3 : 0;
-        pts[--head] = s[n + far + 2]!;
-        pts[--head] = s[n + far + 1]!;
-        edge = s[n + far]!;
-        current = next;
-      }
-    }
-    smooth(path, pts, head, tail, closed, c.scratch);
-  }
-  for (let i = 0; i < c.count; i++) {
-    const from = s[i * 6]!;
-    const to = s[i * 6 + 3]!;
-    c.first[from] = c.second[from] = -1;
-    c.first[to] = c.second[to] = -1;
-  }
-  c.count = 0;
-}
-
-function relax(
-  pts: Float64Array,
-  start: number,
-  n: number,
-  closed: boolean,
-  scratch: Float64Array,
-) {
-  for (let pass = 0; pass < RELAX; pass++) {
-    scratch.set(pts.subarray(start, start + n * 2));
-    for (let i = closed ? 0 : 1; i < (closed ? n : n - 1); i++) {
-      const a = ((i - 1 + n) % n) * 2;
-      const b = ((i + 1) % n) * 2;
-      pts[start + i * 2] =
-        (scratch[a]! + 2 * scratch[i * 2]! + scratch[b]!) / 4;
-      pts[start + i * 2 + 1] =
-        (scratch[a + 1]! + 2 * scratch[i * 2 + 1]! + scratch[b + 1]!) / 4;
-    }
+  };
+  for (let s = 0; s < count; s++) {
+    if (used[s]) continue;
+    used[s] = 1;
+    const o = s * 6;
+    const forward = [segments[o + 4]!, segments[o + 5]!];
+    const end = walk(s, segments[o + 3]!, forward);
+    const closed = end === segments[o];
+    const backward: number[] = [];
+    if (!closed) walk(s, segments[o]!, backward);
+    const points: number[] = [];
+    for (let i = backward.length - 2; i >= 0; i -= 2)
+      points.push(backward[i]!, backward[i + 1]!);
+    points.push(segments[o + 1]!, segments[o + 2]!, ...forward);
+    if (closed) points.length -= 2;
+    smooth(path, points, closed);
   }
 }
 
-function at(pts: Float64Array, start: number, n: number, i: number) {
-  return start + ((i + n) % n) * 2;
-}
-
-function smooth(
-  path: Path2D,
-  pts: Float64Array,
-  start: number,
-  end: number,
-  closed: boolean,
-  scratch: Float64Array,
-) {
-  const n = (end - start) / 2;
+function smooth(path: Path2D, points: number[], closed: boolean) {
+  const n = points.length / 2;
   if (n < 2) return;
-  if (n > 3) relax(pts, start, n, closed, scratch);
+  const x = (i: number) => points[((i + n) % n) * 2]!;
+  const y = (i: number) => points[((i + n) % n) * 2 + 1]!;
   if (closed && n > 2) {
-    const last = at(pts, start, n, -1);
-    path.moveTo(
-      (pts[last]! + pts[start]!) / 2,
-      (pts[last + 1]! + pts[start + 1]!) / 2,
-    );
-    for (let i = 0; i < n; i++) {
-      const p = at(pts, start, n, i);
-      const q = at(pts, start, n, i + 1);
+    path.moveTo((x(-1) + x(0)) / 2, (y(-1) + y(0)) / 2);
+    for (let i = 0; i < n; i++)
       path.quadraticCurveTo(
-        pts[p]!,
-        pts[p + 1]!,
-        (pts[p]! + pts[q]!) / 2,
-        (pts[p + 1]! + pts[q + 1]!) / 2,
+        x(i),
+        y(i),
+        (x(i) + x(i + 1)) / 2,
+        (y(i) + y(i + 1)) / 2,
       );
-    }
     return;
   }
-  path.moveTo(pts[start]!, pts[start + 1]!);
-  for (let i = 1; i < n - 1; i++) {
-    const p = start + i * 2;
+  path.moveTo(x(0), y(0));
+  for (let i = 1; i < n - 1; i++)
     path.quadraticCurveTo(
-      pts[p]!,
-      pts[p + 1]!,
-      (pts[p]! + pts[p + 2]!) / 2,
-      (pts[p + 1]! + pts[p + 3]!) / 2,
+      x(i),
+      y(i),
+      (x(i) + x(i + 1)) / 2,
+      (y(i) + y(i + 1)) / 2,
     );
-  }
-  path.lineTo(pts[end - 2]!, pts[end - 1]!);
+  path.lineTo(x(n - 1), y(n - 1));
 }
 
 type Ripple = { x: number; y: number; progress: MotionValue<number> };
@@ -322,9 +199,7 @@ function TopographyBackgroundContent({
   const hill = useSpring(raised, { stiffness: 80, damping: 18 });
   const rise = useMotionValue(reduce ? 1 : 0);
   const ripplesRef = React.useRef<Ripple[]>([]);
-  const drawRef = React.useRef<(time: number, looping?: boolean) => void>(
-    () => {},
-  );
+  const drawRef = React.useRef<(time: number) => void>(() => {});
   const timeRef = React.useRef(0);
 
   const options = { lineColor, levels, speed, scale, peak };
@@ -358,11 +233,6 @@ function TopographyBackgroundContent({
     let cols = 0;
     let rows = 0;
     let field = new Float32Array(0);
-    let levelLow = new Int16Array(0);
-    let levelHigh = new Int16Array(0);
-    let contours = createContours(0);
-    let frames = 0;
-    let textColor = '#737373';
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
@@ -376,9 +246,6 @@ function TopographyBackgroundContent({
       cols = Math.ceil(width / CELL) + 1;
       rows = Math.ceil(height / CELL) + 1;
       field = new Float32Array((cols + 1) * (rows + 1));
-      levelLow = new Int16Array(rows * cols);
-      levelHigh = new Int16Array(rows * cols);
-      contours = createContours(2 * (rows + 1) * (cols + 1) + 4);
       if (hill.get() === 0) {
         pointerX.jump(width / 2);
         pointerY.jump(height / 2);
@@ -390,8 +257,7 @@ function TopographyBackgroundContent({
     const sample = (time: number) => {
       const { speed, scale, peak } = optionsRef.current;
       const size = FEATURE * scale;
-      const driftX = time * 0.009 * speed;
-      const driftY = time * 0.005 * speed;
+      const z = time * 0.00005 * speed;
       const lift = hill.get() * peak * 1.5;
       const hx = hillX.get();
       const hy = hillY.get();
@@ -403,10 +269,10 @@ function TopographyBackgroundContent({
         const y = row * CELL;
         for (let col = 0; col <= cols; col++) {
           const x = col * CELL;
-          const nx = (x + driftX) / size;
-          const ny = (y + driftY) / size;
+          const nx = x / size;
+          const ny = y / size;
           let value =
-            noise(nx, ny, 0.37) * 1.1 + noise(nx * 2.1, ny * 2.1, 0.63) * 0.45;
+            noise(nx, ny, z) * 1.1 + noise(nx * 2.1, ny * 2.1, z * 1.7) * 0.45;
           const dx = x - hx;
           const dy = y - hy;
           if (lift > 0)
@@ -425,7 +291,7 @@ function TopographyBackgroundContent({
       }
     };
 
-    const draw = (time: number, looping = false) => {
+    const draw = (time: number) => {
       if (width === 0 || height === 0) return;
       const { lineColor, levels } = optionsRef.current;
       sample(time);
@@ -434,8 +300,7 @@ function TopographyBackgroundContent({
       const minor = new Path2D();
       const major = new Path2D();
       const stride = cols + 1;
-      let lowest = Infinity;
-      let highest = -Infinity;
+      const byLevel = new Map<number, number[]>();
 
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -444,91 +309,84 @@ function TopographyBackgroundContent({
           const b = field[i + 1]!;
           const c = field[i + stride + 1]!;
           const d = field[i + stride]!;
-          const first = Math.ceil((Math.min(a, b, c, d) + RANGE) / step);
-          const last = Math.floor((Math.max(a, b, c, d) + RANGE) / step);
-          levelLow[row * cols + col] = first;
-          levelHigh[row * cols + col] = last;
-          if (first < lowest) lowest = first;
-          if (last > highest) highest = last;
-        }
-      }
-
-      for (let level = lowest; level <= highest; level++) {
-        const v = level * step - RANGE;
-        for (let row = 0; row < rows; row++) {
-          for (let col = 0; col < cols; col++) {
-            const cell = row * cols + col;
-            if (level < levelLow[cell]! || level > levelHigh[cell]!) continue;
-            const i = row * stride + col;
-            const a = field[i]!;
-            const b = field[i + 1]!;
-            const c = field[i + stride + 1]!;
-            const d = field[i + stride]!;
+          const low = Math.min(a, b, c, d);
+          const high = Math.max(a, b, c, d);
+          const first = Math.ceil((low + RANGE) / step);
+          const last = Math.floor((high + RANGE) / step);
+          const x = col * CELL;
+          const y = row * CELL;
+          for (let level = first; level <= last; level++) {
+            const v = level * step - RANGE;
             const code =
               (a > v ? 8 : 0) |
               (b > v ? 4 : 0) |
               (c > v ? 2 : 0) |
               (d > v ? 1 : 0);
             if (code === 0 || code === 15) continue;
-            const x = col * CELL;
-            const y = row * CELL;
             const top = x + ((v - a) / (b - a)) * CELL;
             const right = y + ((v - b) / (c - b)) * CELL;
             const bottom = x + ((v - d) / (c - d)) * CELL;
             const left = y + ((v - a) / (d - a)) * CELL;
-            const T = i * 2;
-            const B = T + stride * 2;
-            const L = T + 1;
-            const R = T + 3;
-            const k = contours;
+            let list = byLevel.get(level);
+            if (!list) byLevel.set(level, (list = []));
+            const edge = (row * stride + col) * 2;
+            const T = [edge, top, y] as const;
+            const B = [edge + stride * 2, bottom, y + CELL] as const;
+            const L = [edge + 1, x, left] as const;
+            const R = [edge + 3, x + CELL, right] as const;
+            const segment = (
+              from: readonly [number, number, number],
+              to: readonly [number, number, number],
+            ) => list.push(...from, ...to);
             switch (code) {
               case 1:
               case 14:
-                addSegment(k, L, x, left, B, bottom, y + CELL);
+                segment(L, B);
                 break;
               case 2:
               case 13:
-                addSegment(k, B, bottom, y + CELL, R, x + CELL, right);
+                segment(B, R);
                 break;
               case 3:
               case 12:
-                addSegment(k, L, x, left, R, x + CELL, right);
+                segment(L, R);
                 break;
               case 4:
               case 11:
-                addSegment(k, T, top, y, R, x + CELL, right);
+                segment(T, R);
                 break;
               case 6:
               case 9:
-                addSegment(k, T, top, y, B, bottom, y + CELL);
+                segment(T, B);
                 break;
               case 7:
               case 8:
-                addSegment(k, L, x, left, T, top, y);
+                segment(L, T);
                 break;
               case 5:
               case 10: {
                 const center = (a + b + c + d) / 4 > v;
                 if ((code === 5) === center) {
-                  addSegment(k, L, x, left, T, top, y);
-                  addSegment(k, B, bottom, y + CELL, R, x + CELL, right);
+                  segment(L, T);
+                  segment(B, R);
                 } else {
-                  addSegment(k, L, x, left, B, bottom, y + CELL);
-                  addSegment(k, T, top, y, R, x + CELL, right);
+                  segment(L, B);
+                  segment(T, R);
                 }
                 break;
               }
             }
           }
         }
-        traceLevel(level % 5 === 0 ? major : minor, contours);
       }
+
+      for (const [level, list] of byLevel)
+        trace(level % 5 === 0 ? major : minor, list);
 
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, width, height);
-      if (!looping || frames++ % 30 === 0)
-        textColor = getComputedStyle(container).color || '#737373';
-      context.strokeStyle = lineColor ?? textColor;
+      context.strokeStyle =
+        lineColor ?? (getComputedStyle(container).color || '#737373');
       context.lineCap = 'round';
       context.globalAlpha = 0.4;
       context.lineWidth = 1;
@@ -559,12 +417,16 @@ function TopographyBackgroundContent({
 
   React.useEffect(() => {
     if (!playing) return;
-    const tick = ({ delta }: { delta: number }) => {
-      timeRef.current += Math.min(delta, 64);
-      drawRef.current(timeRef.current, true);
+    let frameId = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      timeRef.current += Math.min(now - last, 64);
+      last = now;
+      drawRef.current(timeRef.current);
+      frameId = requestAnimationFrame(tick);
     };
-    frame.render(tick, true);
-    return () => cancelFrame(tick);
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
   }, [playing]);
 
   const point = (event: React.PointerEvent<HTMLDivElement>) => {
