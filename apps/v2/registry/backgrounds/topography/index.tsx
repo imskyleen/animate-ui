@@ -3,6 +3,8 @@
 import * as React from 'react';
 import {
   animate,
+  cancelFrame,
+  frame,
   motionValue,
   useInView,
   useMotionValue,
@@ -557,16 +559,12 @@ function TopographyBackgroundContent({
 
   React.useEffect(() => {
     if (!playing) return;
-    let frameId = 0;
-    let last = performance.now();
-    const tick = (now: number) => {
-      timeRef.current += Math.min(now - last, 64);
-      last = now;
+    const tick = ({ delta }: { delta: number }) => {
+      timeRef.current += Math.min(delta, 64);
       drawRef.current(timeRef.current, true);
-      frameId = requestAnimationFrame(tick);
     };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
+    frame.render(tick, true);
+    return () => cancelFrame(tick);
   }, [playing]);
 
   const point = (event: React.PointerEvent<HTMLDivElement>) => {
