@@ -945,3 +945,26 @@ test('a looping icon waits off screen between laps, and loops again once back', 
   await section.evaluate((el) => (el.style.transform = ''));
   expect(new Set(await angles(2500)).size).toBeGreaterThan(5);
 });
+
+test('a looping icon whose element is out of reach keeps looping instead of waiting forever', async ({
+  page,
+}) => {
+  await open(page);
+  const svg = page.getByTestId('loop-no-ref').locator('svg');
+  await page.waitForTimeout(3000);
+  const angles = await svg.evaluate(
+    (el) =>
+      new Promise<number[]>((resolve) => {
+        const samples: number[] = [];
+        const start = performance.now();
+        const tick = () => {
+          const { a, b } = new DOMMatrix(getComputedStyle(el).transform);
+          samples.push(Math.round((Math.atan2(b, a) * 180) / Math.PI));
+          if (performance.now() - start < 2500) requestAnimationFrame(tick);
+          else resolve(samples);
+        };
+        requestAnimationFrame(tick);
+      }),
+  );
+  expect(new Set(angles).size).toBeGreaterThan(5);
+});

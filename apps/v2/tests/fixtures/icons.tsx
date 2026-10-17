@@ -8,6 +8,10 @@ import { CirclePlus } from '@/registry/icons/circle-plus';
 import { Fingerprint } from '@/registry/icons/fingerprint';
 import { RefreshCw } from '@/registry/icons/refresh-cw';
 
+function NoRef({ children }: { children?: React.ReactNode }) {
+  return <span className="inline-flex">{children}</span>;
+}
+
 export default function IconsFixture() {
   const [play, setPlay] = React.useState(false);
   const [delayed, setDelayed] = React.useState(false);
@@ -19,6 +23,13 @@ export default function IconsFixture() {
       <section data-testid="loop-turn">
         <AnimateIcon animate loop loopDelay={300} animation="rotate">
           <RefreshCw size={48} />
+        </AnimateIcon>
+      </section>
+      <section data-testid="loop-no-ref">
+        <AnimateIcon asChild animate loop loopDelay={200} animation="rotate">
+          <NoRef>
+            <RefreshCw size={48} />
+          </NoRef>
         </AnimateIcon>
       </section>
       <section data-testid="hover">

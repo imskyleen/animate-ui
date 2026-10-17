@@ -394,7 +394,12 @@ function AnimateIconRoot({
           await startAnim('initial');
           return;
         }
-        if (!onScreenRef.current) {
+        const target = inViewRef.current;
+        if (
+          target &&
+          target.getClientRects().length > 0 &&
+          !onScreenRef.current
+        ) {
           await new Promise<void>((resolve) => {
             resumeRef.current = resolve;
           });
