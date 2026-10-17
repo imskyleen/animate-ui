@@ -137,15 +137,18 @@ function unitOf(thumb: Thumb) {
 }
 
 function write(thumb: Thumb, m: ThumbMotion) {
-  let shift = 0;
-  if (m.stretched) {
-    const width = m.width.get();
-    const painted = snapped(m, width);
-    shift = m.lean * (painted - width);
-    thumb.style.width = `${painted}px`;
-  }
-  m.shift = shift;
-  thumb.style.transform = `translateX(${m.x.get() + shift}px)`;
+  withoutTransitions(thumb, () => {
+    let shift = 0;
+    if (m.stretched) {
+      const width = m.width.get();
+      const painted = snapped(m, width);
+      shift = m.lean * (painted - width);
+      thumb.style.width = `${painted}px`;
+    }
+    m.shift = shift;
+    thumb.style.transform = `translateX(${m.x.get() + shift}px)`;
+    return getComputedStyle(thumb).transform;
+  });
 }
 
 function settleWhereSeen(m: ThumbMotion) {

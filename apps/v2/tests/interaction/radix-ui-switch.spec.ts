@@ -62,5 +62,7 @@ test.describe('radix-ui switch API', () => {
     const end = samples[samples.length - 1]!.x;
     expect(end).toBeGreaterThan(start + 8);
     expectContinuous(samples);
+    const first = samples.find((s) => s.state === 'true')!;
+    expect(first.x - start).toBeLessThan((end - start) / 3);
   });
 });
