@@ -22,8 +22,8 @@ catalogs:
       specifier: ^10.11.0
       version: 10.11.0
     motion:
-      specifier: ^14.3.0
-      version: 14.3.0
+      specifier: ~14.1.1
+      version: 14.1.1
     prettier:
       specifier: ^3.9.9
       version: 3.9.9
@@ -100,7 +100,7 @@ importers:
         version: 1.50.0(@types/react@19.3.0)(react@19.3.0)
       motion:
         specifier: 'catalog:'
-        version: 14.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 14.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       next:
         specifier: 16.3.8
         version: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.63.0)(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -261,7 +261,7 @@ importers:
         version: 1.5.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       motion:
         specifier: 'catalog:'
-        version: 14.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 14.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       radix-ui:
         specifier: 'catalog:'
         version: 1.6.7(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -3435,8 +3435,8 @@ packages:
       react-dom:
         optional: true
 
-  framer-motion@14.3.0:
-    resolution: {integrity: sha512-d8WCrU0ZQn7ukKMykCsDyIOwb/taZeDqqrDBK0du5GO0AO/ynz8fdR/LIIz9Pyy3n3tGwrneR+n0egyrrLa3fw==}
+  framer-motion@14.1.1:
+    resolution: {integrity: sha512-kPp3cepIYM8KS7Ro7+izapfcO11/qk3MCBswbEEllNRPNbq2ttekDhTJTQMuWLD8PbLi9idh5SvJbUtdxJiDzw==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -4327,8 +4327,8 @@ packages:
   motion-dom@13.5.1:
     resolution: {integrity: sha512-/7CVCD20Mz1KobktorpdgvowV0V41J7UxqE+qWS3GkSJqrRr5ft+2RloOYtEKv+wvBp3JaSFBclhxt4ja8ovHg==}
 
-  motion-dom@14.3.0:
-    resolution: {integrity: sha512-rcKO4aEJzAqDEsrH6qFzhLZxs7bNqZpiUEuEATz9LaRwt6dG7hZEbcFUSHNR8NECaKYM0Iuw6Iv6NpWEGXDI+w==}
+  motion-dom@14.1.1:
+    resolution: {integrity: sha512-xfVexSRsNlB8kkZRK2xyMJt8xnh38Vt6iX9O3h1UScBlfhuu6cSB0sPoEwALEaRVAkcizvHYq/a1uqbrR9AuhQ==}
 
   motion-utils@13.5.0:
     resolution: {integrity: sha512-Hqe/sqjIKliPZg8sVjWAkdySDPJNIeKH+euVkDOG8ri3DUUU7ZjndmHsGqEPz2iHpiyVaV5I22iguCMHU2he+Q==}
@@ -4347,8 +4347,8 @@ packages:
       react-dom:
         optional: true
 
-  motion@14.3.0:
-    resolution: {integrity: sha512-yh/nHYjikl68+FTxAMywFYzzj21/oGY7RGCfkqN5zpuT1rk3rp0lKfVU8EUq0A64qQeGnxuKUJWP85MipqdLBw==}
+  motion@14.1.1:
+    resolution: {integrity: sha512-pKmYOtWLZJ1Nb0K7Fnw6i4AW4yNjvxXIFLxbkpx5gRZZrtQ7bXvcIk5n2dB83/waM6Z8tI1AHXjzyh3YQ+7aSA==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -8602,9 +8602,9 @@ snapshots:
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
 
-  framer-motion@14.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  framer-motion@14.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      motion-dom: 14.3.0
+      motion-dom: 14.1.1
       motion-utils: 14.1.1
       tslib: 2.8.1
     optionalDependencies:
@@ -9649,7 +9649,7 @@ snapshots:
     dependencies:
       motion-utils: 13.5.0
 
-  motion-dom@14.3.0:
+  motion-dom@14.1.1:
     dependencies:
       motion-utils: 14.1.1
 
@@ -9665,9 +9665,9 @@ snapshots:
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
 
-  motion@14.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  motion@14.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      framer-motion: 14.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      framer-motion: 14.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       tslib: 2.8.1
     optionalDependencies:
       react: 19.3.0
