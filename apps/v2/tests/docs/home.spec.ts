@@ -846,3 +846,25 @@ test('the orbit components stay still until their cards come in, so the hero pay
     expect(await states()).toBe(before);
   }
 });
+
+test('the home footer reads like the docs footer, and fits a phone', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives/radix-ui/accordion');
+  const docs = await page
+    .locator('[data-slot="footer-credit"]')
+    .first()
+    .innerText();
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto('/', { waitUntil: 'networkidle' });
+  const credit = page.locator('footer [data-slot="footer-credit"]');
+  await credit.scrollIntoViewIfNeeded();
+  await expect(credit).toHaveText(docs);
+  await expect(credit.getByRole('link', { name: 'Skyleen' })).toBeVisible();
+  const box = await credit.boundingBox();
+  expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(320);
+  expect(
+    await credit.evaluate((el) => el.scrollWidth - el.clientWidth),
+  ).toBeLessThanOrEqual(0);
+});

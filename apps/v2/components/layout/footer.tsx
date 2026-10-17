@@ -1,27 +1,7 @@
 export function Footer({ lastUpdate }: { lastUpdate?: Date }) {
   return (
     <footer className="mt-16 mb-7 flex w-full flex-col-reverse justify-between gap-2 text-sm text-muted-foreground lg:flex-row lg:items-center">
-      <p className="truncate">
-        Built by{' '}
-        <a
-          href="https://x.com/imskyleen"
-          rel="noopener noreferrer"
-          target="_blank"
-          className="font-medium text-foreground underline decoration-2 underline-offset-4"
-        >
-          Skyleen
-        </a>
-        . The source code is available on{' '}
-        <a
-          href="https://github.com/imskyleen/animate-ui"
-          rel="noopener noreferrer"
-          target="_blank"
-          className="font-medium text-foreground underline decoration-2 underline-offset-4"
-        >
-          GitHub
-        </a>
-        .
-      </p>
+      <FooterCredit />
       {lastUpdate && (
         <p className="flex items-center gap-1 text-nowrap">
           Last updated:{' '}
@@ -31,5 +11,35 @@ export function Footer({ lastUpdate }: { lastUpdate?: Date }) {
         </p>
       )}
     </footer>
+  );
+}
+
+export function FooterCredit({
+  className = 'truncate',
+}: {
+  className?: string;
+}) {
+  return (
+    <p data-slot="footer-credit" className={className}>
+      Built by{' '}
+      <a
+        href="https://x.com/imskyleen"
+        rel="noopener noreferrer"
+        target="_blank"
+        className="font-medium text-foreground underline decoration-2 underline-offset-4"
+      >
+        Skyleen
+      </a>
+      . The source code is available on{' '}
+      <a
+        href="https://github.com/imskyleen/animate-ui"
+        rel="noopener noreferrer"
+        target="_blank"
+        className="font-medium text-foreground underline decoration-2 underline-offset-4"
+      >
+        GitHub
+      </a>
+      .
+    </p>
   );
 }
