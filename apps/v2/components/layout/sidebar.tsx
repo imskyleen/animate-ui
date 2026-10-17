@@ -9,6 +9,7 @@ import {
   MagicWand01Icon,
   Menu01Icon,
   TextFontIcon,
+  TextNumberSignIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import { cn } from 'cn';
@@ -56,12 +57,14 @@ const PRIMITIVE_SECTIONS: {
   },
   { id: 'buttons', title: 'Buttons', icon: Cursor01Icon },
   { id: 'texts', title: 'Texts', icon: TextFontIcon },
+  { id: 'numbers', title: 'Numbers', icon: TextNumberSignIcon },
   { id: 'effects', title: 'Effects', icon: MagicWand01Icon },
 ];
 
 const SECTION_SUFFIX: Partial<Record<PrimitiveSection, RegExp>> = {
   texts: /(?<=\S) Text$/,
   buttons: /(?<=\S) Button$/,
+  numbers: /(?<=\S) Number$/,
 };
 
 function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {

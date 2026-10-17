@@ -36,6 +36,7 @@ const SECTIONS: { id: PrimitiveSection; title: string }[] = [
   { id: 'animate-ui', title: 'Animate UI' },
   { id: 'buttons', title: 'Buttons' },
   { id: 'texts', title: 'Texts' },
+  { id: 'numbers', title: 'Numbers' },
   { id: 'effects', title: 'Effects' },
 ];
 

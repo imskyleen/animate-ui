@@ -1,9 +1,9 @@
 export type PrimitiveSection =
-  'components' | 'animate-ui' | 'buttons' | 'texts' | 'effects';
+  'components' | 'animate-ui' | 'buttons' | 'texts' | 'numbers' | 'effects';
 
 const SHADCN_COMPONENTS = new Set(['input-otp']);
 
-const SECTIONS: Record<string, 'buttons' | 'texts' | 'effects'> = {
+const SECTIONS: Record<string, 'buttons' | 'texts' | 'numbers' | 'effects'> = {
   button: 'buttons',
   'copy-button': 'buttons',
   'flip-button': 'buttons',
@@ -13,19 +13,20 @@ const SECTIONS: Record<string, 'buttons' | 'texts' | 'effects'> = {
   'ripple-button': 'buttons',
   'theme-toggler-button': 'buttons',
 
-  'counting-number': 'texts',
   'gradient-text': 'texts',
   'highlight-text': 'texts',
   'morphing-text': 'texts',
   'rolling-text': 'texts',
   'rotating-text': 'texts',
-  'scrolling-number': 'texts',
   'shimmering-text': 'texts',
-  'sliding-number': 'texts',
   'sliding-text': 'texts',
   'splitting-text': 'texts',
   'swapping-text': 'texts',
   'typing-text': 'texts',
+
+  'counting-number': 'numbers',
+  'scrolling-number': 'numbers',
+  'sliding-number': 'numbers',
 
   'auto-height': 'effects',
   blur: 'effects',

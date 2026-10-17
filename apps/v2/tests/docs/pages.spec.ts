@@ -237,6 +237,7 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     'Animate UI',
     'Buttons',
     'Texts',
+    'Numbers',
     'Effects',
     'Backgrounds',
     'Icons',
@@ -278,6 +279,7 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   for (const [title, suffix] of [
     ['Texts', /\sText$/],
     ['Buttons', /\sButton$/],
+    ['Numbers', /\sNumber$/],
   ] as const) {
     const names = await section(title)
       .getByRole('link')
@@ -286,12 +288,18 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
           (link as HTMLElement).innerText.replace(/\s*new$/, ''),
         ),
       );
-    expect(names.length).toBeGreaterThan(5);
+    expect(names.length).toBeGreaterThan(2);
     for (const name of names) expect(name.trim()).not.toMatch(suffix);
   }
   await expect(
     section('Texts').getByRole('link', { name: 'Typing', exact: true }),
   ).toHaveAttribute('href', /typing-text/);
+  await expect(
+    section('Numbers').getByRole('link', { name: 'Sliding', exact: true }),
+  ).toHaveAttribute('href', /sliding-number/);
+  await expect(
+    section('Texts').getByRole('link', { name: /Number/ }),
+  ).toHaveCount(0);
   await expect(
     section('Buttons').getByRole('link', { name: 'Button', exact: true }),
   ).toHaveAttribute('href', /\/button$/);

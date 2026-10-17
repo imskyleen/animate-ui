@@ -75,6 +75,7 @@ test('the Primitives page is one card per primitive, opening its page', async ({
     'Animate UI',
     'Buttons',
     'Texts',
+    'Numbers',
     'Effects',
   ])
     await expect(
