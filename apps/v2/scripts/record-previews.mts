@@ -614,6 +614,9 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   'scroll-fade': {
     async play(page) {
       const list = page.locator('main [data-slot="scroll-fade"]').first();
+      await list.evaluate((el) => {
+        el.style.overscrollBehavior = 'contain';
+      });
       await pointAt(page, list);
       for (let i = 0; i < 6; i++) {
         await page.mouse.wheel(0, 60);
