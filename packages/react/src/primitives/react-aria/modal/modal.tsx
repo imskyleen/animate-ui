@@ -16,6 +16,7 @@ import {
 } from '../../../utils/motion';
 import {
   getContentTargets,
+  useEnterAfterPaint,
   getModalSide,
   ariaMotionRender,
   useBackdropFade,
@@ -172,13 +173,14 @@ function ModalContent({
     exitTransition,
   );
   const targets = getContentTargets({ side, from, reduce, enter, exit });
+  const entered = useEnterAfterPaint();
 
   return (
     <ModalPrimitive
       {...props}
       render={ariaMotionRender(render, {
         initial: targets.initial,
-        animate: targets.animate,
+        animate: entered ? targets.animate : targets.initial,
         exit: targets.exit,
         ...(isPresent ? {} : { style: { pointerEvents: 'none' as const } }),
       })}

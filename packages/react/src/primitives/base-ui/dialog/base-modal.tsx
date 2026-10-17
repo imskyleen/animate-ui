@@ -11,6 +11,7 @@ import {
 } from '../../../utils/motion';
 import {
   getAnimateTarget,
+  useEnterAfterPaint,
   getContentTargets,
   getModalSide,
   motionRender,
@@ -92,10 +93,13 @@ function useMotionElementProps(targets: ModalTargets) {
     keepMounted,
   );
   const exiting = !isPresent || (keepMounted && !open && !hidden);
+  const entered = useEnterAfterPaint();
 
   return {
     initial: targets.initial,
-    animate: getAnimateTarget(targets, open, keepMounted),
+    animate: entered
+      ? getAnimateTarget(targets, open, keepMounted)
+      : targets.initial,
     exit: targets.exit,
     onAnimationComplete,
     ...(exiting ? { hidden: false } : {}),

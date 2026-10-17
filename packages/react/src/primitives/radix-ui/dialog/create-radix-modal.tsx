@@ -14,6 +14,7 @@ import {
 } from '../../../utils/motion';
 import {
   getAnimateTarget,
+  useEnterAfterPaint,
   getContentTargets,
   getModalSide,
   motionRender,
@@ -180,6 +181,7 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
     );
     const targets = getContentTargets({ side, from, reduce, enter, exit });
     const { hidden, onAnimationComplete } = useHiddenWhenClosed(open, false);
+    const entered = useEnterAfterPaint();
     const startedClosedRef = React.useRef(new WeakSet<Event>());
     React.useEffect(() => {
       if (open) return;
@@ -204,7 +206,9 @@ export function createRadixModal(parts: RadixModalParts, name: string) {
       >
         {motionChild(asChild, children, {
           initial: targets.initial,
-          animate: getAnimateTarget(targets, open, false),
+          animate: entered
+            ? getAnimateTarget(targets, open, false)
+            : targets.initial,
           exit: targets.exit,
           onAnimationComplete,
           style: closedStyle(style, open, hidden),

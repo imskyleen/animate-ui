@@ -654,7 +654,7 @@ function TooltipOverlay() {
     [],
   );
 
-  const popupScale = useMotionValue(1);
+  const popupScale = useMotionValue(motionTokens.scale.tooltip);
   const swapOut = useTempoTransition(SWAP_TIMINGS.out);
   const swapMove = useTempoTransition(SWAP_TIMINGS.move);
   const swapIn = useTempoTransition(SWAP_TIMINGS.in);

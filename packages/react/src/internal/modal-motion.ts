@@ -152,6 +152,15 @@ export function getContentTargets({
   };
 }
 
+export function useEnterAfterPaint() {
+  const [ready, setReady] = React.useState(false);
+  React.useLayoutEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+  return ready;
+}
+
 export function getAnimateTarget(
   targets: ModalTargets,
   open: boolean,
