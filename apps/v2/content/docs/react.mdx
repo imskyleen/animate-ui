@@ -36,11 +36,13 @@ import { Dialog } from '@animate-ui/react/primitives/radix-ui'; // [!code ++]
 
 The imports mirror the library's:
 
-| Library    | Umbrella import                           | Per primitive                                                                                          |
-| ---------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Radix UI   | `@animate-ui/react/primitives/radix-ui`   | `@animate-ui/react/primitives/radix-ui/<primitive>`                                                    |
-| Base UI    | `@animate-ui/react/primitives/base-ui`    | `@animate-ui/react/primitives/base-ui/<primitive>`                                                     |
-| React Aria | `@animate-ui/react/primitives/react-aria` | `@animate-ui/react/primitives/react-aria/<primitive>` (Preview Link Card only comes from its own path) |
+| Library    | Umbrella import                           | Per primitive                                         |
+| ---------- | ----------------------------------------- | ----------------------------------------------------- |
+| Radix UI   | `@animate-ui/react/primitives/radix-ui`   | `@animate-ui/react/primitives/radix-ui/<primitive>`   |
+| Base UI    | `@animate-ui/react/primitives/base-ui`    | `@animate-ui/react/primitives/base-ui/<primitive>`    |
+| React Aria | `@animate-ui/react/primitives/react-aria` | `@animate-ui/react/primitives/react-aria/<primitive>` |
+
+Preview Link Card isn't in the umbrella imports: it only comes from its own path, `@animate-ui/react/primitives/<library>/preview-link-card`.
 
 The umbrella imports re-export everything else from the library (`Slot`, `Label`, `Field`…), so an import mixing animated and plain parts keeps working. In a shadcn/ui project, the [CLI](/docs/cli) makes the change for you.
 
@@ -55,6 +57,7 @@ The umbrella imports re-export everything else from the library (`Slot`, `Label`
 | `@animate-ui/react/icons`                 | The animated [icons](/docs/icons)' core: `AnimateIcon`, `IconWrapper`…                                |
 | `@animate-ui/react/provider`              | `AnimateUIProvider`                                                                                   |
 | `@animate-ui/react/utils/motion`          | The motion tokens and reduced-motion helpers                                                          |
+| `@animate-ui/react/utils/<name>`          | The hooks the components share: `use-page-visible`, `use-is-in-view`, `use-controlled-state`…         |
 
 Every entry point is its own module: you only ship what you import.
 

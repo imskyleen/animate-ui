@@ -92,7 +92,7 @@ The rest of the file stays as it is: your styles, parts, props and markup.
 
 - A component that isn't installed is reported with the `shadcn add` command to install it, and the CLI exits with code 1.
 - Primitives imported from a supported library that Animate UI doesn't animate yet are listed under **Not animated yet** and left as they are.
-- If `@animate-ui/react` isn't in your `package.json`, the CLI tells you to install it with `motion`.
+- If `@animate-ui/react` isn't installed (neither in your `package.json` nor in `node_modules`) and files were animated, the CLI tells you to install it with `motion`.
 - Running it again changes nothing: a component already animated is skipped.
 
 ### Supported primitives
@@ -171,7 +171,8 @@ Some changes need you. `migrate` lists them with their file and line, marked `!`
 
 - **v1-only parts and hooks** (`DropdownMenuHighlight`, `useAccordionItem`…): in an import mixing them with parts v2 has, the parts move and the v1-only names stay on the v1 file. Their parent is v2 now, so they throw at runtime: remove them (v2 parts animate themselves: style their `data-state` attributes or control the state yourself), or replace the component with shadcn/ui's and run `animate`.
 - **Motion props** (`initial`, `animate`, `layoutId`…): v2 parts aren't motion components. Animated parts take `transition` and `exitTransition` instead.
-- **No v2 equivalent**: Files, Preview Link Card, the Headless UI primitives (Headless UI isn't supported in v2) and a few hooks (`use-auto-height`, `use-data-state`, `use-motion-value-state`) stay yours and keep working.
+- **No v2 equivalent**: Files, the Headless UI primitives (Headless UI isn't supported in v2) and a few hooks (`use-auto-height`, `use-data-state`, `use-motion-value-state`) stay yours and keep working.
+- **Preview Link Card**: it stays on its v1 file, which keeps working. To move it, import it from `@animate-ui/react/primitives/<library>/preview-link-card` yourself.
 - **Registry buttons**: the Flip and Liquid buttons are files you add with shadcn in v2 (`npx shadcn@latest add @animate-ui/buttons-flip`, `@animate-ui/buttons-liquid`): their imports stay on the v1 file, which keeps working, and the manual step gives the command.
 
 Your v1 components (`components/animate-ui/components/…`) keep working on v2. The CLI also suggests swapping each one for shadcn/ui's and running `animate`.
@@ -223,7 +224,7 @@ Each animated property is sorted by what it costs: **compositor** (`transform`, 
 ### Output
 
 ```txt
-Motion audit: 2 of 41 files move, 10 facts.
+Motion audit: 1 of 41 files move, 5 facts.
 These are facts, not verdicts: weigh each one against how often the element is used and what its motion is for.
 
 src/components/menu.tsx
@@ -232,6 +233,11 @@ src/components/menu.tsx
   12  no origin        motion.ul is positioned and scales without a transform origin: it grows from its own center
   30  hover scale      whileHover scale: 1.05
    –  reduced motion   no reduced-motion path in this file
+
+Totals
+  properties      compositor 1 · main-thread 1 (scale) · layout 1 (height)
+  patterns        transition all 0 · ease-in 0 · long durations 1 · hover scale 1 · scale from 0 0 · loops 0 · layout props 0 · will-change 0 · no origin 1 · css vs motion 0 · hidden heading 0 · hover on touch 0
+  reduced motion  0 of 1 files that move have a path · none project-wide
 ```
 
 The report states facts, it doesn't grade them: a 800ms entrance can be right on a page and wrong on a menu opened all day. Read it yourself, or hand it to your AI assistant with the [Animate UI skill](/docs/skills), which judges each fact in context. `--json` prints the same report for scripts.

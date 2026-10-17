@@ -30,7 +30,7 @@ Counting Number for stats and Rotating Text for words cycling on a timer fit eve
 | One string morphing into the next                                                                | Morphing Text    | `@animate-ui/react/primitives/texts/morphing`         |
 | Letters rolling over, like a flip board                                                          | Rolling Text     | `@animate-ui/react/primitives/texts/rolling`          |
 | A link or button label sliding out as a copy slides in, on hover or click                        | Sliding Text     | `@animate-ui/react/primitives/texts/sliding`          |
-| A label swapping to a new value letter by letter (Private → Public)                               | Swapping Text    | `@animate-ui/react/primitives/texts/swapping`         |
+| A label swapping to a new value letter by letter (Private → Public)                              | Swapping Text    | `@animate-ui/react/primitives/texts/swapping`         |
 | A highlighter sweep behind text                                                                  | Highlight Text   | `@animate-ui/react/primitives/texts/highlight`        |
 | A glint running across text                                                                      | Shimmering Text  | `@animate-ui/react/primitives/texts/shimmering`       |
 | A gradient sweeping across text                                                                  | Gradient Text    | `@animate-ui/react/primitives/texts/gradient`         |
@@ -89,6 +89,8 @@ Add with `<dlx> shadcn@latest add @animate-ui/backgrounds-<name>`; they land in 
 | `hexagon`       | A hexagon grid lighting up under the pointer                    |
 | `hole`          | A tunnel of rings with rising particles                         |
 | `fireworks`     | Fireworks bursting across the area                              |
+| `topography`    | Living contour lines, a hill under the pointer, click waves     |
+| `glyph`         | Characters lit by drifting glows, a pointer trail, click waves  |
 
 ## Icons (registry files)
 
