@@ -26,7 +26,7 @@ export function Hero() {
 
 ## Animation
 
-- The terrain is a field of gradient noise drawn as contour lines, like a topographic map: every fifth line is an index contour, thicker and brighter. The noise drifts slowly through time (`speed`), so the relief keeps reshaping itself.
+- The terrain is a field of gradient noise drawn as contour lines, like a topographic map: every fifth line is an index contour, thicker and brighter. The lines are joined end to end and drawn as smooth curves, not as grid segments. The noise drifts slowly through time (`speed`), so the relief keeps reshaping itself.
 - On mount, the relief rises from flat ground in 1.8s on an ease-out: the lines bloom out from the middle level.
 - Under the cursor, a peak rises on a spring and follows it (`transition`), its rings tightening towards the summit (`peak`). Leaving the container lets it sink back.
 - A click (or a tap) drops a wave: a crest and a trough travel out from the point in 2.6s, bunching the lines as they pass, and fade away.

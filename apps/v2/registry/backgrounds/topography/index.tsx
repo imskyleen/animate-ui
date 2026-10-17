@@ -86,6 +86,74 @@ function noise(x: number, y: number, z: number) {
   );
 }
 
+function trace(path: Path2D, segments: number[]) {
+  const count = segments.length / 6;
+  const ends = new Map<number, number[]>();
+  for (let s = 0; s < count; s++)
+    for (const side of [0, 3]) {
+      const edge = segments[s * 6 + side]!;
+      const list = ends.get(edge);
+      if (list) list.push(s);
+      else ends.set(edge, [s]);
+    }
+  const used = new Uint8Array(count);
+  const walk = (s: number, edge: number, into: number[]) => {
+    for (;;) {
+      const next = ends.get(edge)?.find((n) => n !== s && !used[n]);
+      if (next === undefined) return edge;
+      used[next] = 1;
+      const o = next * 6;
+      const far = segments[o] === edge ? 3 : 0;
+      into.push(segments[o + far + 1]!, segments[o + far + 2]!);
+      s = next;
+      edge = segments[o + far]!;
+    }
+  };
+  for (let s = 0; s < count; s++) {
+    if (used[s]) continue;
+    used[s] = 1;
+    const o = s * 6;
+    const forward = [segments[o + 4]!, segments[o + 5]!];
+    const end = walk(s, segments[o + 3]!, forward);
+    const closed = end === segments[o];
+    const backward: number[] = [];
+    if (!closed) walk(s, segments[o]!, backward);
+    const points: number[] = [];
+    for (let i = backward.length - 2; i >= 0; i -= 2)
+      points.push(backward[i]!, backward[i + 1]!);
+    points.push(segments[o + 1]!, segments[o + 2]!, ...forward);
+    if (closed) points.length -= 2;
+    smooth(path, points, closed);
+  }
+}
+
+function smooth(path: Path2D, points: number[], closed: boolean) {
+  const n = points.length / 2;
+  if (n < 2) return;
+  const x = (i: number) => points[((i + n) % n) * 2]!;
+  const y = (i: number) => points[((i + n) % n) * 2 + 1]!;
+  if (closed && n > 2) {
+    path.moveTo((x(-1) + x(0)) / 2, (y(-1) + y(0)) / 2);
+    for (let i = 0; i < n; i++)
+      path.quadraticCurveTo(
+        x(i),
+        y(i),
+        (x(i) + x(i + 1)) / 2,
+        (y(i) + y(i + 1)) / 2,
+      );
+    return;
+  }
+  path.moveTo(x(0), y(0));
+  for (let i = 1; i < n - 1; i++)
+    path.quadraticCurveTo(
+      x(i),
+      y(i),
+      (x(i) + x(i + 1)) / 2,
+      (y(i) + y(i + 1)) / 2,
+    );
+  path.lineTo(x(n - 1), y(n - 1));
+}
+
 type Ripple = { x: number; y: number; progress: MotionValue<number> };
 
 type TopographyBackgroundProps = React.ComponentProps<'div'> & {
@@ -232,6 +300,7 @@ function TopographyBackgroundContent({
       const minor = new Path2D();
       const major = new Path2D();
       const stride = cols + 1;
+      const byLevel = new Map<number, number[]>();
 
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -258,50 +327,51 @@ function TopographyBackgroundContent({
             const right = y + ((v - b) / (c - b)) * CELL;
             const bottom = x + ((v - d) / (c - d)) * CELL;
             const left = y + ((v - a) / (d - a)) * CELL;
-            const path = level % 5 === 0 ? major : minor;
+            let list = byLevel.get(level);
+            if (!list) byLevel.set(level, (list = []));
+            const edge = (row * stride + col) * 2;
+            const T = [edge, top, y] as const;
+            const B = [edge + stride * 2, bottom, y + CELL] as const;
+            const L = [edge + 1, x, left] as const;
+            const R = [edge + 3, x + CELL, right] as const;
             const segment = (
-              x1: number,
-              y1: number,
-              x2: number,
-              y2: number,
-            ) => {
-              path.moveTo(x1, y1);
-              path.lineTo(x2, y2);
-            };
+              from: readonly [number, number, number],
+              to: readonly [number, number, number],
+            ) => list.push(...from, ...to);
             switch (code) {
               case 1:
               case 14:
-                segment(x, left, bottom, y + CELL);
+                segment(L, B);
                 break;
               case 2:
               case 13:
-                segment(bottom, y + CELL, x + CELL, right);
+                segment(B, R);
                 break;
               case 3:
               case 12:
-                segment(x, left, x + CELL, right);
+                segment(L, R);
                 break;
               case 4:
               case 11:
-                segment(top, y, x + CELL, right);
+                segment(T, R);
                 break;
               case 6:
               case 9:
-                segment(top, y, bottom, y + CELL);
+                segment(T, B);
                 break;
               case 7:
               case 8:
-                segment(x, left, top, y);
+                segment(L, T);
                 break;
               case 5:
               case 10: {
                 const center = (a + b + c + d) / 4 > v;
                 if ((code === 5) === center) {
-                  segment(x, left, top, y);
-                  segment(bottom, y + CELL, x + CELL, right);
+                  segment(L, T);
+                  segment(B, R);
                 } else {
-                  segment(x, left, bottom, y + CELL);
-                  segment(top, y, x + CELL, right);
+                  segment(L, B);
+                  segment(T, R);
                 }
                 break;
               }
@@ -309,6 +379,9 @@ function TopographyBackgroundContent({
           }
         }
       }
+
+      for (const [level, list] of byLevel)
+        trace(level % 5 === 0 ? major : minor, list);
 
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, width, height);
