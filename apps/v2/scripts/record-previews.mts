@@ -756,6 +756,10 @@ function previews(): Preview[] {
         play: async (page) => {
           await glide(page, size.width * 0.3, size.height * 0.4, 600);
           await glide(page, size.width * 0.7, size.height * 0.6, 900);
+          if (slug === 'glyph') {
+            await page.mouse.click(size.width * 0.5, size.height * 0.5);
+            await page.waitForTimeout(1800);
+          }
           await away(page);
         },
         tail: 1200,

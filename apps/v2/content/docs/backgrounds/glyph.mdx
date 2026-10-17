@@ -1,0 +1,70 @@
+---
+title: Glyph Background
+description: A field of characters lit by drifting glows. Moving the cursor wakes them up with a trail of light, and a click sends shapes rippling out of it.
+releaseDate: '2026-10-17'
+---
+
+<ComponentPreview name="backgrounds/glyph" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-glyph" />
+
+## Usage
+
+```tsx
+import { GlyphBackground } from '@/components/animate-ui/backgrounds/glyph';
+
+export function Hero() {
+  return (
+    <section className="relative h-[560px] overflow-hidden bg-[#121212]">
+      <GlyphBackground className="absolute inset-0 text-white" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- The background is a grid of random letters and digits in a monospace font, invisible until light falls on them. Now and then a character changes.
+- At rest, soft glows made of characters drift slowly across it, about 30px a second towards the bottom left, reshaping as they go. Nothing else moves.
+- Moving the cursor wakes the glows up all over the field, and a trail of light follows the cursor. Both settle back within a second of stillness.
+- A click sends two waves out of the point, 0.3s apart, the second one dimmer. They spread fast then slower and slower (about 140px in 0.3s, 330px in a second), with a sharp outer edge fading inwards, their outline wavering into a heart or a blob, and fade out within 4s.
+- The glows take `glowColor` and the waves `shapeColor`; both default to the container's text color.
+- Drawn with WebGL, every character cell lit on the GPU, at most twice the device pixel ratio.
+- The loop pauses off screen and while the tab is hidden.
+- Under reduced motion, the glows hold still and the cursor and clicks don't light anything.
+
+## API Reference
+
+### GlyphBackground
+
+<TypeTable
+  type={{
+    glowColor: {
+      description:
+        "Color of the glows and the cursor's trail. Defaults to the container's text color.",
+      type: 'string',
+    },
+    shapeColor: {
+      description:
+        "Color of the waves a click sends out. Defaults to the container's text color.",
+      type: 'string',
+    },
+    fontSize: {
+      description: 'Size of the characters, in pixels.',
+      type: 'number',
+      default: '10',
+    },
+    interactive: {
+      description: 'Let the cursor wake the glows and clicks send waves.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description:
+        'Props of the container div. children render above the characters.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>

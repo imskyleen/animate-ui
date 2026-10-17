@@ -3,6 +3,7 @@ import { expect, test, type Locator, type Page } from '../test';
 const ANIMATED = [
   'bubble',
   'fireworks',
+  'glyph',
   'gradient',
   'gravity-stars',
   'hole',
@@ -268,6 +269,216 @@ test.describe('backgrounds', () => {
       const resting = await color();
       await cell.hover();
       await expect.poll(color).not.toBe(resting);
+    });
+  });
+
+  test.describe('glyph', () => {
+    const virtualClock = async (page: Page) => {
+      await page.addInitScript(() => {
+        let now = 0;
+        let queue: FrameRequestCallback[] = [];
+        const base = performance.now();
+        performance.now = () => base + now;
+        window.requestAnimationFrame = (callback) => {
+          queue.push(callback);
+          return queue.length;
+        };
+        window.cancelAnimationFrame = () => {};
+        (window as unknown as { __step: (ms: number) => void }).__step = (
+          ms,
+        ) => {
+          const frames = Math.round(ms / (1000 / 60));
+          for (let i = 0; i < frames; i++) {
+            now += 1000 / 60;
+            const due = queue;
+            queue = [];
+            for (const callback of due) callback(base + now);
+          }
+        };
+      });
+    };
+    const step = (page: Page, ms: number) =>
+      page.evaluate(
+        (ms) =>
+          (window as unknown as { __step: (ms: number) => void }).__step(ms),
+        ms,
+      );
+    const lit = (
+      section: Locator,
+      center: { x: number; y: number } | null,
+      inner: number,
+      outer: number,
+      level = 120,
+    ) =>
+      section.locator('canvas').evaluate(
+        (canvas: HTMLCanvasElement, { center, inner, outer, level }) => {
+          const copy = document.createElement('canvas');
+          copy.width = canvas.width;
+          copy.height = canvas.height;
+          const context = copy.getContext('2d')!;
+          context.drawImage(canvas, 0, 0);
+          const { data } = context.getImageData(0, 0, copy.width, copy.height);
+          const ratio = canvas.width / canvas.clientWidth;
+          let count = 0;
+          let red = 0;
+          let green = 0;
+          for (let y = 0; y < copy.height; y += 2)
+            for (let x = 0; x < copy.width; x += 2) {
+              const i = (y * copy.width + x) * 4;
+              if (data[i + 3]! < level) continue;
+              if (center) {
+                const d = Math.hypot(
+                  x / ratio - center.x,
+                  y / ratio - center.y,
+                );
+                if (d < inner || d >= outer) continue;
+              }
+              count++;
+              red += data[i]!;
+              green += data[i + 1]!;
+            }
+          return { count, red, green };
+        },
+        { center, inner, outer, level },
+      );
+    const open = async (page: Page, id = 'glyph') => {
+      await page.goto('/tests/fixtures/backgrounds');
+      const section = page.getByTestId(id);
+      await section.locator('canvas').waitFor();
+      await section.locator('[data-slot="glyph-background"]').evaluate(
+        (el) =>
+          new Promise<void>((resolve) => {
+            const ready = () =>
+              Object.keys(el).some((key) => key.startsWith('__reactProps'))
+                ? resolve()
+                : setTimeout(ready, 20);
+            ready();
+          }),
+      );
+      await show(section);
+      await step(page, 1500);
+      return section;
+    };
+
+    test('at rest, only faint glows: no shape, most characters unseen', async ({
+      page,
+    }) => {
+      await virtualClock(page);
+      const section = await open(page);
+      expect((await lit(section, null, 0, 0, 1)).count).toBeGreaterThan(50);
+      expect((await lit(section, null, 0, 0, 120)).count).toBe(0);
+    });
+
+    test('moving the cursor lights a trail behind it, which fades once it stops', async ({
+      page,
+    }) => {
+      await virtualClock(page);
+      const section = await open(page);
+      const box = (await section.boundingBox())!;
+      const end = { x: 420, y: 200 };
+      const still = (await lit(section, end, 0, 60, 12)).count;
+      for (let i = 0; i <= 20; i++) {
+        await page.mouse.move(box.x + 120 + i * 15, box.y + end.y);
+        await step(page, 1000 / 60);
+      }
+      const trail = (await lit(section, end, 0, 60, 12)).count;
+      expect(trail).toBeGreaterThan(still + 200);
+      await step(page, 1500);
+      expect((await lit(section, end, 0, 60, 12)).count).toBeLessThan(
+        still + (trail - still) / 3,
+      );
+    });
+
+    test('a click sends a wave out from the point, fast then slower, which fades', async ({
+      page,
+    }) => {
+      await virtualClock(page);
+      const section = await open(page);
+      const box = (await section.boundingBox())!;
+      const spot = { x: 320, y: 200 };
+      await page.mouse.move(box.x + spot.x, box.y + spot.y);
+      await step(page, 1500);
+      await page.mouse.down();
+      await page.mouse.up();
+      await step(page, 300);
+      const early = {
+        near: (await lit(section, spot, 90, 170)).count,
+        far: (await lit(section, spot, 260, 380)).count,
+      };
+      expect(early.near).toBeGreaterThan(30);
+      expect(early.far).toBe(0);
+      const brightest = (inner: number, outer: number) =>
+        section.locator('canvas').evaluate(
+          (canvas: HTMLCanvasElement, { spot, inner, outer }) => {
+            const copy = document.createElement('canvas');
+            copy.width = canvas.width;
+            copy.height = canvas.height;
+            const context = copy.getContext('2d')!;
+            context.drawImage(canvas, 0, 0);
+            const { data } = context.getImageData(
+              0,
+              0,
+              copy.width,
+              copy.height,
+            );
+            const ratio = canvas.width / canvas.clientWidth;
+            const values: number[] = [];
+            for (let y = 0; y < copy.height; y++)
+              for (let x = 0; x < copy.width; x++) {
+                const d = Math.hypot(x / ratio - spot.x, y / ratio - spot.y);
+                if (d >= inner && d < outer)
+                  values.push(data[(y * copy.width + x) * 4 + 3]!);
+              }
+            values.sort((a, b) => b - a);
+            return values[Math.floor(values.length * 0.002)]!;
+          },
+          { spot, inner, outer },
+        );
+      const fresh = await brightest(90, 170);
+      await step(page, 700);
+      const later = {
+        near: (await lit(section, spot, 90, 170, 60)).count,
+        far: (await lit(section, spot, 260, 380, 60)).count,
+      };
+      expect(later.far).toBeGreaterThan(30);
+      expect(await brightest(260, 380)).toBeLessThan(fresh * 0.8);
+      await step(page, 3500);
+      expect((await lit(section, null, 0, 0, 120)).count).toBe(0);
+    });
+
+    test('glowColor tints the glows and shapeColor the waves', async ({
+      page,
+    }) => {
+      await virtualClock(page);
+      const section = await open(page, 'glyph-colors');
+      const glows = await lit(section, null, 0, 0, 1);
+      expect(glows.red).toBeGreaterThan(glows.green * 5);
+      const box = (await section.boundingBox())!;
+      const spot = { x: 320, y: 200 };
+      await page.mouse.move(box.x + spot.x, box.y + spot.y);
+      await page.mouse.down();
+      await page.mouse.up();
+      await step(page, 300);
+      const wave = await lit(section, spot, 90, 170);
+      expect(wave.count).toBeGreaterThan(30);
+      expect(wave.green).toBeGreaterThan(wave.red * 3);
+    });
+
+    test('reduced motion: the cursor and clicks light nothing', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await virtualClock(page);
+      const section = await open(page);
+      const box = (await section.boundingBox())!;
+      for (let i = 0; i <= 10; i++) {
+        await page.mouse.move(box.x + 120 + i * 30, box.y + 200);
+        await step(page, 1000 / 60);
+      }
+      await page.mouse.down();
+      await page.mouse.up();
+      await step(page, 400);
+      expect((await lit(section, null, 0, 0, 40)).count).toBe(0);
     });
   });
 
