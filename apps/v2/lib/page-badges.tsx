@@ -66,7 +66,7 @@ export const attachBadge: PageTreeTransformer['file'] = function (
 
 function splitSuffix(name: React.ReactNode) {
   if (typeof name !== 'string') return name;
-  const match = name.match(/^(.*)( Background)$/);
+  const match = name.match(/^(.*\S)( Background| Text| Button)$/);
   if (!match) return name;
   return (
     <>

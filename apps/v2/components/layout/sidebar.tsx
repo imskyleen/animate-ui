@@ -59,6 +59,11 @@ const PRIMITIVE_SECTIONS: {
   { id: 'effects', title: 'Effects', icon: MagicWand01Icon },
 ];
 
+const SECTION_SUFFIX: Partial<Record<PrimitiveSection, RegExp>> = {
+  texts: /(?<=\S) Text$/,
+  buttons: /(?<=\S) Button$/,
+};
+
 function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {
   return folder.children.flatMap((page) =>
     page.type === 'page'
@@ -143,14 +148,21 @@ function Section({
   title,
   icon,
   links,
+  hideSuffix,
 }: {
   title: string;
   icon: SectionIcon;
   links: Link[];
+  hideSuffix?: boolean;
 }) {
   if (links.length === 0) return null;
   return (
-    <div className="mb-6 flex flex-col [&_[data-slot=name-suffix]]:hidden">
+    <div
+      className={cn(
+        'mb-6 flex flex-col',
+        hideSuffix && '[&_[data-slot=name-suffix]]:hidden',
+      )}
+    >
       <SectionTitle icon={icon}>{title}</SectionTitle>
       {links.map((link) => (
         <Item key={link.url} id={`${title}:${link.url}`} {...link} />
@@ -222,7 +234,10 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
     sections.set(section, [
       ...(sections.get(section) ?? []),
       {
-        name: entry.name,
+        name:
+          typeof entry.name === 'string' && SECTION_SUFFIX[section]
+            ? entry.name.replace(SECTION_SUFFIX[section], '')
+            : entry.name,
         url: entry.urls[library.id]!,
         active: Object.values(entry.urls).includes(pathname),
       },
@@ -257,11 +272,13 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
             title={section.title}
             icon={section.icon}
             links={sections.get(section.id) ?? []}
+            hideSuffix={section.id in SECTION_SUFFIX}
           />
         ))}
         <Section
           title="Backgrounds"
           icon={Image02Icon}
+          hideSuffix
           links={backgrounds.map((link) => ({
             ...link,
             active: pathname === link.url,

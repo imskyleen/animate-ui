@@ -254,10 +254,10 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     section('Animate UI').getByRole('link', { name: 'Cursor' }),
   ).toHaveAttribute('data-active', 'true');
   await expect(
-    section('Buttons').getByRole('link', { name: 'Ripple Button' }),
+    section('Buttons').getByRole('link', { name: 'Ripple', exact: true }),
   ).toBeVisible();
   await expect(
-    section('Texts').getByRole('link', { name: 'Typing Text' }),
+    section('Texts').getByRole('link', { name: 'Typing', exact: true }),
   ).toBeVisible();
   await expect(
     section('Effects').getByRole('link', { name: 'Shine' }),
@@ -275,6 +275,26 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   await expect(
     section('Backgrounds').getByRole('link', { name: /^Topography/ }),
   ).toContainText('new');
+  for (const [title, suffix] of [
+    ['Texts', /\sText$/],
+    ['Buttons', /\sButton$/],
+  ] as const) {
+    const names = await section(title)
+      .getByRole('link')
+      .evaluateAll((links) =>
+        links.map((link) =>
+          (link as HTMLElement).innerText.replace(/\s*new$/, ''),
+        ),
+      );
+    expect(names.length).toBeGreaterThan(5);
+    for (const name of names) expect(name.trim()).not.toMatch(suffix);
+  }
+  await expect(
+    section('Texts').getByRole('link', { name: 'Typing', exact: true }),
+  ).toHaveAttribute('href', /typing-text/);
+  await expect(
+    section('Buttons').getByRole('link', { name: 'Button', exact: true }),
+  ).toHaveAttribute('href', /\/button$/);
   await expect(
     section('Icons').getByRole('link', { name: 'Get Started' }),
   ).toHaveAttribute('href', '/docs/icons/get-started');
