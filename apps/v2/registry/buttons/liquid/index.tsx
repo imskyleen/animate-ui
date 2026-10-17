@@ -13,14 +13,14 @@ import {
 import { cn } from 'cn';
 
 const HOVER_TRANSITION: Transition = {
-  scale: { duration: 0.3, ease: 'easeOut' },
+  transform: { duration: 0.3, ease: 'easeOut' },
   '--liquid-button-fill-width': { duration: 0 },
   '--liquid-button-fill-height': { duration: 0 },
   '--liquid-button-delay': { duration: 0 },
 };
 
 const DEFAULT_TRANSITION: Transition = {
-  scale: motionTokens.spring.press,
+  transform: motionTokens.spring.press,
   default: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] },
 };
 

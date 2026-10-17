@@ -130,3 +130,33 @@ test('liquid button: the press runs in the browser, off the main thread (rule A9
     .toBe(true);
   await page.mouse.up();
 });
+
+test('liquid button: press and release spring on the press spring, not the default tween', async ({
+  page,
+}) => {
+  await open(page);
+  const easings = () =>
+    page.evaluate((sel) => {
+      const el = document.querySelector(sel)!;
+      return el
+        .getAnimations()
+        .filter((animation) =>
+          (animation.effect as KeyframeEffect)
+            .getKeyframes()
+            .some((frame) => 'transform' in frame),
+        )
+        .map((animation) => {
+          const effect = animation.effect as KeyframeEffect;
+          return [
+            effect.getTiming().easing,
+            ...effect.getKeyframes().map((frame) => frame.easing),
+          ].join(' ');
+        });
+    }, SELECTOR);
+  await page.locator(SELECTOR).first().hover();
+  await page.mouse.down();
+  await expect.poll(easings).toEqual([expect.stringContaining('linear(')]);
+  await page.waitForTimeout(500);
+  await page.mouse.up();
+  await expect.poll(easings).toEqual([expect.stringContaining('linear(')]);
+});
