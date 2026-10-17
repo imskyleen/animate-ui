@@ -116,6 +116,33 @@ test.describe('demo controls', () => {
     await expect.poll(period).toBeGreaterThan(small * 1.4);
   });
 
+  test('the topography levels control redraws the lines live', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page, '/docs/backgrounds/topography');
+    const canvas = stage(page).locator(
+      '[data-slot="topography-background"] canvas',
+    );
+    const ink = () =>
+      canvas.evaluate((canvas: HTMLCanvasElement) => {
+        const copy = document.createElement('canvas');
+        copy.width = canvas.width;
+        copy.height = canvas.height;
+        const context = copy.getContext('2d')!;
+        context.drawImage(canvas, 0, 0);
+        const { data } = context.getImageData(0, 0, copy.width, copy.height);
+        let count = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i]! > 20) count++;
+        return count;
+      });
+    await expect.poll(ink).toBeGreaterThan(1000);
+    const sparse = await ink();
+    await toggle(page).click();
+    await panel(page).getByLabel('levels', { exact: true }).last().fill('40');
+    await expect.poll(ink).toBeGreaterThan(sparse * 1.3);
+  });
+
   test('a slider and its number field stay in sync', async ({ page }) => {
     await open(page, '/docs/backgrounds/fireworks');
     await toggle(page).click();
