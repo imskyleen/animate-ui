@@ -687,6 +687,7 @@ test.describe('base-ui toast API', () => {
     const toast = page.locator('[data-testid="bottom-toast"]');
     await expect(toast).toHaveCount(1);
     await expect(toast).toContainText('Bottom toast');
+    await toast.hover({ force: true });
     const dismiss = toast.getByText('Dismiss');
     await expect(dismiss).toBeInViewport({ ratio: 1 });
     await dismiss.click();
