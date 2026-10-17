@@ -314,6 +314,7 @@ function GlyphBackgroundContent({
     () => {},
   );
   const timeRef = React.useRef(0);
+  const resizeRef = React.useRef(() => {});
   const activityRef = React.useRef({ value: 0, at: 0 });
 
   const options = { glowColor, shapeColor, fontSize };
@@ -451,6 +452,7 @@ function GlyphBackgroundContent({
     };
 
     drawRef.current = draw;
+    resizeRef.current = resize;
     resize();
     draw(timeRef.current);
     const observer = new ResizeObserver(() => {
@@ -461,12 +463,18 @@ function GlyphBackgroundContent({
     return () => {
       observer.disconnect();
       drawRef.current = () => {};
+      resizeRef.current = () => {};
     };
   }, []);
 
   React.useEffect(() => {
+    resizeRef.current();
     drawRef.current(timeRef.current);
-  }, [glowColor, shapeColor, fontSize]);
+  }, [fontSize]);
+
+  React.useEffect(() => {
+    drawRef.current(timeRef.current);
+  }, [glowColor, shapeColor]);
 
   React.useEffect(() => {
     if (!playing) return;

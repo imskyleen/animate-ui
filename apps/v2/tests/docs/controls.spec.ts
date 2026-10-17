@@ -76,6 +76,46 @@ test.describe('demo controls', () => {
     await expect(bubbles).toHaveCount(interactive - 1);
   });
 
+  test('the glyph fontSize control resizes the characters live', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page, '/docs/backgrounds/glyph');
+    const canvas = stage(page).locator('[data-slot="glyph-background"] canvas');
+    const period = () =>
+      canvas.evaluate((canvas: HTMLCanvasElement) => {
+        const copy = document.createElement('canvas');
+        copy.width = canvas.width;
+        copy.height = canvas.height;
+        const context = copy.getContext('2d')!;
+        context.drawImage(canvas, 0, 0);
+        const { data } = context.getImageData(0, 0, copy.width, copy.height);
+        const columns = new Array<number>(copy.width).fill(0);
+        for (let y = 0; y < copy.height; y++)
+          for (let x = 0; x < copy.width; x++)
+            columns[x]! += data[(y * copy.width + x) * 4 + 3]!;
+        const mean = columns.reduce((a, b) => a + b, 0) / columns.length;
+        const centered = columns.map((v) => v - mean);
+        let best = 0;
+        let lag = 0;
+        for (let l = 4; l < 60; l++) {
+          let sum = 0;
+          for (let x = 0; x + l < centered.length; x++)
+            sum += centered[x]! * centered[x + l]!;
+          if (sum > best) {
+            best = sum;
+            lag = l;
+          }
+        }
+        return lag / (canvas.width / canvas.clientWidth);
+      });
+    await expect.poll(period).toBeGreaterThan(4);
+    const small = await period();
+    await toggle(page).click();
+    await panel(page).getByLabel('fontSize', { exact: true }).last().fill('16');
+    await expect.poll(period).toBeGreaterThan(small * 1.4);
+  });
+
   test('a slider and its number field stay in sync', async ({ page }) => {
     await open(page, '/docs/backgrounds/fireworks');
     await toggle(page).click();
