@@ -87,6 +87,7 @@ export function loadProject(cwd: string): Project {
   } catch (error) {
     throw new Error(
       `components.json in ${root} isn't valid JSON${error instanceof Error ? `: ${error.message}` : ''}.`,
+      { cause: error },
     );
   }
   const aliases = config.aliases ?? {};
