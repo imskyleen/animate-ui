@@ -21,6 +21,9 @@ export default function ReactAriaTagGroupFixture() {
         <button type="button" onClick={() => setTags((t) => t.slice(1))}>
           Remove first
         </button>
+        <button type="button" onClick={() => setTags((t) => t.slice(0, -1))}>
+          Remove last
+        </button>
       </div>
       <TagGroup aria-label="Frameworks">
         <TagList className="flex gap-2">

@@ -69,6 +69,31 @@ test.describe('react-aria tag group', () => {
     expect(last.opacity).toBeCloseTo(1, 2);
   });
 
+  test('a tag removed while it pops in fades out from how it looks, instead of vanishing', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Add Nuxt' }).click();
+    await page.waitForTimeout(80);
+    await page.evaluate(() => {
+      const samples: number[] = [];
+      (window as unknown as { samples: number[] }).samples = samples;
+      const start = performance.now();
+      const tick = () => {
+        const copy = document.querySelector<HTMLElement>('[data-exiting]');
+        if (copy) samples.push(Number(getComputedStyle(copy).opacity));
+        if (performance.now() - start < 400) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await page.getByRole('button', { name: 'Remove last' }).click();
+    await page.waitForTimeout(500);
+    const samples = await page.evaluate(
+      () => (window as unknown as { samples: number[] }).samples,
+    );
+    expect(samples.length).toBeGreaterThan(0);
+    expect(Math.max(...samples)).toBeGreaterThan(0.3);
+  });
+
   test('a removed tag shrinks out where it was, the others close the gap', async ({
     page,
   }) => {

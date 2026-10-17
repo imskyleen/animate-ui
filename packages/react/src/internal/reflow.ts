@@ -125,6 +125,24 @@ function layoutItems(container: Element): HTMLElement[] {
   });
 }
 
+const SHOWN_PROPERTIES = [
+  'opacity',
+  'transform',
+  'scale',
+  'translate',
+  'filter',
+] as const;
+
+function copyAsShown(element: HTMLElement) {
+  const copy = element.cloneNode(true) as HTMLElement;
+  if (element.getAnimations().length > 0) {
+    const computed = getComputedStyle(element);
+    for (const property of SHOWN_PROPERTIES)
+      copy.style.setProperty(property, computed.getPropertyValue(property));
+  }
+  return copy;
+}
+
 type Leaving = {
   element: HTMLElement;
   copy: HTMLElement;
@@ -267,7 +285,7 @@ function createReflow(options: () => ReflowOptions): Reflow {
       measure(options().container() ?? (parent && layoutBox(parent)));
       leaving.push({
         element,
-        copy: element.cloneNode(true) as HTMLElement,
+        copy: copyAsShown(element),
         rect: element.getBoundingClientRect(),
         transition,
         reduce,
