@@ -289,7 +289,9 @@
     "progress": [
       {
         "part": "ProgressIndicator",
-        "removed": ["transition-all"],
+        "removed": [
+          "transition-all"
+        ],
         "added": []
       }
     ],
@@ -352,12 +354,16 @@
     "switch": [
       {
         "part": "Switch",
-        "removed": ["transition-all"],
+        "removed": [
+          "transition-all"
+        ],
         "added": []
       },
       {
         "part": "SwitchThumb",
-        "removed": ["transition-transform"],
+        "removed": [
+          "transition-transform"
+        ],
         "added": []
       }
     ],
@@ -700,7 +706,9 @@
     "progress": [
       {
         "part": "ProgressIndicator",
-        "removed": ["transition-all"],
+        "removed": [
+          "transition-all"
+        ],
         "added": []
       }
     ],
@@ -762,12 +770,16 @@
     "switch": [
       {
         "part": "Switch",
-        "removed": ["transition-all"],
+        "removed": [
+          "transition-all"
+        ],
         "added": []
       },
       {
         "part": "SwitchThumb",
-        "removed": ["transition-transform"],
+        "removed": [
+          "transition-transform"
+        ],
         "added": []
       }
     ],
@@ -992,7 +1004,9 @@
     "progress": [
       {
         "part": "ProgressIndicator",
-        "removed": ["transition-all"],
+        "removed": [
+          "transition-all"
+        ],
         "added": []
       }
     ],
@@ -1052,12 +1066,16 @@
     "switch": [
       {
         "part": "Switch",
-        "removed": ["transition-all"],
+        "removed": [
+          "transition-all"
+        ],
         "added": []
       },
       {
         "part": "SwitchThumb",
-        "removed": ["transition-transform"],
+        "removed": [
+          "transition-transform"
+        ],
         "added": []
       }
     ],
