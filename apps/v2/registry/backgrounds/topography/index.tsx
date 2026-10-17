@@ -20,6 +20,8 @@ import { cn } from 'cn';
 
 const CELL = 8;
 const RELAX = 2;
+const MARGIN = 40;
+const STEP = 32;
 const FEATURE = 280;
 const RANGE = 0.95;
 const HILL_RADIUS = 90;
@@ -360,19 +362,24 @@ function TopographyBackgroundContent({
     let levelHigh = new Int16Array(0);
     let contours = createContours(0);
     let frames = 0;
-    let textColor = '#737373';
+    let textColor = '';
+    let baseX = NaN;
+    let baseY = NaN;
+    let shiftX = 0;
+    let shiftY = 0;
+    let moving = true;
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
       dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-      canvas.width = Math.max(1, Math.round(width * dpr));
-      canvas.height = Math.max(1, Math.round(height * dpr));
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      cols = Math.ceil(width / CELL) + 1;
-      rows = Math.ceil(height / CELL) + 1;
+      canvas.width = Math.max(1, Math.round((width + 2 * MARGIN) * dpr));
+      canvas.height = Math.max(1, Math.round((height + 2 * MARGIN) * dpr));
+      canvas.style.width = `${width + 2 * MARGIN}px`;
+      canvas.style.height = `${height + 2 * MARGIN}px`;
+      cols = Math.ceil((width + 2 * MARGIN) / CELL) + 1;
+      rows = Math.ceil((height + 2 * MARGIN) / CELL) + 1;
       field = new Float32Array((cols + 1) * (rows + 1));
       levelLow = new Int16Array(rows * cols);
       levelHigh = new Int16Array(rows * cols);
@@ -388,11 +395,11 @@ function TopographyBackgroundContent({
     const sample = (time: number) => {
       const { speed, scale, peak } = optionsRef.current;
       const size = FEATURE * scale;
-      const driftX = time * 0.009 * speed;
-      const driftY = time * 0.005 * speed;
       const lift = hill.get() * peak * 1.5;
-      const hx = hillX.get();
-      const hy = hillY.get();
+      const offsetX = MARGIN + shiftX;
+      const offsetY = MARGIN + shiftY;
+      const hx = hillX.get() + offsetX;
+      const hy = hillY.get() + offsetY;
       const ripples = ripplesRef.current;
       const reach = Math.hypot(width, height) * 0.8;
       const amount = rise.get();
@@ -401,8 +408,8 @@ function TopographyBackgroundContent({
         const y = row * CELL;
         for (let col = 0; col <= cols; col++) {
           const x = col * CELL;
-          const nx = (x + driftX) / size;
-          const ny = (y + driftY) / size;
+          const nx = (x - MARGIN + baseX) / size;
+          const ny = (y - MARGIN + baseY) / size;
           let value =
             noise(nx, ny, 0.37) * 1.1 + noise(nx * 2.1, ny * 2.1, 0.63) * 0.45;
           const dx = x - hx;
@@ -411,7 +418,9 @@ function TopographyBackgroundContent({
             value += lift * Math.exp(-Math.hypot(dx, dy) / HILL_RADIUS);
           for (const ripple of ripples) {
             const p = ripple.progress.get();
-            const d = Math.hypot(x - ripple.x, y - ripple.y) - p * reach;
+            const d =
+              Math.hypot(x - ripple.x - offsetX, y - ripple.y - offsetY) -
+              p * reach;
             value +=
               0.9 *
               (1 - p) *
@@ -423,8 +432,36 @@ function TopographyBackgroundContent({
       }
     };
 
+    const place = (time: number) => {
+      const { speed } = optionsRef.current;
+      const driftX = time * 0.009 * speed;
+      const driftY = time * 0.005 * speed;
+      const nextX = Math.floor(driftX / STEP) * STEP;
+      const nextY = Math.floor(driftY / STEP) * STEP;
+      const jumped = nextX !== baseX || nextY !== baseY;
+      baseX = nextX;
+      baseY = nextY;
+      shiftX = driftX - baseX;
+      shiftY = driftY - baseY;
+      canvas.style.transform = `translate3d(${-MARGIN - shiftX}px, ${-MARGIN - shiftY}px, 0)`;
+      return jumped;
+    };
+
     const draw = (time: number, looping = false) => {
       if (width === 0 || height === 0) return;
+      const jumped = place(time);
+      if (!looping || frames++ % 30 === 0) {
+        const color = getComputedStyle(container).color || '#737373';
+        if (color !== textColor) {
+          textColor = color;
+          looping = false;
+        }
+      }
+      const changing =
+        hill.get() > 0.002 || ripplesRef.current.length > 0 || rise.get() < 1;
+      const redraw = !looping || jumped || changing || moving;
+      moving = changing;
+      if (!redraw) return;
       const { lineColor, levels } = optionsRef.current;
       sample(time);
       const count = Math.max(2, Math.round(levels));
@@ -523,9 +560,7 @@ function TopographyBackgroundContent({
       }
 
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      context.clearRect(0, 0, width, height);
-      if (!looping || frames++ % 30 === 0)
-        textColor = getComputedStyle(container).color || '#737373';
+      context.clearRect(0, 0, width + 2 * MARGIN, height + 2 * MARGIN);
       context.strokeStyle = lineColor ?? textColor;
       context.lineCap = 'round';
       context.globalAlpha = 0.4;
@@ -611,7 +646,8 @@ function TopographyBackgroundContent({
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute top-0 left-0"
+        style={{ willChange: 'transform' }}
       />
       {children}
     </div>

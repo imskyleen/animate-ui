@@ -260,13 +260,17 @@ test.describe('backgrounds', () => {
       section.locator('canvas').evaluate(
         (canvas: HTMLCanvasElement, { center, inner, outer }) => {
           const ratio = canvas.width / canvas.clientWidth;
+          const shift = new DOMMatrix(getComputedStyle(canvas).transform);
           const { data } = canvas
             .getContext('2d')!
             .getImageData(0, 0, canvas.width, canvas.height);
           let count = 0;
           for (let y = 0; y < canvas.height; y++)
             for (let x = 0; x < canvas.width; x++) {
-              const d = Math.hypot(x / ratio - center.x, y / ratio - center.y);
+              const d = Math.hypot(
+                x / ratio + shift.m41 - center.x,
+                y / ratio + shift.m42 - center.y,
+              );
               if (
                 d >= inner &&
                 d < outer &&
@@ -395,15 +399,29 @@ test.describe('backgrounds', () => {
       const section = page.getByTestId('topography');
       await show(section);
       await page.waitForTimeout(2500);
-      const grab = () =>
-        section.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
-          const { data, width, height } = canvas
-            .getContext('2d')!
-            .getImageData(0, 0, canvas.width, canvas.height);
-          const alpha = new Array<number>(width * height);
-          for (let i = 0; i < width * height; i++) alpha[i] = data[i * 4 + 3]!;
-          return { alpha, width, height };
-        });
+      const grab = async () => {
+        const png = (await section.screenshot()).toString('base64');
+        return page.evaluate(async (png) => {
+          const image = new Image();
+          image.src = `data:image/png;base64,${png}`;
+          await image.decode();
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const context = canvas.getContext('2d')!;
+          context.drawImage(image, 0, 0);
+          const { data, width, height } = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+          const light = new Array<number>(width * height);
+          for (let i = 0; i < width * height; i++)
+            light[i] = data[i * 4]! + data[i * 4 + 1]! + data[i * 4 + 2]!;
+          return { light, width, height };
+        }, png);
+      };
       const before = await grab();
       await page.waitForTimeout(1000);
       const after = await grab();
@@ -413,8 +431,8 @@ test.describe('backgrounds', () => {
         for (let y = 40; y < height - 40; y += 2)
           for (let x = 40; x < width - 40; x += 2)
             total += Math.abs(
-              before.alpha[y * width + x]! -
-                after.alpha[(y - dy) * width + (x - dx)]!,
+              before.light[y * width + x]! -
+                after.light[(y - dy) * width + (x - dx)]!,
             );
         return total;
       };
@@ -423,6 +441,55 @@ test.describe('backgrounds', () => {
         for (let dx = -20; dx <= 20; dx++)
           best = Math.min(best, residual(dx, dy));
       expect(best / residual(0, 0)).toBeLessThan(0.6);
+    });
+
+    test('while it only glides, the lines are not redrawn: the GPU slides them by fractions of a pixel', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const counts = { strokes: 0 };
+        (window as unknown as { __strokes: typeof counts }).__strokes = counts;
+        const stroke = CanvasRenderingContext2D.prototype.stroke;
+        CanvasRenderingContext2D.prototype.stroke = function (
+          ...args: [Path2D]
+        ) {
+          counts.strokes++;
+          return stroke.apply(this, args);
+        };
+      });
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(2500);
+      const canvas = section.locator('canvas');
+      const offsets = await canvas.evaluate(
+        (el) =>
+          new Promise<number[]>((resolve) => {
+            const seen: number[] = [];
+            const counts = (
+              window as unknown as { __strokes: { strokes: number } }
+            ).__strokes;
+            counts.strokes = 0;
+            const t0 = performance.now();
+            const tick = () => {
+              seen.push(new DOMMatrix(getComputedStyle(el).transform).m41);
+              if (performance.now() - t0 < 1000) requestAnimationFrame(tick);
+              else resolve([...seen, counts.strokes]);
+            };
+            requestAnimationFrame(tick);
+          }),
+      );
+      const strokes = offsets.pop()!;
+      expect(strokes).toBeLessThanOrEqual(4);
+      const steps = offsets
+        .slice(1)
+        .map((x, i) => x - offsets[i]!)
+        .filter((step) => Math.abs(step) < 16);
+      expect(steps.length).toBeGreaterThan(30);
+      for (const step of steps) expect(Math.abs(step)).toBeLessThan(1);
+      expect(steps.some((step) => step !== 0 && Math.abs(step) < 0.5)).toBe(
+        true,
+      );
     });
 
     test('the relief rises on mount: the lines bloom out', async ({ page }) => {
