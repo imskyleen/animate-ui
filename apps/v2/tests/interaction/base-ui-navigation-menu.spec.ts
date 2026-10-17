@@ -86,6 +86,58 @@ test.describe('base-ui navigation-menu demo', () => {
     expect(first.opacity).toBeLessThan(1);
   });
 
+  test('hovering from one item to the next, the popup never fades or shrinks', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Getting started' }).hover();
+    await page.waitForTimeout(700);
+    const looks = page.evaluate(
+      (selector) =>
+        new Promise<{ opacity: number; transform: string }[]>((resolve) => {
+          const seen: { opacity: number; transform: string }[] = [];
+          const t0 = performance.now();
+          const tick = () => {
+            const el = document.querySelector(selector);
+            if (el) {
+              const style = getComputedStyle(el);
+              seen.push({
+                opacity: Number(style.opacity),
+                transform: style.transform,
+              });
+            }
+            if (performance.now() - t0 < 500) requestAnimationFrame(tick);
+            else resolve(seen);
+          };
+          tick();
+        }),
+      POPUP,
+    );
+    const next = (await page
+      .getByRole('button', { name: 'Components' })
+      .boundingBox())!;
+    await page.mouse.move(next.x + next.width / 2, next.y + next.height / 2);
+    const seen = await looks;
+    expect(seen.length).toBeGreaterThan(10);
+    for (const look of seen) {
+      expect(look.opacity).toBe(1);
+      expect(look.transform).toBe('none');
+    }
+  });
+
+  test('leaving every item by hover still closes it, then unmounts', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Getting started' }).hover();
+    await page.waitForTimeout(700);
+    await page.mouse.move(5, 700);
+    await expect
+      .poll(async () => (await sample(page, POPUP)).opacity, {
+        intervals: [16],
+      })
+      .toBeLessThan(1);
+    await expect(page.locator(POPUP)).toHaveCount(0, { timeout: 1500 });
+  });
+
   test('closes the same way, then unmounts', async ({ page }) => {
     await page.getByRole('button', { name: 'Getting started' }).click();
     await page.waitForTimeout(500);

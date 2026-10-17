@@ -83,11 +83,13 @@ type RootContextValue = {
   swapper: ContentSwapper;
   justSwitched: () => boolean;
   keptOpen: () => void;
+  closing: () => boolean;
 };
 
 const RootContext = React.createContext<RootContextValue | null>(null);
 
 const PATIENT_CLICK = 500;
+const HOVER_SWAP_GRACE = 60;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Root<Value = any>({
@@ -110,6 +112,7 @@ function Root<Value = any>({
     at: -Infinity,
   });
   const pinnedRef = React.useRef<unknown>(null);
+  const hoverClosedAtRef = React.useRef(-Infinity);
   React.useLayoutEffect(() => {
     if (props.value === undefined || props.value === valueRef.current) return;
     valueRef.current = props.value;
@@ -133,6 +136,10 @@ function Root<Value = any>({
     const previous = valueRef.current;
     if (props.value === undefined) valueRef.current = value;
     pinnedRef.current = null;
+    hoverClosedAtRef.current =
+      value == null && details.reason === 'trigger-hover'
+        ? performance.now()
+        : -Infinity;
     switchedRef.current =
       value != null &&
       previous != null &&
@@ -153,6 +160,9 @@ function Root<Value = any>({
         pinnedRef.current = valueRef.current;
         switchedRef.current = { to: null, at: -Infinity };
       },
+      closing: () =>
+        valueRef.current == null &&
+        performance.now() - hoverClosedAtRef.current >= HOVER_SWAP_GRACE,
     }),
     [swapper],
   );
@@ -300,6 +310,7 @@ function Popup({ transition, exitTransition, render, ...props }: Popup.Props) {
             state={state}
             unmount={root.unmount}
             swapper={root.swapper}
+            closing={root.closing}
             transition={transition}
             exitTransition={exitTransition}
             render={render}
@@ -320,6 +331,7 @@ function PopupMotion({
   htmlProps,
   state,
   unmount,
+  closing,
   swapper,
   transition,
   exitTransition,
@@ -328,14 +340,21 @@ function PopupMotion({
   htmlProps: HTMLProps;
   state: Popup.State;
   unmount: () => void;
+  closing: () => boolean;
   swapper: ContentSwapper;
   render?: Popup.Props['render'];
 }) {
   const reduce = useShouldReduceMotion();
   const [entering] = React.useState(state.open);
   const openRef = React.useRef(state.open);
+  const held = !state.open && !closing();
+  const shown = state.open || held;
+  const [, recheck] = React.useReducer((n: number) => n + 1, 0);
   React.useLayoutEffect(() => {
-    openRef.current = state.open;
+    openRef.current = shown;
+    if (!held) return;
+    const id = requestAnimationFrame(recheck);
+    return () => cancelAnimationFrame(id);
   });
 
   const enter = useTempoTransition(transition ?? MENU_TRANSITION);
@@ -360,12 +379,12 @@ function PopupMotion({
       as="nav"
       {...htmlProps}
       ref={mergedRef}
-      initial={entering ? hidden : false}
-      animate={
-        state.open
-          ? { opacity: 1, scale: 1, transition: enter }
-          : { ...hidden, transition: exit }
-      }
+      variants={{
+        hidden: { ...hidden, transition: exit },
+        shown: { opacity: 1, scale: 1, transition: enter },
+      }}
+      initial={entering ? 'hidden' : false}
+      animate={shown ? 'shown' : 'hidden'}
       onAnimationComplete={() => {
         if (!openRef.current) unmount();
       }}
