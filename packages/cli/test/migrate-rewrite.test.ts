@@ -289,6 +289,19 @@ describe('rewrite', () => {
     expect(found).toEqual(['buttons/liquid']);
   });
 
+  test('the registry button step imports through the project components alias', () => {
+    const { manual } = rewrite(
+      "import { LiquidButton } from '@/components/animate-ui/primitives/buttons/liquid';\n",
+      {
+        project: { ...project, componentsAlias: '~/kit', dlx: 'pnpm dlx' },
+        file: '/app/page.tsx',
+        selected: () => true,
+      },
+    );
+    expect(manual[0]!.message).toContain('`~/kit/animate-ui/buttons/liquid`');
+    expect(manual[0]!.message).toContain('`pnpm dlx shadcn@latest add');
+  });
+
   test("SpringProvider's dragElastic is reported for removal", () => {
     const { manual } = run(
       [

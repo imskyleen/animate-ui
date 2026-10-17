@@ -13,6 +13,7 @@ export type MigrateProject = {
   hasPackage: boolean;
   install: string;
   dlx: string;
+  componentsAlias: string;
   hasDependency: (name: string) => boolean;
   componentsDir: string;
   libDir: string;
@@ -233,6 +234,7 @@ export function loadMigrateProject(cwd: string): MigrateProject {
     hasPackage,
     install,
     dlx,
+    componentsAlias,
     hasDependency: (name) => dependencies.has(name),
     componentsDir,
     libDir,

@@ -81,7 +81,9 @@ export function loadProject(cwd: string): Project {
   }
   let config: { aliases?: Record<string, string> };
   try {
-    config = parseJsonc(readFileSync(configFile, 'utf8'));
+    config = parseJsonc(
+      readFileSync(configFile, 'utf8').replace(/^\uFEFF/, ''),
+    );
   } catch (error) {
     throw new Error(
       `components.json in ${root} isn't valid JSON${error instanceof Error ? `: ${error.message}` : ''}.`,

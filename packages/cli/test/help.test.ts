@@ -64,3 +64,14 @@ test('piping the output into a command that stops early exits cleanly', () => {
   );
   expect(result.stderr).not.toContain('EPIPE');
 });
+
+test('a components.json saved with a byte order mark still loads', () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'animate-ui-bom-config-'));
+  writeFileSync(
+    path.join(dir, 'components.json'),
+    '﻿{"aliases":{"components":"@/components","ui":"@/components/ui"}}',
+  );
+  writeFileSync(path.join(dir, 'package.json'), '{}');
+  const result = runCli(['animate', 'all', '--cwd', dir, '--dry-run']);
+  expect(result.stderr).not.toContain("isn't valid JSON");
+});
