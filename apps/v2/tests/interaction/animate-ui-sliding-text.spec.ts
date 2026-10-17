@@ -184,6 +184,30 @@ test.describe('animate-ui sliding text', () => {
     ).toHaveLength(2);
   });
 
+  test('at rest, descenders and tall letters show whole: the box clips a quarter em past the line, without taking room', async ({
+    page,
+  }) => {
+    const box = await page.getByTestId('inline').evaluate((el) => {
+      const track = el.querySelector('[data-slot="sliding-text-track"]')!;
+      const outer = el.getBoundingClientRect();
+      const inner = track.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      return {
+        above: inner.top - outer.top,
+        below: outer.bottom - inner.bottom,
+        font: parseFloat(style.fontSize),
+        room:
+          outer.height +
+          parseFloat(style.marginTop) +
+          parseFloat(style.marginBottom),
+        height: inner.height,
+      };
+    });
+    expect(box.above).toBeGreaterThanOrEqual(box.font * 0.2);
+    expect(box.below).toBeGreaterThanOrEqual(box.font * 0.2);
+    expect(box.room).toBeCloseTo(box.height, 1);
+  });
+
   test('the copy waits one full height and a gap away, so its descenders never peek in', async ({
     page,
   }) => {
@@ -197,7 +221,7 @@ test.describe('animate-ui sliding text', () => {
           font: parseFloat(getComputedStyle(el).fontSize),
         }));
       expect(height).toBeGreaterThan(id === 'wrapped' ? 40 : 20);
-      expect(top).toBeLessThanOrEqual(-height - font * 0.25);
+      expect(top).toBeLessThanOrEqual(-height - font * 0.5);
     }
     const { top, height } = await page
       .getByTestId('up')

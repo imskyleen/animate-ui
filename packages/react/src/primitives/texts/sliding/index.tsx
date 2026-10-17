@@ -22,7 +22,9 @@ type SlidingTextDirection = 'up' | 'down';
 
 type SlidingTextTrigger = 'hover' | 'click';
 
-const GAP = '0.3em';
+const BLEED = '0.25em';
+
+const GAP = '0.6em';
 
 const DEFAULT_TRANSITION: Transition = {
   duration: 0.25,
@@ -90,6 +92,8 @@ function SlidingTextContent({
         position: 'relative',
         display: 'inline-block',
         overflow: 'clip',
+        paddingBlock: BLEED,
+        marginBlock: `calc(-1 * ${BLEED})`,
         ...style,
       }}
       onHoverStart={(event, info) => {
