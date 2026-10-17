@@ -451,11 +451,13 @@ test.describe('backgrounds', () => {
         (window as unknown as { __strokes: typeof counts }).__strokes = counts;
         const stroke = CanvasRenderingContext2D.prototype.stroke;
         CanvasRenderingContext2D.prototype.stroke = function (
-          ...args: [Path2D]
+          this: CanvasRenderingContext2D,
+          path?: Path2D,
         ) {
           counts.strokes++;
-          return stroke.apply(this, args);
-        };
+          if (path) stroke.call(this, path);
+          else (stroke as () => void).call(this);
+        } as typeof stroke;
       });
       await open(page);
       const section = page.getByTestId('topography');
@@ -490,6 +492,40 @@ test.describe('backgrounds', () => {
       expect(steps.some((step) => step !== 0 && Math.abs(step) < 0.5)).toBe(
         true,
       );
+    });
+
+    test('a cursor resting still lets the peak sink, and nothing is redrawn while it rests', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const counts = { strokes: 0 };
+        (window as unknown as { __strokes: typeof counts }).__strokes = counts;
+        const stroke = CanvasRenderingContext2D.prototype.stroke;
+        CanvasRenderingContext2D.prototype.stroke = function (
+          this: CanvasRenderingContext2D,
+          path?: Path2D,
+        ) {
+          counts.strokes++;
+          if (path) stroke.call(this, path);
+          else (stroke as () => void).call(this);
+        } as typeof stroke;
+      });
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(2500);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + 260, box.y + 200);
+      await page.mouse.move(box.x + 320, box.y + 200, { steps: 5 });
+      await page.waitForTimeout(3000);
+      const strokes = await page.evaluate(async () => {
+        const counts = (window as unknown as { __strokes: { strokes: number } })
+          .__strokes;
+        counts.strokes = 0;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return counts.strokes;
+      });
+      expect(strokes).toBeLessThanOrEqual(4);
     });
 
     test('the relief rises on mount: the lines bloom out', async ({ page }) => {

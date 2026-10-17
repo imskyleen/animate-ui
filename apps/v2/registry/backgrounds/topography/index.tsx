@@ -22,6 +22,7 @@ const CELL = 8;
 const RELAX = 2;
 const MARGIN = 40;
 const STEP = 32;
+const REST_AFTER = 700;
 const FEATURE = 280;
 const RANGE = 0.95;
 const HILL_RADIUS = 90;
@@ -322,6 +323,8 @@ function TopographyBackgroundContent({
   const hill = useSpring(raised, { stiffness: 80, damping: 18 });
   const rise = useMotionValue(reduce ? 1 : 0);
   const ripplesRef = React.useRef<Ripple[]>([]);
+  const restRef = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => () => clearTimeout(restRef.current), []);
   const drawRef = React.useRef<(time: number, looping?: boolean) => void>(
     () => {},
   );
@@ -358,6 +361,10 @@ function TopographyBackgroundContent({
     let cols = 0;
     let rows = 0;
     let field = new Float32Array(0);
+    let terrain = new Float32Array(0);
+    let terrainX = NaN;
+    let terrainY = NaN;
+    let terrainSize = NaN;
     let levelLow = new Int16Array(0);
     let levelHigh = new Int16Array(0);
     let contours = createContours(0);
@@ -381,6 +388,8 @@ function TopographyBackgroundContent({
       cols = Math.ceil((width + 2 * MARGIN) / CELL) + 1;
       rows = Math.ceil((height + 2 * MARGIN) / CELL) + 1;
       field = new Float32Array((cols + 1) * (rows + 1));
+      terrain = new Float32Array((cols + 1) * (rows + 1));
+      terrainSize = NaN;
       levelLow = new Int16Array(rows * cols);
       levelHigh = new Int16Array(rows * cols);
       contours = createContours(2 * (rows + 1) * (cols + 1) + 4);
@@ -403,24 +412,40 @@ function TopographyBackgroundContent({
       const ripples = ripplesRef.current;
       const reach = Math.hypot(width, height) * 0.8;
       const amount = rise.get();
+      if (terrainX !== baseX || terrainY !== baseY || terrainSize !== size) {
+        terrainX = baseX;
+        terrainY = baseY;
+        terrainSize = size;
+        let t = 0;
+        for (let row = 0; row <= rows; row++) {
+          const ny = (row * CELL - MARGIN + baseY) / size;
+          for (let col = 0; col <= cols; col++) {
+            const nx = (col * CELL - MARGIN + baseX) / size;
+            terrain[t++] =
+              noise(nx, ny, 0.37) * 1.1 +
+              noise(nx * 2.1, ny * 2.1, 0.63) * 0.45;
+          }
+        }
+      }
+      const hillReach =
+        lift > 0 ? HILL_RADIUS * Math.log(Math.max(lift, 0.004) / 0.004) : 0;
+      const rippleReach = RIPPLE_WIDTH * 3.5;
       let i = 0;
       for (let row = 0; row <= rows; row++) {
         const y = row * CELL;
         for (let col = 0; col <= cols; col++) {
           const x = col * CELL;
-          const nx = (x - MARGIN + baseX) / size;
-          const ny = (y - MARGIN + baseY) / size;
-          let value =
-            noise(nx, ny, 0.37) * 1.1 + noise(nx * 2.1, ny * 2.1, 0.63) * 0.45;
+          let value = terrain[i]!;
           const dx = x - hx;
           const dy = y - hy;
-          if (lift > 0)
+          if (lift > 0 && dx * dx + dy * dy < hillReach * hillReach)
             value += lift * Math.exp(-Math.hypot(dx, dy) / HILL_RADIUS);
           for (const ripple of ripples) {
             const p = ripple.progress.get();
             const d =
               Math.hypot(x - ripple.x - offsetX, y - ripple.y - offsetY) -
               p * reach;
+            if (d > rippleReach || d < -rippleReach) continue;
             value +=
               0.9 *
               (1 - p) *
@@ -622,9 +647,12 @@ function TopographyBackgroundContent({
         pointerX.set(x);
         pointerY.set(y);
         raised.set(1);
+        clearTimeout(restRef.current);
+        restRef.current = window.setTimeout(() => raised.set(0), REST_AFTER);
       }}
       onPointerLeave={(event) => {
         onPointerLeave?.(event);
+        clearTimeout(restRef.current);
         raised.set(0);
       }}
       onPointerDown={(event) => {
