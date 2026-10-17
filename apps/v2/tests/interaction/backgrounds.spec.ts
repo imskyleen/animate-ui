@@ -388,6 +388,43 @@ test.describe('backgrounds', () => {
       expect(pauses).toBeLessThan(18);
     });
 
+    test('the terrain glides without reshaping, so lines never snap together', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(2500);
+      const grab = () =>
+        section.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
+          const { data, width, height } = canvas
+            .getContext('2d')!
+            .getImageData(0, 0, canvas.width, canvas.height);
+          const alpha = new Array<number>(width * height);
+          for (let i = 0; i < width * height; i++) alpha[i] = data[i * 4 + 3]!;
+          return { alpha, width, height };
+        });
+      const before = await grab();
+      await page.waitForTimeout(1000);
+      const after = await grab();
+      const { width, height } = before;
+      const residual = (dx: number, dy: number) => {
+        let total = 0;
+        for (let y = 40; y < height - 40; y += 2)
+          for (let x = 40; x < width - 40; x += 2)
+            total += Math.abs(
+              before.alpha[y * width + x]! -
+                after.alpha[(y - dy) * width + (x - dx)]!,
+            );
+        return total;
+      };
+      let best = Infinity;
+      for (let dy = -20; dy <= 20; dy++)
+        for (let dx = -20; dx <= 20; dx++)
+          best = Math.min(best, residual(dx, dy));
+      expect(best / residual(0, 0)).toBeLessThan(0.6);
+    });
+
     test('the relief rises on mount: the lines bloom out', async ({ page }) => {
       await page.goto('/tests/fixtures/backgrounds');
       const section = page.getByTestId('topography');

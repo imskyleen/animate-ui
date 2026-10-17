@@ -388,7 +388,8 @@ function TopographyBackgroundContent({
     const sample = (time: number) => {
       const { speed, scale, peak } = optionsRef.current;
       const size = FEATURE * scale;
-      const z = time * 0.00005 * speed;
+      const driftX = time * 0.009 * speed;
+      const driftY = time * 0.005 * speed;
       const lift = hill.get() * peak * 1.5;
       const hx = hillX.get();
       const hy = hillY.get();
@@ -400,10 +401,10 @@ function TopographyBackgroundContent({
         const y = row * CELL;
         for (let col = 0; col <= cols; col++) {
           const x = col * CELL;
-          const nx = x / size;
-          const ny = y / size;
+          const nx = (x + driftX) / size;
+          const ny = (y + driftY) / size;
           let value =
-            noise(nx, ny, z) * 1.1 + noise(nx * 2.1, ny * 2.1, z * 1.7) * 0.45;
+            noise(nx, ny, 0.37) * 1.1 + noise(nx * 2.1, ny * 2.1, 0.63) * 0.45;
           const dx = x - hx;
           const dy = y - hy;
           if (lift > 0)
