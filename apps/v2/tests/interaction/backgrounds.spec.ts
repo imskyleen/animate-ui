@@ -87,11 +87,32 @@ async function expectStill(page: Page, section: Locator) {
   expect(await frame(section)).toBe(previous);
 }
 
+async function withoutWebGl(page: Page) {
+  await page.addInitScript(() => {
+    const getContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (
+      this: HTMLCanvasElement,
+      type: string,
+      ...rest: unknown[]
+    ) {
+      if (type.includes('webgl')) return null;
+      return (getContext as (...args: unknown[]) => unknown).call(
+        this,
+        type,
+        ...rest,
+      );
+    } as typeof getContext;
+  });
+}
+
 function paintedPixels(section: Locator) {
   return section.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
-    const { data } = canvas
-      .getContext('2d')!
-      .getImageData(0, 0, canvas.width, canvas.height);
+    const copy = document.createElement('canvas');
+    copy.width = canvas.width;
+    copy.height = canvas.height;
+    const context = copy.getContext('2d')!;
+    context.drawImage(canvas, 0, 0);
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
     let count = 0;
     for (let i = 3; i < data.length; i += 4) if (data[i]! > 0) count++;
     return count;
@@ -260,9 +281,17 @@ test.describe('backgrounds', () => {
       section.locator('canvas').evaluate(
         (canvas: HTMLCanvasElement, { center, inner, outer }) => {
           const ratio = canvas.width / canvas.clientWidth;
-          const { data } = canvas
-            .getContext('2d')!
-            .getImageData(0, 0, canvas.width, canvas.height);
+          const copy = document.createElement('canvas');
+          copy.width = canvas.width;
+          copy.height = canvas.height;
+          const context = copy.getContext('2d')!;
+          context.drawImage(canvas, 0, 0);
+          const { data } = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
           let count = 0;
           for (let y = 0; y < canvas.height; y++)
             for (let x = 0; x < canvas.width; x++) {
@@ -279,9 +308,10 @@ test.describe('backgrounds', () => {
         { center, inner, outer },
       );
 
-    test('the lines are drawn as smooth curves, not as grid segments', async ({
+    test('without WebGL, the lines are drawn as smooth curves, not as grid segments', async ({
       page,
     }) => {
+      await withoutWebGl(page);
       await page.addInitScript(() => {
         const counts = { curves: 0, lines: 0 };
         (window as unknown as { __strokes: typeof counts }).__strokes = counts;
@@ -312,7 +342,10 @@ test.describe('backgrounds', () => {
       expect(lines).toBeLessThan(curves / 5);
     });
 
-    test('the lines bend steadily, without kinks', async ({ page }) => {
+    test('without WebGL, the lines bend steadily, without kinks', async ({
+      page,
+    }) => {
+      await withoutWebGl(page);
       await page.addInitScript(() => {
         const loops: number[][] = [];
         (window as unknown as { __loops: number[][] }).__loops = loops;
@@ -388,9 +421,10 @@ test.describe('backgrounds', () => {
       expect(pauses).toBeLessThan(18);
     });
 
-    test('on a 120Hz screen it redraws every other frame, at a steady pace', async ({
+    test('without WebGL, a 120Hz screen gets a redraw every other frame, at a steady pace', async ({
       page,
     }) => {
+      await withoutWebGl(page);
       await page.addInitScript(() => {
         let now = 0;
         let queue: FrameRequestCallback[] = [];
@@ -445,14 +479,134 @@ test.describe('backgrounds', () => {
       for (const gap of gaps) expect(gap).toBe(2);
     });
 
-    test('the relief rises on mount: the lines bloom out', async ({ page }) => {
-      await page.goto('/tests/fixtures/backgrounds');
+    test('with WebGL, the relief is drawn per pixel, never through a grid', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const counts = { strokes: 0 };
+        (window as unknown as { __strokes: typeof counts }).__strokes = counts;
+        const stroke = CanvasRenderingContext2D.prototype.stroke;
+        CanvasRenderingContext2D.prototype.stroke = function (
+          this: CanvasRenderingContext2D,
+          path?: Path2D,
+        ) {
+          if (this.canvas.closest('[data-testid="topography"]'))
+            counts.strokes++;
+          if (path) stroke.call(this, path);
+          else (stroke as () => void).call(this);
+        } as typeof stroke;
+      });
+      await open(page);
       const section = page.getByTestId('topography');
-      await section.locator('canvas').waitFor();
       await show(section);
+      await page.waitForTimeout(1500);
+      expect(
+        await section
+          .locator('canvas')
+          .evaluate(
+            (canvas: HTMLCanvasElement) => !!canvas.getContext('webgl'),
+          ),
+      ).toBe(true);
+      expect(await paintedPixels(section)).toBeGreaterThan(1000);
+      expect(
+        await page.evaluate(
+          () =>
+            (window as unknown as { __strokes: { strokes: number } }).__strokes
+              .strokes,
+        ),
+      ).toBe(0);
+    });
+
+    test('with WebGL, a 120Hz screen gets a redraw on every frame', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        let now = 0;
+        let queue: FrameRequestCallback[] = [];
+        const base = performance.now();
+        performance.now = () => base + now;
+        window.requestAnimationFrame = (callback) => {
+          queue.push(callback);
+          return queue.length;
+        };
+        window.cancelAnimationFrame = () => {};
+        const draws: number[] = [];
+        let frame = 0;
+        const drawArrays = WebGLRenderingContext.prototype.drawArrays;
+        WebGLRenderingContext.prototype.drawArrays = function (
+          this: WebGLRenderingContext,
+          ...args: Parameters<typeof drawArrays>
+        ) {
+          draws.push(frame);
+          drawArrays.apply(this, args);
+        };
+        const w = window as unknown as {
+          __step: () => void;
+          __draws: number[];
+        };
+        w.__step = () => {
+          frame++;
+          now += 1000 / 120;
+          const due = queue;
+          queue = [];
+          for (const callback of due) callback(base + now);
+        };
+        w.__draws = draws;
+      });
+      await page.goto('/tests/demos/backgrounds/topography', {
+        waitUntil: 'networkidle',
+      });
+      const drawn = await page.evaluate(() => {
+        const w = window as unknown as {
+          __step: () => void;
+          __draws: number[];
+        };
+        for (let i = 0; i < 240; i++) w.__step();
+        w.__draws.length = 0;
+        for (let i = 0; i < 120; i++) w.__step();
+        return [...new Set(w.__draws)];
+      });
+      expect(drawn.length).toBeGreaterThanOrEqual(118);
+    });
+
+    test('the relief rises on mount from a blank canvas: the lines bloom out', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        let now = 0;
+        let queue: FrameRequestCallback[] = [];
+        const base = performance.now();
+        performance.now = () => base + now;
+        window.requestAnimationFrame = (callback) => {
+          queue.push(callback);
+          return queue.length;
+        };
+        window.cancelAnimationFrame = () => {};
+        (window as unknown as { __step: (ms: number) => void }).__step = (
+          ms,
+        ) => {
+          now += ms;
+          const due = queue;
+          queue = [];
+          for (const callback of due) callback(base + now);
+        };
+      });
+      await page.goto('/tests/demos/backgrounds/topography', {
+        waitUntil: 'networkidle',
+      });
+      const section = page.locator('[data-slot="topography-background"]');
+      const step = (frames: number) =>
+        page.evaluate((frames) => {
+          const w = window as unknown as { __step: (ms: number) => void };
+          for (let i = 0; i < frames; i++) w.__step(1000 / 60);
+        }, frames);
+      expect(await paintedPixels(section)).toBeLessThan(100);
+      await step(2);
       const early = await paintedPixels(section);
-      await page.waitForTimeout(2500);
-      expect(early).toBeLessThan((await paintedPixels(section)) * 0.75);
+      await step(150);
+      const late = await paintedPixels(section);
+      expect(late).toBeGreaterThan(1000);
+      expect(early).toBeLessThan(late * 0.75);
     });
 
     test('a peak rises under the cursor, its rings tight around it, and sinks when it leaves', async ({
@@ -509,9 +663,17 @@ test.describe('backgrounds', () => {
         return section
           .locator('canvas')
           .evaluate((canvas: HTMLCanvasElement) => {
-            const { data } = canvas
-              .getContext('2d')!
-              .getImageData(0, 0, canvas.width, canvas.height);
+            const copy = document.createElement('canvas');
+            copy.width = canvas.width;
+            copy.height = canvas.height;
+            const context = copy.getContext('2d')!;
+            context.drawImage(canvas, 0, 0);
+            const { data } = context.getImageData(
+              0,
+              0,
+              canvas.width,
+              canvas.height,
+            );
             for (let i = 0; i < data.length; i += 4)
               if (data[i + 3]! > 200)
                 return [data[i], data[i + 1], data[i + 2]];
