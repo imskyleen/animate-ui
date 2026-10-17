@@ -93,11 +93,8 @@ function AvatarGroup({
   ...props
 }: AvatarGroupProps) {
   const defaultTransition = useTempoTransition(DEFAULT_TRANSITION);
-  const defaultTooltipTransition = useTempoTransition(
-    DEFAULT_TOOLTIP_TRANSITION,
-  );
   const transition = transitionProp ?? defaultTransition;
-  const tooltipTransition = tooltipTransitionProp ?? defaultTooltipTransition;
+  const tooltipTransition = tooltipTransitionProp ?? DEFAULT_TOOLTIP_TRANSITION;
 
   return (
     <TooltipProvider

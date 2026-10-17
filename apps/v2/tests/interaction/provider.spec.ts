@@ -115,3 +115,43 @@ test('AnimateUIProvider tempo paces a spring written with visualDuration, keepin
     bounce: 0.3,
   });
 });
+
+test('AnimateUIProvider tempo paces the avatar group tooltip once', async ({
+  page,
+}) => {
+  await page.goto('/tests/fixtures/provider-avatar-group-tempo', {
+    waitUntil: 'networkidle',
+  });
+  await page.waitForFunction(() =>
+    Object.keys(document.querySelector('[role="img"]')!).some((key) =>
+      key.startsWith('__reactProps'),
+    ),
+  );
+  const growth = async (label: string) => {
+    await page.mouse.move(0, 0);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    const frames = page.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          let start = 0;
+          const tick = () => {
+            const tooltip = document.querySelector('[role="tooltip"]');
+            if (tooltip) {
+              const scale = new DOMMatrix(getComputedStyle(tooltip).transform)
+                .a;
+              if (!start) start = performance.now();
+              if (scale >= 0.995) return resolve(performance.now() - start);
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    await page.getByRole('img', { name: `${label} A` }).hover();
+    return frames;
+  };
+  const normal = await growth('Default');
+  const slow = await growth('Slow');
+  expect(slow / normal).toBeGreaterThan(1.5);
+  expect(slow / normal).toBeLessThan(2.6);
+});
