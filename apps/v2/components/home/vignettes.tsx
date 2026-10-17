@@ -356,7 +356,7 @@ function ProgressVignette() {
           <SlidingNumber number={STEPS[step]!} />%
         </span>
       </div>
-      <Progress value={STEPS[step]} />
+      <Progress value={STEPS[step]} aria-label="Upload progress" />
     </div>
   );
 }
