@@ -1,0 +1,83 @@
+---
+title: Swapping Text
+description: Text that swaps to a new value letter by letter, each changed letter sliding out as the new one slides in.
+releaseDate: '2026-10-17'
+---
+
+<ComponentPreview name="animate-ui/swapping-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import { SwappingText } from '@animate-ui/react/primitives/texts/swapping';
+
+export function Visibility({ isPublic }: { isPublic: boolean }) {
+  return <SwappingText text={isPublic ? 'Public' : 'Private'} />;
+}
+```
+
+Given an array, it swaps from one text to the next on its own, every `duration` milliseconds, like Rotating Text:
+
+```tsx
+<SwappingText text={['Design', 'Develop', 'Deploy']} />
+```
+
+## Animation
+
+- When `text` changes (or, given an array, every `duration` milliseconds), the letters are compared position by position. A letter that stays the same doesn't move; every other one swaps in place.
+- The old letter slides up by half a line, fading and blurring out, while the new one slides up from below, unblurring in, in 0.2s. `direction="down"` reverses both.
+- Changed letters start one after another, from left to right, `stagger` seconds apart (0.04s).
+- Each letter's width glides from the old letter's to the new one's, so the word grows or shrinks smoothly. Extra letters fade out to nothing.
+- `<AnimateUIProvider tempo>` paces the default transition.
+- Given an array, it loops back to the first text after the last, and waits while off screen or while the tab is hidden.
+- Under reduced motion, the text changes at once.
+- Screen readers read the current text once.
+
+## API Reference
+
+### SwappingText
+
+<TypeTable
+  type={{
+    text: {
+      description:
+        'The text to display. Changing it plays the swap; an array swaps from one text to the next on its own.',
+      type: 'string | string[]',
+      required: true,
+    },
+    duration: {
+      description: 'Given an array, how long each text stays, in milliseconds.',
+      type: 'number',
+      default: '2000',
+    },
+    delay: {
+      description:
+        'Given an array, extra wait before the first swap, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    direction: {
+      description: 'Where the old letters leave to: up, or down.',
+      type: "'up' | 'down'",
+      default: "'up'",
+    },
+    stagger: {
+      description: 'Delay between two changed letters, in seconds.',
+      type: 'number',
+      default: '0.04',
+    },
+    transition: {
+      description: 'Transition of each letter.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<React.ComponentProps<'span'>, 'children'>",
+    },
+  }}
+/>

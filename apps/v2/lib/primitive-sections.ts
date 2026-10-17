@@ -24,6 +24,7 @@ const SECTIONS: Record<string, 'buttons' | 'texts' | 'effects'> = {
   'sliding-number': 'texts',
   'sliding-text': 'texts',
   'splitting-text': 'texts',
+  'swapping-text': 'texts',
   'typing-text': 'texts',
 
   'auto-height': 'effects',

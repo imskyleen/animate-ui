@@ -337,6 +337,7 @@ const FAMILIES: Family[] = [
     values: [
       'Rolling : rotateX 0,5s ease-out, +0,1s par lettre',
       'Sliding : y d’une hauteur en 0,25s [0,4, 0, 0,2, 1], retour au départ du survol',
+      'Swapping : lettre par lettre, y ±0,5em + flou 2px en 0,2s, +0,04s par lettre',
       'Splitting : x 150 → 0 en 0,7s ease-out, +0,05s par caractère',
       'Morphing : scale 0,8 + flou 10px, ressort 125/25 masse 0,4',
       'Rotating : 0,3s ease-out ; Highlight : 2s ease-in-out',
@@ -344,6 +345,7 @@ const FAMILIES: Family[] = [
     demos: [
       { demo: 'animate-ui/rolling-text', label: 'Rolling Text' },
       { demo: 'animate-ui/sliding-text', label: 'Sliding Text' },
+      { demo: 'animate-ui/swapping-text', label: 'Swapping Text' },
       { demo: 'animate-ui/splitting-text', label: 'Splitting Text' },
       { demo: 'animate-ui/morphing-text', label: 'Morphing Text' },
       { demo: 'animate-ui/rotating-text', label: 'Rotating Text' },
