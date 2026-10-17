@@ -7,7 +7,6 @@ import { GravityStarsBackground } from '@/registry/backgrounds/gravity-stars';
 import { HexagonBackground } from '@/registry/backgrounds/hexagon';
 import { HoleBackground } from '@/registry/backgrounds/hole';
 import { StarsBackground } from '@/registry/backgrounds/stars';
-import { StringsBackground } from '@/registry/backgrounds/strings';
 import { TopographyBackground } from '@/registry/backgrounds/topography';
 
 const BACKGROUNDS = {
@@ -20,7 +19,6 @@ const BACKGROUNDS = {
   hexagon: <HexagonBackground className="absolute inset-0" />,
   hole: <HoleBackground className="absolute inset-0" />,
   stars: <StarsBackground className="absolute inset-0" />,
-  strings: <StringsBackground className="absolute inset-0" />,
   topography: <TopographyBackground className="absolute inset-0" />,
   'topography-red': (
     <TopographyBackground className="absolute inset-0" lineColor="#ff0000" />
