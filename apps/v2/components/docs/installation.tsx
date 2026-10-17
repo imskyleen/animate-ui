@@ -2,6 +2,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import cssRemovals from '@/lib/css-removals.json';
 import type { LibraryId } from '@/lib/libraries';
 
 import {
@@ -141,6 +142,73 @@ async function ImportDiff({
   return <ServerCodeBlock code={lines.join('\n')} lang="tsx" diff={diff} />;
 }
 
+type CssRemoval = { part: string; removed: string[]; added: string[] };
+
+const CSS_REMOVALS: Record<string, Record<string, CssRemoval[]>> = cssRemovals;
+
+async function CssRemovals({ parts }: { parts: CssRemoval[] }) {
+  const lines: string[] = [];
+  let diff = '';
+  parts.forEach((part, index) => {
+    if (index) {
+      lines.push('');
+      diff += ' ';
+    }
+    lines.push(
+      part.part,
+      ...part.removed.map((name) => `  ${name}`),
+      ...part.added.map((name) => `  ${name}`),
+    );
+    diff +=
+      ' ' + '-'.repeat(part.removed.length) + '+'.repeat(part.added.length);
+  });
+  return (
+    <div data-slot="css-removals">
+      <ServerCodeBlock code={lines.join('\n')} lang="txt" diff={diff} />
+    </div>
+  );
+}
+
+function RemoveCss({ library, name }: { library?: LibraryId; name: string }) {
+  if (library === 'animate-ui' || Object.hasOwn(DROP_INS, name)) return null;
+  const parts = library ? CSS_REMOVALS[library]?.[name] : undefined;
+  if (!parts)
+    return (
+      <Step>
+        <h3>Remove the CSS animations</h3>
+        <p>
+          Delete the component&apos;s CSS animation classes, if it has any (
+          <code>animate-in</code>, <code>fade-in-0</code>,{' '}
+          <code>zoom-in-95</code>, <code>animate-accordion-down</code>…), and
+          the transitions that came with them: Motion animates it now.
+        </p>
+      </Step>
+    );
+  return (
+    <Step>
+      <h3>Remove the CSS animations</h3>
+      {parts.length ? (
+        <>
+          <p>
+            Motion animates these parts now: delete their CSS animation classes,
+            and the transitions that came with them.
+          </p>
+          <CssRemovals parts={parts} />
+          <p className="text-sm text-muted-foreground">
+            As in shadcn/ui&apos;s Vega style. The other styles use the same
+            classes, sometimes with other values.
+          </p>
+        </>
+      ) : (
+        <p>
+          Nothing to remove: this component has no CSS animation, Motion
+          animates it as it is.
+        </p>
+      )}
+    </Step>
+  );
+}
+
 export function Installation({
   name,
   library,
@@ -200,16 +268,8 @@ export function Installation({
               <Step>
                 <h3>Swap the import</h3>
                 {library && <ImportDiff library={library} name={name} />}
-                {library !== 'animate-ui' && !Object.hasOwn(DROP_INS, name) && (
-                  <p>
-                    Then delete the component&apos;s CSS animation classes, if
-                    it has any (<code>animate-in</code>, <code>fade-in-0</code>,{' '}
-                    <code>zoom-in-95</code>, <code>animate-accordion-down</code>
-                    …), and the transitions that came with them: Motion animates
-                    it now.
-                  </p>
-                )}
               </Step>
+              <RemoveCss library={library} name={name} />
             </Steps>
           ),
         },

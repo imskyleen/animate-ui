@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -87,7 +88,7 @@ test.describe('primitive page', () => {
       .getByRole('tab');
     await expect(tabs).toHaveText(['CLI', 'Manual']);
     await tabs.nth(1).click();
-    const diff = page.locator('.has-diff');
+    const diff = page.locator('.has-diff').first();
     await expect(diff.locator('.line.diff.remove')).toHaveText([
       "import { Accordion as AccordionPrimitive } from 'radix-ui';",
     ]);
@@ -157,7 +158,9 @@ async function importDiff(page: Page, path: string) {
     .getByRole('tab', { name: 'Manual' })
     .click();
   return page
-    .locator('.has-diff .line')
+    .locator('.has-diff')
+    .first()
+    .locator('.line')
     .evaluateAll((lines) =>
       lines.map(
         (line) =>
@@ -206,8 +209,6 @@ test('installation: the imports the CLI swaps, as shadcn/ui writes them', async 
   expect(menu.filter((line) => /import type/.test(line))).toEqual([]);
 });
 
-const DELETE_CLASSES = /^Then delete the component's CSS animation classes/;
-
 test("installation: a drop-in's library page swaps the package it stands in for", async ({
   page,
 }) => {
@@ -218,10 +219,52 @@ test("installation: a drop-in's library page swaps the package it stands in for"
       "-import { Questionnaire as QuestionnairePrimitive } from '@shadcn/react/questionnaire';",
       "+import { Questionnaire as QuestionnairePrimitive } from '@animate-ui/react/primitives/questionnaire';",
     ]);
-    await expect(page.getByText(DELETE_CLASSES)).toHaveCount(0);
+    await expect(
+      page.getByRole('heading', { name: 'Remove the CSS animations' }),
+    ).toHaveCount(0);
   }
   await importDiff(page, '/docs/primitives/radix-ui/accordion');
-  await expect(page.getByText(DELETE_CLASSES)).toHaveCount(1);
+  await expect(
+    page.getByRole('heading', { name: 'Remove the CSS animations' }),
+  ).toHaveCount(1);
+});
+
+test('installation: the manual steps list the exact CSS animation classes the CLI removes, part by part', async ({
+  page,
+}) => {
+  expect(
+    execFileSync('npx', ['tsx', 'scripts/build-css-removals.mts', '--check'], {
+      encoding: 'utf8',
+    }),
+  ).toBe('');
+  await importDiff(page, '/docs/primitives/radix-ui/dialog');
+  const removals = page.locator('[data-slot="css-removals"] .line');
+  const lines = await removals.evaluateAll((all) =>
+    all.map(
+      (line) =>
+        `${line.classList.contains('remove') ? '-' : line.classList.contains('add') ? '+' : ' '}${line.textContent}`,
+    ),
+  );
+  expect(lines).toContain(' DialogOverlay');
+  expect(lines).toContain(' DialogContent');
+  expect(lines).toContain('-  data-open:zoom-in-95');
+  expect(lines.indexOf('-  data-open:zoom-in-95')).toBeGreaterThan(
+    lines.indexOf(' DialogContent'),
+  );
+  expect(lines.filter((line) => line.startsWith('-')).length).toBe(12);
+
+  await importDiff(page, '/docs/primitives/base-ui/tabs');
+  await expect(page.getByText(/^Nothing to remove/)).toBeVisible();
+
+  await page.setViewportSize({ width: 320, height: 800 });
+  await importDiff(page, '/docs/primitives/base-ui/toast');
+  const toast = page.locator('[data-slot="css-removals"]');
+  await expect(toast.locator('.line').first()).toHaveText('Toast');
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    ),
+  ).toBeLessThanOrEqual(0);
 });
 
 test('the sidebar groups primitives into sections', async ({ page }) => {
