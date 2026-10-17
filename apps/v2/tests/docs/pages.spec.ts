@@ -265,6 +265,16 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
   await expect(
     section('Backgrounds').getByRole('link', { name: 'Bubble', exact: true }),
   ).toHaveAttribute('href', '/docs/backgrounds/bubble');
+  const backgrounds = await section('Backgrounds')
+    .getByRole('link')
+    .evaluateAll((links) =>
+      links.map((link) => (link as HTMLElement).innerText),
+    );
+  expect(backgrounds.length).toBeGreaterThan(5);
+  for (const name of backgrounds) expect(name).not.toMatch(/Background/);
+  await expect(
+    section('Backgrounds').getByRole('link', { name: /^Topography/ }),
+  ).toContainText('new');
   await expect(
     section('Icons').getByRole('link', { name: 'Get Started' }),
   ).toHaveAttribute('href', '/docs/icons/get-started');

@@ -150,7 +150,7 @@ function Section({
 }) {
   if (links.length === 0) return null;
   return (
-    <div className="mb-6 flex flex-col">
+    <div className="mb-6 flex flex-col [&_[data-slot=name-suffix]]:hidden">
       <SectionTitle icon={icon}>{title}</SectionTitle>
       {links.map((link) => (
         <Item key={link.url} id={`${title}:${link.url}`} {...link} />

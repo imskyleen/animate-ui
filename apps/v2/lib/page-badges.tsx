@@ -1,3 +1,4 @@
+import type * as React from 'react';
 import { cn } from 'cn';
 import type { PageTreeTransformer } from 'fumadocs-core/source';
 import { Dancing_Script } from 'next/font/google';
@@ -56,9 +57,21 @@ export const attachBadge: PageTreeTransformer['file'] = function (
   if (!badge) return node;
   node.name = (
     <span className="flex w-full items-center justify-between gap-3">
-      <span>{node.name}</span>
+      <span>{splitSuffix(node.name)}</span>
       <BadgeLabel badge={badge} />
     </span>
   );
   return node;
 };
+
+function splitSuffix(name: React.ReactNode) {
+  if (typeof name !== 'string') return name;
+  const match = name.match(/^(.*)( Background)$/);
+  if (!match) return name;
+  return (
+    <>
+      {match[1]}
+      <span data-slot="name-suffix">{match[2]}</span>
+    </>
+  );
+}
