@@ -28,9 +28,9 @@ export function Hero() {
 
 - The terrain is a field of gradient noise drawn as contour lines, like a topographic map: every fifth line is an index contour, thicker and brighter. The lines are joined end to end and drawn as smooth curves, not as grid segments. The terrain glides slowly under the frame, like a map being panned (`speed`): it moves without reshaping, so the lines never snap together or apart.
 - On mount, the relief rises from flat ground in 1.8s on an ease-out: the lines bloom out from the middle level.
-- Under the cursor, a peak rises on a spring and follows it (`transition`), its rings tightening towards the summit (`peak`). Resting the cursor still for 0.7s, or leaving the container, lets it sink back.
+- Under the cursor, a peak rises on a spring and follows it (`transition`), its rings tightening towards the summit (`peak`). Leaving the container lets it sink back.
 - A click (or a tap) drops a wave: a crest and a trough travel out from the point in 2.6s, bunching the lines as they pass, and fade away.
-- The lines take the container's text color, or `lineColor`. Drawn on a canvas, at most twice the device pixel ratio. While the terrain only glides, the lines aren't redrawn: the drawn canvas is slid on the GPU, by fractions of a pixel, and redrawn only when the relief changes or every 32px.
+- The lines take the container's text color, or `lineColor`. Drawn on a canvas, at most twice the device pixel ratio.
 - The loop pauses off screen and while the tab is hidden.
 - Under reduced motion, the terrain is a still map: no drift, no peak, no wave.
 
