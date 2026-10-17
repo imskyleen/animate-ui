@@ -1,0 +1,80 @@
+---
+title: Strings Background
+description: A row of strings swaying in a light breeze. Sweep the cursor across to pluck them like a harp, or click to send a glissando through them all.
+releaseDate: '2026-10-17'
+---
+
+<ComponentPreview name="backgrounds/strings" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-strings" />
+
+## Usage
+
+```tsx
+import { StringsBackground } from '@/components/animate-ui/backgrounds/strings';
+
+export function Hero() {
+  return (
+    <section className="relative h-[480px] overflow-hidden">
+      <StringsBackground className="absolute inset-0 text-neutral-500" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- Vertical strings, `gap` pixels apart, sway in a light breeze: two slow waves run across them (`sway`). They fade out at the top and bottom edges.
+- Sweeping the cursor across a string plucks it where you crossed it, as hard as you moved. Each string rings on its own damped Motion spring, low on the left and higher to the right like a harp (`tension`, `damping`), then settles.
+- A string brightens, thickens and glows while it rings.
+- A click (or a tap) plucks every string in turn, outwards from the point at 1100px/s, softer the farther away: a glissando.
+- The strings take the container's text color, or `lineColor`. Drawn on a canvas, at most twice the device pixel ratio.
+- The loop pauses off screen and while the tab is hidden.
+- Under reduced motion, the strings hang still and don't answer the cursor.
+
+## API Reference
+
+### StringsBackground
+
+<TypeTable
+  type={{
+    lineColor: {
+      description:
+        "Color of the strings. Defaults to the container's text color.",
+      type: 'string',
+    },
+    gap: {
+      description: 'Space between two strings, in pixels.',
+      type: 'number',
+      default: '14',
+    },
+    tension: {
+      description: 'How fast the strings ring. Higher is a higher pitch.',
+      type: 'number',
+      default: '1',
+    },
+    damping: {
+      description: 'How fast a plucked string settles. Higher stops sooner.',
+      type: 'number',
+      default: '3.5',
+    },
+    sway: {
+      description: 'Strength of the breeze. 0 holds the strings straight.',
+      type: 'number',
+      default: '1',
+    },
+    interactive: {
+      description:
+        'Let the cursor pluck the strings and clicks send a glissando.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description:
+        'Props of the container div. children render above the strings.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>

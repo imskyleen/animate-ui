@@ -7,9 +7,10 @@ const ANIMATED = [
   'gravity-stars',
   'hole',
   'stars',
+  'strings',
   'topography',
 ] as const;
-const CANVAS = ['fireworks', 'gravity-stars', 'hole', 'topography'];
+const CANVAS = ['fireworks', 'gravity-stars', 'hole', 'strings', 'topography'];
 
 async function open(page: Page) {
   const errors: string[] = [];
@@ -247,6 +248,91 @@ test.describe('backgrounds', () => {
       const resting = await color();
       await cell.hover();
       await expect.poll(color).not.toBe(resting);
+    });
+  });
+
+  test.describe('strings', () => {
+    const bright = (section: Locator, from = 0, to = 1) =>
+      section.locator('canvas').evaluate(
+        (canvas: HTMLCanvasElement, { from, to }) => {
+          const { data } = canvas
+            .getContext('2d')!
+            .getImageData(0, 0, canvas.width, canvas.height);
+          const start = Math.floor(from * canvas.width);
+          const end = Math.floor(to * canvas.width);
+          let count = 0;
+          for (let y = 0; y < canvas.height; y++)
+            for (let x = start; x < end; x++)
+              if (data[(y * canvas.width + x) * 4 + 3]! > 150) count++;
+          return count;
+        },
+        { from, to },
+      );
+
+    test('at rest, the strings are dim and sway', async ({ page }) => {
+      await open(page);
+      const section = page.getByTestId('strings');
+      await show(section);
+      expect(await paintedPixels(section)).toBeGreaterThan(1000);
+      expect(await bright(section)).toBeLessThan(50);
+    });
+
+    test('sweeping across plucks the strings it crosses, then they settle', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('strings');
+      await show(section);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + 20, box.y + 200);
+      await page.mouse.move(box.x + 300, box.y + 200, { steps: 8 });
+      await expect
+        .poll(() => bright(section, 0, 0.5), { timeout: 2000 })
+        .toBeGreaterThan(500);
+      expect(await bright(section, 0.6, 1)).toBeLessThan(50);
+      await expect
+        .poll(() => bright(section), { timeout: 8000 })
+        .toBeLessThan(50);
+    });
+
+    test('a click plucks every string in turn, outwards from the point', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('strings');
+      await show(section);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + 40, box.y + box.height + 30);
+      await page.waitForTimeout(300);
+      await page.mouse.move(box.x + 40, box.y + 200);
+      await page.mouse.down();
+      await page.mouse.up();
+      await page.waitForTimeout(120);
+      const nearFirst = await bright(section, 0, 0.25);
+      const farFirst = await bright(section, 0.75, 1);
+      expect(nearFirst).toBeGreaterThan(200);
+      expect(farFirst).toBeLessThan(50);
+      await expect
+        .poll(() => bright(section, 0.75, 1), { timeout: 2000 })
+        .toBeGreaterThan(50);
+    });
+
+    test('reduced motion: sweeping and clicking leave them still', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      const section = page.getByTestId('strings');
+      await show(section);
+      await page.waitForTimeout(300);
+      const still = await frame(section);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + 20, box.y + 200);
+      await page.mouse.move(box.x + 300, box.y + 200, { steps: 8 });
+      await page.mouse.down();
+      await page.mouse.up();
+      await page.waitForTimeout(600);
+      expect(await frame(section)).toBe(still);
     });
   });
 
