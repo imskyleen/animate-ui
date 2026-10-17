@@ -279,6 +279,115 @@ test.describe('backgrounds', () => {
         { center, inner, outer },
       );
 
+    test('the lines are drawn as smooth curves, not as grid segments', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const counts = { curves: 0, lines: 0 };
+        (window as unknown as { __strokes: typeof counts }).__strokes = counts;
+        const curve = Path2D.prototype.quadraticCurveTo;
+        const line = Path2D.prototype.lineTo;
+        Path2D.prototype.quadraticCurveTo = function (...args) {
+          counts.curves++;
+          return curve.apply(this, args);
+        };
+        Path2D.prototype.lineTo = function (...args) {
+          counts.lines++;
+          return line.apply(this, args);
+        };
+      });
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(1500);
+      const { curves, lines } = await page.evaluate(
+        () =>
+          (
+            window as unknown as {
+              __strokes: { curves: number; lines: number };
+            }
+          ).__strokes,
+      );
+      expect(curves).toBeGreaterThan(1000);
+      expect(lines).toBeLessThan(curves / 5);
+    });
+
+    test('the lines bend steadily, without kinks', async ({ page }) => {
+      await page.addInitScript(() => {
+        const loops: number[][] = [];
+        (window as unknown as { __loops: number[][] }).__loops = loops;
+        const move = Path2D.prototype.moveTo;
+        const curve = Path2D.prototype.quadraticCurveTo;
+        let current: number[] | null = null;
+        Path2D.prototype.moveTo = function (x, y) {
+          current = [x, y];
+          loops.push(current);
+          return move.call(this, x, y);
+        };
+        Path2D.prototype.quadraticCurveTo = function (cx, cy, x, y) {
+          current?.push(x, y);
+          return curve.call(this, cx, cy, x, y);
+        };
+      });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(800);
+      const jerk = await page.evaluate(() => {
+        const loops = (window as unknown as { __loops: number[][] }).__loops;
+        let total = 0;
+        let count = 0;
+        for (const loop of loops) {
+          const n = loop.length / 2;
+          if (n < 8) continue;
+          const turns: number[] = [];
+          for (let i = 1; i < n - 1; i++) {
+            const a = Math.atan2(
+              loop[i * 2 + 1]! - loop[i * 2 - 1]!,
+              loop[i * 2]! - loop[i * 2 - 2]!,
+            );
+            const b = Math.atan2(
+              loop[i * 2 + 3]! - loop[i * 2 + 1]!,
+              loop[i * 2 + 2]! - loop[i * 2]!,
+            );
+            let turn = b - a;
+            if (turn > Math.PI) turn -= 2 * Math.PI;
+            if (turn < -Math.PI) turn += 2 * Math.PI;
+            turns.push(turn);
+          }
+          for (let i = 1; i < turns.length; i++) {
+            total += Math.abs(turns[i]! - turns[i - 1]!);
+            count++;
+          }
+        }
+        return { mean: (total / count) * (180 / Math.PI), count };
+      });
+      expect(jerk.count).toBeGreaterThan(500);
+      expect(jerk.mean).toBeLessThan(2);
+    });
+
+    test('drawing a frame allocates next to nothing, so the garbage collector never stutters it', async ({
+      page,
+      browser,
+    }) => {
+      await page.goto('/tests/demos/backgrounds/topography', {
+        waitUntil: 'networkidle',
+      });
+      await page.waitForTimeout(2500);
+      await browser.startTracing(page, {
+        categories: ['v8', 'devtools.timeline'],
+      });
+      await page.waitForTimeout(3000);
+      const trace = JSON.parse((await browser.stopTracing()).toString()) as {
+        traceEvents: { name: string; ph: string }[];
+      };
+      const pauses = trace.traceEvents.filter(
+        (event) => event.name === 'MinorGC' && event.ph === 'X',
+      ).length;
+      expect(pauses).toBeLessThan(18);
+    });
+
     test('the relief rises on mount: the lines bloom out', async ({ page }) => {
       await page.goto('/tests/fixtures/backgrounds');
       const section = page.getByTestId('topography');
