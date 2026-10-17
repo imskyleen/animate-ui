@@ -726,6 +726,50 @@ test('the AI section plays a request through to its result, then keeps the tab p
   );
 });
 
+test('on a phone, the AI demo keeps one height while a request plays and across tabs', async ({
+  page,
+}) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const demo = page.locator('[data-slot="ai-demo"]');
+    await demo.scrollIntoViewIfNeeded();
+    await demo.evaluate((element) => {
+      const contents = element.querySelector('[data-slot="tabs-contents"]')!;
+      const panes: number[] = [];
+      const overflow: number[] = [];
+      (window as unknown as { panes: number[] }).panes = panes;
+      (window as unknown as { overflow: number[] }).overflow = overflow;
+      const tick = () => {
+        panes.push(Math.round(contents.getBoundingClientRect().height));
+        for (const pane of element.querySelectorAll(
+          '[data-slot="tabs-content"][data-state="active"] > div > div',
+        ))
+          overflow.push(pane.scrollHeight - pane.clientHeight);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    const active = demo.locator(
+      '[data-slot="tabs-content"][data-state="active"]',
+    );
+    await expect(active.getByText('Edited')).toBeVisible({ timeout: 10000 });
+    for (const name of ['Bell icon', 'Todo list', 'Review']) {
+      await demo.getByRole('tab', { name }).click();
+      await expect(active.getByText(/Created|Edited|Report ready/)).toBeVisible(
+        { timeout: 10000 },
+      );
+      await page.waitForTimeout(600);
+    }
+    const { panes, overflow } = await page.evaluate(() => ({
+      panes: (window as unknown as { panes: number[] }).panes,
+      overflow: (window as unknown as { overflow: number[] }).overflow,
+    }));
+    expect(Math.max(...panes) - Math.min(...panes)).toBeLessThanOrEqual(1);
+    expect(Math.max(...overflow)).toBeLessThanOrEqual(0);
+  }
+});
+
 test('clicking fast through the AI demo tabs never blinks the highlight', async ({
   page,
 }) => {

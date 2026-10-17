@@ -459,7 +459,7 @@ function ScenarioPane({
 
   return (
     <div className="grid min-h-[380px] gap-1 md:grid-cols-[1.05fr_1fr]">
-      <div className="flex flex-col gap-4 rounded-lg bg-background p-5 md:p-6">
+      <div className="flex h-[27rem] flex-col gap-4 rounded-lg bg-background p-5 md:h-auto md:p-6">
         <div className="flex items-start gap-2.5 rounded-lg bg-accent px-4 py-3 text-sm leading-5">
           <span className="flex h-5 shrink-0 items-center text-muted-foreground">
             <ArrowRight01
@@ -514,7 +514,7 @@ function ScenarioPane({
           )}
         </AnimatePresence>
       </div>
-      <div className="relative flex flex-col rounded-lg bg-background bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:16px_16px]">
+      <div className="relative flex h-[25rem] flex-col rounded-lg bg-background md:h-auto bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:16px_16px]">
         {/* Over the pane, not above it: the preview below is centred in the whole pane. */}
         <div className="absolute top-4 left-5 flex items-center gap-2">
           <span className="rounded-md bg-accent px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
