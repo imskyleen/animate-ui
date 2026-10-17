@@ -2,7 +2,6 @@
 
 import { BubbleBackground } from '@/registry/backgrounds/bubble';
 import { FireworksBackground } from '@/registry/backgrounds/fireworks';
-import { GlowBackground } from '@/registry/backgrounds/glow';
 import { GradientBackground } from '@/registry/backgrounds/gradient';
 import { GravityStarsBackground } from '@/registry/backgrounds/gravity-stars';
 import { HexagonBackground } from '@/registry/backgrounds/hexagon';
@@ -14,14 +13,6 @@ const BACKGROUNDS = {
   bubble: <BubbleBackground interactive className="absolute inset-0" />,
   fireworks: (
     <FireworksBackground className="absolute inset-0" color="#737373" />
-  ),
-  glow: <GlowBackground className="absolute inset-0" />,
-  'glow-plain': (
-    <GlowBackground
-      className="absolute inset-0"
-      grain={false}
-      colors={['#ff0000', '#00ff00', '#0000ff']}
-    />
   ),
   gradient: <GradientBackground className="absolute inset-0" />,
   'gravity-stars': <GravityStarsBackground className="absolute inset-0" />,

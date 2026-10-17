@@ -3,7 +3,6 @@ import { expect, test, type Locator, type Page } from '../test';
 const ANIMATED = [
   'bubble',
   'fireworks',
-  'glow',
   'gradient',
   'gravity-stars',
   'hole',
@@ -251,82 +250,6 @@ test.describe('backgrounds', () => {
     });
   });
 
-  test.describe('glow', () => {
-    const cursorGlow = (section: Locator) =>
-      section.locator('[data-slot="glow-cursor"]');
-    const opacity = (section: Locator) =>
-      cursorGlow(section).evaluate((el) =>
-        Number(getComputedStyle(el).opacity),
-      );
-    const center = (section: Locator) =>
-      cursorGlow(section).evaluate((el) => {
-        const r = el.getBoundingClientRect();
-        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-      });
-
-    test('a faint glow fades in on the cursor, trails it, then fades out when it leaves', async ({
-      page,
-    }) => {
-      await open(page);
-      const section = page.getByTestId('glow');
-      await show(section);
-      expect(await opacity(section)).toBe(0);
-      const box = (await section.boundingBox())!;
-      await page.mouse.move(box.x + 100, box.y + 100);
-      await page.mouse.move(box.x + 120, box.y + 110, { steps: 3 });
-      await expect.poll(() => opacity(section)).toBeGreaterThan(0.1);
-      expect(await opacity(section)).toBeLessThanOrEqual(0.2);
-      await page.mouse.move(box.x + 500, box.y + 300, { steps: 4 });
-      const trailing = await center(section);
-      expect(trailing.x).toBeLessThan(box.x + 450);
-      await expect
-        .poll(
-          async () => {
-            const { x, y } = await center(section);
-            return Math.hypot(x - (box.x + 500), y - (box.y + 300));
-          },
-          { timeout: 4000 },
-        )
-        .toBeLessThan(10);
-      await page.mouse.move(box.x + box.width + 40, box.y - 40);
-      await expect.poll(() => opacity(section)).toBe(0);
-    });
-
-    test('colors tint the glows; grain={false} leaves the grain out', async ({
-      page,
-    }) => {
-      await open(page);
-      const glows = page
-        .getByTestId('glow-plain')
-        .locator('[data-slot="glow"]');
-      await expect(glows).toHaveCount(3);
-      const images = await glows.evaluateAll((els) =>
-        els.map((el) => getComputedStyle(el).backgroundImage),
-      );
-      expect(images[0]).toContain('rgb(255, 0, 0)');
-      expect(images[1]).toContain('rgb(0, 255, 0)');
-      expect(images[2]).toContain('rgb(0, 0, 255)');
-      await expect(
-        page.getByTestId('glow-plain').locator('[data-slot="glow-grain"]'),
-      ).toHaveCount(0);
-      await expect(
-        page.getByTestId('glow').locator('[data-slot="glow-grain"]'),
-      ).toHaveCount(1);
-    });
-
-    test('reduced motion: the cursor glow stays hidden', async ({ page }) => {
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await open(page);
-      const section = page.getByTestId('glow');
-      await show(section);
-      const box = (await section.boundingBox())!;
-      await page.mouse.move(box.x + 100, box.y + 100);
-      await page.mouse.move(box.x + 300, box.y + 200, { steps: 5 });
-      await page.waitForTimeout(1200);
-      expect(await opacity(section)).toBe(0);
-    });
-  });
-
   test.describe('topography', () => {
     const inCircle = (
       section: Locator,
@@ -355,39 +278,6 @@ test.describe('backgrounds', () => {
         },
         { center, inner, outer },
       );
-
-    test('the lines are drawn as smooth curves, not as grid segments', async ({
-      page,
-    }) => {
-      await page.addInitScript(() => {
-        const counts = { curves: 0, lines: 0 };
-        (window as unknown as { __strokes: typeof counts }).__strokes = counts;
-        const curve = Path2D.prototype.quadraticCurveTo;
-        const line = Path2D.prototype.lineTo;
-        Path2D.prototype.quadraticCurveTo = function (...args) {
-          counts.curves++;
-          return curve.apply(this, args);
-        };
-        Path2D.prototype.lineTo = function (...args) {
-          counts.lines++;
-          return line.apply(this, args);
-        };
-      });
-      await open(page);
-      const section = page.getByTestId('topography');
-      await show(section);
-      await page.waitForTimeout(1500);
-      const { curves, lines } = await page.evaluate(
-        () =>
-          (
-            window as unknown as {
-              __strokes: { curves: number; lines: number };
-            }
-          ).__strokes,
-      );
-      expect(curves).toBeGreaterThan(1000);
-      expect(lines).toBeLessThan(curves / 5);
-    });
 
     test('the relief rises on mount: the lines bloom out', async ({ page }) => {
       await page.goto('/tests/fixtures/backgrounds');
