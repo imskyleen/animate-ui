@@ -6,6 +6,7 @@ const ANIMATED = [
   'gradient',
   'gravity-stars',
   'hole',
+  'orb',
   'stars',
   'topography',
 ] as const;
@@ -247,6 +248,108 @@ test.describe('backgrounds', () => {
       const resting = await color();
       await cell.hover();
       await expect.poll(color).not.toBe(resting);
+    });
+  });
+
+  test.describe('orb', () => {
+    const light = (section: Locator) =>
+      section.locator('[data-slot="orb-highlight"]').evaluate((el) => {
+        const match = getComputedStyle(el).backgroundImage.match(
+          /at ([\d.]+)% ([\d.]+)%/,
+        )!;
+        return { x: Number(match[1]), y: Number(match[2]) };
+      });
+    const lean = (section: Locator) =>
+      section.locator('[data-slot="orb"]').evaluate((el) => {
+        const matrix = new DOMMatrix(getComputedStyle(el).transform);
+        const width = (el as HTMLElement).offsetWidth;
+        return { x: matrix.m41 + width / 2, y: matrix.m42 + width / 2 };
+      });
+
+    test('at rest, it is lit from the upper left and sits in the middle', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('orb');
+      await show(section);
+      expect(await light(section)).toEqual({ x: 34, y: 28 });
+      const { x, y } = await lean(section);
+      expect(Math.abs(x)).toBeLessThan(0.5);
+      expect(Math.abs(y)).toBeLessThan(0.5);
+      const body = section.locator('[data-slot="orb-body"]');
+      await expect(body).toHaveCSS(
+        'border-radius',
+        /^(50%|9999px|3.4e\+38px|.*px)$/,
+      );
+      const round = await body.evaluate((el) => {
+        const { width, height } = el.getBoundingClientRect();
+        return { width, height };
+      });
+      expect(round.width).toBeCloseTo(round.height, 0);
+    });
+
+    test('its light and the orb turn towards the cursor, then rest again when it leaves', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('orb');
+      await show(section);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.move(box.x + box.width - 10, box.y + 10, { steps: 6 });
+      await expect
+        .poll(async () => {
+          const { x, y } = await light(section);
+          return x > 60 && y < 45;
+        })
+        .toBe(true);
+      await expect
+        .poll(async () => {
+          const { x, y } = await lean(section);
+          return x > 6 && y < -4;
+        })
+        .toBe(true);
+      await page.mouse.move(box.x + box.width + 40, box.y - 40);
+      await expect
+        .poll(
+          async () => {
+            const { x, y } = await light(section);
+            return Math.abs(x - 34) < 1 && Math.abs(y - 28) < 1;
+          },
+          { timeout: 4000 },
+        )
+        .toBe(true);
+    });
+
+    test('its colors swirl inside', async ({ page }) => {
+      await open(page);
+      const section = page.getByTestId('orb-colors');
+      await show(section);
+      const swirl = section.locator('[data-slot="orb-swirl"]');
+      await expect(swirl).toHaveCSS(
+        'background-image',
+        /rgb\(255, 0, 0\).*rgb\(0, 255, 0\).*rgb\(0, 0, 255\)/,
+      );
+      const angle = () =>
+        swirl.evaluate((el) => {
+          const m = new DOMMatrix(getComputedStyle(el).transform);
+          return Math.atan2(m.b, m.a);
+        });
+      const first = await angle();
+      await expect.poll(angle).not.toBe(first);
+    });
+
+    test('reduced motion: the light stays put under the cursor', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      const section = page.getByTestId('orb');
+      await show(section);
+      const box = (await section.boundingBox())!;
+      await page.mouse.move(box.x + 20, box.y + 20, { steps: 5 });
+      await page.waitForTimeout(800);
+      expect(await light(section)).toEqual({ x: 34, y: 28 });
     });
   });
 

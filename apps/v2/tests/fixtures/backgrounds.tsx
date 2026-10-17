@@ -6,6 +6,7 @@ import { GradientBackground } from '@/registry/backgrounds/gradient';
 import { GravityStarsBackground } from '@/registry/backgrounds/gravity-stars';
 import { HexagonBackground } from '@/registry/backgrounds/hexagon';
 import { HoleBackground } from '@/registry/backgrounds/hole';
+import { OrbBackground } from '@/registry/backgrounds/orb';
 import { StarsBackground } from '@/registry/backgrounds/stars';
 import { TopographyBackground } from '@/registry/backgrounds/topography';
 
@@ -18,6 +19,13 @@ const BACKGROUNDS = {
   'gravity-stars': <GravityStarsBackground className="absolute inset-0" />,
   hexagon: <HexagonBackground className="absolute inset-0" />,
   hole: <HoleBackground className="absolute inset-0" />,
+  orb: <OrbBackground className="absolute inset-0" />,
+  'orb-colors': (
+    <OrbBackground
+      className="absolute inset-0"
+      colors={['#ff0000', '#00ff00', '#0000ff']}
+    />
+  ),
   stars: <StarsBackground className="absolute inset-0" />,
   topography: <TopographyBackground className="absolute inset-0" />,
   'topography-red': (

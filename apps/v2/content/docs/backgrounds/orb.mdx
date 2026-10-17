@@ -1,0 +1,73 @@
+---
+title: Orb Background
+description: A softly glowing orb for a quiet hero. Its colors swirl slowly inside, its halo breathes, and its light turns towards the cursor.
+releaseDate: '2026-10-17'
+---
+
+<ComponentPreview name="backgrounds/orb" fullBleed />
+
+## Installation
+
+<RegistryInstallation name="backgrounds-orb" />
+
+## Usage
+
+```tsx
+import { OrbBackground } from '@/components/animate-ui/backgrounds/orb';
+
+export function Hero() {
+  return (
+    <section className="relative h-[560px] overflow-hidden">
+      <OrbBackground className="absolute inset-0" />
+    </section>
+  );
+}
+```
+
+## Animation
+
+- Inside the sphere, two blurred conic gradients of `colors` turn in opposite directions (24s and 38s a lap, divided by `speed`), so the colors keep mixing without ever repeating the same way.
+- The halo around it breathes: it grows by 10% and brightens over 7s, back and forth.
+- The light follows the cursor: the highlight slides towards it and the shade to the opposite side, and the orb leans up to 18px its way, on a spring (`transition`). Leaving the container brings them back to rest, lit from the upper left.
+- The swirl and the halo are animated with hardware-accelerated `transform`s and `opacity`: each blurred layer is drawn once, then only turned.
+- The loops pause off screen and while the tab is hidden.
+- Under reduced motion, the orb holds still and its light doesn't follow the cursor.
+
+## API Reference
+
+### OrbBackground
+
+<TypeTable
+  type={{
+    colors: {
+      description:
+        'Colors swirling inside the orb. The first one also tints the halo.',
+      type: 'string[]',
+      default: "['#7c8cff', '#b48cff', '#6cc6ff', '#8af0d6']",
+    },
+    size: {
+      description: 'Diameter of the orb: any CSS length, or pixels.',
+      type: 'number | string',
+      default: "'min(70vmin, 640px)'",
+    },
+    speed: {
+      description: 'How fast the colors swirl and the halo breathes.',
+      type: 'number',
+      default: '1',
+    },
+    interactive: {
+      description: 'Let the light and the orb follow the cursor.',
+      type: 'boolean',
+      default: 'true',
+    },
+    transition: {
+      description: 'Spring the light and the orb follow the cursor with.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 60, damping: 18 }',
+    },
+    '...props': {
+      description: 'Props of the container div. children render above the orb.',
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
