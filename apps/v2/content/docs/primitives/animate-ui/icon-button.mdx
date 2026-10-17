@@ -29,7 +29,7 @@ export function Star() {
 
 ## Animation
 
-- Each click bursts particles from the top edge of the button (built on [Particles](/docs/primitives/animate-ui/particles)): 6 dots fly 30px out around it (at the full 360° spread, the first and the last share a direction, as in v1), growing then shrinking back to nothing as they fade in and out, over 0.8s with an `easeOut`, one after another 50ms apart. A click during a burst starts it over.
+- Each click bursts particles from the top edge of the button (built on [Particles](/docs/primitives/animate-ui/particles)): 6 dots fly 30px out around it (spread evenly at the full 360°), growing then shrinking back to nothing as they fade in and out, over 0.8s with an `easeOut`, one after another 50ms apart. A click during a burst starts it over.
 - Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
 - `<AnimateUIProvider tempo>` paces the press spring.
 - Under reduced motion, the particles don't burst and the button doesn't scale.
@@ -67,6 +67,10 @@ export function Star() {
     },
   }}
 />
+
+### useIconButton
+
+Returns `bursts`, the number of clicks so far: each one starts a new burst.
 
 ### IconButtonParticles
 

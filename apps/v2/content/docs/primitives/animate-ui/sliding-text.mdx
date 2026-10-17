@@ -26,7 +26,7 @@ export function NavLink() {
 
 ## Animation
 
-- The text sits in a box that clips it. On `hover`, it slides out by its own height while a copy of it slides in from the other side, in 0.25s on an ease-in-out.
+- The text sits in a box that clips it. On `hover`, it slides out by its own height plus a small gap (0.6em) while a copy of it slides in from the other side, in 0.25s on an ease-in-out.
 - `direction="down"` sends the text down and brings the copy from above; `direction="up"` does the opposite.
 - With `trigger="hover"`, leaving slides it back the other way. Left halfway, it turns back from where it is.
 - With `trigger="click"`, each click slides it once more in the same direction. A click during a slide carries it on without a jump.

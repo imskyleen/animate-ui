@@ -79,7 +79,7 @@ It takes every prop of the primitive, plus:
 
 ## Animation
 
-- With `writing`, the code appears one character at a time, evenly over `duration` (after `delay`), and the block, or `scrollContainerRef`, scrolls smoothly to follow the last line.
+- With `writing`, the code appears one character at a time, evenly over `duration` (after `delay`), and the block and `scrollContainerRef` (its parent element by default) scroll smoothly to follow the last line.
 - With `inView`, writing starts when the block scrolls into view.
 - Under reduced motion, the whole code is shown at once (`onDone` is still called).
 

@@ -39,7 +39,7 @@ A button built on [GitHub Stars](/docs/primitives/animate-ui/github-stars): its 
 
 ## Animation
 
-- Nothing is rendered until the count is loaded. Then the number counts up from 0 with rolling digits ([Sliding Number](/docs/primitives/animate-ui/sliding-number)), the star fills from the bottom as it climbs, and bursts into particles when the count is reached.
+- The button stays hidden (`visibility: hidden`, `aria-busy`) until the count is loaded. Then the number counts up from 0 with rolling digits ([Sliding Number](/docs/primitives/animate-ui/sliding-number)), the star fills from the bottom as it climbs, and bursts into particles when the count is reached.
 - Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
 - `<AnimateUIProvider tempo>` paces the press spring.
 - Under reduced motion, the digits change without rolling, the burst is skipped and the button doesn't scale.

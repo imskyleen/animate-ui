@@ -22,7 +22,11 @@ import {
 
 export function Stars() {
   return (
-    <GithubStars username="imskyleen" repo="animate-ui" className="flex items-center gap-2">
+    <GithubStars
+      username="imskyleen"
+      repo="animate-ui"
+      className="flex items-center gap-2"
+    >
       <GithubStarsLogo className="size-6" />
       <GithubStarsNumber />
       <GithubStarsParticles>
@@ -39,7 +43,7 @@ The count is fetched from the GitHub API (`api.github.com/repos/<username>/<repo
 
 - Once the count is loaded, the number counts up from 0 with rolling digits ([Sliding Number](/docs/primitives/animate-ui/sliding-number)).
 - The star fills from the bottom as the number climbs, and bursts into particles when the count is reached.
-- Nothing is rendered until the count is loaded; the container is marked `aria-busy` meanwhile.
+- Nothing is rendered until the count is loaded (with `asChild`, the child is there but hidden); the container is marked `aria-busy` meanwhile.
 - With `inView`, the request waits for the element to be on screen.
 - Under reduced motion, the digits change without rolling and the burst is skipped.
 
@@ -78,12 +82,12 @@ The count is fetched from the GitHub API (`api.github.com/repos/<username>/<repo
       required: true,
     },
     inView: {
-      description: 'Wait for the element to be in view before animating.',
+      description: 'Wait for the element to be in view before the request.',
       type: 'boolean',
       default: 'false',
     },
     inViewOnce: {
-      description: 'Only animate the first time the element comes into view.',
+      description: 'Only wait for the first time the element comes into view.',
       type: 'boolean',
       default: 'true',
     },

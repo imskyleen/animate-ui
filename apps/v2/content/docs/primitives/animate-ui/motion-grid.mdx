@@ -12,13 +12,27 @@ description: A grid of dots that plays frame-by-frame animations, for loading an
 ## Usage
 
 ```tsx
-import { MotionGrid, MotionGridCells, type Frames } from '@animate-ui/react/primitives/motion-grid';
+import {
+  MotionGrid,
+  MotionGridCells,
+  type Frames,
+} from '@animate-ui/react/primitives/motion-grid';
 
 // Each frame lists the active cells as [column, row].
 const frames: Frames = [
   [[1, 1]],
-  [[0, 1], [1, 0], [1, 2], [2, 1]],
-  [[0, 0], [0, 2], [2, 0], [2, 2]],
+  [
+    [0, 1],
+    [1, 0],
+    [1, 2],
+    [2, 1],
+  ],
+  [
+    [0, 0],
+    [0, 2],
+    [2, 0],
+    [2, 2],
+  ],
   [],
 ];
 
@@ -36,7 +50,7 @@ Active cells have `data-active="true"`: style them with it, or pass `activeProps
 ## Animation
 
 - The grid shows one frame every `duration` milliseconds, looping.
-- Cells change with your own CSS transitions or Motion props (`activeProps`), each over `duration` with an ease-in-out.
+- Cells change with your own CSS transitions or Motion props (`activeProps`). Motion props take `duration` with an ease-in-out; CSS transitions keep their own timing.
 - The loop pauses while the grid is off screen or the tab is hidden.
 
 ## API Reference

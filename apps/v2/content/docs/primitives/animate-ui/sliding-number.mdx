@@ -96,7 +96,7 @@ export function Price({ value }: { value: number }) {
     },
     inViewOnce: {
       description:
-        'Only roll in once. When `false`, the digits roll in again each time the number comes back into view.',
+        'Only roll in once. When `false`, the digits roll in again each time the number comes back into view, unless `fromNumber` or `initiallyStable` is set.',
       type: 'boolean',
       default: 'true',
     },

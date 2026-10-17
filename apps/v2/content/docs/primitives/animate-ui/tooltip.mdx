@@ -188,12 +188,12 @@ Place it inside `TooltipContent`.
     },
     '...props': {
       description:
-        "Props of Floating UI's arrow (an `<svg>`), except `context`.",
-      type: 'React.ComponentProps<typeof FloatingArrow>',
+        "Props of Floating UI's arrow (an `<svg>`) and Motion props, except `context`.",
+      type: "Omit<React.ComponentProps<typeof motion.create(FloatingArrow)>, 'context'>",
     },
   }}
 />
 
 ### useGlobalTooltip, useTooltip
 
-Return the provider's and the tooltip's state: the current tooltip, `showTooltip`, `hideTooltip` and `hideImmediate`; the tooltip's side, alignment and id.
+Return the provider's and the tooltip's state: the current tooltip, `showTooltip`, `hideTooltip`, `hideImmediate`, the `transition` and the reference element; the tooltip's props, side, alignment, offsets and id.
