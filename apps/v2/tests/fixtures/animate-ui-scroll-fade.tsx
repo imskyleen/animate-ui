@@ -56,6 +56,22 @@ export default function ScrollFadeFixture() {
         ))}
       </ScrollFade>
       <AsChild />
+      <div style={{ transform: 'scale(0.5)', transformOrigin: 'top left' }}>
+        <ScrollFade data-testid="scaled" className="h-[200px] w-60 border">
+          {items(20)}
+        </ScrollFade>
+      </div>
+      <ScrollFade data-testid="filtered" className="h-[200px] w-60 border">
+        {Array.from({ length: 20 }, (_, i) => (
+          <div
+            key={i}
+            className="h-10 shrink-0 border-b px-2 leading-10"
+            style={{ filter: i === 4 ? 'grayscale(1)' : undefined }}
+          >
+            Item {i + 1}
+          </div>
+        ))}
+      </ScrollFade>
       <ScrollFade data-testid="grouped" className="h-[200px] w-60 border">
         {['Components', 'Buttons', 'Texts', 'Effects'].map((title) => (
           <section key={title} data-group={title} className="mb-4">

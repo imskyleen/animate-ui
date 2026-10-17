@@ -251,7 +251,7 @@ test.describe('animate-ui scroll fade', () => {
     expect(tags.every((tag) => tag === 'LI' || tag === 'P')).toBe(true);
   });
 
-  test('scrolling never reads the items back: their places are measured once, not every frame', async ({
+  test('scrolling reads the items once per gesture, not every frame', async ({
     page,
   }) => {
     await open(page);
@@ -274,7 +274,7 @@ test.describe('animate-ui scroll fade', () => {
     const reads = await page.evaluate(
       () => (window as unknown as { counter: { reads: number } }).counter.reads,
     );
-    expect(reads).toBe(0);
+    expect(reads).toBeLessThanOrEqual(22);
     const scales = await page
       .getByTestId('long')
       .evaluate(
@@ -283,6 +283,38 @@ test.describe('animate-ui scroll fade', () => {
             .length,
       );
     expect(scales).toBeGreaterThan(0);
+  });
+
+  test('inside a scaled parent, the items shrink as they would at full size', async ({
+    page,
+  }) => {
+    await open(page);
+    const scales = (testId: string) =>
+      page
+        .getByTestId(testId)
+        .evaluate((el) =>
+          [...el.children].map((child) =>
+            Number((child as HTMLElement).style.scale || 1).toFixed(3),
+          ),
+        );
+    await expect.poll(() => scales('scaled')).toEqual(await scales('long'));
+  });
+
+  test("an item's own filter stays: it isn't blurred over", async ({
+    page,
+  }) => {
+    await open(page);
+    const item = page.getByTestId('filtered').locator(':scope > div').nth(4);
+    await expect
+      .poll(() =>
+        page
+          .getByTestId('filtered')
+          .evaluate((el) =>
+            (el.children[5] as HTMLElement).style.filter.startsWith('blur('),
+          ),
+      )
+      .toBe(true);
+    expect(await item.evaluate((el) => el.style.filter)).toBe('grayscale(1)');
   });
 
   test('blur: items deep in the fade blur, those in the middle stay sharp', async ({

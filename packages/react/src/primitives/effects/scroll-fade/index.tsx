@@ -11,6 +11,7 @@ import {
 } from 'motion/react';
 
 import { mergeRefs } from '../../../internal/anchored';
+import { screenScale } from '../../../internal/screen-scale';
 import {
   motionTokens,
   useShouldReduceMotion,
@@ -62,8 +63,9 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const smooth = (value: number) => value * value * (3 - 2 * value);
 
 const ZONE = 1.75;
+const GESTURE_GAP = 150;
 
-type ItemSlot = { item: HTMLElement; x: number; y: number };
+type ItemSlot = { item: HTMLElement; x: number; y: number; ownFilter: boolean };
 
 const GROUP = 'ul, ol, [role="list"], [role="group"]';
 
@@ -147,12 +149,12 @@ function useScrollFade(
     el.style.setProperty(VAR.size, `${size}px`);
 
     const shrunk = new Set<HTMLElement>();
+    const blurred = new Set<HTMLElement>();
     const restore = () => {
-      for (const item of shrunk) {
-        item.style.removeProperty('scale');
-        item.style.removeProperty('filter');
-      }
+      for (const item of shrunk) item.style.removeProperty('scale');
+      for (const item of blurred) item.style.removeProperty('filter');
       shrunk.clear();
+      blurred.clear();
     };
 
     let slots: ItemSlot[] = [];
@@ -164,14 +166,17 @@ function useScrollFade(
         return;
       }
       const box = el.getBoundingClientRect();
+      const [sx, sy] = screenScale(el);
       width = el.clientWidth;
       height = el.clientHeight;
       slots = itemsOf(el).map((item) => {
         const rect = item.getBoundingClientRect();
         return {
           item,
-          x: rect.left + rect.width / 2 - box.left + el.scrollLeft,
-          y: rect.top + rect.height / 2 - box.top + el.scrollTop,
+          x: (rect.left + rect.width / 2 - box.left) / sx + el.scrollLeft,
+          y: (rect.top + rect.height / 2 - box.top) / sy + el.scrollTop,
+          ownFilter:
+            !blurred.has(item) && getComputedStyle(item).filter !== 'none',
         };
       });
     };
@@ -180,12 +185,17 @@ function useScrollFade(
     const reach = (distance: number) =>
       zone > 0 ? smooth(clamp01(1 - distance / zone)) : 0;
 
+    let dirty = true;
     const paintItems = () => {
+      if (dirty) {
+        dirty = false;
+        measureItems();
+      }
       const scale = reduceRef.current ? 0 : shrink;
       if (!slots.length || (!scale && !blur)) return restore();
       const scrollX = el.scrollLeft;
       const scrollY = el.scrollTop;
-      for (const { item, x, y } of slots) {
+      for (const { item, x, y, ownFilter } of slots) {
         let depth = 0;
         if (vertical) {
           const center = y - scrollY;
@@ -202,15 +212,14 @@ function useScrollFade(
             reach(width - center) * values.right.get(),
           );
         }
-        if (depth > 0.001) {
-          if (scale) item.style.scale = String(1 - scale * depth);
-          else item.style.removeProperty('scale');
-          if (blur) item.style.filter = `blur(${(blur * depth).toFixed(2)}px)`;
+        if (depth > 0.001 && scale) {
+          item.style.scale = String(1 - scale * depth);
           shrunk.add(item);
-        } else if (shrunk.delete(item)) {
-          item.style.removeProperty('scale');
-          item.style.removeProperty('filter');
-        }
+        } else if (shrunk.delete(item)) item.style.removeProperty('scale');
+        if (depth > 0.001 && blur && !ownFilter) {
+          item.style.filter = `blur(${(blur * depth).toFixed(2)}px)`;
+          blurred.add(item);
+        } else if (blurred.delete(item)) item.style.removeProperty('filter');
       }
     };
 
@@ -280,14 +289,19 @@ function useScrollFade(
       write();
     };
 
-    measureItems();
     measure(true);
 
-    const onScroll = () => measure(true);
+    let lastScroll = 0;
+    const onScroll = () => {
+      const now = performance.now();
+      if (now - lastScroll > GESTURE_GAP) dirty = true;
+      lastScroll = now;
+      measure(true);
+    };
     el.addEventListener('scroll', onScroll, { passive: true });
 
     const resizeObserver = new ResizeObserver(() => {
-      measureItems();
+      dirty = true;
       measure(false);
     });
     const observeChildren = () => {
@@ -296,9 +310,9 @@ function useScrollFade(
       for (const child of el.children) resizeObserver.observe(child);
     };
     observeChildren();
-    const mutationObserver = new MutationObserver(() => {
-      observeChildren();
-      measureItems();
+    const mutationObserver = new MutationObserver((records) => {
+      if (records.some((record) => record.target === el)) observeChildren();
+      dirty = true;
       measure(false);
     });
     mutationObserver.observe(el, { childList: true, subtree: true });
