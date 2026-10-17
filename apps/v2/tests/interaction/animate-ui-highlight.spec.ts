@@ -58,3 +58,44 @@ test.describe('animate-ui highlight', () => {
     );
   });
 });
+
+test('hovering back onto an item whose highlight is fading out brings it back, and once shown it stays shown', async ({
+  page,
+}) => {
+  await page.goto('/tests/demos/animate-ui/highlight?hover=true', {
+    waitUntil: 'networkidle',
+  });
+  const overview = page.getByRole('button', { name: 'Overview' });
+  const activity = page.getByRole('button', { name: 'Activity' });
+  await overview.hover();
+  await page.waitForTimeout(400);
+  await activity.hover();
+  await page.waitForTimeout(500);
+  await page.mouse.move(5, 5);
+  await page.waitForTimeout(280);
+  await page.evaluate(() => {
+    const samples: number[] = [];
+    (window as unknown as { samples: number[] }).samples = samples;
+    const start = performance.now();
+    const tick = () => {
+      samples.push(
+        Math.max(
+          0,
+          ...[
+            ...document.querySelectorAll('[data-slot="motion-highlight"]'),
+          ].map((element) => Number(getComputedStyle(element).opacity)),
+        ),
+      );
+      if (performance.now() - start < 900) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  await activity.hover();
+  await page.waitForTimeout(1000);
+  const samples = await page.evaluate(
+    () => (window as unknown as { samples: number[] }).samples,
+  );
+  const shown = samples.findIndex((opacity) => opacity > 0.95);
+  expect(shown).toBeGreaterThan(-1);
+  expect(Math.min(...samples.slice(shown))).toBeGreaterThan(0.95);
+});

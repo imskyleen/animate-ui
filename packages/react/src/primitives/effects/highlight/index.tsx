@@ -514,6 +514,9 @@ function HighlightItem<T extends React.ElementType>({
   const handOff = activeValue !== null;
   const handedTo =
     isActive && previousValue !== null && previousValue !== childValue;
+  const [surfaceKey, setSurfaceKey] = React.useState('rest');
+  const wantedKey = handedTo ? `to-${changes}` : surfaceKey;
+  if (wantedKey !== surfaceKey) setSurfaceKey(wantedKey);
   const isDisabled = disabled === undefined ? contextDisabled : disabled;
   const { tempo } = useMotionTokens();
   const ownTransition = useTempoTransition(transition);
@@ -660,7 +663,7 @@ function HighlightItem<T extends React.ElementType>({
           <AnimatePresence initial={false} custom={handOff}>
             {isActive && !isDisabled && (
               <motion.div
-                key={handedTo ? `to-${changes}` : 'rest'}
+                key={wantedKey}
                 layoutId={`transition-background-${contextId}`}
                 data-slot="motion-highlight"
                 style={{
@@ -718,7 +721,7 @@ function HighlightItem<T extends React.ElementType>({
         <AnimatePresence initial={false} custom={handOff}>
           {isActive && !isDisabled && (
             <motion.div
-              key={handedTo ? `to-${changes}` : 'rest'}
+              key={wantedKey}
               layoutId={`transition-background-${contextId}`}
               data-slot="motion-highlight"
               style={{
