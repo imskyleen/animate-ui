@@ -29,6 +29,7 @@ Counting Number for stats and Rotating Text for words cycling on a timer fit eve
 | Words taking turns in place (inside a line of text: `recipes/swap.md`, a word cycling in a line) | Rotating Text    | `@animate-ui/react/primitives/texts/rotating`         |
 | One string morphing into the next                                                                | Morphing Text    | `@animate-ui/react/primitives/texts/morphing`         |
 | Letters rolling over, like a flip board                                                          | Rolling Text     | `@animate-ui/react/primitives/texts/rolling`          |
+| A link or button label sliding out as a copy slides in, on hover or click                        | Sliding Text     | `@animate-ui/react/primitives/texts/sliding`          |
 | A highlighter sweep behind text                                                                  | Highlight Text   | `@animate-ui/react/primitives/texts/highlight`        |
 | A glint running across text                                                                      | Shimmering Text  | `@animate-ui/react/primitives/texts/shimmering`       |
 | A gradient sweeping across text                                                                  | Gradient Text    | `@animate-ui/react/primitives/texts/gradient`         |

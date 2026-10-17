@@ -604,6 +604,12 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   'ripple-button': { play: toggle((page) => buttons(page).first(), 600) },
   'rolling-text': { play: replay() },
   'rotating-text': { mount: true, tail: 3000 },
+  'sliding-text': {
+    play: hoverOver(
+      (page) => page.locator('main [data-slot="sliding-text"]').first(),
+      700,
+    ),
+  },
   'scroll-fade': {
     async play(page) {
       const list = page.locator('main [data-slot="scroll-fade"]').first();
@@ -685,6 +691,7 @@ const TEXTS = new Set([
   'rolling-text',
   'rotating-text',
   'shimmering-text',
+  'sliding-text',
   'splitting-text',
 ]);
 
