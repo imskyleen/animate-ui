@@ -312,6 +312,139 @@ test.describe('backgrounds', () => {
       expect(lines).toBeLessThan(curves / 5);
     });
 
+    test('the lines bend steadily, without kinks', async ({ page }) => {
+      await page.addInitScript(() => {
+        const loops: number[][] = [];
+        (window as unknown as { __loops: number[][] }).__loops = loops;
+        const move = Path2D.prototype.moveTo;
+        const curve = Path2D.prototype.quadraticCurveTo;
+        let current: number[] | null = null;
+        Path2D.prototype.moveTo = function (x, y) {
+          current = [x, y];
+          loops.push(current);
+          return move.call(this, x, y);
+        };
+        Path2D.prototype.quadraticCurveTo = function (cx, cy, x, y) {
+          current?.push(x, y);
+          return curve.call(this, cx, cy, x, y);
+        };
+      });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await open(page);
+      const section = page.getByTestId('topography');
+      await show(section);
+      await page.waitForTimeout(800);
+      const jerk = await page.evaluate(() => {
+        const loops = (window as unknown as { __loops: number[][] }).__loops;
+        let total = 0;
+        let count = 0;
+        for (const loop of loops) {
+          const n = loop.length / 2;
+          if (n < 8) continue;
+          const turns: number[] = [];
+          for (let i = 1; i < n - 1; i++) {
+            const a = Math.atan2(
+              loop[i * 2 + 1]! - loop[i * 2 - 1]!,
+              loop[i * 2]! - loop[i * 2 - 2]!,
+            );
+            const b = Math.atan2(
+              loop[i * 2 + 3]! - loop[i * 2 + 1]!,
+              loop[i * 2 + 2]! - loop[i * 2]!,
+            );
+            let turn = b - a;
+            if (turn > Math.PI) turn -= 2 * Math.PI;
+            if (turn < -Math.PI) turn += 2 * Math.PI;
+            turns.push(turn);
+          }
+          for (let i = 1; i < turns.length; i++) {
+            total += Math.abs(turns[i]! - turns[i - 1]!);
+            count++;
+          }
+        }
+        return { mean: (total / count) * (180 / Math.PI), count };
+      });
+      expect(jerk.count).toBeGreaterThan(500);
+      expect(jerk.mean).toBeLessThan(2);
+    });
+
+    test('drawing a frame allocates next to nothing, so the garbage collector never stutters it', async ({
+      page,
+      browser,
+    }) => {
+      await page.goto('/tests/demos/backgrounds/topography', {
+        waitUntil: 'networkidle',
+      });
+      await page.waitForTimeout(2500);
+      await browser.startTracing(page, {
+        categories: ['v8', 'devtools.timeline'],
+      });
+      await page.waitForTimeout(3000);
+      const trace = JSON.parse((await browser.stopTracing()).toString()) as {
+        traceEvents: { name: string; ph: string }[];
+      };
+      const pauses = trace.traceEvents.filter(
+        (event) => event.name === 'MinorGC' && event.ph === 'X',
+      ).length;
+      expect(pauses).toBeLessThan(18);
+    });
+
+    test('on a 120Hz screen it redraws every other frame, at a steady pace', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        let now = 0;
+        let queue: FrameRequestCallback[] = [];
+        const base = performance.now();
+        performance.now = () => base + now;
+        window.requestAnimationFrame = (callback) => {
+          queue.push(callback);
+          return queue.length;
+        };
+        window.cancelAnimationFrame = () => {};
+        const strokes: number[] = [];
+        let frame = 0;
+        const stroke = CanvasRenderingContext2D.prototype.stroke;
+        CanvasRenderingContext2D.prototype.stroke = function (
+          this: CanvasRenderingContext2D,
+          path?: Path2D,
+        ) {
+          strokes.push(frame);
+          if (path) stroke.call(this, path);
+          else (stroke as () => void).call(this);
+        } as typeof stroke;
+        (
+          window as unknown as {
+            __step: () => void;
+            __strokes: number[];
+          }
+        ).__step = () => {
+          frame++;
+          now += 1000 / 120;
+          const due = queue;
+          queue = [];
+          for (const callback of due) callback(base + now);
+        };
+        (window as unknown as { __strokes: number[] }).__strokes = strokes;
+      });
+      await page.goto('/tests/demos/backgrounds/topography', {
+        waitUntil: 'networkidle',
+      });
+      const drawn = await page.evaluate(() => {
+        const w = window as unknown as {
+          __step: () => void;
+          __strokes: number[];
+        };
+        for (let i = 0; i < 240; i++) w.__step();
+        w.__strokes.length = 0;
+        for (let i = 0; i < 120; i++) w.__step();
+        return [...new Set(w.__strokes)];
+      });
+      expect(drawn.length).toBeGreaterThanOrEqual(58);
+      expect(drawn.length).toBeLessThanOrEqual(62);
+      const gaps = drawn.slice(1).map((frame, i) => frame - drawn[i]!);
+      for (const gap of gaps) expect(gap).toBe(2);
+    });
+
     test('the relief rises on mount: the lines bloom out', async ({ page }) => {
       await page.goto('/tests/fixtures/backgrounds');
       const section = page.getByTestId('topography');
