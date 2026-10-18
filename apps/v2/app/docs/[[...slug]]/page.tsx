@@ -26,6 +26,7 @@ import { CopyPage, PageNavigation } from '@/components/docs/page-actions';
 import { getMDXComponents } from '@/components/mdx';
 import { getNeighbours, getPrimitive, getPrimitiveUrls } from '@/lib/docs';
 import {
+  appName,
   getPageImageUrl,
   getPageMarkdownUrl,
   gitConfig,
@@ -126,6 +127,13 @@ export async function generateMetadata(
   return {
     title: page.data.title,
     description: page.data.description,
-    openGraph: { images: getPageImageUrl(page).url },
+    alternates: { canonical: page.url },
+    openGraph: {
+      type: 'article',
+      url: page.url,
+      siteName: appName,
+      images: getPageImageUrl(page).url,
+    },
+    twitter: { card: 'summary_large_image' },
   };
 }
