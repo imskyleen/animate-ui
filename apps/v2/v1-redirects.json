@@ -1,0 +1,647 @@
+[
+  {
+    "source": "/docs/components",
+    "destination": "/docs/primitives",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/animate/avatar-group",
+    "destination": "/docs/primitives/animate-ui/avatar-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/animate/code",
+    "destination": "/docs/primitives/animate-ui/code-block",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/animate/cursor",
+    "destination": "/docs/primitives/animate-ui/cursor",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/animate/tabs",
+    "destination": "/docs/primitives/animate-ui/tabs",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/animate/tooltip",
+    "destination": "/docs/primitives/animate-ui/tooltip",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/bubble",
+    "destination": "/docs/backgrounds/bubble",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/fireworks",
+    "destination": "/docs/backgrounds/fireworks",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/gradient",
+    "destination": "/docs/backgrounds/gradient",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/gravity-stars",
+    "destination": "/docs/backgrounds/gravity-stars",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/hexagon",
+    "destination": "/docs/backgrounds/hexagon",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/hole",
+    "destination": "/docs/backgrounds/hole",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/backgrounds/stars",
+    "destination": "/docs/backgrounds/stars",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/accordion",
+    "destination": "/docs/primitives/base-ui/accordion",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/alert-dialog",
+    "destination": "/docs/primitives/base-ui/alert-dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/checkbox",
+    "destination": "/docs/primitives/base-ui/checkbox",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/dialog",
+    "destination": "/docs/primitives/base-ui/dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/menu",
+    "destination": "/docs/primitives/base-ui/dropdown-menu",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/popover",
+    "destination": "/docs/primitives/base-ui/popover",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/preview-card",
+    "destination": "/docs/primitives/base-ui/hover-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/preview-link-card",
+    "destination": "/docs/primitives/base-ui/preview-link-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/progress",
+    "destination": "/docs/primitives/base-ui/progress",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/radio",
+    "destination": "/docs/primitives/base-ui/radio-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/switch",
+    "destination": "/docs/primitives/base-ui/switch",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/tabs",
+    "destination": "/docs/primitives/base-ui/tabs",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/toggle",
+    "destination": "/docs/primitives/base-ui/toggle",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/toggle-group",
+    "destination": "/docs/primitives/base-ui/toggle-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/base/tooltip",
+    "destination": "/docs/primitives/base-ui/tooltip",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/button",
+    "destination": "/docs/primitives/animate-ui/button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/copy",
+    "destination": "/docs/primitives/animate-ui/copy-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/flip",
+    "destination": "/docs/primitives/animate-ui/flip-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/github-stars",
+    "destination": "/docs/primitives/animate-ui/github-stars-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/icon",
+    "destination": "/docs/primitives/animate-ui/icon-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/liquid",
+    "destination": "/docs/primitives/animate-ui/liquid-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/ripple",
+    "destination": "/docs/primitives/animate-ui/ripple-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/buttons/theme-toggler",
+    "destination": "/docs/primitives/animate-ui/theme-toggler-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/accordion",
+    "destination": "/docs/primitives/radix-ui/accordion",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/alert-dialog",
+    "destination": "/docs/primitives/radix-ui/alert-dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/checkbox",
+    "destination": "/docs/primitives/radix-ui/checkbox",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/dialog",
+    "destination": "/docs/primitives/radix-ui/dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/dropdown-menu",
+    "destination": "/docs/primitives/radix-ui/dropdown-menu",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/hover-card",
+    "destination": "/docs/primitives/radix-ui/hover-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/popover",
+    "destination": "/docs/primitives/radix-ui/popover",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/preview-link-card",
+    "destination": "/docs/primitives/radix-ui/preview-link-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/progress",
+    "destination": "/docs/primitives/radix-ui/progress",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/radio-group",
+    "destination": "/docs/primitives/radix-ui/radio-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/sheet",
+    "destination": "/docs/primitives/radix-ui/sheet",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/sidebar",
+    "destination": "/docs/primitives/radix-ui/sidebar",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/switch",
+    "destination": "/docs/primitives/radix-ui/switch",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/tabs",
+    "destination": "/docs/primitives/radix-ui/tabs",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/toggle",
+    "destination": "/docs/primitives/radix-ui/toggle",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/toggle-group",
+    "destination": "/docs/primitives/radix-ui/toggle-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/components/radix/tooltip",
+    "destination": "/docs/primitives/radix-ui/tooltip",
+    "permanent": true
+  },
+  {
+    "source": "/docs/icons/usage/animations",
+    "destination": "/docs/icons/get-started",
+    "permanent": true
+  },
+  {
+    "source": "/docs/icons/usage/persistence",
+    "destination": "/docs/icons/get-started",
+    "permanent": true
+  },
+  {
+    "source": "/docs/icons/usage/timing",
+    "destination": "/docs/icons/get-started",
+    "permanent": true
+  },
+  {
+    "source": "/docs/icons/usage/triggers",
+    "destination": "/docs/icons/get-started",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/avatar-group",
+    "destination": "/docs/primitives/animate-ui/avatar-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/code-block",
+    "destination": "/docs/primitives/animate-ui/code-block",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/cursor",
+    "destination": "/docs/primitives/animate-ui/cursor",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/github-stars",
+    "destination": "/docs/primitives/animate-ui/github-stars",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/motion-grid",
+    "destination": "/docs/primitives/animate-ui/motion-grid",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/pinned-list",
+    "destination": "/docs/primitives/animate-ui/pinned-list",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/scroll-progress",
+    "destination": "/docs/primitives/animate-ui/scroll-progress",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/spring",
+    "destination": "/docs/primitives/animate-ui/spring",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/tabs",
+    "destination": "/docs/primitives/animate-ui/tabs",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/animate/tooltip",
+    "destination": "/docs/primitives/animate-ui/tooltip",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/accordion",
+    "destination": "/docs/primitives/base-ui/accordion",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/alert-dialog",
+    "destination": "/docs/primitives/base-ui/alert-dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/checkbox",
+    "destination": "/docs/primitives/base-ui/checkbox",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/collapsible",
+    "destination": "/docs/primitives/base-ui/collapsible",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/dialog",
+    "destination": "/docs/primitives/base-ui/dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/menu",
+    "destination": "/docs/primitives/base-ui/dropdown-menu",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/popover",
+    "destination": "/docs/primitives/base-ui/popover",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/preview-card",
+    "destination": "/docs/primitives/base-ui/hover-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/preview-link-card",
+    "destination": "/docs/primitives/base-ui/preview-link-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/progress",
+    "destination": "/docs/primitives/base-ui/progress",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/radio",
+    "destination": "/docs/primitives/base-ui/radio-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/switch",
+    "destination": "/docs/primitives/base-ui/switch",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/tabs",
+    "destination": "/docs/primitives/base-ui/tabs",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/toggle",
+    "destination": "/docs/primitives/base-ui/toggle",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/toggle-group",
+    "destination": "/docs/primitives/base-ui/toggle-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/base/tooltip",
+    "destination": "/docs/primitives/base-ui/tooltip",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/buttons/button",
+    "destination": "/docs/primitives/animate-ui/button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/buttons/flip",
+    "destination": "/docs/primitives/animate-ui/flip-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/buttons/liquid",
+    "destination": "/docs/primitives/animate-ui/liquid-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/buttons/ripple",
+    "destination": "/docs/primitives/animate-ui/ripple-button",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/auto-height",
+    "destination": "/docs/primitives/animate-ui/auto-height",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/blur",
+    "destination": "/docs/primitives/animate-ui/blur",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/click",
+    "destination": "/docs/primitives/animate-ui/click",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/effect",
+    "destination": "/docs/primitives/animate-ui/effect",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/fade",
+    "destination": "/docs/primitives/animate-ui/fade",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/highlight",
+    "destination": "/docs/primitives/animate-ui/highlight",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/image-zoom",
+    "destination": "/docs/primitives/animate-ui/image-zoom",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/magnetic",
+    "destination": "/docs/primitives/animate-ui/magnetic",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/particles",
+    "destination": "/docs/primitives/animate-ui/particles",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/shine",
+    "destination": "/docs/primitives/animate-ui/shine",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/slide",
+    "destination": "/docs/primitives/animate-ui/slide",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/theme-toggler",
+    "destination": "/docs/primitives/animate-ui/theme-toggler",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/tilt",
+    "destination": "/docs/primitives/animate-ui/tilt",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/effects/zoom",
+    "destination": "/docs/primitives/animate-ui/zoom",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/accordion",
+    "destination": "/docs/primitives/radix-ui/accordion",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/alert-dialog",
+    "destination": "/docs/primitives/radix-ui/alert-dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/checkbox",
+    "destination": "/docs/primitives/radix-ui/checkbox",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/collapsible",
+    "destination": "/docs/primitives/radix-ui/collapsible",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/dialog",
+    "destination": "/docs/primitives/radix-ui/dialog",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/dropdown-menu",
+    "destination": "/docs/primitives/radix-ui/dropdown-menu",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/hover-card",
+    "destination": "/docs/primitives/radix-ui/hover-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/popover",
+    "destination": "/docs/primitives/radix-ui/popover",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/preview-link-card",
+    "destination": "/docs/primitives/radix-ui/preview-link-card",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/progress",
+    "destination": "/docs/primitives/radix-ui/progress",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/radio-group",
+    "destination": "/docs/primitives/radix-ui/radio-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/sheet",
+    "destination": "/docs/primitives/radix-ui/sheet",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/switch",
+    "destination": "/docs/primitives/radix-ui/switch",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/tabs",
+    "destination": "/docs/primitives/radix-ui/tabs",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/toggle",
+    "destination": "/docs/primitives/radix-ui/toggle",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/toggle-group",
+    "destination": "/docs/primitives/radix-ui/toggle-group",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/radix/tooltip",
+    "destination": "/docs/primitives/radix-ui/tooltip",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/counting-number",
+    "destination": "/docs/primitives/animate-ui/counting-number",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/gradient",
+    "destination": "/docs/primitives/animate-ui/gradient-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/highlight",
+    "destination": "/docs/primitives/animate-ui/highlight-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/morphing",
+    "destination": "/docs/primitives/animate-ui/morphing-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/rolling",
+    "destination": "/docs/primitives/animate-ui/rolling-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/rotating",
+    "destination": "/docs/primitives/animate-ui/rotating-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/scrolling-number",
+    "destination": "/docs/primitives/animate-ui/scrolling-number",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/shimmering",
+    "destination": "/docs/primitives/animate-ui/shimmering-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/sliding-number",
+    "destination": "/docs/primitives/animate-ui/sliding-number",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/splitting",
+    "destination": "/docs/primitives/animate-ui/splitting-text",
+    "permanent": true
+  },
+  {
+    "source": "/docs/primitives/texts/typing",
+    "destination": "/docs/primitives/animate-ui/typing-text",
+    "permanent": true
+  }
+]

@@ -4,7 +4,7 @@
     Animated drop-in primitives for Radix UI, Base UI and React Aria, built with Motion. Swap the import, keep your shadcn/ui components.
 </p>
 
-<a href="https://github.com/imskyleen/animate-ui/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/imskyleen/animate-ui?style=for-the-badge"></a>
+<a href="https://github.com/imskyleen/animate-ui/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fanimate-ui.com%2Fapi%2Fgithub-stars&style=for-the-badge"></a>
 <a href="https://twitter.com/animate_ui"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/animate_ui?style=for-the-badge&logo=x"></a>
 <a href="https://github.com/imskyleen/animate-ui/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT%20%2B%20Commons%20Clause-yellow.svg?style=for-the-badge"></a>
 

@@ -78,3 +78,13 @@ test('the sitemap lists the home page and every docs page, nothing else', async 
     [],
   );
 });
+
+test('the README stars badge reads its count from the site', async ({
+  request,
+}) => {
+  const response = await request.get('/api/github-stars');
+  expect(response.status()).toBe(200);
+  const badge = await response.json();
+  expect(badge).toMatchObject({ schemaVersion: 1, label: 'stars' });
+  expect(badge.message).toMatch(/^(\d+(\.\d)?k?|GitHub)$/);
+});
