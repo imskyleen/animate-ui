@@ -132,7 +132,7 @@ export async function generateMetadata(
       type: 'article',
       url: page.url,
       siteName: appName,
-      images: getPageImageUrl(page).url,
+      images: `${getPageImageUrl(page).url}?v=2`,
     },
     twitter: { card: 'summary_large_image' },
   };
