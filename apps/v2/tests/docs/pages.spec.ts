@@ -512,7 +512,7 @@ test('installation: switching CLI and Manual moves the steps like the tabs demo,
   ).toBe('relative');
 });
 
-test('the sidebar marks new and updated pages with badges set next to their name', async ({
+test('the sidebar marks new and updated pages, the badge at the end of the row', async ({
   page,
 }) => {
   await page.goto('/docs/primitives/radix-ui/accordion');
@@ -540,14 +540,14 @@ test('the sidebar marks new and updated pages with badges set next to their name
     return color;
   });
   await expect(updated).toHaveCSS('color', muted);
-  const gap = await link(/^Accordion/)
+  const fromEnd = await link(/^Accordion/)
     .first()
     .evaluate((anchor) => {
       const badge = anchor.querySelector('[data-slot="badge"]')!;
-      const label = badge.previousElementSibling!;
+      const row = badge.parentElement!;
       return (
-        badge.getBoundingClientRect().left - label.getBoundingClientRect().right
+        row.getBoundingClientRect().right - badge.getBoundingClientRect().right
       );
     });
-  expect(gap).toBeLessThan(16);
+  expect(Math.abs(fromEnd)).toBeLessThan(2);
 });

@@ -2,8 +2,6 @@ import type * as React from 'react';
 import { cn } from 'cn';
 import type { PageTreeTransformer } from 'fumadocs-core/source';
 import { Dancing_Script } from 'next/font/google';
-
-import { Badge } from '@/components/ui/badge';
 import { isNewPage, isUpdatedPage } from '@/lib/new-badge';
 
 const dancing = Dancing_Script({ subsets: ['latin'] });
@@ -16,29 +14,21 @@ export function BadgeLabel({
   className?: string;
 }) {
   return (
-    <Badge
-      variant={BADGE_VARIANTS[badge]}
+    <span
+      data-slot="badge"
       className={cn(
         dancing.className,
-        'h-[18px] px-1.5 py-0 text-[13px] leading-none font-bold',
+        'text-[15px] leading-1 font-black text-nowrap text-foreground',
         BADGE_COLORS[badge],
         className,
       )}
     >
       {badge}
-    </Badge>
+    </span>
   );
 }
 
 export type PageBadge = 'new' | 'alpha' | 'beta' | 'deprecated' | 'updated';
-
-const BADGE_VARIANTS: Record<PageBadge, 'default' | 'secondary'> = {
-  new: 'default',
-  alpha: 'secondary',
-  beta: 'secondary',
-  deprecated: 'secondary',
-  updated: 'secondary',
-};
 
 const BADGE_COLORS: Record<PageBadge, string> = {
   new: '',
@@ -66,7 +56,7 @@ export const attachBadge: PageTreeTransformer['file'] = function (
   const badge = pageBadge(file.data);
   if (!badge) return node;
   node.name = (
-    <span className="flex items-center gap-2">
+    <span className="flex w-full items-center justify-between gap-3">
       <span>{splitSuffix(node.name)}</span>
       <BadgeLabel badge={badge} />
     </span>
