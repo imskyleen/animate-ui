@@ -461,3 +461,53 @@ test('the TOC line stays put while the page scrolls', async ({ page }) => {
     expect(await scroller.evaluate((el) => el.scrollLeft)).toBe(0);
   }
 });
+
+test('installation: switching CLI and Manual moves the steps like the tabs demo, blurred and slid', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives/radix-ui/tabs', {
+    waitUntil: 'networkidle',
+  });
+  const install = page.locator('[data-slot="install-tabs"]').first();
+  await install.scrollIntoViewIfNeeded();
+  const record = () =>
+    install.evaluate(
+      (root) =>
+        new Promise<{ blur: number; shift: number }>((resolve) => {
+          let blur = 0;
+          let shift = 0;
+          const start = performance.now();
+          const tick = () => {
+            for (const step of root.querySelectorAll('.fd-step')) {
+              const style = getComputedStyle(step);
+              blur = Math.max(
+                blur,
+                parseFloat(
+                  style.filter.match(/blur\(([\d.]+)px\)/)?.[1] ?? '0',
+                ),
+              );
+              shift = Math.max(
+                shift,
+                Math.abs(parseFloat(style.translate) || 0),
+              );
+            }
+            if (performance.now() - start < 700) requestAnimationFrame(tick);
+            else resolve({ blur, shift });
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+  await install.getByRole('tab', { name: 'Manual', exact: true }).click();
+  await page.waitForTimeout(900);
+  const back = record();
+  await install.getByRole('tab', { name: 'CLI', exact: true }).click();
+  const { blur, shift } = await back;
+  expect(blur).toBeGreaterThan(2);
+  expect(shift).toBeGreaterThan(6);
+  expect(
+    await install
+      .locator('.fd-step')
+      .first()
+      .evaluate((step) => getComputedStyle(step).position),
+  ).toBe('relative');
+});

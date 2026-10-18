@@ -281,3 +281,17 @@ html {
     display: none;
   }
 }
+
+.fd-steps > .fd-step {
+  position: relative;
+}
+
+.fd-steps > .fd-step::before {
+  inset-inline-start: calc(var(--spacing) * -10);
+}
+
+@media (width >= 40rem) {
+  .fd-steps > .fd-step::before {
+    inset-inline-start: calc(var(--spacing) * -11);
+  }
+}
