@@ -73,13 +73,11 @@ function createParticle(
       this.alpha -= this.decay;
     },
     draw(ctx: CanvasRenderingContext2D) {
-      ctx.save();
       ctx.globalAlpha = this.alpha;
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       ctx.fillStyle = this.color;
       ctx.fill();
-      ctx.restore();
     },
     isAlive() {
       return this.alpha > 0;
@@ -236,6 +234,9 @@ function FireworksBackgroundContent({
   const pageVisible = usePageVisible();
   const reduce = useShouldReduceMotion();
   const playing = inView && pageVisible && !reduce;
+  const stillKey = reduce
+    ? JSON.stringify([color, particleSpeed, particleSize])
+    : null;
 
   const optionsRef = React.useRef({
     population,
@@ -284,6 +285,7 @@ function FireworksBackgroundContent({
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.globalAlpha = 1;
     };
 
     const render = () => {
@@ -377,7 +379,9 @@ function FireworksBackgroundContent({
     };
 
     const still = () => {
-      if (running || fireworks.length || explosions.length) return;
+      if (running) return;
+      fireworks.length = 0;
+      explosions.length = 0;
       const options = optionsRef.current;
       for (let i = 0; i < 3; i++) {
         const firework = createFirework(
@@ -431,7 +435,7 @@ function FireworksBackgroundContent({
     if (!playing) return;
     engine.start();
     return engine.stop;
-  }, [playing, reduce]);
+  }, [playing, reduce, stillKey]);
 
   return (
     <div
@@ -441,6 +445,7 @@ function FireworksBackgroundContent({
       {...props}
     >
       <canvas
+        aria-hidden="true"
         {...canvasProps}
         ref={canvasRef}
         className={cn('absolute inset-0 size-full', canvasProps?.className)}

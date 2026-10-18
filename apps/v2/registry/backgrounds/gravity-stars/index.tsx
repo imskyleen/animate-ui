@@ -55,6 +55,7 @@ function GravityStarsBackgroundContent({
   starsInteractionType = 'bounce',
   ref,
   className,
+  children,
   onMouseMove,
   onTouchMove,
   ...props
@@ -178,10 +179,13 @@ function GravityStarsBackgroundContent({
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
+      const nextDpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
       const sizeChanged = rect.width !== width || rect.height !== height;
+      if (!sizeChanged && nextDpr === dpr && starsRef.current.length > 0)
+        return;
       width = rect.width;
       height = rect.height;
-      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      dpr = nextDpr;
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       color = getComputedStyle(container).color || '#ffffff';
@@ -214,9 +218,10 @@ function GravityStarsBackgroundContent({
 
         const dx = mouse.x - p.x;
         const dy = mouse.y - p.y;
-        const dist = Math.hypot(dx, dy);
+        const distSq = dx * dx + dy * dy;
 
-        if (dist < mouseInfluence && dist > 0) {
+        if (distSq < mouseInfluence * mouseInfluence && distSq > 0) {
+          const dist = Math.sqrt(distSq);
           const force = (mouseInfluence - dist) / mouseInfluence;
           const nx = dx / dist;
           const ny = dy / dist;
@@ -271,9 +276,10 @@ function GravityStarsBackgroundContent({
             const o = stars[j]!;
             const dx2 = o.x - p.x;
             const dy2 = o.y - p.y;
-            const d = Math.hypot(dx2, dy2);
+            const dSq = dx2 * dx2 + dy2 * dy2;
             const minD = p.size + o.size + 5;
-            if (d < minD && d > 0) {
+            if (dSq < minD * minD && dSq > 0) {
+              const d = Math.sqrt(dSq);
               if (starsInteractionType === 'bounce') {
                 const nx = dx2 / d;
                 const ny = dy2 / d;
@@ -419,8 +425,10 @@ function GravityStarsBackgroundContent({
     >
       <canvas
         ref={canvasRef}
+        aria-hidden="true"
         className="pointer-events-none absolute inset-0 block size-full"
       />
+      {children}
     </div>
   );
 }

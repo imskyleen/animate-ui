@@ -27,12 +27,12 @@ type StarLayerProps = HTMLMotionProps<'div'> & {
   starColor: string;
 };
 
-function generateStars(count: number, starColor: string) {
+function generateStars(count: number) {
   const shadows: string[] = [];
   for (let i = 0; i < count; i++) {
     const x = Math.floor(Math.random() * 4000) - 2000;
     const y = Math.floor(Math.random() * 4000) - 2000;
-    shadows.push(`${x}px ${y}px ${starColor}`);
+    shadows.push(`${x}px ${y}px`);
   }
   return shadows.join(', ');
 }
@@ -54,10 +54,10 @@ function StarLayerContent({
   const playing = inView && pageVisible && !reduce;
 
   React.useEffect(() => {
-    const boxShadow = generateStars(count, starColor);
+    const boxShadow = generateStars(count);
     if (firstRef.current) firstRef.current.style.boxShadow = boxShadow;
     if (secondRef.current) secondRef.current.style.boxShadow = boxShadow;
-  }, [count, starColor]);
+  }, [count]);
 
   return (
     <motion.div
@@ -75,12 +75,12 @@ function StarLayerContent({
       <div
         ref={firstRef}
         className="absolute bg-transparent rounded-full"
-        style={{ width: `${size}px`, height: `${size}px` }}
+        style={{ width: `${size}px`, height: `${size}px`, color: starColor }}
       />
       <div
         ref={secondRef}
         className="absolute bg-transparent rounded-full top-[2000px]"
-        style={{ width: `${size}px`, height: `${size}px` }}
+        style={{ width: `${size}px`, height: `${size}px`, color: starColor }}
       />
     </motion.div>
   );
@@ -148,6 +148,7 @@ function StarsBackgroundContent({
     >
       <StarsInViewContext value={inView}>
         <motion.div
+          aria-hidden="true"
           style={{ x: springX, y: springY }}
           className={cn({ 'pointer-events-none': !pointerEvents })}
         >

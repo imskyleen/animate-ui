@@ -123,8 +123,9 @@ function BubbleBackgroundContent({
       }
     >
       <svg
+        aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute top-0 left-0 w-0 h-0"
+        className="pointer-events-none absolute top-0 left-0 w-0 h-0"
       >
         <defs>
           <filter id={filterId}>
@@ -145,7 +146,8 @@ function BubbleBackgroundContent({
       </svg>
 
       <div
-        className="absolute inset-0"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
         style={{ filter: `url(#${filterId}) blur(40px)` }}
       >
         <motion.div

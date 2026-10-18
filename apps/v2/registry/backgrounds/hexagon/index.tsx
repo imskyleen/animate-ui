@@ -50,6 +50,7 @@ function HexagonBackground({
           : { rows, columns },
       );
     };
+    update();
     const resizeObserver = new ResizeObserver(update);
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
@@ -60,7 +61,7 @@ function HexagonBackground({
       ref={containerRef}
       data-slot="hexagon-background"
       className={cn(
-        'relative size-full overflow-hidden dark:bg-neutral-900 bg-neutral-100',
+        'relative isolate size-full overflow-hidden dark:bg-neutral-900 bg-neutral-100',
         className,
       )}
       {...props}
@@ -71,7 +72,10 @@ function HexagonBackground({
         } as React.CSSProperties
       }
     >
-      <div className="absolute top-0 -left-0 size-full overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 -z-10 size-full overflow-hidden text-base leading-6"
+      >
         {range(gridDimensions.rows).map((rowIndex) => (
           <div
             key={rowIndex}
@@ -97,7 +101,7 @@ function HexagonBackground({
                 className={cn(
                   'relative',
                   '[clip-path:polygon(50%_0%,_100%_25%,_100%_75%,_50%_100%,_0%_75%,_0%_25%)]',
-                  "before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full dark:before:bg-neutral-950 before:bg-white before:opacity-100 before:transition-all before:duration-1000",
+                  "before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full dark:before:bg-neutral-950 before:bg-white before:opacity-100 before:transition-colors before:duration-1000",
                   "after:content-[''] after:absolute after:inset-[var(--hexagon-margin)] dark:after:bg-neutral-950 after:bg-white",
                   'after:[clip-path:polygon(50%_0%,_100%_25%,_100%_75%,_50%_100%,_0%_75%,_0%_25%)]',
                   'hover:before:bg-neutral-200 dark:hover:before:bg-neutral-800 hover:before:opacity-100 hover:before:duration-0 dark:hover:after:bg-neutral-900 hover:after:bg-neutral-100 hover:after:opacity-100 hover:after:duration-0',

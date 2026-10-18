@@ -920,3 +920,94 @@ test.describe('backgrounds', () => {
     });
   });
 });
+
+test.describe('backgrounds: children and props', () => {
+  for (const name of ['bubble', 'gravity-stars', 'hexagon', 'hole']) {
+    test(`${name}: a child renders above the background and takes clicks`, async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId(`${name}-children`);
+      await show(section);
+      const child = page.getByTestId(`${name}-child`);
+      await expect(child).toBeVisible();
+      const onTop = await child.evaluate((el) => {
+        const { left, top, width, height } = el.getBoundingClientRect();
+        return (
+          document.elementFromPoint(left + width / 2, top + height / 2) === el
+        );
+      });
+      expect(onTop).toBe(true);
+    });
+  }
+
+  test('hexagon: rows keep their spacing under a tight line height', async ({
+    page,
+  }) => {
+    await open(page);
+    const pitch = (id: string) =>
+      page
+        .getByTestId(id)
+        .locator('[data-slot="hexagon-background"] .inline-flex')
+        .evaluateAll((rows) => {
+          const tops = rows
+            .slice(0, 3)
+            .map((row) => row.getBoundingClientRect().top);
+          return tops[2]! - tops[1]!;
+        });
+    expect(await pitch('hexagon-tight')).toBeCloseTo(await pitch('hexagon'), 1);
+  });
+
+  test('stars: a new star color keeps the stars in place', async ({ page }) => {
+    await open(page);
+    const section = page.getByTestId('stars-color');
+    await show(section);
+    const stars = section.locator('[data-slot="star-layer"] > div').first();
+    const read = () =>
+      stars.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return { shadow: el.style.boxShadow, color: style.color };
+      });
+    const before = await read();
+    await section.getByTestId('toggle').click();
+    await expect.poll(async () => (await read()).color).toBe('rgb(255, 0, 0)');
+    expect((await read()).shadow).toBe(before.shadow);
+  });
+
+  test.describe('reduced motion', () => {
+    test.use({ reducedMotion: 'reduce' });
+
+    test('gravity-stars: stars stay put on a window resize without a size change', async ({
+      page,
+    }) => {
+      await open(page);
+      const section = page.getByTestId('gravity-stars');
+      await show(section);
+      await expectStill(page, section);
+      const before = await frame(section);
+      await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+      await page.waitForTimeout(200);
+      expect(await frame(section)).toBe(before);
+    });
+
+    test('fireworks: the still frame follows a new color', async ({ page }) => {
+      await open(page);
+      const section = page.getByTestId('fireworks-color');
+      await show(section);
+      const red = () =>
+        section.locator('canvas').evaluate((canvas: HTMLCanvasElement) => {
+          const { data } = canvas
+            .getContext('2d')!
+            .getImageData(0, 0, canvas.width, canvas.height);
+          let count = 0;
+          for (let i = 0; i < data.length; i += 4)
+            if (data[i + 3]! > 0 && data[i]! > data[i + 2]!) count++;
+          return count;
+        });
+      await expect.poll(() => paintedPixels(section)).toBeGreaterThan(0);
+      expect(await red()).toBe(0);
+      await section.getByTestId('toggle').click();
+      await expect.poll(red).toBeGreaterThan(0);
+    });
+  });
+});
