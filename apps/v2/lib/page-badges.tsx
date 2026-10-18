@@ -2,7 +2,9 @@ import type * as React from 'react';
 import { cn } from 'cn';
 import type { PageTreeTransformer } from 'fumadocs-core/source';
 import { Dancing_Script } from 'next/font/google';
-import { isNewPage } from '@/lib/new-badge';
+
+import { Badge } from '@/components/ui/badge';
+import { isNewPage, isUpdatedPage } from '@/lib/new-badge';
 
 const dancing = Dancing_Script({ subsets: ['latin'] });
 
@@ -14,37 +16,45 @@ export function BadgeLabel({
   className?: string;
 }) {
   return (
-    <span
-      data-slot="badge"
+    <Badge
+      variant={BADGE_VARIANTS[badge]}
       className={cn(
         dancing.className,
-        'text-[17px] leading-1 font-black text-nowrap text-foreground',
+        'h-[18px] px-1.5 py-0 text-[13px] leading-none font-bold',
         BADGE_COLORS[badge],
         className,
       )}
     >
       {badge}
-    </span>
+    </Badge>
   );
 }
 
 export type PageBadge = 'new' | 'alpha' | 'beta' | 'deprecated' | 'updated';
+
+const BADGE_VARIANTS: Record<PageBadge, 'default' | 'secondary'> = {
+  new: 'default',
+  alpha: 'secondary',
+  beta: 'secondary',
+  deprecated: 'secondary',
+  updated: 'secondary',
+};
 
 const BADGE_COLORS: Record<PageBadge, string> = {
   new: '',
   alpha: 'text-pink-600 dark:text-pink-400',
   beta: 'text-blue-600 dark:text-blue-400',
   deprecated: 'text-red-600 dark:text-red-400',
-  updated: 'text-emerald-600 dark:text-emerald-400',
+  updated: 'text-muted-foreground',
 };
 
 export function pageBadge(frontmatter: object): PageBadge | null {
   const data = frontmatter as Record<string, unknown>;
-  if (data.updated === true) return 'updated';
   if (data.deprecated === true) return 'deprecated';
   if (data.beta === true) return 'beta';
   if (data.alpha === true) return 'alpha';
-  return isNewPage(data) ? 'new' : null;
+  if (isNewPage(data)) return 'new';
+  return isUpdatedPage(data) ? 'updated' : null;
 }
 
 export const attachBadge: PageTreeTransformer['file'] = function (
@@ -56,7 +66,7 @@ export const attachBadge: PageTreeTransformer['file'] = function (
   const badge = pageBadge(file.data);
   if (!badge) return node;
   node.name = (
-    <span className="flex w-full items-center justify-between gap-3">
+    <span className="flex items-center gap-2">
       <span>{splitSuffix(node.name)}</span>
       <BadgeLabel badge={badge} />
     </span>

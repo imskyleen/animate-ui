@@ -11,3 +11,9 @@ export function isNewPage(frontmatter: Record<string, unknown>) {
     return isRecent(frontmatter.releaseDate);
   return frontmatter.new === true;
 }
+
+export function isUpdatedPage(frontmatter: Record<string, unknown>) {
+  if (typeof frontmatter.updatedDate === 'string')
+    return isRecent(frontmatter.updatedDate);
+  return frontmatter.updated === true;
+}

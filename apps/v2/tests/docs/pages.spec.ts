@@ -298,10 +298,10 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     section('Animate UI').getByRole('link', { name: 'Cursor' }),
   ).toHaveAttribute('data-active', 'true');
   await expect(
-    section('Buttons').getByRole('link', { name: 'Ripple', exact: true }),
+    section('Buttons').getByRole('link', { name: /^Ripple(\s+updated)?$/ }),
   ).toBeVisible();
   await expect(
-    section('Texts').getByRole('link', { name: 'Typing', exact: true }),
+    section('Texts').getByRole('link', { name: /^Typing(\s+updated)?$/ }),
   ).toBeVisible();
   await expect(
     section('Effects').getByRole('link', { name: 'Shine' }),
@@ -335,16 +335,16 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     for (const name of names) expect(name.trim()).not.toMatch(suffix);
   }
   await expect(
-    section('Texts').getByRole('link', { name: 'Typing', exact: true }),
+    section('Texts').getByRole('link', { name: /^Typing(\s+updated)?$/ }),
   ).toHaveAttribute('href', /typing-text/);
   await expect(
-    section('Numbers').getByRole('link', { name: 'Sliding', exact: true }),
+    section('Numbers').getByRole('link', { name: /^Sliding(\s+updated)?$/ }),
   ).toHaveAttribute('href', /sliding-number/);
   await expect(
     section('Texts').getByRole('link', { name: /Number/ }),
   ).toHaveCount(0);
   await expect(
-    section('Buttons').getByRole('link', { name: 'Button', exact: true }),
+    section('Buttons').getByRole('link', { name: /^Button(\s+updated)?$/ }),
   ).toHaveAttribute('href', /\/button$/);
   await expect(
     section('Icons').getByRole('link', { name: 'Get Started' }),
@@ -510,4 +510,44 @@ test('installation: switching CLI and Manual moves the steps like the tabs demo,
       .first()
       .evaluate((step) => getComputedStyle(step).position),
   ).toBe('relative');
+});
+
+test('the sidebar marks new and updated pages with badges set next to their name', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives/radix-ui/accordion');
+  const link = (name: RegExp) =>
+    page.locator('#nd-sidebar').getByRole('link', { name });
+  const badgeOf = (name: RegExp) => link(name).locator('[data-slot="badge"]');
+  for (const name of [
+    /^@animate-ui\/react/,
+    /^CLI/,
+    /^Skills/,
+    /^Lucide Icons/,
+    /^Combobox/,
+  ])
+    await expect(badgeOf(name).first()).toHaveText('new');
+  for (const name of [/^Installation/, /^Get Started/, /^Accordion/, /^Ripple/])
+    await expect(badgeOf(name).first()).toHaveText('updated');
+  await expect(badgeOf(/^Introduction/)).toHaveCount(0);
+  const updated = badgeOf(/^Accordion/).first();
+  const muted = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.className = 'text-muted-foreground';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(updated).toHaveCSS('color', muted);
+  const gap = await link(/^Accordion/)
+    .first()
+    .evaluate((anchor) => {
+      const badge = anchor.querySelector('[data-slot="badge"]')!;
+      const label = badge.previousElementSibling!;
+      return (
+        badge.getBoundingClientRect().left - label.getBoundingClientRect().right
+      );
+    });
+  expect(gap).toBeLessThan(16);
 });

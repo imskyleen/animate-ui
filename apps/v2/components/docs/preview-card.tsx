@@ -120,13 +120,13 @@ export function PreviewCard({
         </div>
         <div className="flex items-center gap-2 px-2.5 pt-2.5 pb-1.5 text-sm font-medium">
           {logo}
-          <span className="flex-1 truncate">{title}</span>
-          {badge && <BadgeLabel badge={badge} className="mr-1" />}
+          <span className="min-w-0 truncate">{title}</span>
+          {badge && <BadgeLabel badge={badge} />}
           <HugeiconsIcon
             icon={ArrowUpRight01Icon}
             strokeWidth={2}
             size={16}
-            className="shrink-0 text-muted-foreground transition-[color,translate] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
+            className="ml-auto shrink-0 text-muted-foreground transition-[color,translate] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
           />
         </div>
       </Link>
