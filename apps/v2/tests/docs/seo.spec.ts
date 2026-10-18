@@ -19,13 +19,17 @@ test('the home page has its own share image, canonical URL and structured data',
   expect(meta(html, 'og:description')).toBeTruthy();
   expect(meta(html, 'twitter:card')).toBe('summary_large_image');
   const image = meta(html, 'og:image')!;
-  expect(image).toBe('https://animate-ui.com/og/home/image.png');
+  expect(image).toBe('https://animate-ui.com/og-image.png');
   expect(meta(html, 'twitter:image')).toBe(image);
 
   const response = await request.get(new URL(image).pathname);
   expect(response.headers()['content-type']).toBe('image/png');
   const png = await response.body();
-  expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1200, 630]);
+  expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([
+    Number(meta(html, 'og:image:width')),
+    Number(meta(html, 'og:image:height')),
+  ]);
+  expect(meta(html, 'twitter:site')).toBe('@animate_ui');
 
   const jsonLd = JSON.parse(
     html.match(/<script type="application\/ld\+json">([^<]*)<\/script>/)![1]!,
