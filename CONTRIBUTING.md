@@ -38,19 +38,19 @@ apps
     └── tests         # Playwright tests
 packages
 ├── react             # @animate-ui/react: the animated primitives
-├── cli               # @animate-ui/cli: the animate and migrate commands
+├── cli               # @animate-ui/cli: the animate, migrate and audit commands
 ├── eslint-config
 └── typescript-config
 skills
 └── animate-ui        # The Animate UI skill for AI assistants
 ```
 
-| Path                   | Description                                                 |
-| ---------------------- | ----------------------------------------------------------- |
-| `packages/react/src`   | The primitives: Radix UI, Base UI, React Aria and our own.  |
-| `packages/cli/src`     | The CLI that animates shadcn/ui components and migrates v1. |
-| `apps/v2/registry`     | The icons (Lucide and Hugeicons) and the backgrounds.       |
-| `apps/v2/content/docs` | The documentation.                                          |
+| Path                   | Description                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `packages/react/src`   | The primitives: Radix UI, Base UI, React Aria and our own.                     |
+| `packages/cli/src`     | The CLI that animates shadcn/ui components, migrates v1 and audits animations. |
+| `apps/v2/registry`     | The icons (Lucide and Hugeicons) and the backgrounds.                          |
+| `apps/v2/content/docs` | The documentation.                                                             |
 
 ## Development
 
