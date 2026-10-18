@@ -31,23 +31,23 @@ export async function GET(
   if (!page) notFound();
 
   return new ImageResponse(
-    <div tw="relative flex w-full h-full bg-[#0A0A0A]">
-      <div tw="absolute left-15 top-0 bottom-0 w-0.5 h-full bg-[#171717]" />
-      <div tw="absolute right-15 top-0 bottom-0 w-0.5 h-full bg-[#171717]" />
-      <div tw="absolute bottom-15 left-0 right-0 w-full h-0.5 bg-[#171717]" />
-      <div tw="absolute top-15 left-0 right-0 w-full h-0.5 bg-[#171717]" />
+    <div tw="relative flex w-full h-full bg-[#FFFFFF]">
+      <div tw="absolute left-15 top-0 bottom-0 w-0.5 h-full bg-[#F0F0F0]" />
+      <div tw="absolute right-15 top-0 bottom-0 w-0.5 h-full bg-[#F0F0F0]" />
+      <div tw="absolute bottom-15 left-0 right-0 w-full h-0.5 bg-[#F0F0F0]" />
+      <div tw="absolute top-15 left-0 right-0 w-full h-0.5 bg-[#F0F0F0]" />
 
-      <div tw="absolute top-15 left-[43.5px] w-[35px] h-0.5 bg-[#404040]" />
-      <div tw="absolute left-15 top-[43.5px] h-[35px] w-0.5 bg-[#404040]" />
+      <div tw="absolute top-15 left-[43.5px] w-[35px] h-0.5 bg-[#C8C8C8]" />
+      <div tw="absolute left-15 top-[43.5px] h-[35px] w-0.5 bg-[#C8C8C8]" />
 
-      <div tw="absolute bottom-15 left-[43.5px] w-[35px] h-0.5 bg-[#404040]" />
-      <div tw="absolute left-15 bottom-[43.5px] h-[35px] w-0.5 bg-[#404040]" />
+      <div tw="absolute bottom-15 left-[43.5px] w-[35px] h-0.5 bg-[#C8C8C8]" />
+      <div tw="absolute left-15 bottom-[43.5px] h-[35px] w-0.5 bg-[#C8C8C8]" />
 
-      <div tw="absolute top-15 right-[43.5px] w-[35px] h-0.5 bg-[#404040]" />
-      <div tw="absolute right-15 top-[43.5px] h-[35px] w-0.5 bg-[#404040]" />
+      <div tw="absolute top-15 right-[43.5px] w-[35px] h-0.5 bg-[#C8C8C8]" />
+      <div tw="absolute right-15 top-[43.5px] h-[35px] w-0.5 bg-[#C8C8C8]" />
 
-      <div tw="absolute bottom-15 right-[43.5px] w-[35px] h-0.5 bg-[#404040]" />
-      <div tw="absolute right-15 bottom-[43.5px] h-[35px] w-0.5 bg-[#404040]" />
+      <div tw="absolute bottom-15 right-[43.5px] w-[35px] h-0.5 bg-[#C8C8C8]" />
+      <div tw="absolute right-15 bottom-[43.5px] h-[35px] w-0.5 bg-[#C8C8C8]" />
 
       <div
         tw="flex flex-col w-full h-full items-start justify-between p-26"
@@ -57,7 +57,7 @@ export async function GET(
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          fill="#fff"
+          fill="#0A0A0A"
           viewBox="0 0 4899.14 783.54"
           height="45"
         >
@@ -67,14 +67,14 @@ export async function GET(
         <div tw="flex flex-row gap-10 w-full justify-between items-end">
           <div tw="flex flex-col">
             <p
-              tw="text-white text-6xl font-medium mb-0"
+              tw="text-[#0A0A0A] text-6xl font-medium mb-0"
               style={{ fontFamily: 'Outfit' }}
             >
               {page.data.title}
             </p>
             {page.data.description && (
               <p
-                tw="text-white/60 text-2xl mt-6 -mb-2 max-w-2xl"
+                tw="text-[#737373] text-2xl mt-6 -mb-2 max-w-2xl"
                 style={{ fontFamily: 'Outfit' }}
               >
                 {page.data.description}
@@ -84,7 +84,7 @@ export async function GET(
 
           <div tw="flex ml-6">
             <p
-              tw="text-white/80 text-2xl -mb-2"
+              tw="text-[#404040] text-2xl -mb-2"
               style={{ fontFamily: 'Outfit' }}
             >
               animate-ui.com
