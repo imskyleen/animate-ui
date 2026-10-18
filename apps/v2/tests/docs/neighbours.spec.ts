@@ -9,4 +9,5 @@ for (const [url, previous, next] of [
     expect(html).toContain(`aria-label="Previous: ${previous}"`);
     expect(html).toContain(`aria-label="Next: ${next}"`);
     expect(html).not.toContain('aria-label="Next: Introduction"');
+    expect(html).not.toContain('[object Object]');
   });

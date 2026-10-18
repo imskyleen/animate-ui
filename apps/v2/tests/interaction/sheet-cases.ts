@@ -29,7 +29,9 @@ async function importDiff(page: Page, path: string) {
     .getByRole('tab', { name: 'Manual' })
     .click();
   return page
-    .locator('.has-diff .line')
+    .locator('.has-diff')
+    .first()
+    .locator('.line')
     .evaluateAll((lines) =>
       lines.map(
         (line) =>

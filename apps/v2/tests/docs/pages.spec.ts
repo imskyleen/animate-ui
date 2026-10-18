@@ -307,7 +307,9 @@ test('the sidebar groups primitives into sections', async ({ page }) => {
     section('Effects').getByRole('link', { name: 'Shine' }),
   ).toBeVisible();
   await expect(
-    section('Backgrounds').getByRole('link', { name: 'Bubble', exact: true }),
+    section('Backgrounds').getByRole('link', {
+      name: /^Bubble(\s+updated)?$/,
+    }),
   ).toHaveAttribute('href', '/docs/backgrounds/bubble');
   const backgrounds = await section('Backgrounds')
     .getByRole('link')
