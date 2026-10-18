@@ -12,9 +12,9 @@ const description =
   'Animated drop-in primitives for Radix UI, Base UI and React Aria, built with Motion. Swap the import and your shadcn/ui components animate.';
 const image = {
   url: '/og-image.png',
-  width: 9268,
-  height: 4635,
-  alt: 'Animate UI',
+  width: 2400,
+  height: 1260,
+  alt: 'Animate UI, animate-ui.com, over a grid of animated components',
 };
 
 export const metadata: Metadata = {
