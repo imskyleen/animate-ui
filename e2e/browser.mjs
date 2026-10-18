@@ -65,17 +65,27 @@ for (const [base, port] of Object.entries(PORTS)) {
   await opensAnimated('select', 'listbox', () => section('select').locator('button, [role="combobox"]').first().click());
   await check('popover', async () => {
     await section('popover').getByRole('button').first().click();
-    await page.getByText('Share this document').waitFor({ timeout: 3000 });
+    await page.getByText('Dimensions').first().waitFor({ timeout: 3000 });
     return 'opens';
   });
   await check('accordion', async () => {
-    await section('accordion').getByRole('button', { name: /different/ }).click();
-    await page.getByText(/You keep your own components/).waitFor({ timeout: 3000 });
+    const trigger = section('accordion').getByRole('button', { name: /return policy/ });
+    await trigger.click();
+    await page.waitForFunction(
+      (el) => el.getAttribute('aria-expanded') === 'true',
+      await trigger.elementHandle(),
+      { timeout: 3000 },
+    );
     return 'expands';
   });
   await check('tabs', async () => {
-    await section('tabs').getByRole('tab', { name: 'Activity' }).click();
-    await page.getByText('Recent activity').waitFor({ timeout: 3000 });
+    const tab = section('tabs').getByRole('tab', { name: 'Analytics' }).first();
+    await tab.click();
+    await page.waitForFunction(
+      (el) => el.getAttribute('aria-selected') === 'true',
+      await tab.elementHandle(),
+      { timeout: 3000 },
+    );
     return 'switches';
   });
   await check('switch', async () => {
@@ -87,9 +97,9 @@ for (const [base, port] of Object.entries(PORTS)) {
     return 'toggles';
   });
   await check('checkbox', async () => {
-    const control = section('checkbox').getByRole('checkbox').nth(1);
+    const control = section('checkbox').getByRole('checkbox', { name: /Accept terms and conditions/ }).first();
     const before = await control.isChecked();
-    await section('checkbox').getByText('Product updates').click();
+    await section('checkbox').getByText('Accept terms and conditions').first().click();
     await page.waitForTimeout(300);
     if ((await control.isChecked()) === before) throw new Error('did not toggle');
     return 'toggles';

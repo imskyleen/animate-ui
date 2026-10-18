@@ -32,6 +32,10 @@ for pair in radix:nova:radix-ui base:vega:base-ui aria:maia:react-aria; do
   (cd "$dir" && pnpm add "$TARBALL" motion @hugeicons/react @hugeicons/core-free-icons >/dev/null)
   (cd "$dir" && node "$CLI" animate all)
   node "$ROOT/e2e/make-pages.mjs" "$dir" "$library"
+  # The demos are shadcn/ui's own: they use a few more components and packages,
+  # and the docs-only `from` control.
+  (cd "$dir" && pnpm dlx shadcn@latest add field card badge sonner use-mobile -y -o >/dev/null && pnpm add recharts sonner >/dev/null)
+  sed -i.bak -e 's#@/components/ui/rhea/#@/components/ui/#g' -e 's# from={from}##g' "$dir"/app/e2e/*.tsx && rm -f "$dir"/app/e2e/*.bak
   (cd "$dir" && npx tsc --noEmit && pnpm build >/dev/null)
   (cd "$dir" && pnpm start -p "$PORT" >/dev/null 2>&1 &)
   PORT=$((PORT + 1))
