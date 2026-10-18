@@ -6,7 +6,7 @@
 
 <a href="https://github.com/imskyleen/animate-ui/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/imskyleen/animate-ui?style=for-the-badge"></a>
 <a href="https://twitter.com/animate_ui"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/animate_ui?style=for-the-badge&logo=x"></a>
-<a href="https://github.com/imskyleen/animate-ui/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge"></a>
+<a href="https://github.com/imskyleen/animate-ui/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT%20%2B%20Commons%20Clause-yellow.svg?style=for-the-badge"></a>
 
 </div>
 
@@ -44,7 +44,7 @@ Please read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) before contributing.
 
 ## License
 
-Licensed under the [MIT license](https://github.com/imskyleen/animate-ui/blob/main/LICENSE.md).
+Licensed under the [MIT license with the Commons Clause](https://github.com/imskyleen/animate-ui/blob/main/LICENSE.md): use it in any application, website or product, commercial or not, but don't sell or redistribute the components themselves.
 
 <br />
 <br />
