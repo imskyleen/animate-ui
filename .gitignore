@@ -46,3 +46,6 @@ e2e/.work
 
 # Launch video (Remotion project, kept local)
 /launch-video
+
+# Local agent files and working notes (never committed)
+/.playwright-mcp/
