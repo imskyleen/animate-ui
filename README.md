@@ -10,7 +10,7 @@
 
 </div>
 
-![hero](https://animate-ui.com/og-image.png)
+![Animate UI](apps/v2/public/og-image.png)
 
 ## Getting started
 
