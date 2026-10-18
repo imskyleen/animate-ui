@@ -1,8 +1,19 @@
 {
   "name": "@animate-ui/cli",
-  "version": "2.0.0-next.0",
-  "private": true,
+  "version": "2.0.0",
   "description": "Swap your shadcn/ui primitives for Animate UI's animated ones, and migrate from Animate UI v1.",
+  "keywords": [
+    "animate-ui",
+    "cli",
+    "shadcn",
+    "shadcn-ui",
+    "codemod",
+    "motion",
+    "animation",
+    "radix-ui",
+    "base-ui",
+    "react-aria"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

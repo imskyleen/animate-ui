@@ -7,6 +7,9 @@ packages/cli/test/fixtures
 packages/cli/test/__snapshots__
 apps/v2/registry/icons/index.ts
 apps/v2/lib/css-removals.json
+packages/react/src/primitives/radix-ui/index.tsx
+packages/react/src/primitives/base-ui/index.tsx
+packages/react/src/primitives/react-aria/index.tsx
 
 # Animate UI v1, frozen as in production (its own project in apps/v1)
 apps/v1

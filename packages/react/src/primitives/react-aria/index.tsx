@@ -5,11 +5,7 @@ export type { CheckboxProps } from './checkbox';
 export { DisclosurePanel } from './disclosure';
 export type { DisclosurePanelProps } from './disclosure';
 export { ListBox, ListBoxItem, SelectionIndicator } from './list-box';
-export type {
-  ListBoxItemProps,
-  ListBoxProps,
-  SelectionIndicatorProps,
-} from './list-box';
+export type { ListBoxItemProps, ListBoxProps, SelectionIndicatorProps } from './list-box';
 export { Menu, MenuItem, MenuSection } from './menu';
 export type { MenuItemProps, MenuProps, MenuSectionProps } from './menu';
 export { Modal, ModalOverlay } from './modal';

@@ -1,7 +1,6 @@
 {
   "name": "@animate-ui/react",
-  "version": "2.0.0-next.0",
-  "private": true,
+  "version": "2.0.0",
   "type": "module",
   "sideEffects": false,
   "devDependencies": {
@@ -23,6 +22,19 @@
     "typescript": "~6.0.3"
   },
   "description": "Animated drop-in primitives for Radix UI, Base UI and React Aria, built with Motion.",
+  "keywords": [
+    "animate-ui",
+    "react",
+    "motion",
+    "animation",
+    "radix-ui",
+    "base-ui",
+    "react-aria",
+    "shadcn",
+    "shadcn-ui",
+    "primitives",
+    "components"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
