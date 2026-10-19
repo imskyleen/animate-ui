@@ -128,21 +128,30 @@ test.describe('page transition', () => {
     expect(new Set(reaches.map((r) => r.toFixed(1))).size).toBeGreaterThan(1);
   });
 
-  test('both snapshots stay inside the page box', async ({ page: browser }) => {
+  test('both snapshots stay inside the page box, rounded like the frame that clips it', async ({
+    page: browser,
+  }) => {
     await open(browser);
     await navigate(browser, 'push', 'Docs');
-    const overflow = await browser.evaluate(() => {
+    const { overflow, radius } = await browser.evaluate(() => {
       const name = document
         .getAnimations()
         .map((a) => (a.effect as KeyframeEffect).pseudoElement ?? '')
         .find((p) => p.includes('_t_'))!
         .match(/\((.*)\)/)![1];
-      return getComputedStyle(
+      const style = getComputedStyle(
         document.documentElement,
         `::view-transition-image-pair(${name})`,
-      ).overflow;
+      );
+      return { overflow: style.overflow, radius: style.borderRadius };
     });
     expect(overflow).toBe('clip');
+    const [topLeft, topRight, bottomRight, bottomLeft] = radius
+      .split(' ')
+      .map(parseFloat);
+    expect([topLeft, topRight]).toEqual([0, 0]);
+    expect(bottomRight).toBeGreaterThan(0);
+    expect(bottomLeft).toBe(bottomRight);
   });
 
   test('a shared element morphs above the pages', async ({ page: browser }) => {
