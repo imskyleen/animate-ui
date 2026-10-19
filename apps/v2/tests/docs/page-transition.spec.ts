@@ -134,6 +134,12 @@ test.describe('the docs site', () => {
         if (pseudo?.startsWith('::view-transition-new('))
           (window as unknown as { __effects: string[] }).__effects.push(
             getComputedStyle(document.documentElement, pseudo).backgroundColor,
+            getComputedStyle(
+              document.documentElement,
+              '::view-transition-old(root)',
+            ).display,
+            getComputedStyle(document.querySelector('header')!)
+              .viewTransitionName,
           );
         return animate.call(this, keyframes, options);
       };
@@ -153,11 +159,18 @@ test.describe('the docs site', () => {
         { timeout: 15_000 },
       )
       .toBeGreaterThan(0);
-    const [snapshot, body] = await page.evaluate(() => [
-      (window as unknown as { __effects: string[] }).__effects[0],
+    const [snapshot, oldRoot, header, body] = await page.evaluate(() => [
+      ...(window as unknown as { __effects: string[] }).__effects.slice(0, 3),
       getComputedStyle(document.body).backgroundColor,
     ]);
     expect(snapshot).toBe(body);
+    expect(oldRoot, 'the header and sidebar stay live, no crossfade').toBe(
+      'none',
+    );
+    // Bug: on a scrolled page, the old page's snapshot covered the header.
+    expect(header, 'the header has its own snapshot, above the page').toBe(
+      'header',
+    );
     expect(await layout(page)).toEqual(before);
   });
 
@@ -267,6 +280,73 @@ test.describe('the docs site, between libraries and components', () => {
         () => page.getByRole('link', { name: /^Next:/ }).click(),
         '**/docs/primitives/radix-ui/alert-dialog',
       ),
-    ).toBe('translateY(100%)');
+    ).toMatch(/^translateY\(\d+(\.\d+)?px\)$/);
+  });
+
+  // Bug: on a page taller than the screen, stack slid in from below the
+  // whole page and receded around its middle, far off screen.
+  test('stack moves within the visible part of a long page', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const animate = Element.prototype.animate;
+      (window as unknown as { __frames: unknown[] }).__frames = [];
+      Element.prototype.animate = function (keyframes, options) {
+        const pseudo =
+          typeof options === 'object' ? options.pseudoElement : undefined;
+        if (pseudo?.includes('(_t_'))
+          (window as unknown as { __frames: unknown[] }).__frames.push([
+            pseudo.startsWith('::view-transition-new') ? 'new' : 'old',
+            keyframes,
+          ]);
+        return animate.call(this, keyframes, options);
+      };
+    });
+    await page.goto('/docs/primitives/radix-ui/accordion', {
+      waitUntil: 'networkidle',
+    });
+    await page.waitForFunction(() => {
+      const link = document.querySelector('a[aria-label^="Next:"]');
+      return (
+        !!link && Object.keys(link).some((k) => k.startsWith('__reactProps'))
+      );
+    });
+    const link = page
+      .locator('a[href$="/radix-ui/alert-dialog"]:not([aria-label])')
+      .first();
+    await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
+    const scrolled = await page.evaluate(() => scrollY);
+    expect(scrolled).toBeGreaterThan(900);
+    await link.click();
+    await page.waitForURL('**/docs/primitives/radix-ui/alert-dialog', {
+      timeout: 15_000,
+    });
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () =>
+              (window as unknown as { __frames: unknown[] }).__frames.length,
+          ),
+        { timeout: 15_000 },
+      )
+      .toBeGreaterThanOrEqual(2);
+    const frames = (await page.evaluate(
+      () => (window as unknown as { __frames: unknown[] }).__frames,
+    )) as [string, { transform?: string[]; transformOrigin?: string[] }][];
+    const keyframes = (
+      side: string,
+      property: 'transform' | 'transformOrigin',
+    ) => frames.find(([s, k]) => s === side && k[property])![1][property]![0]!;
+    const distance = Number(
+      /translateY\((.+)px\)/.exec(keyframes('new', 'transform'))![1],
+    );
+    expect(distance).toBeGreaterThan(400);
+    expect(distance).toBeLessThanOrEqual(900);
+    const originY = Number(
+      / (.+)px$/.exec(keyframes('old', 'transformOrigin'))![1],
+    );
+    expect(originY).toBeGreaterThan(scrolled);
+    expect(originY).toBeLessThan(scrolled + 900);
   });
 });

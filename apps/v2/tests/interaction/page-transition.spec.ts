@@ -68,11 +68,17 @@ test.describe('page transition', () => {
     fade: { old: ['opacity', 'filter'], new: ['opacity', 'filter'] },
     slide: { old: ['opacity', 'transform'], new: ['opacity', 'transform'] },
     push: { old: ['transform'], new: ['transform'] },
-    zoom: { old: ['opacity', 'transform'], new: ['opacity', 'transform'] },
+    zoom: {
+      old: ['opacity', 'transform', 'transformOrigin'],
+      new: ['opacity', 'transform', 'transformOrigin'],
+    },
     iris: { old: ['transform'], new: ['clipPath'] },
     wipe: { old: ['transform'], new: ['clipPath'] },
     bands: { old: ['transform'], new: ['clipPath'] },
-    stack: { old: ['opacity', 'transform'], new: ['transform'] },
+    stack: {
+      old: ['opacity', 'transform', 'transformOrigin'],
+      new: ['transform'],
+    },
     flow: {
       old: ['opacity', 'transform', 'filter'],
       new: ['opacity', 'transform', 'filter'],
@@ -158,7 +164,7 @@ test.describe('page transition', () => {
     expect(frames.length).toBeGreaterThan(10);
     const middle = frames[Math.floor(frames.length / 2)]!.clipPath!;
     const reaches = [
-      ...middle.matchAll(/([\d.]+)% [\d.]+%, ([\d.]+)% [\d.]+%/g),
+      ...middle.matchAll(/([\d.]+)% [\d.]+px, ([\d.]+)% [\d.]+px/g),
     ]
       .map((m) => Number(m[2]))
       .filter((_, i) => i % 2 === 0);

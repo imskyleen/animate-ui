@@ -195,7 +195,7 @@ export function SiteHeader({
   return (
     <header
       {...props}
-      className="fixed inset-x-0 top-0 z-40 h-14 bg-background md:h-17"
+      className="fixed inset-x-0 top-0 z-40 h-14 bg-background [view-transition-name:header] md:h-17"
     >
       <div className="mx-auto flex h-full max-w-[1670px] items-center gap-3 px-3 md:px-5">
         <Link

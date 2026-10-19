@@ -26,7 +26,13 @@ type PageTransitionEffect =
 
 type Effect = Exclude<PageTransitionEffect, 'random'>;
 
-type Origin = { x: number; y: number };
+type Frame = {
+  width: number;
+  top: number;
+  bottom: number;
+  x: number;
+  y: number;
+};
 
 type EffectAnimation = {
   enter: TargetAndTransition;
@@ -45,7 +51,7 @@ const still = (duration: number): TargetAndTransition => ({
 
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
-function bandFrames(back: boolean) {
+function bandFrames(back: boolean, { top, bottom }: Frame) {
   const span = 1 - (BANDS - 1) * BAND_STAGGER;
   return Array.from({ length: BAND_FRAMES + 1 }, (_, frame) => {
     const t = frame / BAND_FRAMES;
@@ -56,13 +62,13 @@ function bandFrames(back: boolean) {
       );
       const edge = back ? 100 : 0;
       const reach = back ? 100 - progress * 100 : progress * 100;
-      const top = (band / BANDS) * 100;
-      const bottom = ((band + 1) / BANDS) * 100;
+      const from = top + ((bottom - top) * band) / BANDS;
+      const to = top + ((bottom - top) * (band + 1)) / BANDS;
       points.push(
-        `${edge}% ${top}%`,
-        `${reach}% ${top}%`,
-        `${reach}% ${bottom}%`,
-        `${edge}% ${bottom}%`,
+        `${edge}% ${from}px`,
+        `${reach}% ${from}px`,
+        `${reach}% ${to}px`,
+        `${edge}% ${to}px`,
       );
     }
     return `polygon(${points.join(', ')})`;
@@ -70,6 +76,7 @@ function bandFrames(back: boolean) {
 }
 
 const CLIP =
+  '::view-transition-old(root){display:none}::view-transition-new(root){animation:none}' +
   '::view-transition-image-pair(*.page-transition){overflow:clip}' +
   '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
   '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
@@ -95,9 +102,11 @@ function morphRadius(name: string, from: string | undefined, to: string) {
   transition?.finished.finally(() => animation.cancel());
 }
 
+const middle = ({ top, bottom }: Frame) => `50% ${(top + bottom) / 2}px`;
+
 const EFFECTS: Record<
   Effect,
-  (back: boolean, origin: Origin) => EffectAnimation
+  (back: boolean, enter: Frame, exit: Frame) => EffectAnimation
 > = {
   fade: () => ({
     enter: {
@@ -139,25 +148,36 @@ const EFFECTS: Record<
       },
     };
   },
-  zoom: () => ({
+  zoom: (_, enter, exit) => ({
     enter: {
       opacity: [0, 1],
       transform: ['scale(0.94)', 'none'],
+      transformOrigin: [middle(enter), middle(enter)],
       transition: { duration: 0.4, ease: ease.out },
     },
     exit: {
       opacity: [1, 0],
       transform: ['none', 'scale(1.04)'],
+      transformOrigin: [middle(exit), middle(exit)],
       transition: { duration: 0.2, ease: ease.leave },
     },
   }),
-  iris: (_, { x, y }) => ({
-    enter: {
-      clipPath: [`circle(0% at ${x}% ${y}%)`, `circle(150% at ${x}% ${y}%)`],
-      transition: { duration: 0.6, ease: ease.resize },
-    },
-    exit: still(0.6),
-  }),
+  iris: (_, { width, top, bottom, x, y }) => {
+    const radius = Math.hypot(
+      Math.max(x, width - x),
+      Math.max(y - top, bottom - y),
+    );
+    return {
+      enter: {
+        clipPath: [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${radius}px at ${x}px ${y}px)`,
+        ],
+        transition: { duration: 0.6, ease: ease.resize },
+      },
+      exit: still(0.6),
+    };
+  },
   wipe: (back) => ({
     enter: {
       clipPath: [back ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)', 'inset(0)'],
@@ -168,24 +188,28 @@ const EFFECTS: Record<
       transition: { duration: 0.5, ease: ease.resize },
     },
   }),
-  bands: (back) => ({
+  bands: (back, enter) => ({
     enter: {
-      clipPath: bandFrames(back),
+      clipPath: bandFrames(back, enter),
       transition: { duration: 0.7, ease: 'linear' },
     },
     exit: still(0.7),
   }),
-  stack: (back) => ({
-    enter: {
-      transform: [`translateY(${back ? -100 : 100}%)`, 'none'],
-      transition: { duration: 0.5, ease: ease.resize },
-    },
-    exit: {
-      transform: ['none', 'scale(0.94)'],
-      opacity: [1, 0.6],
-      transition: { duration: 0.5, ease: ease.resize },
-    },
-  }),
+  stack: (back, enter, exit) => {
+    const distance = enter.bottom - enter.top;
+    return {
+      enter: {
+        transform: [`translateY(${back ? -distance : distance}px)`, 'none'],
+        transition: { duration: 0.5, ease: ease.resize },
+      },
+      exit: {
+        transform: ['none', 'scale(0.94)'],
+        transformOrigin: [middle(exit), middle(exit)],
+        opacity: [1, 0.6],
+        transition: { duration: 0.5, ease: ease.resize },
+      },
+    };
+  },
   flow: (back) => {
     const from = back ? -30 : 30;
     return {
@@ -203,16 +227,16 @@ const EFFECTS: Record<
       },
     };
   },
-  chop: (back) => ({
+  chop: (back, { top, bottom }) => ({
     enter: {
       clipPath: back
         ? [
-            'polygon(0% 0%, -20% 0%, 0% 100%, 0% 100%)',
-            'polygon(0% 0%, 120% 0%, 100% 100%, 0% 100%)',
+            `polygon(0% ${top}px, -20% ${top}px, 0% ${bottom}px, 0% ${bottom}px)`,
+            `polygon(0% ${top}px, 120% ${top}px, 100% ${bottom}px, 0% ${bottom}px)`,
           ]
         : [
-            'polygon(100% 0%, 100% 0%, 100% 100%, 120% 100%)',
-            'polygon(-20% 0%, 100% 0%, 100% 100%, 0% 100%)',
+            `polygon(100% ${top}px, 100% ${top}px, 100% ${bottom}px, 120% ${bottom}px)`,
+            `polygon(-20% ${top}px, 100% ${top}px, 100% ${bottom}px, 0% ${bottom}px)`,
           ],
       transition: { duration: 0.55, ease: ease.inOut },
     },
@@ -228,6 +252,19 @@ function pickEffect(previous?: Effect): Effect {
     (name) => name !== previous,
   );
   return choices[Math.floor(Math.random() * choices.length)]!;
+}
+
+function frameOf(element: HTMLElement, point?: { x: number; y: number }) {
+  const rect = element.getBoundingClientRect();
+  const top = Math.min(Math.max(0, -rect.top), rect.height);
+  const bottom = Math.max(top, Math.min(rect.height, innerHeight - rect.top));
+  return {
+    width: rect.width,
+    top,
+    bottom,
+    x: point ? point.x - rect.left : rect.width / 2,
+    y: point ? point.y - rect.top : (top + bottom) / 2,
+  };
 }
 
 function backgroundOf(element: HTMLElement) {
@@ -311,7 +348,10 @@ function PageTransition({
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
   const styleRef = React.useRef<HTMLStyleElement>(null);
-  const originRef = React.useRef<Origin>({ x: 50, y: 50 });
+  const pointRef = React.useRef<{ x: number; y: number } | undefined>(
+    undefined,
+  );
+  const exitRef = React.useRef<Frame | undefined>(undefined);
   const effectRef = React.useRef<Effect>('fade');
   const id = React.useId();
   const className = `page-transition-${id.replace(/[^a-z0-9]/gi, '')}`;
@@ -331,25 +371,30 @@ function PageTransition({
   React.useLayoutEffect(refreshStyle);
 
   React.useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => {
-      const rect = localRef.current?.getBoundingClientRect();
-      if (!rect?.width || !rect.height) return;
-      originRef.current = {
-        x: ((event.clientX - rect.left) / rect.width) * 100,
-        y: ((event.clientY - rect.top) / rect.height) * 100,
-      };
+    const onInput = (event: Event) => {
+      if (!localRef.current) return;
+      pointRef.current =
+        event instanceof PointerEvent
+          ? { x: event.clientX, y: event.clientY }
+          : undefined;
+      exitRef.current = frameOf(localRef.current, pointRef.current);
     };
-    document.addEventListener('pointerdown', onPointerDown, true);
-    return () =>
-      document.removeEventListener('pointerdown', onPointerDown, true);
+    document.addEventListener('pointerdown', onInput, true);
+    document.addEventListener('keydown', onInput, true);
+    return () => {
+      document.removeEventListener('pointerdown', onInput, true);
+      document.removeEventListener('keydown', onInput, true);
+    };
   }, []);
 
   const animation = (types: string[]) => {
     refreshStyle();
     const named = types.find((type): type is Effect => type in EFFECTS);
+    const enter = frameOf(localRef.current!, pointRef.current);
     return EFFECTS[reduce ? 'fade' : (named ?? effectRef.current)](
       types.includes('nav-back'),
-      originRef.current,
+      enter,
+      exitRef.current ?? enter,
     );
   };
 
