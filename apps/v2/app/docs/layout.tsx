@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
       }}
     >
       <PageTransition
-        effect="random"
+        effect="stack"
         className="col-[main-start/toc-end] row-[1/-1] grid grid-cols-subgrid grid-rows-subgrid"
       >
         {children}
