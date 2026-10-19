@@ -134,6 +134,18 @@ Links play forward. Mark the ones that go back:
   </Tab>
 </Tabs>
 
+### One effect per navigation
+
+A transition type named after an effect plays it for that navigation, whatever `effect` says. The docs here stack from page to page, and push sideways between Radix UI, Base UI and React Aria:
+
+```tsx
+<Link href={url} transitionTypes={['push', 'nav-forward']}>
+  React Aria
+</Link>
+```
+
+With TanStack Router, pass them in `viewTransition={{ types: ['push', 'nav-forward'] }}`; with React Router, call `addTransitionType('push')` in the transition.
+
 ### Shared elements
 
 An element on both pages, like a card that becomes a page header, morphs from one to the other with `PageTransitionShared`. Give it the same `name` on both pages, unique on each page:

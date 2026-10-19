@@ -371,10 +371,12 @@ function PageTransition({
         const before = sharedRadii();
         effectRef.current =
           effect === 'random' ? pickEffect(effectRef.current) : effect;
-        const { enter, exit } = EFFECTS[reduce ? 'fade' : effectRef.current](
-          types?.has('nav-back') ?? false,
-          originRef.current,
+        const named = [...(types ?? [])].find(
+          (type): type is Effect => type in EFFECTS,
         );
+        const { enter, exit } = EFFECTS[
+          reduce ? 'fade' : (named ?? effectRef.current)
+        ](types?.has('nav-back') ?? false, originRef.current);
         transition.ready
           .then(() => {
             const animations = [

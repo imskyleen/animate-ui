@@ -189,3 +189,84 @@ test.describe('the docs site', () => {
       .toContain('nav-back');
   });
 });
+
+test.describe('the docs site, between libraries and components', () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  test('library tabs push sideways, while moving between components stacks', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const animate = Element.prototype.animate;
+      (window as unknown as { __entrances: string[] }).__entrances = [];
+      Element.prototype.animate = function (keyframes, options) {
+        const pseudo =
+          typeof options === 'object' ? options.pseudoElement : undefined;
+        if (pseudo?.startsWith('::view-transition-new(_t_')) {
+          const transform = (keyframes as { transform?: string[] } | null)
+            ?.transform?.[0];
+          if (transform)
+            (window as unknown as { __entrances: string[] }).__entrances.push(
+              transform,
+            );
+        }
+        return animate.call(this, keyframes, options);
+      };
+    });
+    const next = async (click: () => Promise<void>, url: string) => {
+      const count = await page.evaluate(
+        () =>
+          (window as unknown as { __entrances: string[] }).__entrances.length,
+      );
+      await click();
+      await page.waitForURL(url, { timeout: 15_000 });
+      await expect
+        .poll(
+          () =>
+            page.evaluate(
+              () =>
+                (window as unknown as { __entrances: string[] }).__entrances,
+            ),
+          { timeout: 15_000 },
+        )
+        .toHaveLength(count + 1);
+      return page.evaluate(() =>
+        (window as unknown as { __entrances: string[] }).__entrances.at(-1),
+      );
+    };
+    const tab = (name: string) =>
+      page.getByRole('tablist', { name: 'Library' }).getByRole('tab', { name });
+    const ready = () =>
+      page.waitForFunction(() =>
+        Object.keys(
+          document.querySelector('[role="tablist"][aria-label="Library"] a') ??
+            {},
+        ).some((k) => k.startsWith('__reactProps')),
+      );
+
+    await page.goto('/docs/primitives/radix-ui/accordion', {
+      waitUntil: 'networkidle',
+    });
+    await ready();
+    expect(
+      await next(
+        () => tab('React Aria').click(),
+        '**/docs/primitives/react-aria/accordion',
+      ),
+    ).toBe('translateX(100%)');
+    await ready();
+    expect(
+      await next(
+        () => tab('Radix UI').click(),
+        '**/docs/primitives/radix-ui/accordion',
+      ),
+    ).toBe('translateX(-100%)');
+    await ready();
+    expect(
+      await next(
+        () => page.getByRole('link', { name: /^Next:/ }).click(),
+        '**/docs/primitives/radix-ui/alert-dialog',
+      ),
+    ).toBe('translateY(100%)');
+  });
+});

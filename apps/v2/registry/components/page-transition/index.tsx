@@ -346,7 +346,8 @@ function PageTransition({
 
   const animation = (types: string[]) => {
     refreshStyle();
-    return EFFECTS[reduce ? 'fade' : effectRef.current](
+    const named = types.find((type): type is Effect => type in EFFECTS);
+    return EFFECTS[reduce ? 'fade' : (named ?? effectRef.current)](
       types.includes('nav-back'),
       originRef.current,
     );

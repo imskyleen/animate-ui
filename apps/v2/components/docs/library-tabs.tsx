@@ -31,29 +31,36 @@ export function LibraryTabs({
         value={current}
         className="inset-0 rounded-lg bg-accent"
       >
-        {LIBRARIES.filter((library) => urls[library.id]).map((library) => {
-          const active = library.id === current;
-          const { Logo } = getLibrary(library.id)!;
-          return (
-            <HighlightItem key={library.id} value={library.id}>
-              <Link
-                role="tab"
-                aria-selected={active}
-                href={urls[library.id]!}
-                scroll={false}
-                className={cn(
-                  'inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
-                  active
-                    ? 'text-foreground'
-                    : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                <Logo className="size-3.5" />
-                {library.title}
-              </Link>
-            </HighlightItem>
-          );
-        })}
+        {LIBRARIES.filter((library) => urls[library.id]).map(
+          (library, index, list) => {
+            const active = library.id === current;
+            const direction =
+              index > list.findIndex((l) => l.id === current)
+                ? 'nav-forward'
+                : 'nav-back';
+            const { Logo } = getLibrary(library.id)!;
+            return (
+              <HighlightItem key={library.id} value={library.id}>
+                <Link
+                  role="tab"
+                  aria-selected={active}
+                  href={urls[library.id]!}
+                  scroll={false}
+                  transitionTypes={['push', direction]}
+                  className={cn(
+                    'inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
+                    active
+                      ? 'text-foreground'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  <Logo className="size-3.5" />
+                  {library.title}
+                </Link>
+              </HighlightItem>
+            );
+          },
+        )}
       </Highlight>
     </div>
   );
