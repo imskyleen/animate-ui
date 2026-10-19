@@ -136,11 +136,11 @@ Links play forward. Mark the ones that go back:
 
 ### One effect per navigation
 
-A transition type named after an effect plays it for that navigation, whatever `effect` says. The docs here stack from page to page, and push sideways between Radix UI, Base UI and React Aria:
+A transition type named after an effect plays it for that navigation, whatever `effect` says. Tabs that switch between views of the same page can push sideways while the rest of the site stacks:
 
 ```tsx
-<Link href={url} transitionTypes={['push', 'nav-forward']}>
-  React Aria
+<Link href="/pricing/yearly" transitionTypes={['push', 'nav-forward']}>
+  Yearly
 </Link>
 ```
 

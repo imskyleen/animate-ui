@@ -5,10 +5,10 @@ import {
   useSidebar,
 } from 'fumadocs-ui/layouts/docs/slots/sidebar';
 
+import { DocsPageTransition } from '@/components/docs/docs-page-transition';
 import { Header } from '@/components/layout/header';
 import { Sidebar } from '@/components/layout/sidebar';
 import { source } from '@/lib/source';
-import { PageTransition } from '@/registry/components/page-transition';
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   return (
@@ -28,12 +28,12 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
           'mx-auto max-w-[1670px] pt-(--fd-banner-height) [--fd-banner-height:--spacing(14)] md:[--fd-banner-height:--spacing(17)]',
       }}
     >
-      <PageTransition
+      <DocsPageTransition
         effect="stack"
         className="col-[main-start/toc-end] row-[1/-1] grid grid-cols-subgrid grid-rows-subgrid"
       >
         {children}
-      </PageTransition>
+      </DocsPageTransition>
     </DocsLayout>
   );
 }

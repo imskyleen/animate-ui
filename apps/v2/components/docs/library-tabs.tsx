@@ -32,12 +32,8 @@ export function LibraryTabs({
         className="inset-0 rounded-lg bg-accent"
       >
         {LIBRARIES.filter((library) => urls[library.id]).map(
-          (library, index, list) => {
+          (library) => {
             const active = library.id === current;
-            const direction =
-              index > list.findIndex((l) => l.id === current)
-                ? 'nav-forward'
-                : 'nav-back';
             const { Logo } = getLibrary(library.id)!;
             return (
               <HighlightItem key={library.id} value={library.id}>
@@ -46,7 +42,7 @@ export function LibraryTabs({
                   aria-selected={active}
                   href={urls[library.id]!}
                   scroll={false}
-                  transitionTypes={['push', direction]}
+                  transitionTypes={['library']}
                   className={cn(
                     'inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
                     active

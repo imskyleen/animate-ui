@@ -206,30 +206,44 @@ test.describe('the docs site', () => {
 test.describe('the docs site, between libraries and components', () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  test('library tabs push sideways, while moving between components stacks', async ({
+  test('switching library changes the page at once, moving between components stacks', async ({
     page,
   }) => {
     await page.addInitScript(() => {
-      const animate = Element.prototype.animate;
-      (window as unknown as { __entrances: string[] }).__entrances = [];
-      Element.prototype.animate = function (keyframes, options) {
-        const pseudo =
-          typeof options === 'object' ? options.pseudoElement : undefined;
-        if (pseudo?.startsWith('::view-transition-new(_t_')) {
-          const transform = (keyframes as { transform?: string[] } | null)
-            ?.transform?.[0];
-          if (transform)
-            (window as unknown as { __entrances: string[] }).__entrances.push(
-              transform,
-            );
-        }
-        return animate.call(this, keyframes, options);
-      };
+      const log: string[] = [];
+      (window as unknown as { __transitions: string[] }).__transitions = log;
+      const start = document.startViewTransition.bind(document);
+      document.startViewTransition = ((
+        options: ViewTransitionUpdateCallback,
+      ) => {
+        const transition = start(options);
+        transition.ready
+          .then(() => new Promise(requestAnimationFrame))
+          .then(() => {
+            const animations = document
+              .getAnimations()
+              .filter(
+                (a) => (a.effect as KeyframeEffect | null)?.pseudoElement,
+              );
+            const entrance = animations
+              .map((a) => a.effect as KeyframeEffect)
+              .filter((e) =>
+                e.pseudoElement!.startsWith('::view-transition-new(_t_'),
+              )
+              .map((e) => e.getKeyframes())
+              .find((k) => k[0]?.transform)?.[0]?.transform as
+              string | undefined;
+            log.push(animations.length ? (entrance ?? 'animated') : 'still');
+          })
+          .catch(() => log.push('skipped'));
+        return transition;
+      }) as typeof document.startViewTransition;
     });
     const next = async (click: () => Promise<void>, url: string) => {
       const count = await page.evaluate(
         () =>
-          (window as unknown as { __entrances: string[] }).__entrances.length,
+          (window as unknown as { __transitions: string[] }).__transitions
+            .length,
       );
       await click();
       await page.waitForURL(url, { timeout: 15_000 });
@@ -238,13 +252,14 @@ test.describe('the docs site, between libraries and components', () => {
           () =>
             page.evaluate(
               () =>
-                (window as unknown as { __entrances: string[] }).__entrances,
+                (window as unknown as { __transitions: string[] })
+                  .__transitions,
             ),
           { timeout: 15_000 },
         )
         .toHaveLength(count + 1);
       return page.evaluate(() =>
-        (window as unknown as { __entrances: string[] }).__entrances.at(-1),
+        (window as unknown as { __transitions: string[] }).__transitions.at(-1),
       );
     };
     const tab = (name: string) =>
@@ -266,19 +281,12 @@ test.describe('the docs site, between libraries and components', () => {
         () => tab('React Aria').click(),
         '**/docs/primitives/react-aria/accordion',
       ),
-    ).toBe('translateX(100%)');
-    await ready();
-    expect(
-      await next(
-        () => tab('Radix UI').click(),
-        '**/docs/primitives/radix-ui/accordion',
-      ),
-    ).toBe('translateX(-100%)');
+    ).toBe('still');
     await ready();
     expect(
       await next(
         () => page.getByRole('link', { name: /^Next:/ }).click(),
-        '**/docs/primitives/radix-ui/alert-dialog',
+        '**/docs/primitives/react-aria/alert-dialog',
       ),
     ).toMatch(/^translateY\(\d+(\.\d+)?px\)$/);
   });

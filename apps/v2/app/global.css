@@ -295,3 +295,10 @@ html {
     inset-inline-start: calc(var(--spacing) * -11);
   }
 }
+
+/* Switching library shows the same page: no transition. */
+:root:active-view-transition-type(library)::view-transition-group(*),
+:root:active-view-transition-type(library)::view-transition-old(*),
+:root:active-view-transition-type(library)::view-transition-new(*) {
+  animation: none;
+}
