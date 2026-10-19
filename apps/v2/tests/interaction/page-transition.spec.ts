@@ -99,6 +99,43 @@ test.describe('page transition', () => {
     });
   }
 
+  test('random picks one effect per navigation, never the same twice in a row', async ({
+    page: browser,
+  }) => {
+    await open(browser);
+    const signature = (list: PseudoAnimation[], side: 'old' | 'new') =>
+      page(list, side)
+        .flatMap((a) => Object.keys(a.keyframes[0]!))
+        .filter(
+          (key) =>
+            !['offset', 'easing', 'composite', 'computedOffset'].includes(key),
+        )
+        .sort()
+        .join('+');
+    const known = Object.entries(EXPECTED).map(([effect, sides]) => ({
+      effect,
+      old: [...sides.old].sort().join('+'),
+      new: [...sides.new].sort().join('+'),
+    }));
+    const seen: string[] = [];
+    for (const to of ['Docs', 'Blog', 'Home', 'Docs', 'Blog', 'Home']) {
+      const animations = await navigate(browser, 'random', to);
+      const pair = {
+        old: signature(animations, 'old'),
+        new: signature(animations, 'new'),
+      };
+      const matches = known.filter(
+        (k) => k.old === pair.old && k.new === pair.new,
+      );
+      expect(matches.length, JSON.stringify(pair)).toBeGreaterThan(0);
+      seen.push(matches.map((m) => m.effect).join('|'));
+      await settle(browser);
+    }
+    for (let i = 1; i < seen.length; i++)
+      if (!seen[i]!.includes('|') && !seen[i - 1]!.includes('|'))
+        expect(seen[i]).not.toBe(seen[i - 1]);
+  });
+
   test('slide follows the direction: forward from the right, back from the left', async ({
     page: browser,
   }) => {

@@ -21,7 +21,10 @@ type PageTransitionEffect =
   | 'bands'
   | 'stack'
   | 'flow'
-  | 'chop';
+  | 'chop'
+  | 'random';
+
+type Effect = Exclude<PageTransitionEffect, 'random'>;
 
 type Origin = { x: number; y: number };
 
@@ -67,7 +70,7 @@ function bandFrames(back: boolean) {
 }
 
 const CLIP =
-  '::view-transition-image-pair(*.page-transition){overflow:clip;border-radius:var(--page-transition-radius,0)}' +
+  '::view-transition-image-pair(*.page-transition){overflow:clip}' +
   '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
   '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
 
@@ -93,7 +96,7 @@ function morphRadius(name: string, from: string | undefined, to: string) {
 }
 
 const EFFECTS: Record<
-  PageTransitionEffect,
+  Effect,
   (back: boolean, origin: Origin) => EffectAnimation
 > = {
   fade: () => ({
@@ -220,6 +223,13 @@ const EFFECTS: Record<
   }),
 };
 
+function pickEffect(previous?: Effect): Effect {
+  const choices = (Object.keys(EFFECTS) as Effect[]).filter(
+    (name) => name !== previous,
+  );
+  return choices[Math.floor(Math.random() * choices.length)]!;
+}
+
 function clipRadius(element: HTMLElement) {
   const own = getComputedStyle(element).borderRadius;
   if (own !== '0px') return own;
@@ -283,17 +293,24 @@ function PageTransition({
   ...props
 }: PageTransitionProps) {
   const pathname = usePathname();
+  const key = pageKey ?? pathname;
   const reduce = useShouldReduceMotion();
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
+  const styleRef = React.useRef<HTMLStyleElement>(null);
   const originRef = React.useRef<Origin>({ x: 50, y: 50 });
+  const effectRef = React.useRef<Effect>('fade');
+  const id = React.useId();
+  const className = `page-transition-${id.replace(/[^a-z0-9]/gi, '')}`;
 
   React.useLayoutEffect(() => {
-    if (!localRef.current) return;
-    document.documentElement.style.setProperty(
-      '--page-transition-radius',
-      clipRadius(localRef.current),
-    );
+    effectRef.current =
+      effect === 'random' ? pickEffect(effectRef.current) : effect;
+  }, [effect, key]);
+
+  React.useLayoutEffect(() => {
+    if (!localRef.current || !styleRef.current) return;
+    styleRef.current.textContent = `::view-transition-image-pair(*.${className}){border-radius:${clipRadius(localRef.current)}}`;
   });
 
   React.useEffect(() => {
@@ -311,14 +328,14 @@ function PageTransition({
   }, []);
 
   const animation = (types: string[]) =>
-    EFFECTS[reduce ? 'fade' : effect](
+    EFFECTS[reduce ? 'fade' : effectRef.current](
       types.includes('nav-back'),
       originRef.current,
     );
 
   return (
     <AnimateView
-      key={pageKey ?? pathname}
+      key={key}
       enter={(types) => animation(types).enter}
       exit={(types) => animation(types).exit}
     >
@@ -326,11 +343,15 @@ function PageTransition({
         ref={localRef}
         data-slot="page-transition"
         {...props}
-        style={{ viewTransitionClass: 'page-transition', ...props.style }}
+        style={{
+          viewTransitionClass: `page-transition ${className}`,
+          ...props.style,
+        }}
       >
         <style href="page-transition" precedence="default">
           {CLIP}
         </style>
+        <style ref={styleRef} />
         {children}
       </div>
     </AnimateView>

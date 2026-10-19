@@ -19,6 +19,7 @@ const EFFECTS: PageTransitionEffect[] = [
   'stack',
   'flow',
   'chop',
+  'random',
 ];
 
 const PAGES = [

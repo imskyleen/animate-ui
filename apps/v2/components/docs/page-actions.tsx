@@ -142,10 +142,16 @@ export function PageNavigation({
   previous: Neighbour;
   next: Neighbour;
 }) {
-  const arrow = (target: Neighbour, label: string, icon: typeof Copy01Icon) =>
+  const arrow = (
+    target: Neighbour,
+    label: string,
+    icon: typeof Copy01Icon,
+    direction: 'nav-back' | 'nav-forward',
+  ) =>
     target ? (
       <Link
         href={target.url}
+        transitionTypes={[direction]}
         aria-label={`${label}: ${target.name}`}
         title={target.name}
         className={cn(button, 'w-8 rounded-md')}
@@ -160,8 +166,8 @@ export function PageNavigation({
 
   return (
     <div className="flex items-center gap-2">
-      {arrow(previous, 'Previous', ArrowLeft02Icon)}
-      {arrow(next, 'Next', ArrowRight02Icon)}
+      {arrow(previous, 'Previous', ArrowLeft02Icon, 'nav-back')}
+      {arrow(next, 'Next', ArrowRight02Icon, 'nav-forward')}
     </div>
   );
 }

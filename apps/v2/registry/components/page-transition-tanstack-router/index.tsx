@@ -20,7 +20,10 @@ type PageTransitionEffect =
   | 'bands'
   | 'stack'
   | 'flow'
-  | 'chop';
+  | 'chop'
+  | 'random';
+
+type Effect = Exclude<PageTransitionEffect, 'random'>;
 
 type Origin = { x: number; y: number };
 
@@ -66,7 +69,7 @@ function bandFrames(back: boolean) {
 }
 
 const EFFECTS: Record<
-  PageTransitionEffect,
+  Effect,
   (back: boolean, origin: Origin) => EffectAnimation
 > = {
   fade: () => ({
@@ -193,6 +196,13 @@ const EFFECTS: Record<
   }),
 };
 
+function pickEffect(previous?: Effect): Effect {
+  const choices = (Object.keys(EFFECTS) as Effect[]).filter(
+    (name) => name !== previous,
+  );
+  return choices[Math.floor(Math.random() * choices.length)]!;
+}
+
 const NAME = 'page-transition';
 
 const STYLE =
@@ -305,6 +315,7 @@ function PageTransition({
   const localRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
   const originRef = React.useRef<Origin>({ x: 50, y: 50 });
+  const effectRef = React.useRef<Effect>('fade');
 
   React.useLayoutEffect(() => {
     if (!localRef.current) return;
@@ -340,7 +351,9 @@ function PageTransition({
         const types = (transition as ViewTransition & { types?: Set<string> })
           .types;
         const before = sharedRadii();
-        const { enter, exit } = EFFECTS[reduce ? 'fade' : effect](
+        effectRef.current =
+          effect === 'random' ? pickEffect(effectRef.current) : effect;
+        const { enter, exit } = EFFECTS[reduce ? 'fade' : effectRef.current](
           types?.has('nav-back') ?? false,
           originRef.current,
         );

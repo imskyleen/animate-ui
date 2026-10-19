@@ -41,6 +41,7 @@ export const controls = {
         stack: "stack",
         flow: "flow",
         chop: "chop",
+        random: "random",
       },
     },
     shared: { value: true },

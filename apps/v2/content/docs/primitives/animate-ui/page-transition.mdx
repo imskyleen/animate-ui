@@ -10,6 +10,8 @@ releaseDate: '2026-10-19'
 
 <PageTransitionEffects />
 
+`random` picks another of these effects at each navigation, the same for the page that leaves and the one that arrives.
+
 ## Installation
 
 <Tabs items={['Next.js', 'React Router', 'TanStack Router']}>
@@ -159,7 +161,7 @@ An element on both pages, like a card that becomes a page header, morphs from on
   type={{
     effect: {
       description: 'The transition between pages.',
-      type: "'fade' | 'slide' | 'push' | 'zoom' | 'iris' | 'wipe' | 'bands' | 'stack' | 'flow' | 'chop'",
+      type: "'fade' | 'slide' | 'push' | 'zoom' | 'iris' | 'wipe' | 'bands' | 'stack' | 'flow' | 'chop' | 'random'",
       default: "'fade'",
     },
     pageKey: {

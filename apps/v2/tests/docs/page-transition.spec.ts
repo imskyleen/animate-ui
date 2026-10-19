@@ -78,8 +78,9 @@ test('the demo has its own effect picker, in sync with the controls', async ({
   });
   const picker = page.getByRole('radiogroup', { name: 'Effect' });
   await expect(picker.getByRole('radio')).toHaveCount(
-    PAGE_TRANSITION_EFFECTS.length,
+    PAGE_TRANSITION_EFFECTS.length + 1,
   );
+  await expect(picker.getByRole('radio', { name: 'random' })).toBeVisible();
   await expect(picker.getByRole('radio', { checked: true })).toHaveText('zoom');
   await picker.getByRole('radio', { name: 'iris' }).click();
   await page.getByRole('button', { name: 'Docs', exact: true }).click();
@@ -98,4 +99,88 @@ test('the demo has its own effect picker, in sync with the controls', async ({
       ),
     )
     .toBe(true);
+});
+
+test.describe('the docs site', () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  const hydrated = (page: import('../test').Page, label: string) =>
+    page.waitForFunction((label) => {
+      const link = document.querySelector(`a[aria-label^="${label}:"]`);
+      return (
+        !!link && Object.keys(link).some((k) => k.startsWith('__reactProps'))
+      );
+    }, label);
+
+  const layout = (page: import('../test').Page) =>
+    page.evaluate(() =>
+      ['main[data-layout-main]', '#nd-toc'].map((selector) => {
+        const element = document.querySelector(selector);
+        if (!element) throw new Error(`${selector} missing at ${innerWidth}px`);
+        const rect = element.getBoundingClientRect();
+        return [Math.round(rect.x), Math.round(rect.width)];
+      }),
+    );
+
+  test('every page change plays a page transition, with the layout untouched', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const animate = Element.prototype.animate;
+      (window as unknown as { __effects: string[] }).__effects = [];
+      Element.prototype.animate = function (keyframes, options) {
+        const pseudo =
+          typeof options === 'object' ? options.pseudoElement : undefined;
+        if (pseudo?.startsWith('::view-transition-new('))
+          (window as unknown as { __effects: string[] }).__effects.push(
+            Object.keys(keyframes ?? {}).join('+'),
+          );
+        return animate.call(this, keyframes, options);
+      };
+    });
+    await page.goto('/docs/backgrounds/hole', { waitUntil: 'networkidle' });
+    const before = await layout(page);
+    await hydrated(page, 'Next');
+    await page.getByRole('link', { name: /^Next:/ }).click();
+    await page.waitForURL('**/docs/backgrounds/stars', { timeout: 15_000 });
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () =>
+              (window as unknown as { __effects: string[] }).__effects.length,
+          ),
+        { timeout: 15_000 },
+      )
+      .toBeGreaterThan(0);
+    expect(await layout(page)).toEqual(before);
+  });
+
+  test('the previous page arrow goes back', async ({ page }) => {
+    await page.addInitScript(() => {
+      const start = document.startViewTransition.bind(document);
+      (window as unknown as { __types: string[] }).__types = [];
+      document.startViewTransition = ((
+        options: { types?: string[] } | ViewTransitionUpdateCallback,
+      ) => {
+        if (typeof options === 'object')
+          (window as unknown as { __types: string[] }).__types.push(
+            ...(options.types ?? []),
+          );
+        return start(options as ViewTransitionUpdateCallback);
+      }) as typeof document.startViewTransition;
+    });
+    await page.goto('/docs/primitives', { waitUntil: 'networkidle' });
+    await hydrated(page, 'Previous');
+    await page.getByRole('link', { name: /^Previous:/ }).click();
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () => (window as unknown as { __types: string[] }).__types,
+          ),
+        { timeout: 15_000 },
+      )
+      .toContain('nav-back');
+  });
 });
