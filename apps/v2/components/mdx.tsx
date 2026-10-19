@@ -9,6 +9,13 @@ import {
   CalloutTitle,
 } from './docs/callout';
 import { Card, Cards } from './docs/cards';
+import {
+  Changelog,
+  ChangelogItem,
+  ChangelogItemDescription,
+  ChangelogItemTitle,
+  ChangelogItemVersion,
+} from './docs/changelog';
 import { LucideLogo } from '@/lib/icon-libraries';
 import { CodeBlock, Pre, type CodeBlockProps } from './docs/codeblock';
 import { ComponentPreview } from './docs/component-preview';
@@ -60,6 +67,11 @@ export function getMDXComponents(components?: MDXComponents) {
     Installation,
     RegistryInstallation,
     PageTransitionEffects,
+    Changelog,
+    ChangelogItem,
+    ChangelogItemDescription,
+    ChangelogItemTitle,
+    ChangelogItemVersion,
     TypeTable,
     ...components,
   } satisfies MDXComponents;

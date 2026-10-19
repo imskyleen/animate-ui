@@ -2,6 +2,7 @@ import type * as React from 'react';
 import { cn } from 'cn';
 import type { PageTreeTransformer } from 'fumadocs-core/source';
 import { Dancing_Script } from 'next/font/google';
+import { ChangelogBadge } from '@/components/docs/changelog-badge';
 import { isNewPage, isUpdatedPage } from '@/lib/new-badge';
 
 const dancing = Dancing_Script({ subsets: ['latin'] });
@@ -53,6 +54,16 @@ export const attachBadge: PageTreeTransformer['file'] = function (
 ) {
   const file = filePath ? this.storage.read(filePath) : undefined;
   if (!file || file.format !== 'page') return node;
+  const { version } = file.data as { version?: unknown };
+  if (typeof version === 'string') {
+    node.name = (
+      <span className="flex w-full items-center justify-between gap-3">
+        <span>{node.name}</span>
+        <ChangelogBadge version={version} />
+      </span>
+    );
+    return node;
+  }
   const badge = pageBadge(file.data);
   if (!badge) return node;
   node.name = (

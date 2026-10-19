@@ -102,6 +102,19 @@ export function toLlmMarkdown(text: string) {
       ].join('\n'),
     )
     .replace(
+      /^ *<ChangelogItemDescription>\n([\s\S]*?)\n *<\/ChangelogItemDescription>/gm,
+      (_, content: string) => dedent(content),
+    )
+    .replace(
+      /^ *<ChangelogItem(?: major)? date="([^"]+)">\s*<ChangelogItemVersion>\s*(## [^\n]+?)\s*<\/ChangelogItemVersion>/gm,
+      (_, date: string, heading: string) => `${heading}\n\n_${date}_`,
+    )
+    .replace(
+      /^ *<ChangelogItemTitle>\s*([^<]+?)\s*<\/ChangelogItemTitle>/gm,
+      '### $1',
+    )
+    .replace(/^ *<\/?Changelog(?:Item)?>\n?/gm, '')
+    .replace(
       /^<(ComponentPreview|IconsGallery|PrimitivesGrid|BackgroundsGrid|IconLibrariesGrid)\b[^>]*\/>\n*/gm,
       '',
     );

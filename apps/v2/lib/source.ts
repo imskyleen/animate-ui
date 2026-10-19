@@ -14,6 +14,7 @@ const docs = defineDocs({
     schema: pageSchema.extend({
       releaseDate: pageSchema.shape.description,
       updatedDate: pageSchema.shape.description,
+      version: pageSchema.shape.description,
       new: flag,
       alpha: flag,
       beta: flag,

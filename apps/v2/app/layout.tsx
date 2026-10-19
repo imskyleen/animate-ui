@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 
 import { Toaster } from '@/components/ui/sonner';
+import { changelogSeenScript } from '@/lib/changelog-seen';
+import { source } from '@/lib/source';
 
 import './global.css';
 
@@ -34,8 +36,19 @@ export const metadata: Metadata = {
 const outfit = Outfit({ subsets: ['latin'] });
 
 export default function Layout({ children }: LayoutProps<'/'>) {
+  const { version } = (source.getPage(['changelog'])?.data ?? {}) as {
+    version?: string;
+  };
   return (
     <html lang="en" className={outfit.className} suppressHydrationWarning>
+      {version && (
+        <head>
+          <script
+            // eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml
+            dangerouslySetInnerHTML={{ __html: changelogSeenScript(version) }}
+          />
+        </head>
+      )}
       <body className="flex min-h-screen flex-col">
         <RootProvider>
           {children}
