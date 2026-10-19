@@ -76,6 +76,10 @@ Icon Button: render the particles only while liked, aim them at the icon (`side`
 
 Liquid Button, Flip Button, Theme Toggler Button and GitHub Stars Button are styled files, not package exports: add them with `<dlx> shadcn@latest add @animate-ui/buttons-<name>` (`liquid`, `flip`, `theme-toggler`, `github-stars`); they land in `components/animate-ui/buttons/` and take `variant` and `size` where their page lists them.
 
+## Page transitions (registry file)
+
+Animated changes between the pages of a Next.js (App Router), React Router or TanStack Router app: Page Transition, ten effects (`fade`, `slide`, `push`, `zoom`, `iris`, `wipe`, `bands`, `stack`, `flow`, `chop`) plus `random`, and `PageTransitionShared` to morph an element from one page to the next. Add with `<dlx> shadcn@latest add @animate-ui/components-page-transition` (`-react-router`, `-tanstack-router` for the other routers); it lands in `components/animate-ui/components/page-transition.tsx`. Wiring, direction and new effects: `recipes/route.md`.
+
 ## Backgrounds (registry files)
 
 Add with `<dlx> shadcn@latest add @animate-ui/backgrounds-<name>`; they land in `components/animate-ui/backgrounds/`.

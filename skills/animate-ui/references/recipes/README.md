@@ -33,4 +33,5 @@ One file per kind; read only the one you need:
 - [Palette (command palette, spotlight search)](palette.md)
 - [Toast (hand-built)](toast.md)
 - [Page (hero, sections, feature grids, stats)](page.md)
+- [Route change (page transitions, shared elements, new effects)](route.md)
 - [CSS-driven by the base library (Base UI Drawer, Toast)](css-driven.md)
