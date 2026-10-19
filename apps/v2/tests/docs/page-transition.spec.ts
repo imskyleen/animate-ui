@@ -69,3 +69,33 @@ test('the markdown export lists the effects as a table', async ({
   for (const [effect, description] of PAGE_TRANSITION_EFFECTS)
     expect(markdown).toContain(`| \`${effect}\` | ${description} |`);
 });
+
+test('the demo has its own effect picker, in sync with the controls', async ({
+  page,
+}) => {
+  await page.goto('/tests/demos/animate-ui/page-transition?effect=zoom', {
+    waitUntil: 'networkidle',
+  });
+  const picker = page.getByRole('radiogroup', { name: 'Effect' });
+  await expect(picker.getByRole('radio')).toHaveCount(
+    PAGE_TRANSITION_EFFECTS.length,
+  );
+  await expect(picker.getByRole('radio', { checked: true })).toHaveText('zoom');
+  await picker.getByRole('radio', { name: 'iris' }).click();
+  await page.getByRole('button', { name: 'Docs', exact: true }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        document
+          .getAnimations()
+          .some(
+            (a) =>
+              (a.effect as KeyframeEffect | null)?.pseudoElement?.includes(
+                '-new(_t_',
+              ) &&
+              'clipPath' in (a.effect as KeyframeEffect).getKeyframes()[0]!,
+          ),
+      ),
+    )
+    .toBe(true);
+});

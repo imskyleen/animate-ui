@@ -44,17 +44,30 @@ export const controls = {
       },
     },
     shared: { value: true },
+    picker: { value: true },
   },
 }
+
+const EFFECTS = Object.keys(
+  controls.PageTransition.effect.options,
+) as PageTransitionEffect[]
 
 export default function PageTransitionDemo({
   effect = "slide",
   shared = true,
+  picker = true,
 }: {
   effect?: PageTransitionEffect
   shared?: boolean
+  picker?: boolean
 }) {
   const [page, setPage] = React.useState(0)
+  const [chosen, setChosen] = React.useState(effect)
+  const [prop, setProp] = React.useState(effect)
+  if (effect !== prop) {
+    setProp(effect)
+    setChosen(effect)
+  }
 
   const go = (next: number) => {
     if (next === page) return
@@ -67,7 +80,27 @@ export default function PageTransitionDemo({
   const current = PAGES[page]!
 
   return (
-    <div className="w-full max-w-md overflow-hidden rounded-xl border bg-background">
+    <div className="flex w-full max-w-md flex-col gap-3">
+      {picker && (
+        <div
+          role="radiogroup"
+          aria-label="Effect"
+          className="flex flex-wrap justify-center gap-1"
+        >
+          {EFFECTS.map((name) => (
+            <button
+              key={name}
+              role="radio"
+              aria-checked={chosen === name}
+              onClick={() => setChosen(name)}
+              className="rounded-md border px-2.5 py-1 font-mono text-xs text-muted-foreground transition-colors hover:text-foreground aria-checked:border-foreground aria-checked:bg-foreground aria-checked:text-background"
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="w-full overflow-hidden rounded-xl border bg-background">
       <nav className="flex gap-1 border-b p-2">
         {PAGES.map((item, index) => (
           <button
@@ -81,7 +114,7 @@ export default function PageTransitionDemo({
         ))}
       </nav>
       <PageTransition
-        effect={effect}
+        effect={chosen}
         pageKey={page}
         className={`relative flex h-64 flex-col justify-end gap-1.5 p-6 ${current.tone}`}
       >
@@ -98,6 +131,7 @@ export default function PageTransitionDemo({
         <h2 className="text-2xl font-medium">{current.title}</h2>
         <p className="text-sm text-muted-foreground">{current.text}</p>
       </PageTransition>
+      </div>
     </div>
   )
 }

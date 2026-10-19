@@ -778,7 +778,7 @@ function previews(): Preview[] {
   for (const effect of PAGE_TRANSITION_EFFECTS)
     list.push({
       id: `page-transition/${effect}`,
-      demo: `/tests/demos/animate-ui/page-transition?effect=${effect}&shared=`,
+      demo: `/tests/demos/animate-ui/page-transition?effect=${effect}&shared=&picker=`,
       viewport: LARGE,
       cursor: false,
       play: async (page) => {
