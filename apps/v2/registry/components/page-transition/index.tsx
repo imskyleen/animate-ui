@@ -68,8 +68,29 @@ function bandFrames(back: boolean) {
 
 const CLIP =
   '::view-transition-image-pair(*.page-transition){overflow:clip;border-radius:inherit}' +
-  '::view-transition-group(*.page-transition-shared){z-index:1}' +
-  '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%}';
+  '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
+  '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
+
+const SHARE = { duration: 0.45, ease: ease.resize };
+
+const radii = new Map<string, string>();
+
+function morphRadius(name: string, from: string | undefined, to: string) {
+  if (!from || from === to) return;
+  const animation = document.documentElement.animate(
+    { borderRadius: [from, to] },
+    {
+      pseudoElement: `::view-transition-group(${name})`,
+      duration: SHARE.duration * 1000,
+      easing: `cubic-bezier(${SHARE.ease.join(',')})`,
+      fill: 'both',
+    },
+  );
+  const transition = (
+    document as Document & { activeViewTransition?: ViewTransition | null }
+  ).activeViewTransition;
+  transition?.finished.finally(() => animation.cancel());
+}
 
 const EFFECTS: Record<
   PageTransitionEffect,
@@ -262,10 +283,36 @@ type PageTransitionSharedProps = React.ComponentProps<'div'> & {
   name: string;
 };
 
-function PageTransitionShared({ name, ...props }: PageTransitionSharedProps) {
+function PageTransitionShared({
+  name,
+  ref,
+  ...props
+}: PageTransitionSharedProps) {
+  const localRef = React.useRef<HTMLDivElement>(null);
+  React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
+  const fromRef = React.useRef<string | undefined>(undefined);
+
+  React.useLayoutEffect(() => {
+    if (!localRef.current) return;
+    fromRef.current = radii.get(name);
+    radii.set(name, getComputedStyle(localRef.current).borderRadius);
+  });
+
   return (
-    <AnimateView name={name} transition={{ duration: 0.45, ease: ease.resize }}>
+    <AnimateView
+      name={name}
+      transition={SHARE}
+      onAnimationStart={(_, type) => {
+        if (type === 'share' && localRef.current)
+          morphRadius(
+            name,
+            fromRef.current,
+            getComputedStyle(localRef.current).borderRadius,
+          );
+      }}
+    >
       <div
+        ref={localRef}
         data-slot="page-transition-shared"
         {...props}
         style={{

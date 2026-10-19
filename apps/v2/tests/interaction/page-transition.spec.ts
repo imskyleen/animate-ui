@@ -168,6 +168,36 @@ test.describe('page transition', () => {
     expect(height).toBe(groupHeight);
   });
 
+  test('a shared element keeps its shape: cropped, not stretched, its radius morphing', async ({
+    page: browser,
+  }) => {
+    await open(browser);
+    const animations = await navigate(browser, 'fade', 'Docs');
+    const radius = animations.find(
+      (a) =>
+        a.pseudo === '::view-transition-group(cover)' &&
+        'borderRadius' in a.keyframes[0]!,
+    );
+    const target = await browser
+      .locator('[data-slot="page-transition-shared"]')
+      .evaluate((element) => getComputedStyle(element).borderRadius);
+    expect(radius?.keyframes.map((k) => k.borderRadius)).toEqual([
+      '16px',
+      target,
+    ]);
+    expect(target).not.toBe('16px');
+    const [overflow, fit] = await browser.evaluate(() => [
+      getComputedStyle(
+        document.documentElement,
+        '::view-transition-group(cover)',
+      ).overflow,
+      getComputedStyle(document.documentElement, '::view-transition-old(cover)')
+        .objectFit,
+    ]);
+    expect(overflow).toBe('clip');
+    expect(fit).toBe('cover');
+  });
+
   test.describe('reduced motion', () => {
     test.use({ reducedMotion: 'reduce' });
 

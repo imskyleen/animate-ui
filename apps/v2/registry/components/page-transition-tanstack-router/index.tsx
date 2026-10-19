@@ -198,8 +198,23 @@ const NAME = 'page-transition';
 const STYLE =
   `::view-transition-old(${NAME}),::view-transition-new(${NAME}){animation:none;mix-blend-mode:normal}` +
   `::view-transition-image-pair(${NAME}){overflow:clip;border-radius:inherit}` +
-  '::view-transition-group(*.page-transition-shared){z-index:1}' +
-  '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%}';
+  '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
+  '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
+
+const SHARE = { duration: 0.45, ease: ease.resize };
+
+function sharedRadii() {
+  return new Map(
+    [
+      ...document.querySelectorAll<HTMLElement>(
+        '[data-slot="page-transition-shared"]',
+      ),
+    ].map((element) => {
+      const style = getComputedStyle(element);
+      return [style.viewTransitionName, style.borderRadius] as const;
+    }),
+  );
+}
 
 function play(
   pseudoElement: string,
@@ -266,6 +281,7 @@ function PageTransition({
         if (!transition) return;
         const types = (transition as ViewTransition & { types?: Set<string> })
           .types;
+        const before = sharedRadii();
         const { enter, exit } = EFFECTS[reduce ? 'fade' : effect](
           types?.has('nav-back') ?? false,
           originRef.current,
@@ -276,6 +292,25 @@ function PageTransition({
               play(`::view-transition-old(${NAME})`, exit),
               play(`::view-transition-new(${NAME})`, enter),
             ];
+            for (const [name, radius] of sharedRadii()) {
+              for (const animation of document.getAnimations()) {
+                const pseudo = (animation.effect as KeyframeEffect | null)
+                  ?.pseudoElement;
+                if (pseudo?.endsWith(`(${name})`))
+                  animation.effect!.updateTiming({
+                    duration: SHARE.duration * 1000,
+                    easing: `cubic-bezier(${SHARE.ease.join(',')})`,
+                  });
+              }
+              const from = before.get(name);
+              if (from && from !== radius)
+                animations.push(
+                  play(`::view-transition-group(${name})`, {
+                    borderRadius: [from, radius],
+                    transition: SHARE,
+                  }),
+                );
+            }
             transition.finished.finally(() =>
               animations.forEach((animation) => animation.cancel()),
             );
