@@ -70,6 +70,15 @@ Infinite animations and canvas backgrounds pause off screen (`useInView`), in a 
 
 The press scale and the state change (a checkbox's fill, a switch's track color) start on the frame of the interaction. A secondary flourish may follow: the check draws itself 0.2s later, once the box has answered.
 
+#### A17. Focus survives the motion
+
+Keyboard and screen-reader users follow the focus: no animation may hide it, lose it or leave it on something that's going away.
+
+- **The ring shows at once.** `:focus-visible` styles (outline, ring) never transition in or wait for an entrance; they stay under reduced motion. An `overflow: hidden` added for an animation (a clip, a reveal) mustn't cut the ring off: use an inset ring or `overflow: clip` with `overflow-clip-margin`.
+- **Nothing invisible takes focus.** What is leaving, closed or waiting at opacity 0 (an exiting panel, a hidden slide, an off-screen step) gets `inert` (a leaving element as its exit starts), so Tab never lands on something no one sees. A reveal on scroll plays at once when something inside it gets focus (`onFocusCapture`), rather than after its delay.
+- **Focus moves with the motion, not after it.** A hand-built overlay focuses its content when it opens, not when its entrance ends, and gives focus back to its trigger when it starts closing. Radix UI, Base UI and React Aria (and Animate UI's primitives) manage this themselves: don't fight them. A panel that opens in place (a disclosure, an inline form) leaves the focus on its trigger; closed from a control inside it, it gives the focus back to the trigger before it goes.
+- **A swap keeps the focused element.** Changing a focused button's label or icon swaps its content, not the button: an `AnimatePresence` keyed on the button itself drops the focus to the page. A list that reorders keeps its DOM order in step with what's shown, and a removed item that had the focus hands it to its neighbor. A result that only shows as motion ("Copied", "Saved") is also said: a `role="status"` live region, mounted from the start, gets the text.
+
 ### Physicality
 
 #### A6. Anchored popups grow from their trigger
@@ -265,6 +274,7 @@ Quality (any miss is a bug):
 
 - [ ] Wrapped in `ReducedMotionConfig`; `transform` strings neutralized with `useShouldReduceMotion()` (CSS: travel zeroed under `motion-reduce:`); fades and blurs kept; numbers show their value at once; loops stop under reduced motion
 - [ ] The keyboard animates like the pointer
+- [ ] Focus survives the motion: the ring shows at once and isn't clipped, nothing invisible or leaving is focusable, a swap keeps the focused element (A17)
 - [ ] Anchored popups set `transform-origin` in the primitive; modals stay centered
 - [ ] Overlays start from a visible size (≥ 0.7)
 - [ ] Only `transform`, `opacity` and `filter` animate (disclosure and content heights, and a menubar popover's size as it's handed over, excepted); blur stays light
