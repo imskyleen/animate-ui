@@ -1,4 +1,4 @@
-export const NEW_FOR_DAYS = 60;
+export const NEW_FOR_DAYS = 30;
 
 const DAY = 86_400_000;
 
