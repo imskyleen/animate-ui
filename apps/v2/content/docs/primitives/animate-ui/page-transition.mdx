@@ -1,0 +1,196 @@
+---
+title: Page Transition
+description: Animated transitions between pages, built on view transitions, for Next.js, React Router and TanStack Router.
+releaseDate: '2026-10-19'
+---
+
+<ComponentPreview name="animate-ui/page-transition" />
+
+## Installation
+
+<Tabs items={['Next.js', 'React Router', 'TanStack Router']}>
+  <Tab value="Next.js">
+
+<RegistryInstallation name="components-page-transition" />
+
+  </Tab>
+  <Tab value="React Router">
+
+<RegistryInstallation name="components-page-transition-react-router" />
+
+  </Tab>
+  <Tab value="TanStack Router">
+
+<RegistryInstallation name="components-page-transition-tanstack-router" />
+
+  </Tab>
+</Tabs>
+
+It needs React 19.3 or later, and plays in browsers with view transitions (Chromium 125+, recent Safari and Firefox). Elsewhere, pages change without animation.
+
+## Usage
+
+Wrap the content that changes from one page to the next, in the layout, so the header and navigation around it stay still:
+
+<Tabs items={['Next.js', 'React Router', 'TanStack Router']}>
+  <Tab value="Next.js">
+
+```tsx title="app/layout.tsx"
+import { PageTransition } from '@/components/animate-ui/components/page-transition';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Header />
+        <PageTransition effect="slide">{children}</PageTransition>
+      </body>
+    </html>
+  );
+}
+```
+
+Links play forward by default. Mark the ones that go back with `transitionTypes`:
+
+```tsx
+<Link href="/" transitionTypes={['nav-back']}>
+  Back to the gallery
+</Link>
+```
+
+  </Tab>
+  <Tab value="React Router">
+
+```tsx title="app/root.tsx"
+import { Outlet } from 'react-router';
+import { PageTransition } from '@/components/animate-ui/components/page-transition';
+
+export default function Layout() {
+  return (
+    <>
+      <Header />
+      <PageTransition effect="slide">
+        <Outlet />
+      </PageTransition>
+    </>
+  );
+}
+```
+
+Links play forward. To go back, navigate inside a transition tagged `nav-back`:
+
+```tsx
+const navigate = useNavigate();
+
+startTransition(() => {
+  addTransitionType('nav-back');
+  navigate('/');
+});
+```
+
+  </Tab>
+  <Tab value="TanStack Router">
+
+Turn on view transitions in the router:
+
+```tsx title="src/router.tsx"
+const router = createRouter({ routeTree, defaultViewTransition: true });
+```
+
+```tsx title="src/routes/__root.tsx"
+import { Outlet } from '@tanstack/react-router';
+import { PageTransition } from '@/components/animate-ui/components/page-transition';
+
+export const Route = createRootRoute({
+  component: () => (
+    <>
+      <Header />
+      <PageTransition effect="slide">
+        <Outlet />
+      </PageTransition>
+    </>
+  ),
+});
+```
+
+Links play forward. Mark the ones that go back:
+
+```tsx
+<Link to="/" viewTransition={{ types: ['nav-back'] }}>
+  Back to the gallery
+</Link>
+```
+
+  </Tab>
+</Tabs>
+
+### Shared elements
+
+An element on both pages, like a card that becomes a page header, morphs from one to the other with `PageTransitionShared`. Give it the same `name` on both pages, unique on each page:
+
+```tsx
+<PageTransitionShared
+  name={`cover-${post.id}`}
+  className="h-20 rounded-lg bg-primary"
+/>
+```
+
+## Effects
+
+| Effect  | What it does                                                         |
+| ------- | -------------------------------------------------------------------- |
+| `fade`  | A crossfade through a light blur.                                    |
+| `slide` | The new page slides in 60px and fades, from the side you go towards. |
+| `push`  | The new page pushes the old one out of the frame.                    |
+| `zoom`  | The old page grows a little as it leaves, the new one settles in.    |
+| `iris`  | The new page opens as a circle from where you clicked.               |
+| `wipe`  | A clean edge reveals the new page while the old one drifts away.     |
+| `bands` | Five staggered bands reveal the new page.                            |
+| `stack` | The new page lands on the old one, which sinks back and dims.        |
+| `flow`  | A quick slide through a strong motion blur.                          |
+| `chop`  | A diagonal cut reveals the new page.                                 |
+
+## Animation
+
+- Each page is a snapshot the browser animates: the old page plays its exit and the new one its entrance, on Animate UI's curves (`ease.out` to arrive, a quicker `ease.leave` to go). Both stay inside the page's box.
+- Direction comes from the `nav-back` and `nav-forward` transition types: a navigation without one plays forward.
+- View transitions aren't interruptible: a click during one waits for it to end, so the effects stay short (0.3s to 0.7s).
+- The browser's back button doesn't animate with Next.js and React Router (React renders history navigations at once). TanStack Router animates it, forward.
+- Under reduced motion, every effect becomes the crossfade, blur included.
+
+## API Reference
+
+### PageTransition
+
+<TypeTable
+  type={{
+    effect: {
+      description: 'The transition between pages.',
+      type: "'fade' | 'slide' | 'push' | 'zoom' | 'iris' | 'wipe' | 'bands' | 'stack' | 'flow' | 'chop'",
+      default: "'fade'",
+    },
+    pageKey: {
+      description:
+        'What identifies the page, when it is not the URL. Next.js and React Router only.',
+      type: 'React.Key',
+      default: 'the pathname',
+    },
+  }}
+/>
+
+### PageTransitionShared
+
+<TypeTable
+  type={{
+    name: {
+      description:
+        'Matches the element on the old page with the one on the new page.',
+      type: 'string',
+      required: true,
+    },
+  }}
+/>

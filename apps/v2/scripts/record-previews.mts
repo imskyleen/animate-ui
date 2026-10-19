@@ -560,6 +560,15 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     play: toggle((page) => page.locator('main').getByText(/./).first(), 500),
   },
   'code-block': { mount: true, tail: 2500 },
+  'page-transition': {
+    async play(page) {
+      for (const name of ['Docs', 'Blog', 'Home']) {
+        await press(page, page.getByRole('button', { name, exact: true }));
+        await wait(page, 900);
+      }
+      await away(page);
+    },
+  },
   'copy-button': {
     async play(page) {
       await press(page, buttons(page).first());
@@ -701,6 +710,7 @@ const TEXTS = new Set([
 ]);
 
 const ROOMY = new Set([
+  'page-transition',
   'accordion',
   'alert-dialog',
   'auto-height',

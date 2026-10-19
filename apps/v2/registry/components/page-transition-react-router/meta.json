@@ -1,0 +1,12 @@
+{
+  "title": "Page Transition (React Router)",
+  "description": "Animated transitions between the pages of a React Router app, built on view transitions.",
+  "from": "page-transition",
+  "replace": [
+    [
+      "import { usePathname } from 'next/navigation';",
+      "import { useLocation } from 'react-router';"
+    ],
+    ["const pathname = usePathname();", "const { pathname } = useLocation();"]
+  ]
+}

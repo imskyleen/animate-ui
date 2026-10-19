@@ -7,7 +7,13 @@ const root = path.join(import.meta.dirname, '..');
 const outDir = path.join(root, 'public', 'r');
 mkdirSync(outDir, { recursive: true });
 
-type Meta = { title: string; description: string };
+type Meta = {
+  title: string;
+  description: string;
+  from?: string;
+  target?: string;
+  replace?: [string, string][];
+};
 
 let count = 0;
 for (const category of ['backgrounds', 'buttons', 'components']) {
@@ -22,7 +28,14 @@ for (const category of ['backgrounds', 'buttons', 'components']) {
     const meta = JSON.parse(
       readFileSync(path.join(itemDir, 'meta.json'), 'utf8'),
     ) as Meta;
-    const content = readFileSync(path.join(itemDir, 'index.tsx'), 'utf8');
+    const content = (meta.replace ?? []).reduce(
+      (source, [search, value]) => {
+        if (!source.includes(search))
+          throw new Error(`${name}: "${search}" not found in ${meta.from}`);
+        return source.replaceAll(search, value);
+      },
+      readFileSync(path.join(dir, meta.from ?? name, 'index.tsx'), 'utf8'),
+    );
     const specifiers = [
       ...content.matchAll(
         /(?:from\s+|import\s+|import\(\s*)["']([^"'.][^"']*)["']/g,
@@ -51,7 +64,7 @@ for (const category of ['backgrounds', 'buttons', 'components']) {
             {
               path: `registry/${category}/${name}/index.tsx`,
               type: 'registry:ui',
-              target: `@components/animate-ui/${category}/${name}.tsx`,
+              target: `@components/animate-ui/${category}/${meta.target ?? meta.from ?? name}.tsx`,
               content,
             },
           ],

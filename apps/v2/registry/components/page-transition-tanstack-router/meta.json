@@ -1,0 +1,5 @@
+{
+  "title": "Page Transition (TanStack Router)",
+  "description": "Animated transitions between the pages of a TanStack Router app, built on view transitions.",
+  "target": "page-transition"
+}
