@@ -206,7 +206,7 @@ function pickEffect(previous?: Effect): Effect {
 const NAME = 'page-transition';
 
 const STYLE =
-  `::view-transition-old(${NAME}),::view-transition-new(${NAME}){animation:none;mix-blend-mode:normal}` +
+  `::view-transition-old(${NAME}),::view-transition-new(${NAME}){animation:none;mix-blend-mode:normal;background-color:var(--page-transition-background,canvas)}` +
   `::view-transition-image-pair(${NAME}){overflow:clip;border-radius:var(--page-transition-radius,0)}` +
   '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
   '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
@@ -248,6 +248,19 @@ function play(
       fill: 'both',
     },
   );
+}
+
+function backgroundOf(element: HTMLElement) {
+  for (
+    let node: HTMLElement | null = element;
+    node;
+    node = node.parentElement
+  ) {
+    const color = getComputedStyle(node).backgroundColor;
+    if (color !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(color))
+      return color;
+  }
+  return 'canvas';
 }
 
 function clipRadius(element: HTMLElement) {
@@ -317,13 +330,17 @@ function PageTransition({
   const originRef = React.useRef<Origin>({ x: 50, y: 50 });
   const effectRef = React.useRef<Effect>('fade');
 
-  React.useLayoutEffect(() => {
+  const refreshStyle = () => {
     if (!localRef.current) return;
-    document.documentElement.style.setProperty(
-      '--page-transition-radius',
-      clipRadius(localRef.current),
+    const { style } = document.documentElement;
+    style.setProperty('--page-transition-radius', clipRadius(localRef.current));
+    style.setProperty(
+      '--page-transition-background',
+      backgroundOf(localRef.current),
     );
-  });
+  };
+
+  React.useLayoutEffect(refreshStyle);
 
   React.useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
@@ -350,6 +367,7 @@ function PageTransition({
         if (!transition) return;
         const types = (transition as ViewTransition & { types?: Set<string> })
           .types;
+        refreshStyle();
         const before = sharedRadii();
         effectRef.current =
           effect === 'random' ? pickEffect(effectRef.current) : effect;

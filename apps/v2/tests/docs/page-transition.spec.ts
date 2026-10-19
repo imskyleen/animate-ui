@@ -122,7 +122,7 @@ test.describe('the docs site', () => {
       }),
     );
 
-  test('every page change plays a page transition, with the layout untouched', async ({
+  test('every page change plays a page transition, on the page background, with the layout untouched', async ({
     page,
   }) => {
     await page.addInitScript(() => {
@@ -133,7 +133,7 @@ test.describe('the docs site', () => {
           typeof options === 'object' ? options.pseudoElement : undefined;
         if (pseudo?.startsWith('::view-transition-new('))
           (window as unknown as { __effects: string[] }).__effects.push(
-            Object.keys(keyframes ?? {}).join('+'),
+            getComputedStyle(document.documentElement, pseudo).backgroundColor,
           );
         return animate.call(this, keyframes, options);
       };
@@ -153,6 +153,11 @@ test.describe('the docs site', () => {
         { timeout: 15_000 },
       )
       .toBeGreaterThan(0);
+    const [snapshot, body] = await page.evaluate(() => [
+      (window as unknown as { __effects: string[] }).__effects[0],
+      getComputedStyle(document.body).backgroundColor,
+    ]);
+    expect(snapshot).toBe(body);
     expect(await layout(page)).toEqual(before);
   });
 

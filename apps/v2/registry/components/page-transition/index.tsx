@@ -230,6 +230,19 @@ function pickEffect(previous?: Effect): Effect {
   return choices[Math.floor(Math.random() * choices.length)]!;
 }
 
+function backgroundOf(element: HTMLElement) {
+  for (
+    let node: HTMLElement | null = element;
+    node;
+    node = node.parentElement
+  ) {
+    const color = getComputedStyle(node).backgroundColor;
+    if (color !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(color))
+      return color;
+  }
+  return 'canvas';
+}
+
 function clipRadius(element: HTMLElement) {
   const own = getComputedStyle(element).borderRadius;
   if (own !== '0px') return own;
@@ -308,10 +321,14 @@ function PageTransition({
       effect === 'random' ? pickEffect(effectRef.current) : effect;
   }, [effect, key]);
 
-  React.useLayoutEffect(() => {
+  const refreshStyle = () => {
     if (!localRef.current || !styleRef.current) return;
-    styleRef.current.textContent = `::view-transition-image-pair(*.${className}){border-radius:${clipRadius(localRef.current)}}`;
-  });
+    styleRef.current.textContent =
+      `::view-transition-image-pair(*.${className}){border-radius:${clipRadius(localRef.current)}}` +
+      `::view-transition-old(*.${className}),::view-transition-new(*.${className}){background-color:${backgroundOf(localRef.current)}}`;
+  };
+
+  React.useLayoutEffect(refreshStyle);
 
   React.useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
@@ -327,11 +344,13 @@ function PageTransition({
       document.removeEventListener('pointerdown', onPointerDown, true);
   }, []);
 
-  const animation = (types: string[]) =>
-    EFFECTS[reduce ? 'fade' : effectRef.current](
+  const animation = (types: string[]) => {
+    refreshStyle();
+    return EFFECTS[reduce ? 'fade' : effectRef.current](
       types.includes('nav-back'),
       originRef.current,
     );
+  };
 
   return (
     <AnimateView
