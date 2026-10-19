@@ -709,6 +709,19 @@ const TEXTS = new Set([
   'swapping-text',
 ]);
 
+const PAGE_TRANSITION_EFFECTS = [
+  'fade',
+  'slide',
+  'push',
+  'zoom',
+  'iris',
+  'wipe',
+  'bands',
+  'stack',
+  'flow',
+  'chop',
+];
+
 const ROOMY = new Set([
   'page-transition',
   'accordion',
@@ -762,6 +775,20 @@ function previews(): Preview[] {
     ...(TEXTS.has(slug) ? { nowrap: true as const } : {}),
     ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
   }));
+  for (const effect of PAGE_TRANSITION_EFFECTS)
+    list.push({
+      id: `page-transition/${effect}`,
+      demo: `/tests/demos/animate-ui/page-transition?effect=${effect}&shared=`,
+      viewport: LARGE,
+      cursor: false,
+      play: async (page) => {
+        for (const name of ['Docs', 'Home']) {
+          await page.getByRole('button', { name, exact: true }).click();
+          await wait(page, 1100);
+        }
+      },
+      tail: 0,
+    });
   for (const file of readdirSync(path.join(docs, 'backgrounds')))
     if (file.endsWith('.mdx') && file !== 'index.mdx') {
       const slug = file.slice(0, -4);

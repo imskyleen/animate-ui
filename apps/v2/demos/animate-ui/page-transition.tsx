@@ -12,14 +12,17 @@ const PAGES = [
   {
     title: "Home",
     text: "Animated primitives for Radix UI, Base UI and React Aria.",
+    tone: "bg-sky-100 dark:bg-sky-950",
   },
   {
     title: "Docs",
     text: "Swap the import and your shadcn/ui components animate.",
+    tone: "bg-amber-100 dark:bg-amber-950",
   },
   {
     title: "Blog",
     text: "Animate UI 2.0 is out, with a CLI and a skill.",
+    tone: "bg-emerald-100 dark:bg-emerald-950",
   },
 ]
 
@@ -40,13 +43,16 @@ export const controls = {
         chop: "chop",
       },
     },
+    shared: { value: true },
   },
 }
 
 export default function PageTransitionDemo({
   effect = "slide",
+  shared = true,
 }: {
   effect?: PageTransitionEffect
+  shared?: boolean
 }) {
   const [page, setPage] = React.useState(0)
 
@@ -77,9 +83,9 @@ export default function PageTransitionDemo({
       <PageTransition
         effect={effect}
         pageKey={page}
-        className="relative flex h-64 flex-col justify-end gap-1.5 bg-background p-6"
+        className={`relative flex h-64 flex-col justify-end gap-1.5 p-6 ${current.tone}`}
       >
-        {page < 2 && (
+        {shared && page < 2 && (
           <PageTransitionShared
             name="page-transition-demo-cover"
             className={

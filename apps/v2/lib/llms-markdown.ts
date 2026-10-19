@@ -1,4 +1,5 @@
 import { MANAGERS } from '@/components/docs/package-managers';
+import { PAGE_TRANSITION_EFFECTS } from './page-transition-effects';
 
 const { dlx, add } = MANAGERS.npm;
 
@@ -89,6 +90,16 @@ export function toLlmMarkdown(text: string) {
           `${dlx} shadcn@latest add ${name}`,
           `${dlx} @animate-ui/cli@latest animate ${name}`,
         )}`,
+    )
+    .replace(
+      /^<PageTransitionEffects\s*\/>/gm,
+      [
+        '| Effect | What it does |',
+        '| --- | --- |',
+        ...PAGE_TRANSITION_EFFECTS.map(
+          ([effect, description]) => `| \`${effect}\` | ${description} |`,
+        ),
+      ].join('\n'),
     )
     .replace(
       /^<(ComponentPreview|IconsGallery|PrimitivesGrid|BackgroundsGrid|IconLibrariesGrid)\b[^>]*\/>\n*/gm,

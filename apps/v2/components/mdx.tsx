@@ -19,6 +19,7 @@ import {
   PrimitivesGrid,
 } from './docs/preview-grids';
 import { Installation } from './docs/installation';
+import { PageTransitionEffects } from './docs/page-transition-effects';
 import { RegistryInstallation } from './docs/registry-installation';
 import {
   CodeBlockTab,
@@ -58,6 +59,7 @@ export function getMDXComponents(components?: MDXComponents) {
     IconLibrariesGrid,
     Installation,
     RegistryInstallation,
+    PageTransitionEffects,
     TypeTable,
     ...components,
   } satisfies MDXComponents;
