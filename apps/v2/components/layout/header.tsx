@@ -48,7 +48,7 @@ function VersionMenu() {
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger className="inline-flex h-6 items-center gap-1 rounded-md bg-accent px-2 text-xs font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50">
-        v2.0
+        {docsVersions[0].label}
         <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} size={12} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
