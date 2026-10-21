@@ -15,6 +15,7 @@ const PAGES = [
   ['collapsible', '@radix-ui/primitives'],
   ['progress', 'progress.value = 66'],
   ['radio-group', 'id="r3"'],
+  ['select', 'Select a fruit'],
   ['sheet', 'Save changes'],
   ['slider', 'w-[60%]'],
   ['switch', 'Airplane Mode'],
@@ -129,7 +130,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(19);
+  await expect(cards).toHaveCount(20);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

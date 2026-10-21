@@ -57,6 +57,27 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
     },
   },
+  'reka-ui/select': {
+    SelectContent: {
+      position: {
+        value: 'item-aligned',
+        options: { 'item-aligned': 'item-aligned', popper: 'popper' },
+      },
+      side: {
+        value: 'bottom',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 0 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+    AnimateUIProvider: {
+      checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
+    },
+  },
   'reka-ui/menubar': {
     AnimateUIProvider: {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },

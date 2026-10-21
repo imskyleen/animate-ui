@@ -40,9 +40,9 @@ import {
 } from './item-indicator';
 import type { CheckAnimation } from '../utils/motion';
 
-const isOn = (value: unknown) => value === '' || value === true;
+export const isOn = (value: unknown) => value === '' || value === true;
 
-const elementOf = (node: unknown) =>
+export const elementOf = (node: unknown) =>
   ((node as { $el?: unknown } | null)?.$el ?? node) as HTMLElement | null;
 
 type MenuState = { open: () => boolean; picked: () => Picked };
@@ -355,7 +355,7 @@ export function createMenuContent(
 }
 
 /** Appends the highlight inside the item, or inside the element given `as-child`. */
-function withHighlight(
+export function withHighlight(
   children: VNode[] | undefined,
   copies: VNode[],
   asChild: boolean,
@@ -507,7 +507,7 @@ export function createMenuItemIndicator(
 }
 
 /** Reads the checked state reka puts on the indicator (`data-state`). */
-const ItemCheckFromState = defineComponent({
+export const ItemCheckFromState = defineComponent({
   name: 'AnimatedItemIndicator',
   inheritAttrs: false,
   props: {

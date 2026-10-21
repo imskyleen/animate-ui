@@ -18,6 +18,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   menubar: [/^duration-100$/],
   popover: [/^duration-100$/],
   progress: [/^transition-all$/],
+  select: [/^duration-100$/],
   'radio-group': [],
   sheet: DIALOG_STRIP,
   slider: [],
