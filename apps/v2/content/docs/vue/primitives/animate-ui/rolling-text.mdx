@@ -1,0 +1,75 @@
+---
+title: Rolling Text
+description: Text whose letters roll over one after another, like a flip board.
+---
+
+<VueComponentPreview name="animate-ui/rolling-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { RollingText } from '@animate-ui/vue/primitives/texts/rolling';
+</script>
+
+<template>
+  <RollingText text="Rolling Text" in-view />
+</template>
+```
+
+## Animation
+
+- Each letter turns over in 3D (`rotateX`): its front copy rolls away from its upper quarter while the back copy rolls in from its baseline 0.3s later, 0.5s each on an ease-out.
+- Letters start 0.1s apart (the `delay` of `transition`). Words never break in the middle; emoji and accented letters stay whole.
+- Once rolled, the text stays rolled: leaving the viewport doesn't reverse it.
+- `<AnimateUIProvider :tempo>` paces the default transition and the 0.3s offset.
+- Under reduced motion, the letters sit in their final state at once.
+- Screen readers read the text once, not letter by letter.
+
+## API Reference
+
+### RollingText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    transition: {
+      description:
+        'Transition of each letter. Its `delay` is the stagger between letters (in seconds), not a start delay: use the `delay` prop for that.',
+      type: 'Transition',
+      default: "{ duration: 0.5, delay: 0.1, ease: 'easeOut' }",
+    },
+    delay: {
+      description: 'Delay before the first letter rolls, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    'in-view': {
+      description: 'Wait for the text to be in view before rolling.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'in-view-once': {
+      description: 'Only trigger the in-view start once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<React.ComponentProps<'span'>, 'children'>",
+    },
+  }}
+/>

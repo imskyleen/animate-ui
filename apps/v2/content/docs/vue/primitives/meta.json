@@ -1,4 +1,7 @@
 {
   "title": "Primitives",
-  "pages": ["reka-ui"]
+  "pages": [
+    "reka-ui",
+    "animate-ui"
+  ]
 }

@@ -40,6 +40,11 @@ export const frameworkOf = (pathname: string) =>
 
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
+  'animate-ui/rolling-text': {
+    RollingText: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+    },
+  },
   'reka-ui/dropdown-menu': {
     DropdownMenuContent: {
       side: {

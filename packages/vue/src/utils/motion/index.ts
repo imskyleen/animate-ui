@@ -1,6 +1,7 @@
 import {
   computed,
   defineComponent,
+  Fragment,
   getCurrentInstance,
   h,
   inject,
@@ -332,11 +333,24 @@ function useShouldReduceMotion(): ComputedRef<boolean> {
   });
 }
 
+const RemountOnReduce = defineComponent({
+  name: 'RemountOnReduce',
+  setup(_, { slots }) {
+    const reduce = useShouldReduceMotion();
+    return () =>
+      h(Fragment, { key: reduce.value ? 'reduce' : 'full' }, slots.default?.());
+  },
+});
+
 const ReducedMotionConfig = defineComponent({
   name: 'ReducedMotionConfig',
-  setup(_, { slots }) {
+  props: { remount: Boolean },
+  setup(props, { slots }) {
     const reducedMotion = useReducedMotionSetting();
-    return () => h(MotionConfig, { reducedMotion: reducedMotion.value }, slots);
+    return () =>
+      h(MotionConfig, { reducedMotion: reducedMotion.value }, () =>
+        props.remount ? h(RemountOnReduce, null, slots) : slots.default?.(),
+      );
   },
 });
 

@@ -258,11 +258,13 @@ function RemoveCss({ library, name }: { library?: LibraryId; name: string }) {
 export function Installation({
   name,
   library,
+  framework,
 }: {
   name?: string;
   library?: LibraryId;
+  framework?: 'react' | 'vue';
 }) {
-  const vue = library === 'reka-ui';
+  const vue = library === 'reka-ui' || framework === 'vue';
   const packages = vue
     ? '@animate-ui/vue motion-v'
     : '@animate-ui/react motion';

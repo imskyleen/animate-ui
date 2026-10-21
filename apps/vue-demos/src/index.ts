@@ -3,6 +3,8 @@ import { createApp, h, reactive, type Component } from 'vue';
 type Props = Record<string, unknown>;
 
 const demos: Record<string, () => Promise<{ default: Component }>> = {
+  'animate-ui/rolling-text': () =>
+    import('./demos/animate-ui/rolling-text.vue'),
   'reka-ui/accordion': () => import('./demos/reka-ui/accordion.vue'),
   'reka-ui/collapsible': () => import('./demos/reka-ui/collapsible.vue'),
   'reka-ui/checkbox': () => import('./demos/reka-ui/checkbox.vue'),

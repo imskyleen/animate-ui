@@ -28,27 +28,34 @@ const PAGES = [
   ['tooltip', 'variant="outline"'],
 ] as const;
 
-for (const [name, text] of PAGES)
-  test(`the Vue ${name} page shows its Vue demo and .vue source`, async ({
-    page,
-  }) => {
-    await page.goto(`/docs/vue/primitives/reka-ui/${name}`, {
-      waitUntil: 'networkidle',
+/** Animate UI's own primitives in Vue, with a text from their demo's source. */
+const OWN_PAGES = [['rolling-text', 'Replay']] as const;
+
+for (const [library, pages] of [
+  ['reka-ui', PAGES],
+  ['animate-ui', OWN_PAGES],
+] as const)
+  for (const [name, text] of pages)
+    test(`the Vue ${name} page shows its Vue demo and .vue source`, async ({
+      page,
+    }) => {
+      await page.goto(`/docs/vue/primitives/${library}/${name}`, {
+        waitUntil: 'networkidle',
+      });
+      await page
+        .locator('[data-slot="vue-demo"][data-mounted]')
+        .first()
+        .waitFor();
+      await expect(
+        page.locator('[data-slot="vue-demo"] [data-slot]').first(),
+      ).toBeVisible();
+      await expect(
+        page
+          .locator('pre')
+          .filter({ hasText: '<script setup lang="ts">' })
+          .filter({ hasText: text }),
+      ).toHaveCount(1);
     });
-    await page
-      .locator('[data-slot="vue-demo"][data-mounted]')
-      .first()
-      .waitFor();
-    await expect(
-      page.locator('[data-slot="vue-demo"] [data-slot]').first(),
-    ).toBeVisible();
-    await expect(
-      page
-        .locator('pre')
-        .filter({ hasText: '<script setup lang="ts">' })
-        .filter({ hasText: text }),
-    ).toHaveCount(1);
-  });
 
 for (const scheme of ['light', 'dark'] as const)
   test(`the logo is Vue green on Vue pages only, in the ${scheme} theme`, async ({
@@ -133,7 +140,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(23);
+  await expect(cards).toHaveCount(24);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));
@@ -142,6 +149,6 @@ test('the Vue primitives grid shows the Vue components with their own recordings
     expect(src).toMatch(/^\/previews\/vue\/primitives\//);
   for (const card of await cards.all())
     expect(await card.locator('a').first().getAttribute('href')).toMatch(
-      /^\/docs\/vue\/primitives\/reka-ui\//,
+      /^\/docs\/vue\/primitives\/(reka-ui|animate-ui)\//,
     );
 });

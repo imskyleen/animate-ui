@@ -46,6 +46,10 @@ const INSTALLATIONS = Object.fromEntries(
   ]),
 ) as Record<LibraryId, typeof Installation>;
 
+function VueInstallation(props: React.ComponentProps<typeof Installation>) {
+  return <Installation {...props} library="animate-ui" framework="vue" />;
+}
+
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
   const page = source.getPage(params.slug);
@@ -105,7 +109,11 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           components={getMDXComponents({
             a: createRelativeLink(source, page),
             ...(primitive && {
-              Installation: INSTALLATIONS[primitive.library],
+              Installation:
+                primitive.framework === 'vue' &&
+                primitive.library === 'animate-ui'
+                  ? VueInstallation
+                  : INSTALLATIONS[primitive.library],
             }),
           })}
         />

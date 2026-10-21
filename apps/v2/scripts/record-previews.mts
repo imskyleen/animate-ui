@@ -787,20 +787,24 @@ function previews(): Preview[] {
     ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
   }));
   // The Vue demos, played the same way.
-  for (const file of readdirSync(
-    path.join(docs, 'vue', 'primitives', 'reka-ui'),
-  ))
-    if (file.endsWith('.mdx')) {
-      const slug = file.slice(0, -4);
-      list.push({
-        id: `vue/primitives/${slug}`,
-        demo: `/tests/vue-demos/reka-ui/${slug}`,
-        ...(ROOMY.has(slug) ? { viewport: LARGE } : {}),
-        ...VUE_TALL[slug],
-        ...(TEXTS.has(slug) ? { nowrap: true as const } : {}),
-        ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
-      });
-    }
+  for (const library of ['reka-ui', 'animate-ui'])
+    for (const file of readdirSync(
+      path.join(docs, 'vue', 'primitives', library),
+    ))
+      if (file.endsWith('.mdx')) {
+        const slug = file.slice(0, -4);
+        // One card, so one preview, per name: reka-ui's when both have it.
+        if (list.some((preview) => preview.id === `vue/primitives/${slug}`))
+          continue;
+        list.push({
+          id: `vue/primitives/${slug}`,
+          demo: `/tests/vue-demos/${library}/${slug}`,
+          ...(ROOMY.has(slug) ? { viewport: LARGE } : {}),
+          ...VUE_TALL[slug],
+          ...(TEXTS.has(slug) ? { nowrap: true as const } : {}),
+          ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
+        });
+      }
   for (const effect of PAGE_TRANSITION_EFFECTS)
     list.push({
       id: `page-transition/${effect}`,
