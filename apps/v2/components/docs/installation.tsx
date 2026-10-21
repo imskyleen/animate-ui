@@ -1,5 +1,5 @@
 import { Step, Steps } from 'fumadocs-ui/components/steps';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import cssRemovals from '@/lib/css-removals.json';
@@ -142,6 +142,51 @@ async function ImportDiff({
   return <ServerCodeBlock code={lines.join('\n')} lang="tsx" diff={diff} />;
 }
 
+const VUE_FIXTURES = path.join(
+  process.cwd(),
+  '../../packages/cli/test/fixtures-vue',
+);
+const VUE_MODULE = '@animate-ui/vue/primitives/reka-ui';
+
+/** shadcn-vue's own files import reka-ui in each part: one statement per kind, values and types. */
+async function VueImportDiff({ name }: { name: string }) {
+  const dir = path.join(VUE_FIXTURES, name);
+  const files = await readdir(dir).catch(() => [] as string[]);
+  const values = new Set<string>();
+  const types = new Set<string>();
+  for (const file of files.filter((f) => f.endsWith('.vue')).sort()) {
+    const code = await readFile(path.join(dir, file), 'utf8');
+    for (const [, type, names] of code.matchAll(
+      /^import\s+(type\s+)?\{([^}]*)\}\s+from\s+["']reka-ui["']/gm,
+    ))
+      for (const specifier of names!.split(','))
+        if (specifier.trim()) (type ? types : values).add(specifier.trim());
+  }
+  const lines: string[] = [];
+  let diff = '';
+  for (const [kind, names] of [
+    ['import type', types],
+    ['import', values],
+  ] as const) {
+    if (!names.size) continue;
+    const clause = `${kind} { ${[...names].sort().join(', ')} }`;
+    if (`${clause} from 'reka-ui'`.length <= PRINT_WIDTH) {
+      lines.push(`${clause} from 'reka-ui'`, `${clause} from '${VUE_MODULE}'`);
+      diff += '-+';
+      continue;
+    }
+    lines.push(
+      `${kind} {`,
+      ...[...names].sort().map((specifier) => `  ${specifier},`),
+      `} from 'reka-ui'`,
+      `} from '${VUE_MODULE}'`,
+    );
+    diff += ' '.repeat(names.size + 1) + '-+';
+  }
+  if (!lines.length) return null;
+  return <ServerCodeBlock code={lines.join('\n')} lang="ts" diff={diff} />;
+}
+
 type CssRemoval = { part: string; removed: string[]; added: string[] };
 
 const CSS_REMOVALS: Record<string, Record<string, CssRemoval[]>> = cssRemovals;
@@ -195,8 +240,9 @@ function RemoveCss({ library, name }: { library?: LibraryId; name: string }) {
           </p>
           <CssRemovals parts={parts} />
           <p className="text-sm text-muted-foreground">
-            As in shadcn/ui&apos;s Vega style. The other styles use the same
-            classes, sometimes with other values.
+            {library === 'reka-ui'
+              ? 'As in shadcn-vue’s New York style.'
+              : 'As in shadcn/ui’s Vega style. The other styles use the same classes, sometimes with other values.'}
           </p>
         </>
       ) : (
@@ -216,8 +262,15 @@ export function Installation({
   name?: string;
   library?: LibraryId;
 }) {
+  const vue = library === 'reka-ui';
+  const packages = vue
+    ? '@animate-ui/vue motion-v'
+    : '@animate-ui/react motion';
+  const shadcn = vue ? 'shadcn-vue' : 'shadcn';
+  const kit = vue ? 'shadcn-vue' : 'shadcn/ui';
+
   if (!name) {
-    return <Command command={(m) => `${m.add} @animate-ui/react motion`} />;
+    return <Command command={(m) => `${m.add} ${packages}`} />;
   }
 
   return (
@@ -231,18 +284,18 @@ export function Installation({
             <Steps>
               <Step>
                 <h3>Install the packages</h3>
-                <Command command={(m) => `${m.add} @animate-ui/react motion`} />
+                <Command command={(m) => `${m.add} ${packages}`} />
               </Step>
               <Step>
-                <h3>Add the shadcn/ui component</h3>
+                <h3>Add the {kit} component</h3>
                 <Command
-                  command={(m) => `${m.dlx} shadcn@latest add ${name}`}
+                  command={(m) => `${m.dlx} ${shadcn}@latest add ${name}`}
                 />
               </Step>
               <Step>
                 <h3>Animate it</h3>
                 <p>
-                  The CLI finds your shadcn/ui components through{' '}
+                  The CLI finds your {kit} components through{' '}
                   <code>components.json</code>, swaps their primitive imports
                   for Animate UI&apos;s and removes the CSS animation classes
                   Motion replaces.
@@ -263,11 +316,15 @@ export function Installation({
             <Steps>
               <Step>
                 <h3>Install the packages</h3>
-                <Command command={(m) => `${m.add} @animate-ui/react motion`} />
+                <Command command={(m) => `${m.add} ${packages}`} />
               </Step>
               <Step>
                 <h3>Swap the import</h3>
-                {library && <ImportDiff library={library} name={name} />}
+                {vue ? (
+                  <VueImportDiff name={name} />
+                ) : (
+                  library && <ImportDiff library={library} name={name} />
+                )}
               </Step>
               <RemoveCss library={library} name={name} />
             </Steps>

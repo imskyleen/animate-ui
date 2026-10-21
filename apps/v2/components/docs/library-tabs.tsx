@@ -14,11 +14,15 @@ import { setPreferredLibrary } from '@/lib/preferred-library';
 export function LibraryTabs({
   current,
   urls,
+  remember = true,
 }: {
   current: LibraryId;
   urls: Partial<Record<LibraryId, string>>;
+  remember?: boolean;
 }) {
-  useEffect(() => setPreferredLibrary(current), [current]);
+  useEffect(() => {
+    if (remember) setPreferredLibrary(current);
+  }, [current, remember]);
 
   return (
     <div
@@ -31,32 +35,30 @@ export function LibraryTabs({
         value={current}
         className="inset-0 rounded-lg bg-accent"
       >
-        {LIBRARIES.filter((library) => urls[library.id]).map(
-          (library) => {
-            const active = library.id === current;
-            const { Logo } = getLibrary(library.id)!;
-            return (
-              <HighlightItem key={library.id} value={library.id}>
-                <Link
-                  role="tab"
-                  aria-selected={active}
-                  href={urls[library.id]!}
-                  scroll={false}
-                  transitionTypes={['library']}
-                  className={cn(
-                    'inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
-                    active
-                      ? 'text-foreground'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  <Logo className="size-3.5" />
-                  {library.title}
-                </Link>
-              </HighlightItem>
-            );
-          },
-        )}
+        {LIBRARIES.filter((library) => urls[library.id]).map((library) => {
+          const active = library.id === current;
+          const { Logo } = getLibrary(library.id)!;
+          return (
+            <HighlightItem key={library.id} value={library.id}>
+              <Link
+                role="tab"
+                aria-selected={active}
+                href={urls[library.id]!}
+                scroll={false}
+                transitionTypes={['library']}
+                className={cn(
+                  'inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
+                  active
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <Logo className="size-3.5" />
+                {library.title}
+              </Link>
+            </HighlightItem>
+          );
+        })}
       </Highlight>
     </div>
   );

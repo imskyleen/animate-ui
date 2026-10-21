@@ -22,7 +22,7 @@ test('a component switches to the same component in the other framework', async 
   await expect(tab(page, 'React')).toHaveAttribute('aria-selected', 'true');
   await ready(page);
   await tab(page, 'Vue').click();
-  await page.waitForURL('**/docs/vue/primitives/accordion');
+  await page.waitForURL('**/docs/vue/primitives/reka-ui/accordion');
   await expect(tab(page, 'Vue')).toHaveAttribute('aria-selected', 'true');
   await ready(page);
   await tab(page, 'React').click();
@@ -60,7 +60,7 @@ test('switching to the same component plays no page transition', async ({
   });
   await ready(page);
   await tab(page, 'Vue').click();
-  await page.waitForURL('**/docs/vue/primitives/switch');
+  await page.waitForURL('**/docs/vue/primitives/reka-ui/switch');
   await expect
     .poll(() =>
       page.evaluate(
@@ -84,10 +84,10 @@ test('a page without a counterpart goes to the introduction', async ({
 
 test('each framework has its own sidebar', async ({ page }) => {
   const sidebar = page.locator('#nd-sidebar');
-  await page.goto('/docs/vue/primitives/switch', { waitUntil: 'networkidle' });
+  await page.goto('/docs/vue/primitives/reka-ui/switch', { waitUntil: 'networkidle' });
   await expect(sidebar.getByRole('link', { name: 'Checkbox' })).toHaveAttribute(
     'href',
-    '/docs/vue/primitives/checkbox',
+    '/docs/vue/primitives/reka-ui/checkbox',
   );
   await expect(sidebar.getByRole('link', { name: 'Backgrounds' })).toHaveCount(
     0,
@@ -127,7 +127,7 @@ for (const reduced of [false, true])
     page,
   }) => {
     if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/docs/vue/primitives/switch', {
+    await page.goto('/docs/vue/primitives/reka-ui/switch', {
       waitUntil: 'networkidle',
     });
     await page.goto('/docs/primitives/radix-ui/switch', {

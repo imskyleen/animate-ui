@@ -95,7 +95,8 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       {primitive && (
         <LibraryTabs
           current={primitive.library}
-          urls={getPrimitiveUrls(primitive.name)}
+          urls={getPrimitiveUrls(primitive.name, primitive.framework)}
+          remember={primitive.framework === 'react'}
         />
       )}
       <DocsBody>

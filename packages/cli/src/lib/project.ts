@@ -10,6 +10,7 @@ import {
 
 export type Project = {
   root: string;
+  framework: 'react' | 'vue';
   uiDir: string;
   hasPackage: boolean;
   tailwind?: 3 | 4;
@@ -79,7 +80,7 @@ export function loadProject(cwd: string): Project {
       `No components.json in ${root}. Run this in a shadcn/ui project (or pass --cwd).`,
     );
   }
-  let config: { aliases?: Record<string, string> };
+  let config: { $schema?: string; aliases?: Record<string, string> };
   try {
     config = parseJsonc(
       readFileSync(configFile, 'utf8').replace(/^\uFEFF/, ''),
@@ -96,15 +97,25 @@ export function loadProject(cwd: string): Project {
 
   const pkgFile = path.join(root, 'package.json');
   const pkg = existsSync(pkgFile) ? readJson(pkgFile) : {};
+  const depends = (name: string) =>
+    Boolean(pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]);
+  const framework =
+    config.$schema?.includes('shadcn-vue') ||
+    (!config.$schema && depends('vue') && !depends('react'))
+      ? 'vue'
+      : 'react';
+  const animateUI =
+    framework === 'vue' ? '@animate-ui/vue' : '@animate-ui/react';
   const hasPackage =
     Boolean(
-      pkg.dependencies?.['@animate-ui/react'] ??
-      pkg.devDependencies?.['@animate-ui/react'] ??
-      pkg.peerDependencies?.['@animate-ui/react'],
-    ) || installedAbove(root, '@animate-ui/react');
+      pkg.dependencies?.[animateUI] ??
+      pkg.devDependencies?.[animateUI] ??
+      pkg.peerDependencies?.[animateUI],
+    ) || installedAbove(root, animateUI);
 
   return {
     root,
+    framework,
     uiDir: resolveAlias(root, uiAlias),
     hasPackage,
     tailwind: tailwindVersion(root, pkg, readJson(configFile)),

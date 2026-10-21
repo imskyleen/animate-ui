@@ -1100,5 +1100,45 @@
         "added": []
       }
     ]
+  },
+  "reka-ui": {
+    "accordion": [
+      {
+        "part": "AccordionContent",
+        "removed": [
+          "data-[state=closed]:animate-accordion-up",
+          "data-[state=open]:animate-accordion-down"
+        ],
+        "added": []
+      }
+    ],
+    "checkbox": [],
+    "collapsible": [],
+    "progress": [
+      {
+        "part": "ProgressIndicator",
+        "removed": [
+          "transition-all"
+        ],
+        "added": []
+      }
+    ],
+    "switch": [
+      {
+        "part": "Switch",
+        "removed": [
+          "transition-all"
+        ],
+        "added": []
+      },
+      {
+        "part": "SwitchThumb",
+        "removed": [
+          "transition-transform"
+        ],
+        "added": []
+      }
+    ],
+    "toggle": []
   }
 }

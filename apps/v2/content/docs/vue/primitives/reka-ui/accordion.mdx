@@ -7,19 +7,7 @@ description: A vertically stacked set of interactive headings that each reveal a
 
 ## Installation
 
-```npm
-npm install @animate-ui/vue motion-v
-```
-
-In your shadcn-vue accordion (`components/ui/accordion`), import from Animate UI instead of reka-ui, then remove the CSS animation classes Motion replaces: `data-[state=closed]:animate-accordion-up` and `data-[state=open]:animate-accordion-down` on `AccordionContent`.
-
-```vue
-<script setup lang="ts">
-import { AccordionContent } from '@animate-ui/vue/primitives/reka-ui'
-</script>
-```
-
-`@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does (helpers like `useForwardPropsEmits` and every props type included), so swapping the whole import is enough.
+<Installation name="accordion" />
 
 ## Usage
 

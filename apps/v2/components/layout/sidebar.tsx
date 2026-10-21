@@ -91,6 +91,19 @@ function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {
   );
 }
 
+/** A folder's pages, with those of its library folders (`primitives/reka-ui`). */
+function deepLinks(
+  folder: PageTree.Folder,
+): { name: ReactNode; url: string }[] {
+  return folder.children.flatMap((node) =>
+    node.type === 'page'
+      ? [{ name: node.name, url: node.url }]
+      : node.type === 'folder'
+        ? deepLinks(node)
+        : [],
+  );
+}
+
 type PrimitiveEntry = {
   name: ReactNode;
   slug: string;
@@ -293,7 +306,7 @@ function FolderSections({
     if (node.type === 'folder')
       sections.push({
         title: node.name === 'Primitives' ? 'Components' : String(node.name),
-        links: folderLinks(node).map((link) => ({
+        links: deepLinks(node).map((link) => ({
           ...link,
           active: pathname === link.url,
         })),

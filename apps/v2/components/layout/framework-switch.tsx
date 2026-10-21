@@ -21,7 +21,7 @@ import { isVuePath } from '@/lib/vue';
 type Framework = 'react' | 'vue';
 
 const REACT_PRIMITIVE = /^\/docs\/primitives\/[^/]+\/([^/]+)$/;
-const VUE_PRIMITIVE = /^\/docs\/vue\/primitives\/([^/]+)$/;
+const VUE_PRIMITIVE = /^\/docs\/vue\/primitives\/[^/]+\/([^/]+)$/;
 
 function collectUrls(nodes: PageTree.Node[], urls: Set<string>) {
   for (const node of nodes) {
@@ -43,7 +43,7 @@ function counterpart(
 ) {
   if (target === 'vue') {
     const slug = REACT_PRIMITIVE.exec(pathname)?.[1];
-    const url = slug && `/docs/vue/primitives/${slug}`;
+    const url = slug && `/docs/vue/primitives/reka-ui/${slug}`;
     return url && urls.has(url)
       ? { href: url, same: true }
       : { href: '/docs/vue', same: false };

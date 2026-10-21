@@ -1,11 +1,4 @@
 {
   "title": "Primitives",
-  "pages": [
-    "accordion",
-    "checkbox",
-    "collapsible",
-    "progress",
-    "switch",
-    "toggle"
-  ]
+  "pages": ["reka-ui"]
 }

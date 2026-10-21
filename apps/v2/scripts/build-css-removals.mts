@@ -3,11 +3,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { transform } from '../../../packages/cli/src/lib/transform.ts';
+import { transformVue } from '../../../packages/cli/src/lib/vue.ts';
 
 export type CssRemoval = { part: string; removed: string[]; added: string[] };
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURES = path.join(ROOT, '../../../packages/cli/test/fixtures');
+const VUE_FIXTURES = path.join(ROOT, '../../../packages/cli/test/fixtures-vue');
 export const OUTPUT = path.join(ROOT, '../lib/css-removals.json');
 const STYLE = 'vega';
 const LIBRARIES = ['radix-ui', 'base-ui', 'react-aria'];
@@ -54,12 +56,9 @@ function pairs(before: string[], after: string[]) {
   return new Map(changed);
 }
 
-function removals(code: string, file: string) {
+function removals(code: string, after: string) {
   const before = code.split('\n');
-  const changed = pairs(
-    before,
-    transform(code, file, { tailwind: 4 }).code.split('\n'),
-  );
+  const changed = pairs(before, after.split('\n'));
   const parts: CssRemoval[] = [];
   let part = '';
   for (let i = 0; i < before.length; i++) {
@@ -98,8 +97,23 @@ export function buildCssRemovals() {
       const match = file.match(new RegExp(`^(.+)\\.${STYLE}\\.tsx$`));
       if (!match) continue;
       const code = readFileSync(path.join(FIXTURES, library, file), 'utf8');
-      result[library][match[1]!] = removals(code, `${match[1]}.tsx`);
+      result[library][match[1]!] = removals(
+        code,
+        transform(code, `${match[1]}.tsx`, { tailwind: 4 }).code,
+      );
     }
+  }
+  // shadcn-vue keeps a component in a folder: its files' removals, in order.
+  result['reka-ui'] = {};
+  for (const name of readdirSync(VUE_FIXTURES).sort()) {
+    const dir = path.join(VUE_FIXTURES, name);
+    result['reka-ui'][name] = readdirSync(dir)
+      .filter((file) => file.endsWith('.vue'))
+      .sort()
+      .flatMap((file) => {
+        const code = readFileSync(path.join(dir, file), 'utf8');
+        return removals(code, transformVue(code, name)!.code);
+      });
   }
   return result;
 }
