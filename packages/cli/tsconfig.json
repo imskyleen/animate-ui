@@ -23,6 +23,7 @@
   ],
   "exclude": [
     "test/fixtures",
+    "test/fixtures-vue",
     "test/__snapshots__"
   ]
 }

@@ -10,7 +10,14 @@ import {
   type InjectionKey,
   type Ref,
 } from 'vue';
-import { MotionConfig, useMotionConfig, type Transition } from 'motion-v';
+import {
+  createGeneratorEasing,
+  generateLinearEasing,
+  MotionConfig,
+  spring as springGenerator,
+  useMotionConfig,
+  type Transition,
+} from 'motion-v';
 
 const ease = {
   out: [0.23, 1, 0.32, 1],
@@ -233,6 +240,64 @@ function useReducedMotionSetting(): ComputedRef<ReducedMotion> {
   );
 }
 
+type CssTiming = { duration: number; easing: string };
+
+const CSS_EASINGS: Record<string, string> = {
+  linear: 'linear',
+  easeIn: 'cubic-bezier(0.42, 0, 1, 1)',
+  easeOut: 'cubic-bezier(0, 0, 0.58, 1)',
+  easeInOut: 'cubic-bezier(0.42, 0, 0.58, 1)',
+  circIn: 'cubic-bezier(0, 0.65, 0.55, 1)',
+  circOut: 'cubic-bezier(0.55, 0, 1, 0.45)',
+  backIn: 'cubic-bezier(0.31, 0.01, 0.66, -0.59)',
+  backOut: 'cubic-bezier(0.33, 1.53, 0.69, 0.99)',
+};
+
+const SPRING_KEYS = [
+  'stiffness',
+  'damping',
+  'mass',
+  'bounce',
+  'visualDuration',
+];
+
+function toCssEase(curve: unknown): string {
+  if (
+    Array.isArray(curve) &&
+    curve.length === 4 &&
+    curve.every(Number.isFinite)
+  )
+    return `cubic-bezier(${curve.join(', ')})`;
+  if (typeof curve === 'string') return CSS_EASINGS[curve] ?? 'ease';
+  return CSS_EASINGS.easeInOut!;
+}
+
+function toCssTiming(motionTransition: Transition): CssTiming {
+  const options = motionTransition as Record<string, unknown>;
+  const isSpring =
+    options.type === 'spring' || SPRING_KEYS.some((key) => key in options);
+
+  if (isSpring) {
+    const springOptions =
+      typeof options.duration === 'number'
+        ? { ...options, duration: options.duration * 1000 }
+        : options;
+    const { duration, ease: curve } = createGeneratorEasing(
+      springOptions,
+      100,
+      springGenerator,
+    );
+    const ms = Math.round(duration * 1000);
+    return { duration: ms, easing: generateLinearEasing(curve, ms) };
+  }
+
+  const seconds = typeof options.duration === 'number' ? options.duration : 0.3;
+  return {
+    duration: Math.round(seconds * 1000),
+    easing: toCssEase(options.ease),
+  };
+}
+
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 /** False on the server and while hydrating, then follows the OS setting. */
@@ -259,8 +324,7 @@ const ReducedMotionConfig = defineComponent({
   name: 'ReducedMotionConfig',
   setup(_, { slots }) {
     const reducedMotion = useReducedMotionSetting();
-    return () =>
-      h(MotionConfig, { reducedMotion: reducedMotion.value }, slots);
+    return () => h(MotionConfig, { reducedMotion: reducedMotion.value }, slots);
   },
 });
 
@@ -284,7 +348,9 @@ export {
   useShouldReduceMotion,
   useReducedMotionSetting,
   scaleTransition,
+  toCssTiming,
   useTempoTransition,
+  type CssTiming,
   type MotionTokens,
   type CheckAnimation,
   type ReducedMotion,

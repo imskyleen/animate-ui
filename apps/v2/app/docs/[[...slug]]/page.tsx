@@ -33,6 +33,7 @@ import {
   siteUrl,
 } from '@/lib/shared';
 import { source } from '@/lib/source';
+import { siteIcons } from '@/lib/vue';
 
 const INSTALLATIONS = Object.fromEntries(
   LIBRARIES.map(({ id }) => [
@@ -136,5 +137,6 @@ export async function generateMetadata(
       images: `${getPageImageUrl(page).url}?v=2`,
     },
     twitter: { card: 'summary_large_image' },
+    ...(page.slugs[0] === 'vue' ? { icons: siteIcons(true) } : null),
   };
 }

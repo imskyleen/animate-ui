@@ -1,4 +1,4 @@
-import { isAnimationClass } from './classes';
+import { centerWithMargins, isAnimationClass } from './classes';
 
 export const VUE_PACKAGE = '@animate-ui/vue';
 export const VUE_MODULE = `${VUE_PACKAGE}/primitives/reka-ui`;
@@ -9,8 +9,10 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   checkbox: [],
   collapsible: [],
   progress: [/^transition-all$/],
+  'radio-group': [],
   switch: [/^transition-transform$/, /^transition-all$/],
   toggle: [],
+  'toggle-group': [],
 };
 
 const REKA_IMPORT = /(\bfrom\s+)(["'])reka-ui\2/g;
@@ -38,16 +40,33 @@ function stripAnimationClasses(code: string, extra: RegExp[]) {
   return { code: out + code.slice(last), removed };
 }
 
+const QUOTED = /(["'`])([^"'`\n]*?)\1/g;
+
+/** Under Tailwind 3 a translate would fight Motion's transform: center with margins. */
+function centerClassLists(code: string) {
+  const centering: string[] = [];
+  const out = code.replace(QUOTED, (whole, quote: string, value: string) => {
+    if (quote === '`' && value.includes('${')) return whole;
+    const { value: centered, replaced } = centerWithMargins(value);
+    if (replaced.length === 0) return whole;
+    centering.push(...replaced);
+    return `${quote}${centered}${quote}`;
+  });
+  return { code: out, centering };
+}
+
 export type VueTransformResult = {
   code: string;
   imports: number;
   removedClasses: string[];
+  centering: string[];
 };
 
 /** A file of a shadcn-vue component folder: reka-ui imports swapped, CSS animations removed. */
 export function transformVue(
   code: string,
   component: string,
+  options: { tailwind?: 3 | 4 } = {},
 ): VueTransformResult | null {
   const extra = VUE_PRIMITIVES[component];
   if (!extra) return null;
@@ -60,5 +79,9 @@ export function transformVue(
     },
   );
   const { code: stripped, removed } = stripAnimationClasses(swapped, extra);
-  return { code: stripped, imports, removedClasses: removed };
+  const { code: centered, centering } =
+    options.tailwind === 3
+      ? centerClassLists(stripped)
+      : { code: stripped, centering: [] };
+  return { code: centered, imports, removedClasses: removed, centering };
 }

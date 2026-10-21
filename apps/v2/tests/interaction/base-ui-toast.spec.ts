@@ -590,6 +590,49 @@ test.describe('base-ui toast promise', () => {
     );
 });
 
+test('in a toast of fractional width, the leaving text sits right over the old one', async ({
+  page,
+}) => {
+  await page.goto('/tests/demos/base-ui/toast-promise', {
+    waitUntil: 'networkidle',
+  });
+  await page.getByRole('button', { name: 'Create Event' }).click();
+  const description = page.locator('[data-slot="toast-description"]');
+  await expect(description).toHaveText('Creating event…');
+  await settled(page);
+  const { before, copy } = await page.evaluate(
+    () =>
+      new Promise<{
+        before: { left: number; width: number };
+        copy: { left: number; width: number };
+      }>((resolve) => {
+        const root = document.querySelector<HTMLElement>(
+          '[data-slot="toast"]',
+        )!;
+        root.style.width = `${Math.floor(root.getBoundingClientRect().width) + 0.45}px`;
+        const text = root.querySelector('[data-slot="toast-description"]')!;
+        let before = { left: 0, width: 0 };
+        const tick = () => {
+          const leaving = [
+            ...root.querySelectorAll<HTMLElement>(
+              ':scope > [aria-hidden="true"]',
+            ),
+          ].find((c) => c.textContent === 'Creating event…');
+          if (leaving) {
+            const r = leaving.getBoundingClientRect();
+            return resolve({ before, copy: { left: r.left, width: r.width } });
+          }
+          const r = text.getBoundingClientRect();
+          before = { left: r.left, width: r.width };
+          requestAnimationFrame(tick);
+        };
+        tick();
+      }),
+  );
+  expect(copy.left).toBeCloseTo(before.left, 1);
+  expect(copy.width).toBeCloseTo(before.width, 1);
+});
+
 test.describe('base-ui toast updates', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/fixtures/base-ui-toast-update', {

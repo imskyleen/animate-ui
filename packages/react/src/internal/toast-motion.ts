@@ -7,6 +7,7 @@ import {
   type MotionTokens,
 } from '../utils/motion';
 import { animateTo, forget, targetsOf, type Look } from './controls/indicator';
+import { layoutScale } from './layout-scale';
 
 type Copy = {
   element: HTMLElement | SVGElement;
@@ -84,7 +85,7 @@ function takeSnapshot(root: HTMLElement | null): Snapshot | null {
   return {
     root: box,
     height: root.offsetHeight,
-    scale: root.offsetWidth ? box.width / root.offsetWidth : 1,
+    scale: layoutScale(root, box).x,
     icon: copyOf(iconOf(root)),
     title: copyOf(labelOf(root, 'aria-labelledby')),
     description: copyOf(labelOf(root, 'aria-describedby')),

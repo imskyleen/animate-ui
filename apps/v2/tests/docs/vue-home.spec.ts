@@ -51,7 +51,7 @@ test('the Vue home is the home adapted to Vue', async ({ page }) => {
   await expect(
     page.locator('footer').getByRole('link', { name: 'Docs' }),
   ).toHaveAttribute('href', '/docs/vue');
-  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(4);
+  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(5);
   await expect(page.locator('[data-slot="home-ai"]')).toHaveCount(0);
 });
 
@@ -101,7 +101,7 @@ test('the home switch changes framework in place: the hero stays, the page keeps
   await tabs(page).getByRole('tab', { name: 'Vue' }).click();
   await page.waitForURL('**/vue');
   await expect(page.locator('main section p').first()).toHaveText(/Reka UI\./);
-  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(4);
+  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(5);
   expect(
     await page.evaluate(() => ({
       kept: (document.querySelector('main section') as { kept?: boolean }).kept,
@@ -143,3 +143,68 @@ test('on the Vue docs, the header logo goes back to the Vue home', async ({
     page.locator('header').getByRole('link', { name: 'Animate UI' }).first(),
   ).toHaveAttribute('href', '/');
 });
+
+test('the favicon has the Vue green logo on Vue pages, and goes back on React ones', async ({
+  page,
+}) => {
+  const icons = () =>
+    page
+      .locator('link[rel="icon"], link[rel="apple-touch-icon"]')
+      .evaluateAll((links) => links.map((l) => l.getAttribute('href')));
+  const vue = [
+    '/favicon-vue-32x32.png',
+    '/favicon-vue-16x16.png',
+    '/apple-touch-icon-vue.png',
+  ];
+  await page.goto('/vue');
+  expect(await icons()).toEqual(vue);
+  await page.goto('/docs/primitives/radix-ui/switch', {
+    waitUntil: 'networkidle',
+  });
+  expect(await icons()).toEqual(vue.map((url) => url.replace('-vue', '')));
+  await page
+    .getByRole('tablist', { name: 'Framework' })
+    .getByRole('tab', { name: 'Vue' })
+    .click();
+  await page.waitForURL('**/docs/vue/primitives/reka-ui/switch');
+  await expect.poll(icons).toEqual(vue);
+});
+
+for (const reduced of [false, true])
+  test(`a short last row of cards sits centered under the others${reduced ? ', under reduced motion' : ''}`, async ({
+    page,
+  }) => {
+    if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/vue', { waitUntil: 'networkidle' });
+    await introDone(page);
+    const cards = page.locator('[data-slot="orbit-card"]');
+    await page.evaluate(() => {
+      const orbit = document.querySelector<HTMLElement>(
+        '[data-slot="home-orbit"]',
+      )!;
+      window.scrollTo(
+        0,
+        orbit.getBoundingClientRect().top +
+          window.scrollY +
+          orbit.offsetHeight -
+          window.innerHeight,
+      );
+    });
+    const centers = async () => {
+      const boxes = await cards.evaluateAll((all) =>
+        all.map((c) => {
+          const r = c.getBoundingClientRect();
+          return { x: r.left + r.width / 2, y: Math.round(r.top) };
+        }),
+      );
+      const rows = Object.values(Object.groupBy(boxes, (b) => String(b.y))).map(
+        (row) => row!.reduce((sum, b) => sum + b.x, 0) / row!.length,
+      );
+      return {
+        rows: rows.length,
+        spread: Math.max(...rows) - Math.min(...rows),
+      };
+    };
+    await expect.poll(async () => (await centers()).rows).toBe(2);
+    await expect.poll(async () => (await centers()).spread).toBeLessThan(1);
+  });

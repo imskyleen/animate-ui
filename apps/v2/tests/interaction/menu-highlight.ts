@@ -398,6 +398,24 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
       });
     }
 
+    test('in a menu of fractional width, it sits right on its item', async ({
+      page,
+    }) => {
+      const first = c.first(page);
+      await first.evaluate((item) => {
+        const menu = item.closest<HTMLElement>(
+          '[role="menu"], [role="listbox"]',
+        )!;
+        menu.style.width = `${Math.floor(menu.getBoundingClientRect().width) + 0.45}px`;
+      });
+      await pointAt(page, first);
+      await page.waitForTimeout(700);
+      const copy = await boxOf(page.locator(HIGHLIGHT).first());
+      const box = await boxOf(first);
+      expect(copy.x).toBeCloseTo(box.x, 1);
+      expect(copy.width).toBeCloseTo(box.width, 1);
+    });
+
     test('stays on the last item when the pointer leaves', async ({ page }) => {
       const first = c.first(page);
       await pointAt(page, first);

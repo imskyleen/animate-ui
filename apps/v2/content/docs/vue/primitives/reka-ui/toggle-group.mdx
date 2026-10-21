@@ -1,0 +1,84 @@
+---
+title: Toggle Group
+description: A set of two-state buttons that can be toggled on or off.
+---
+
+<VueComponentPreview name="reka-ui/toggle-group" />
+
+## Installation
+
+<Installation name="toggle-group" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  ToggleGroupItem,
+  ToggleGroupRoot,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <ToggleGroupRoot
+    type="single"
+    default-value="left"
+    aria-label="Text alignment"
+  >
+    <ToggleGroupItem value="left" aria-label="Align left">L</ToggleGroupItem>
+    <ToggleGroupItem value="center" aria-label="Align center"
+      >C</ToggleGroupItem
+    >
+    <ToggleGroupItem value="right" aria-label="Align right">R</ToggleGroupItem>
+  </ToggleGroupRoot>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React toggle group:
+
+- **Item** (each item) scales to 0.97 while pressed, on Motion's default spring for scale (stiffness 550, damping 30); the selection changes on the press itself.
+- **Root** with `type="multiple"`: a selected item's surface grows in from 70% of its size, from its center, as it fades in, in 300ms (`cubic-bezier(0.4, 0, 0.2, 1)`, like the radio's fill), and shrinks back out as it fades when it's deselected.
+- Neighbours selected together join into one surface: on the same 300ms, each one stretches to the middle of the gap between them as its inner corners square off; deselecting one splits the surface again. Items join when they touch (`spacing` 0), or across a gap no wider than half their height when they have no border on the sides facing each other: bordered items apart keep their own surfaces. Rows, columns and right to left alike.
+- **Root** with `type="single"`: one surface slides from the selected item to the newly selected one, on a spring (stiffness 300, damping 30), its size and corners following. Picked again on the way (quick clicks), it goes on from where it is with the speed it had. The first selection grows it in like a fill; clearing the selection shrinks it out.
+- Hovering an item lights a highlight that glides from item to item on a quick spring (stiffness 500, damping 40), fading in from nothing and out to nothing in 200ms (`ease`). It's lit only where the item's own hover style paints something its selection doesn't already. It's drawn above the selected surfaces; clicking a hovered item, it stays until the surface growing (or sliding) in under it has arrived.
+- The surfaces copy each item's own background and corners (shadcn-vue's `data-[state=on]:bg-accent`, `hover:bg-muted`), drawn behind the items and under their borders, in the group's shadow root (so the items' `first:` / `last:` styles are untouched); a small stylesheet clears the items' own backgrounds. The demo hovers lighter than it selects (`hover:bg-muted/50`), so the two read apart. Borders, shadows, text colors and focus rings stay the items'.
+- The arrow keys only move the focus between items: nothing animates. Space and Enter select like a click.
+- Nothing moves when the group mounts.
+- Under reduced motion, there is no press scale and nothing grows, slides or stretches: surfaces only fade, and the highlight jumps from item to item.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Toggle Group](https://reka-ui.com/docs/components/toggle-group#api-reference). Animate UI adds the animation props below. With `as-child`, an item renders your element with reka-ui's behaviour, without the press scale.
+
+### ToggleGroupRoot
+
+[reka-ui props](https://reka-ui.com/docs/components/toggle-group#root), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the surface sliding between items (`type="single"`).',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 30 }",
+    },
+  }}
+/>
+
+### ToggleGroupItem
+
+[reka-ui props](https://reka-ui.com/docs/components/toggle-group#item), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+  }}
+/>
+
+`AnimateUIProvider`'s `tempo` scales these transitions with everything else.

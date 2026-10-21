@@ -39,6 +39,13 @@ type Vignettes = typeof VIGNETTES;
 const VignettesContext = createContext<Vignettes>(VIGNETTES);
 const columnsOf = (count: number) => (count === 4 ? 2 : 3);
 
+/** How many cards sit in a row: the last one may be shorter, and centered. */
+const rowLength = (count: number, columns: number, row: number) =>
+  Math.min(columns, count - row * columns);
+
+// A short last row of a 3-column grid starts one or two half-columns in.
+const LAST_ROW_START = ['', 'md:col-start-3', 'md:col-start-2'];
+
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const clamp = (t: number) => Math.min(1, Math.max(0, t));
 const round = (value: number, digits: number) =>
@@ -133,7 +140,7 @@ function OrbitCard({
   const row = Math.floor(index / columns);
   const rows = Math.ceil(count / columns);
   const slot = {
-    x: (column - (columns - 1) / 2) * (CARD.width + GAP),
+    x: (column - (rowLength(count, columns, row) - 1) / 2) * (CARD.width + GAP),
     y: (row - (rows - 1) / 2) * (CARD.height + GAP) + 40,
   };
 
@@ -339,12 +346,18 @@ function StaticGrid() {
         <div
           className={cn(
             'grid gap-4',
-            columns === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3',
+            columns === 2 ? 'md:grid-cols-2' : 'md:grid-cols-6',
           )}
         >
           {vignettes.map(({ title, Vignette }, index) => (
             <motion.div
               key={title}
+              className={cn(
+                columns === 3 && 'md:col-span-2',
+                columns === 3 &&
+                  index === vignettes.length - (vignettes.length % 3) &&
+                  LAST_ROW_START[vignettes.length % 3],
+              )}
               initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
               whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               viewport={{ once: true, margin: '-60px' }}

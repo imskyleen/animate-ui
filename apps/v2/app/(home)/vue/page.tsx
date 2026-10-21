@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { HomeFooter } from '@/components/home/home-footer';
 import { Orbit } from '@/components/home/orbit';
 import { appName } from '@/lib/shared';
+import { siteIcons } from '@/lib/vue';
 
 const title = 'Animate UI - Animated primitives for Vue';
 const description =
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   title: { absolute: title },
   description,
   alternates: { canonical: '/vue' },
+  icons: siteIcons(true),
   openGraph: {
     type: 'website',
     url: '/vue',
@@ -39,7 +41,9 @@ export const metadata: Metadata = {
 export default function VueHomePage() {
   return (
     <>
-      <Orbit only={['Switch', 'Accordion', 'Checkbox', 'Progress']} />
+      <Orbit
+        only={['Switch', 'Accordion', 'Checkbox', 'Radio Group', 'Progress']}
+      />
       <HomeFooter docs="/docs/vue" />
     </>
   );

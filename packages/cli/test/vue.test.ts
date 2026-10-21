@@ -25,7 +25,9 @@ const changedLines = (before: string, after: string) => {
   const a = before.split('\n');
   const b = after.split('\n');
   expect(b).toHaveLength(a.length);
-  return a.flatMap((line, i) => (line === b[i] ? [] : [[line, b[i]!]]));
+  return a.flatMap((line, i): [string, string][] =>
+    line === b[i] ? [] : [[line, b[i]!]],
+  );
 };
 
 describe('transformVue, on shadcn-vue’s own files', () => {
@@ -61,7 +63,13 @@ describe('transformVue, on shadcn-vue’s own files', () => {
       'transition-transform',
     ]);
     expect(removed('progress')).toEqual(['transition-all']);
-    for (const name of ['checkbox', 'collapsible', 'toggle'])
+    for (const name of [
+      'checkbox',
+      'collapsible',
+      'radio-group',
+      'toggle',
+      'toggle-group',
+    ])
       expect(removed(name), name).toEqual([]);
   });
 
@@ -71,6 +79,23 @@ describe('transformVue, on shadcn-vue’s own files', () => {
       'accordion',
     )!;
     expect(code).toBe('class="overflow-hidden"\nclass="a b"\n');
+  });
+
+  test('under Tailwind 3 the radio dot is centered with margins, like the React CLI', () => {
+    const [item] = files('radio-group').filter(
+      ({ file }) => file === 'RadioGroupItem.vue',
+    );
+    const result = transformVue(item!.code, 'radio-group', { tailwind: 3 })!;
+    expect(result.centering.sort()).toEqual([
+      '-translate-x-1/2',
+      '-translate-y-1/2',
+      'left-1/2',
+      'top-1/2',
+    ]);
+    expect(result.code).toContain(
+      'fill-primary absolute size-2 inset-0 m-auto h-fit',
+    );
+    expect(transformVue(item!.code, 'radio-group')!.centering).toEqual([]);
   });
 
   test('a component Animate UI doesn’t animate is left alone', () => {

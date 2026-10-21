@@ -377,12 +377,7 @@ export type {
   PresenceProps,
   PrimitiveProps,
   RGBColor,
-  RadioGroupIndicatorProps,
   RadioGroupItemEmits,
-  RadioGroupItemProps,
-  RadioGroupItemSelectEvent,
-  RadioGroupRootEmits,
-  RadioGroupRootProps,
   RangeCalendarCellProps,
   RangeCalendarCellTriggerProps,
   RangeCalendarGridBodyProps,
@@ -500,9 +495,6 @@ export type {
   ToastTitleProps,
   ToastUpdateOptions,
   ToastViewportProps,
-  ToggleGroupItemProps,
-  ToggleGroupRootEmits,
-  ToggleGroupRootProps,
   ToolbarButtonProps,
   ToolbarLinkProps,
   ToolbarRootProps,
@@ -593,6 +585,17 @@ export {
 } from './progress';
 
 export {
+  RadioGroupRoot,
+  type RadioGroupRootEmits,
+  type RadioGroupRootProps,
+  type RadioGroupItemSelectEvent,
+  RadioGroupItem,
+  RadioGroupIndicator,
+  type RadioGroupItemProps,
+  type RadioGroupIndicatorProps,
+} from './radio-group';
+
+export {
   type SwitchRootEmits,
   type SwitchRootProps,
   SwitchRoot,
@@ -605,3 +608,11 @@ export {
   Toggle,
   type ToggleProps,
 } from './toggle';
+
+export {
+  type ToggleGroupRootEmits,
+  ToggleGroupRoot,
+  ToggleGroupItem,
+  type ToggleGroupRootProps,
+  type ToggleGroupItemProps,
+} from './toggle-group';

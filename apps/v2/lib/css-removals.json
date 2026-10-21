@@ -1123,6 +1123,7 @@
         "added": []
       }
     ],
+    "radio-group": [],
     "switch": [
       {
         "part": "Switch",
@@ -1139,6 +1140,7 @@
         "added": []
       }
     ],
-    "toggle": []
+    "toggle": [],
+    "toggle-group": []
   }
 }

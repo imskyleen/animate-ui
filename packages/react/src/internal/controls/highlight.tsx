@@ -17,6 +17,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../utils/motion';
+import { layoutScale } from '../layout-scale';
 import { startOf } from '../momentum';
 
 const ITEM_ATTRIBUTE = 'data-animate-ui-toggle-item';
@@ -110,8 +111,7 @@ function readLook(item: HTMLElement): Look {
 
 function placer(root: HTMLElement) {
   const origin = root.getBoundingClientRect();
-  const scaleX = root.offsetWidth ? origin.width / root.offsetWidth : 1;
-  const scaleY = root.offsetHeight ? origin.height / root.offsetHeight : 1;
+  const { x: scaleX, y: scaleY } = layoutScale(root, origin);
   return (el: Element): Rect => {
     const rect = el.getBoundingClientRect();
     return {

@@ -14,6 +14,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
+import { layoutScale } from './layout-scale';
 
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
 const FADE_TRANSITION = motionTokens.transition.color;
@@ -550,10 +551,8 @@ function placeOver(element: HTMLElement, item: HTMLElement) {
   const host = element.offsetParent as HTMLElement | null;
   const box = item.getBoundingClientRect();
   const origin = host?.getBoundingClientRect();
-  const ratioX =
-    origin && host?.offsetWidth ? origin.width / host.offsetWidth : 1;
-  const ratioY =
-    origin && host?.offsetHeight ? origin.height / host.offsetHeight : 1;
+  const { x: ratioX, y: ratioY } =
+    host && origin ? layoutScale(host, origin) : { x: 1, y: 1 };
   const left = origin
     ? (box.left - origin.left) / ratioX - host!.clientLeft + host!.scrollLeft
     : box.left + window.scrollX;

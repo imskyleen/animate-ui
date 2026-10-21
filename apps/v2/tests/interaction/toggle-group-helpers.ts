@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from '../test';
 
 import { pressScale, type Lib } from './controls-helpers';
+import { gotoVueMounted } from './disclosure-timeline';
 
 const GROUP = '[data-slot="toggle-group"]';
 const ITEM = '[data-slot="toggle-group-item"]';
@@ -129,12 +130,24 @@ async function settle(page: Page) {
   await page.waitForTimeout(700);
 }
 
+const VUE = {
+  fixture: '/tests/vue-demos/fixtures/reka-ui-toggle-group-surfaces',
+  demo: '/tests/vue-demos/reka-ui/toggle-group',
+};
+
+const reload = async (page: Page, lib: Lib) => {
+  await page.reload({ waitUntil: 'networkidle' });
+  if (lib === 'vue-reka-ui')
+    await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+};
+
 export function describeToggleGroup(lib: Lib) {
   const groupOf = (page: Page, id: string) => page.getByTestId(`${lib}-${id}`);
 
   test.describe(`${lib} toggle group surfaces`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(FIXTURE, { waitUntil: 'networkidle' });
+      if (lib === 'vue-reka-ui') await gotoVueMounted(page, VUE.fixture);
+      else await page.goto(FIXTURE, { waitUntil: 'networkidle' });
     });
 
     test('a selected surface grows in from 70% as it fades in, and shrinks out', async ({
@@ -289,6 +302,21 @@ export function describeToggleGroup(lib: Lib) {
       ).toBe(true);
     });
 
+    test('a group of fractional width draws its surfaces right on the items', async ({
+      page,
+    }) => {
+      const group = groupOf(page, 'default-2-horizontal');
+      await group.evaluate((el: HTMLElement) => {
+        el.style.width = `${Math.floor(el.getBoundingClientRect().width) + 0.45}px`;
+      });
+      await toggle(group, 2);
+      await settle(page);
+      const now = { t: 0, surfaces: await surfacesNow(group) };
+      const c = await boxOf(group, 2);
+      expect(selection(now, 2)!.x).toBeCloseTo(c.x, 2);
+      expect(selection(now, 2)!.w).toBeCloseTo(c.w, 2);
+    });
+
     test('quick select and deselect ends clean', async ({ page }) => {
       const group = groupOf(page, 'default-0-horizontal');
       const items = group.locator(ITEM);
@@ -301,7 +329,9 @@ export function describeToggleGroup(lib: Lib) {
       const [b, c] = [await boxOf(group, 1), await boxOf(group, 2)];
       expect(selection(now, 0)).toBeUndefined();
       expect(selection(now, 3)).toBeUndefined();
-      expect(selection(now, 1)).toMatchObject({ x: b.x, opacity: 1 });
+      // The drawn transform is read back with 6 significant digits.
+      expect(selection(now, 1)!.x).toBeCloseTo(b.x, 2);
+      expect(selection(now, 1)!.opacity).toBe(1);
       expect(selection(now, 2)!.x + selection(now, 2)!.w).toBeCloseTo(
         c.x + c.w,
         1,
@@ -476,7 +506,7 @@ export function describeToggleGroup(lib: Lib) {
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.reload({ waitUntil: 'networkidle' });
+      await reload(page, lib);
       const group = groupOf(page, 'default-2-horizontal');
       const [a, b] = [await boxOf(group, 0), await boxOf(group, 1)];
       await toggle(group, 0);
@@ -522,9 +552,11 @@ export function describeToggleGroup(lib: Lib) {
 
   test.describe(`${lib} toggle group demo`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`/tests/demos/${lib}/toggle-group`, {
-        waitUntil: 'networkidle',
-      });
+      if (lib === 'vue-reka-ui') await gotoVueMounted(page, VUE.demo);
+      else
+        await page.goto(`/tests/demos/${lib}/toggle-group`, {
+          waitUntil: 'networkidle',
+        });
     });
 
     test('items scale while pressed, and a click selects', async ({ page }) => {
@@ -539,7 +571,7 @@ export function describeToggleGroup(lib: Lib) {
 
     test('reduced motion: no press scale', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.reload({ waitUntil: 'networkidle' });
+      await reload(page, lib);
       const { held } = await pressScale(page, page.locator(ITEM).nth(1));
       expect(held).toBe(1);
     });
