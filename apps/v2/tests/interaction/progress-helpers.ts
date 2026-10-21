@@ -48,7 +48,7 @@ export async function sampleRevealed(page: Page, ms: number) {
     );
 }
 
-async function loadDemo(page: Page, library: string) {
+async function loadDemo(page: Page, url: string) {
   await page.addInitScript((indicator) => {
     const w = window as unknown as { __revealed: [number, number][] };
     w.__revealed = [];
@@ -65,9 +65,7 @@ async function loadDemo(page: Page, library: string) {
     };
     requestAnimationFrame(tick);
   }, INDICATOR);
-  await page.goto(`/tests/demos/${library}/progress`, {
-    waitUntil: 'networkidle',
-  });
+  await page.goto(url, { waitUntil: 'networkidle' });
   await expect
     .poll(() => revealed(page), { timeout: 30_000 })
     .toBeGreaterThan(TO - 0.001);
@@ -83,14 +81,19 @@ function fromChange(frames: Sample[]) {
   return frames.slice(moved - 1);
 }
 
-export function describeProgressDemo(library: string) {
-  const byWidth = library !== 'radix-ui';
-
+export function describeProgressDemo(
+  library: string,
+  {
+    demo = `/tests/demos/${library}/progress`,
+    fixture = `/tests/fixtures/${library}-progress`,
+    byWidth = library !== 'radix-ui',
+  } = {},
+) {
   test.describe(`${library} progress demo`, () => {
     test('page load: the indicator starts at its value, no animation', async ({
       page,
     }) => {
-      const frames = await loadDemo(page, library);
+      const frames = await loadDemo(page, demo);
       expect(frames[0]![1]).toBeCloseTo(FROM, 2);
       fromChange(frames);
       const { bar, track } = await page.locator(INDICATOR).evaluate((el) => ({
@@ -102,7 +105,7 @@ export function describeProgressDemo(library: string) {
     });
 
     test('a new value springs there without overshooting', async ({ page }) => {
-      const after = fromChange(await loadDemo(page, library));
+      const after = fromChange(await loadDemo(page, demo));
       const start = after[0]![0];
       const first = after
         .filter(([t]) => t - start <= 420)
@@ -123,7 +126,7 @@ export function describeProgressDemo(library: string) {
     });
 
     test('it lands without a jump', async ({ page }) => {
-      const after = fromChange(await loadDemo(page, library));
+      const after = fromChange(await loadDemo(page, demo));
       const steps = after
         .slice(1)
         .map(([, value], i) => value - after[i]![1])
@@ -137,7 +140,7 @@ export function describeProgressDemo(library: string) {
 
     test('reduced motion: values apply at once', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      const frames = await loadDemo(page, library);
+      const frames = await loadDemo(page, demo);
       const between = frames.filter(
         ([, v]) => Math.abs(v - FROM) >= 0.01 && Math.abs(v - TO) >= 0.01,
       );
@@ -148,9 +151,7 @@ export function describeProgressDemo(library: string) {
 
   test.describe(`${library} progress, values in quick succession`, () => {
     test('values retarget mid-way, then settle on 100%', async ({ page }) => {
-      await page.goto(`/tests/fixtures/${library}-progress`, {
-        waitUntil: 'networkidle',
-      });
+      await page.goto(fixture, { waitUntil: 'networkidle' });
       const button = page.getByRole('button', { name: 'Upload again' });
       await button.click();
       await expect(button).toBeEnabled({ timeout: 6000 });

@@ -1,0 +1,73 @@
+---
+title: Progress
+description: Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.
+---
+
+<VueComponentPreview name="reka-ui/progress" />
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+In your shadcn-vue progress (`components/ui/progress`), import from Animate UI instead of reka-ui. `@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does, so swapping the whole import is enough. Then remove `transition-all` from `ProgressIndicator`: it would run on top of Motion.
+
+```vue
+<script setup lang="ts">
+import { ProgressIndicator, ProgressRoot } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { ProgressIndicator, ProgressRoot } from '@animate-ui/vue/primitives/reka-ui'
+
+const value = ref(40)
+</script>
+
+<template>
+  <ProgressRoot :model-value="value" class="h-2 w-full overflow-hidden rounded-full">
+    <ProgressIndicator
+      class="h-full w-full bg-primary"
+      :style="`transform: translateX(-${100 - value}%);`"
+    />
+  </ProgressRoot>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React progress:
+
+- **Indicator** springs to each new value (stiffness 300, damping 35: most of the way in ~230ms and settled by ~550ms, with no jump at the end; no overshoot, which would uncover the start of the track). reka-ui leaves the indicator's position to you: shadcn-vue moves it with `transform: translateX(-…%)` in its style, as a string or an object. Animate UI animates that translation instead of jumping to it, as an `x` that keeps its momentum when a new value arrives mid-way.
+- It starts at its value on mount, with no animation.
+- Under reduced motion, the indicator jumps to each value.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Progress](https://reka-ui.com/docs/components/progress#api-reference). Animate UI adds the animation props below.
+
+### ProgressRoot
+
+[reka-ui props](https://reka-ui.com/docs/components/progress#root) only. It isn't animated.
+
+### ProgressIndicator
+
+[reka-ui props](https://reka-ui.com/docs/components/progress#indicator), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the indicator to each new value.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 300, damping: 35, restDelta: 0.01, restSpeed: 0.1 }",
+    },
+  }}
+/>
+
+`AnimateUIProvider`'s `tempo` scales the spring with everything else.

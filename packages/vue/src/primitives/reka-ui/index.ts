@@ -376,9 +376,6 @@ export type {
   PopoverTriggerProps,
   PresenceProps,
   PrimitiveProps,
-  ProgressIndicatorProps,
-  ProgressRootEmits,
-  ProgressRootProps,
   RGBColor,
   RadioGroupIndicatorProps,
   RadioGroupItemEmits,
@@ -586,6 +583,14 @@ export {
   CollapsibleContent,
   type CollapsibleContentProps,
 } from './collapsible';
+
+export {
+  ProgressRoot,
+  type ProgressRootEmits,
+  type ProgressRootProps,
+  ProgressIndicator,
+  type ProgressIndicatorProps,
+} from './progress';
 
 export {
   type SwitchRootEmits,

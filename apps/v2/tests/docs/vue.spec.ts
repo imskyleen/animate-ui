@@ -6,6 +6,7 @@ const PAGES = [
   ['accordion', 'Product Information'],
   ['checkbox', 'Enable notifications'],
   ['collapsible', '@radix-ui/primitives'],
+  ['progress', 'progress.value = 66'],
   ['switch', 'Airplane Mode'],
   ['toggle', 'TextBoldIcon'],
 ] as const;

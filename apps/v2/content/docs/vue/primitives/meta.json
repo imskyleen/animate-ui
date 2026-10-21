@@ -1,4 +1,11 @@
 {
   "title": "Primitives",
-  "pages": ["accordion", "checkbox", "collapsible", "switch", "toggle"]
+  "pages": [
+    "accordion",
+    "checkbox",
+    "collapsible",
+    "progress",
+    "switch",
+    "toggle"
+  ]
 }
