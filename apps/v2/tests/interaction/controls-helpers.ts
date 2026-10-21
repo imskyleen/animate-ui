@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '../test';
 
-export type Lib = 'radix-ui' | 'base-ui' | 'react-aria';
+export type Lib = 'radix-ui' | 'base-ui' | 'react-aria' | 'vue-reka-ui';
 
 export type Sample = {
   t: number;
@@ -150,6 +150,13 @@ async function stateOf(root: Locator) {
 }
 
 async function gotoDemo(page: Page, lib: Lib, name: string, query = '') {
+  if (lib === 'vue-reka-ui') {
+    await page.goto(`/tests/vue-demos/reka-ui/${name}${query}`, {
+      waitUntil: 'networkidle',
+    });
+    await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+    return;
+  }
   await page.goto(`/tests/demos/${lib}/${name}${query}`, {
     waitUntil: 'networkidle',
   });

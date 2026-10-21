@@ -461,9 +461,6 @@ export type {
   StepperTitleProps,
   StepperTriggerProps,
   StringOrNumber,
-  SwitchRootEmits,
-  SwitchRootProps,
-  SwitchThumbProps,
   TabsContentProps,
   TabsIndicatorProps,
   TabsListProps,
@@ -586,3 +583,11 @@ export {
   CollapsibleContent,
   type CollapsibleContentProps,
 } from './collapsible';
+
+export {
+  type SwitchRootEmits,
+  type SwitchRootProps,
+  SwitchRoot,
+  SwitchThumb,
+  type SwitchThumbProps,
+} from './switch';

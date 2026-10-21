@@ -1,0 +1,71 @@
+---
+title: Switch
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<VueComponentPreview name="reka-ui/switch" />
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+In your shadcn-vue switch (`components/ui/switch`), import from Animate UI instead of reka-ui. `@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does, so swapping the whole import is enough. Then remove `transition-all` from `SwitchRoot` and `transition-transform` from `SwitchThumb`: the track changes colour at once, and Animate UI moves the thumb.
+
+```vue
+<script setup lang="ts">
+import { SwitchRoot, SwitchThumb } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { SwitchRoot, SwitchThumb } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+
+<template>
+  <SwitchRoot id="airplane-mode">
+    <SwitchThumb />
+  </SwitchRoot>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React switch:
+
+- **Thumb**, pressed: stretches toward the middle of the track, its other edge in place. Its width grows by 3/16 (a 16px thumb becomes 19px) on a spring (stiffness 300, damping 25). It's the thumb's real width, so its round ends stay round.
+- **Thumb**, on a change: springs to its new side while its width springs back, on the same spring. The thumb's `translate` classes still decide where it rests (`data-[state=checked]:translate-x-…`): Animate UI puts it back where it was with a `transform` and springs it to its new place.
+- **Root** doesn't move, and its track changes colour at once.
+- The press is the pointer, or Enter on the keyboard. Space toggles without the stretch, and the thumb glides the same way.
+- Toggling again mid-glide turns back from where the thumb is, without a jump.
+- Under reduced motion, the thumb jumps to its side, without the stretch.
+- A leftover `transition-transform` on the thumb doesn't break the glide: Animate UI skips it while measuring.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Switch](https://reka-ui.com/docs/components/switch#api-reference). Animate UI adds the animation props below. With `as-child`, a part renders your element with reka-ui's behaviour: an `as-child` SwitchRoot has no press stretch, an `as-child` SwitchThumb no animation.
+
+### SwitchRoot
+
+[reka-ui props](https://reka-ui.com/docs/components/switch#root). The root doesn't animate itself: it tells the thumb when it's pressed.
+
+### SwitchThumb
+
+[reka-ui props](https://reka-ui.com/docs/components/switch#thumb), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the thumb: its stretch while pressed, and its glide to the new side.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 25 }",
+    },
+  }}
+/>
+
+`AnimateUIProvider`'s `tempo` scales the spring with everything else.
