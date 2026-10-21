@@ -45,7 +45,8 @@ async function armPickRecording(
       const stateOf = (mark: HTMLElement | null) => {
         if (!mark) return null;
         const icon = mark.querySelector('svg') ?? mark;
-        const shape = icon.querySelector('path, line, polyline') ?? icon;
+        const shape =
+          icon.querySelector('path, line, polyline, circle') ?? icon;
         let opacity = 1;
         for (let el: Element | null = shape; el; el = el.parentElement) {
           opacity *= Number(getComputedStyle(el).opacity);

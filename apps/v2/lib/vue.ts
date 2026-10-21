@@ -40,6 +40,28 @@ export const frameworkOf = (pathname: string) =>
 
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
+  'reka-ui/dropdown-menu': {
+    DropdownMenuContent: {
+      side: {
+        value: 'bottom',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 4 },
+      align: {
+        value: 'start',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+    AnimateUIProvider: {
+      checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
+    },
+  },
+  'reka-ui/context-menu': {
+    AnimateUIProvider: {
+      checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
+    },
+  },
   'reka-ui/tooltip': {
     Tooltip: {
       followCursor: {

@@ -5,7 +5,9 @@ const PAGE = '/docs/vue/primitives/reka-ui/accordion';
 const PAGES = [
   ['accordion', 'Product Information'],
   ['alert-dialog', 'Show Dialog'],
+  ['context-menu', 'Show Full URLs'],
   ['dialog', 'Open Dialog'],
+  ['dropdown-menu', 'Panel Position'],
   ['hover-card', '@nuxt'],
   ['popover', 'Set the dimensions for the layer'],
   ['checkbox', 'Enable notifications'],
@@ -26,7 +28,10 @@ for (const [name, text] of PAGES)
     await page.goto(`/docs/vue/primitives/reka-ui/${name}`, {
       waitUntil: 'networkidle',
     });
-    await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+    await page
+      .locator('[data-slot="vue-demo"][data-mounted]')
+      .first()
+      .waitFor();
     await expect(
       page.locator('[data-slot="vue-demo"] [data-slot]').first(),
     ).toBeVisible();
@@ -121,7 +126,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(14);
+  await expect(cards).toHaveCount(16);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

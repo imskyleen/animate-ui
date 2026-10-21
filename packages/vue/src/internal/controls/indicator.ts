@@ -165,6 +165,9 @@ function forget(content: Element[]) {
   }
 }
 
+const anyShown = (targets: Element[]) =>
+  targets.some((el) => (drawn.get(el)?.progress.get() ?? 0) > 0);
+
 function animateTo(
   targets: Styled[],
   look: Look,
@@ -317,6 +320,8 @@ const IndicatorContent = defineComponent({
 });
 
 export {
+  anyShown,
+  drawn,
   CHECK_TRANSITION,
   CHECK_EXIT_TRANSITION,
   POP_TRANSITION,

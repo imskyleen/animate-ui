@@ -25,7 +25,7 @@ function readCheck({ items, label, indicator }: CheckTarget, t: number) {
   if (!mark)
     return { t, present: false, opacity: 0, scale: 1, blur: 0, dash: 1 };
   const icon = mark.querySelector<Element>('svg') ?? mark;
-  const shape = icon.querySelector('path, line, polyline') ?? icon;
+  const shape = icon.querySelector('path, line, polyline, circle') ?? icon;
   let opacity = 1;
   for (let el: Element | null = shape; el; el = el.parentElement) {
     opacity *= Number(getComputedStyle(el).opacity);

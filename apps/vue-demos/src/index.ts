@@ -10,6 +10,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/dialog': () => import('./demos/reka-ui/dialog.vue'),
   'reka-ui/alert-dialog': () => import('./demos/reka-ui/alert-dialog.vue'),
   'reka-ui/sheet': () => import('./demos/reka-ui/sheet.vue'),
+  'reka-ui/dropdown-menu': () => import('./demos/reka-ui/dropdown-menu.vue'),
+  'reka-ui/context-menu': () => import('./demos/reka-ui/context-menu.vue'),
   'reka-ui/popover': () => import('./demos/reka-ui/popover.vue'),
   'reka-ui/tooltip': () => import('./demos/reka-ui/tooltip.vue'),
   'reka-ui/hover-card': () => import('./demos/reka-ui/hover-card.vue'),
@@ -17,6 +19,10 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
   'fixtures/reka-ui-toggle': () => import('./fixtures/reka-ui-toggle.vue'),
   'fixtures/reka-ui-dialog': () => import('./fixtures/reka-ui-dialog.vue'),
+  'fixtures/reka-ui-dropdown-menu': () =>
+    import('./fixtures/reka-ui-dropdown-menu.vue'),
+  'fixtures/reka-ui-context-menu': () =>
+    import('./fixtures/reka-ui-context-menu.vue'),
   'fixtures/reka-ui-follow-cursor': () =>
     import('./fixtures/reka-ui-follow-cursor.vue'),
   'fixtures/reka-ui-popover': () => import('./fixtures/reka-ui-popover.vue'),

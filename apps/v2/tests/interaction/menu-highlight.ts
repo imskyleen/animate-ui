@@ -156,6 +156,8 @@ export function describeMenuHighlight(name: string, c: MenuHighlightCase) {
     test.describe.configure({ timeout: 180_000 });
     test.beforeEach(async ({ page }) => {
       await page.goto(c.path, { waitUntil: 'networkidle', timeout: 150_000 });
+      if (page.url().includes('/vue-demos/'))
+        await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
       await page.mouse.move(1, 1);
       await c.open(page);
     });
