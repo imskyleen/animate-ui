@@ -4,8 +4,11 @@ type Props = Record<string, unknown>
 
 const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/accordion': () => import('./demos/reka-ui/accordion.vue'),
+  'reka-ui/collapsible': () => import('./demos/reka-ui/collapsible.vue'),
   'fixtures/reka-ui-accordion': () =>
     import('./fixtures/reka-ui-accordion.vue'),
+  'fixtures/reka-ui-collapsible': () =>
+    import('./fixtures/reka-ui-collapsible.vue'),
 }
 
 export const names = Object.keys(demos)

@@ -1,4 +1,4 @@
 {
   "title": "Primitives",
-  "pages": ["accordion"]
+  "pages": ["accordion", "collapsible"]
 }

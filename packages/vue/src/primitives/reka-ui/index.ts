@@ -61,10 +61,6 @@ export type {
   CheckboxRootEmits,
   CheckboxRootProps,
   CollapsibleContentEmits,
-  CollapsibleContentProps,
-  CollapsibleRootEmits,
-  CollapsibleRootProps,
-  CollapsibleTriggerProps,
   Color,
   ColorAreaAreaProps,
   ColorAreaRootEmits,
@@ -580,3 +576,13 @@ export {
   AccordionContent,
   type AccordionContentProps,
 } from './accordion';
+
+export {
+  CollapsibleTrigger,
+  type CollapsibleRootEmits,
+  type CollapsibleRootProps,
+  type CollapsibleTriggerProps,
+  CollapsibleRoot,
+  CollapsibleContent,
+  type CollapsibleContentProps,
+} from './collapsible';

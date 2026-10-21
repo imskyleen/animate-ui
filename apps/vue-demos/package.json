@@ -13,6 +13,7 @@
     "@hugeicons/core-free-icons": "^4.3.5",
     "@hugeicons/vue": "^1.0.8",
     "@vueuse/core": "^15.0.0",
+    "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
     "motion-v": "^2.8.0",
     "reka-ui": "^2.11.0",

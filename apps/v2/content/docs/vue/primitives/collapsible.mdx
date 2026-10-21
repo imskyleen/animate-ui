@@ -1,0 +1,78 @@
+---
+title: Collapsible
+description: An interactive component which expands/collapses a panel.
+---
+
+<VueComponentPreview name="reka-ui/collapsible" />
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+In your shadcn-vue collapsible (`components/ui/collapsible`), import from Animate UI instead of reka-ui. `@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does, so swapping the whole import is enough.
+
+```vue
+<script setup lang="ts">
+import { CollapsibleContent } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  CollapsibleContent,
+  CollapsibleRoot,
+  CollapsibleTrigger,
+} from '@animate-ui/vue/primitives/reka-ui'
+</script>
+
+<template>
+  <CollapsibleRoot>
+    <CollapsibleTrigger>Can I use this in my project?</CollapsibleTrigger>
+    <CollapsibleContent>
+      Yes. Free to use for personal and commercial projects.
+    </CollapsibleContent>
+  </CollapsibleRoot>
+</template>
+```
+
+## Animation
+
+- **Content** unfolds like the accordions: its height grows from 0 while the content fades in from a 2px blur, over 350ms on a soft ease-out. While it moves, its bottom edge fades (over 16px, or over the part still hidden): the content never meets what follows it with a hard cut. It folds back the same way, in reverse, then unmounts.
+- Toggling it while it moves retargets from where it is.
+- Open by default (`default-open`), it animates open on mount (page load).
+- `--reka-collapsible-content-height` and `--reka-collapsible-content-width` read `auto`: classes using them follow Motion's height instead of a stale measure.
+- With `force-mount`, closed content stays in the DOM, collapsed and `inert`.
+- `<AnimateUIProvider :tempo>` paces both transitions.
+- Under reduced motion, the height changes at once; the fade and the blur still play.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Collapsible](https://reka-ui.com/docs/components/collapsible#api-reference). Animate UI adds the animation props below.
+
+### CollapsibleRoot, CollapsibleTrigger
+
+[reka-ui props](https://reka-ui.com/docs/components/collapsible#api-reference) only. They are not animated.
+
+### CollapsibleContent
+
+[reka-ui props](https://reka-ui.com/docs/components/collapsible#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the opening.',
+      type: 'Transition',
+      default: '{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>

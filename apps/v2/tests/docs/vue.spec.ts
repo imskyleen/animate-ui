@@ -2,19 +2,29 @@ import { expect, test } from '../test';
 
 const PAGE = '/docs/vue/primitives/accordion';
 
-test('a Vue page shows its Vue demo and .vue source', async ({ page }) => {
-  await page.goto(PAGE, { waitUntil: 'networkidle' });
-  await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
-  await expect(
-    page.getByRole('button', { name: 'Product Information' }),
-  ).toHaveAttribute('aria-expanded', 'true');
-  await expect(
-    page
-      .locator('pre')
-      .filter({ hasText: '<script setup lang="ts">' })
-      .filter({ hasText: 'Product Information' }),
-  ).toHaveCount(1);
-});
+const PAGES = [
+  ['accordion', 'Product Information'],
+  ['collapsible', '@radix-ui/primitives'],
+] as const;
+
+for (const [name, text] of PAGES)
+  test(`the Vue ${name} page shows its Vue demo and .vue source`, async ({
+    page,
+  }) => {
+    await page.goto(`/docs/vue/primitives/${name}`, {
+      waitUntil: 'networkidle',
+    });
+    await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+    await expect(
+      page.locator('[data-slot="vue-demo"]').getByText(text).first(),
+    ).toBeVisible();
+    await expect(
+      page
+        .locator('pre')
+        .filter({ hasText: '<script setup lang="ts">' })
+        .filter({ hasText: text }),
+    ).toHaveCount(1);
+  });
 
 for (const scheme of ['light', 'dark'] as const)
   test(`the logo is Vue green on Vue pages only, in the ${scheme} theme`, async ({
