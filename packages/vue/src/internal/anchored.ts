@@ -9,6 +9,7 @@ import {
 
 export const POPOVER_TRANSITION = motionTokens.spring.pop;
 export const MENU_TRANSITION = motionTokens.transition.menu;
+export const MORPH_TRANSITION = motionTokens.spring.morph;
 
 export const HIDDEN_SCALE = {
   tooltip: motionTokens.scale.tooltip,

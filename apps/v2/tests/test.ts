@@ -52,6 +52,26 @@ export const test = base.extend<{
           problems.push(`console: ${message.text()}`);
       });
       page.on('pageerror', (error) => problems.push(`page: ${error.message}`));
+      // A Vue demo mounts after the page loads: wait for it, wherever a suite navigates.
+      const mounted = async () => {
+        if (page.url().includes('/vue-demos/'))
+          await page
+            .locator('[data-slot="vue-demo"][data-mounted]')
+            .first()
+            .waitFor();
+      };
+      const goto = page.goto.bind(page);
+      page.goto = async (...args) => {
+        const response = await goto(...args);
+        await mounted();
+        return response;
+      };
+      const reload = page.reload.bind(page);
+      page.reload = async (...args) => {
+        const response = await reload(...args);
+        await mounted();
+        return response;
+      };
       await page.context().route(
         (url) => !LOCAL.test(url.href),
         (route) => {

@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import type { MenubarSubTriggerProps } from "@animate-ui/vue/primitives/reka-ui"
+import type { HTMLAttributes } from "vue"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/vue"
+import { reactiveOmit } from "@vueuse/core"
+import { cn } from "cn"
+import { MenubarSubTrigger, useForwardProps } from "@animate-ui/vue/primitives/reka-ui"
+
+const props = defineProps<MenubarSubTriggerProps & { class?: HTMLAttributes["class"], inset?: boolean }>()
+
+const delegatedProps = reactiveOmit(props, "class", "inset")
+const forwardedProps = useForwardProps(delegatedProps)
+</script>
+
+<template>
+  <MenubarSubTrigger
+    data-slot="menubar-sub-trigger"
+    :data-inset="inset ? '' : undefined"
+    v-bind="forwardedProps"
+    :class="cn(
+      'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[inset]:pl-8',
+      props.class,
+    )"
+  >
+    <slot />
+    <HugeiconsIcon :icon="ArrowRight01Icon" :stroke-width="2" class="ml-auto size-4" />
+  </MenubarSubTrigger>
+</template>

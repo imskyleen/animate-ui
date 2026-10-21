@@ -20,7 +20,14 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
-import { HIDDEN_SCALE, MENU_TRANSITION } from './anchored';
+import { HIDDEN_SCALE, MENU_TRANSITION, MORPH_TRANSITION } from './anchored';
+import {
+  HandoffNestedKey,
+  MenuHandoffKey,
+  takeOver,
+  useHandoffNested,
+  useMenuHandoff,
+} from './menu-handoff';
 import { provideHighlightScope, useItemHighlight } from './item-highlight';
 import {
   createCheckGroup,
@@ -40,7 +47,8 @@ const elementOf = (node: unknown) =>
 
 type MenuState = { open: () => boolean; picked: () => Picked };
 
-const MenuStateKey: InjectionKey<MenuState> = Symbol('AnimateUIMenuState');
+export const MenuStateKey: InjectionKey<MenuState> =
+  Symbol('AnimateUIMenuState');
 const PortalForceMountKey: InjectionKey<boolean> = Symbol(
   'AnimateUIMenuPortalForceMount',
 );
@@ -121,6 +129,7 @@ type ContentOptions = {
   origin: string;
   sub?: boolean;
   returnFocus: 'trigger' | 'previous' | 'none';
+  handoff?: boolean;
 };
 
 const ContentMotion = defineComponent({
@@ -132,6 +141,7 @@ const ContentMotion = defineComponent({
     keepMounted: Boolean,
     origin: { type: String, required: true },
     sub: Boolean,
+    handoff: Boolean,
     returnFocus: {
       type: String as PropType<ContentOptions['returnFocus']>,
       required: true,
@@ -147,9 +157,28 @@ const ContentMotion = defineComponent({
       () => props.exitTransition ?? props.transition ?? MENU_TRANSITION,
     );
     const hold = usePickHold();
+    const morph = useTempoTransition(
+      () => props.transition ?? MORPH_TRANSITION,
+    );
     const element = shallowRef<HTMLElement | null>(null);
     const settledClosed = ref(!props.open);
     if (!props.sub) provideHighlightScope(() => props.open);
+    const handoff = useMenuHandoff(
+      props.handoff ? inject(MenuHandoffKey, null) : null,
+      {
+        node: element,
+        open: () => props.open,
+        transition: () => morph.value,
+        reduce: () => reduce.value,
+        // Handed over and hidden: it leaves at once.
+        onDrop: () => {
+          if (!props.open) emit('exited');
+        },
+      },
+    );
+    useHandoffNested(element, props.sub);
+    if (!props.sub)
+      provide(HandoffNestedKey, props.handoff ? handoff.entry : null);
 
     let previousFocus: Element | null = null;
     onMounted(() => {
@@ -185,8 +214,10 @@ const ContentMotion = defineComponent({
         scale: reduce.value ? 1 : HIDDEN_SCALE.menu,
       };
       const picked = state.picked();
-      const exit: Transition =
-        picked && !reduce.value
+      const from = handoff.from.value;
+      const exit: Transition = handoff.dropped.value
+        ? { duration: 0 }
+        : picked && !reduce.value
           ? {
               ...leave.value,
               delay:
@@ -201,9 +232,11 @@ const ContentMotion = defineComponent({
           ref: (node: unknown) => {
             element.value = elementOf(node);
           },
-          initial: hidden,
+          initial: from ? { opacity: from.opacity, scale: 1 } : hidden,
           animate: props.open
-            ? { opacity: 1, scale: 1, transition: enter.value }
+            ? from
+              ? takeOver(from, enter.value)
+              : { opacity: 1, scale: 1, transition: enter.value }
             : { ...hidden, transition: exit },
           style: [
             attrs.style,
@@ -304,6 +337,7 @@ export function createMenuContent(
                     keepMounted: keepMounted(),
                     origin: options.origin,
                     sub: Boolean(options.sub),
+                    handoff: Boolean(options.handoff),
                     returnFocus: options.returnFocus,
                     transition: props.transition,
                     exitTransition: props.exitTransition,

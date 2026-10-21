@@ -15,6 +15,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   dialog: DIALOG_STRIP,
   'dropdown-menu': [/^duration-100$/],
   'hover-card': [/^duration-100$/],
+  menubar: [/^duration-100$/],
   popover: [/^duration-100$/],
   progress: [/^transition-all$/],
   'radio-group': [],
