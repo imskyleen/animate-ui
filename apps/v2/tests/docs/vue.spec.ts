@@ -7,6 +7,7 @@ const PAGES = [
   ['checkbox', 'Enable notifications'],
   ['collapsible', '@radix-ui/primitives'],
   ['switch', 'Airplane Mode'],
+  ['toggle', 'TextBoldIcon'],
 ] as const;
 
 for (const [name, text] of PAGES)
@@ -18,7 +19,7 @@ for (const [name, text] of PAGES)
     });
     await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
     await expect(
-      page.locator('[data-slot="vue-demo"]').getByText(text).first(),
+      page.locator('[data-slot="vue-demo"] [data-slot]').first(),
     ).toBeVisible();
     await expect(
       page

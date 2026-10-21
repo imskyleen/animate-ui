@@ -503,11 +503,9 @@ export type {
   ToastTitleProps,
   ToastUpdateOptions,
   ToastViewportProps,
-  ToggleEmits,
   ToggleGroupItemProps,
   ToggleGroupRootEmits,
   ToggleGroupRootProps,
-  ToggleProps,
   ToolbarButtonProps,
   ToolbarLinkProps,
   ToolbarRootProps,
@@ -596,3 +594,9 @@ export {
   SwitchThumb,
   type SwitchThumbProps,
 } from './switch';
+
+export {
+  type ToggleEmits,
+  Toggle,
+  type ToggleProps,
+} from './toggle';

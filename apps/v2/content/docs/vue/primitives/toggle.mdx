@@ -1,0 +1,58 @@
+---
+title: Toggle
+description: A two-state button that can be either on or off.
+---
+
+<VueComponentPreview name="reka-ui/toggle" />
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+In your shadcn-vue toggle (`components/ui/toggle`), import from Animate UI instead of reka-ui. `@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does, so swapping the whole import is enough.
+
+```vue
+<script setup lang="ts">
+import { Toggle } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Toggle } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+
+<template>
+  <Toggle aria-label="Toggle bold">B</Toggle>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React toggle:
+
+- **Toggle** scales to 0.97 while pressed, on Motion's default spring for scale (stiffness 550, damping 30). No hover scale.
+- The press scale runs on the compositor (a `transform`), so a `transition` class on the toggle doesn't tween its frames.
+- The on/off colours are the component's CSS (`data-[state=on]:bg-accent` in shadcn-vue).
+- Toggling with Space changes the state at once.
+- Under reduced motion, there is no press scale.
+
+## API Reference
+
+`Toggle` takes exactly the props of [reka-ui's Toggle](https://reka-ui.com/docs/components/toggle#api-reference), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the press scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+  }}
+/>
+
+With `as-child`, it renders your element with reka-ui's behaviour, without the animation. `AnimateUIProvider`'s `tempo` scales these transitions with everything else.
