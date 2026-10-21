@@ -13,6 +13,12 @@ export async function gotoHydrated(page: Page, url: string) {
   });
 }
 
+/** Vue demos are mounted by VueDemo once the page is up. */
+export async function gotoVueMounted(page: Page, url: string) {
+  await page.goto(url, { waitUntil: 'networkidle' });
+  await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+}
+
 export type HeightSample = {
   t: number;
   h: number;
@@ -121,14 +127,22 @@ type DemoOptions = {
   closed: { trigger: string; text: string };
   open?: { trigger: string; text: string };
   closedState: 'unmounted' | 'hidden';
+  goto?: (page: Page, url: string) => Promise<void>;
 };
 
 export function disclosureDemoTests(name: string, options: DemoOptions) {
-  const { url, panel, closed, open, closedState } = options;
+  const {
+    url,
+    panel,
+    closed,
+    open,
+    closedState,
+    goto = gotoHydrated,
+  } = options;
 
   test.describe(name, () => {
     test.beforeEach(async ({ page }) => {
-      await gotoHydrated(page, url);
+      await goto(page, url);
     });
 
     const trigger = (page: Page, label: string) =>
@@ -221,7 +235,7 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
           },
           { selector: panel, text: open.text },
         );
-        await gotoHydrated(page, url);
+        await goto(page, url);
         await expect(panelOf(page, open.text)).toHaveCSS('opacity', '1');
         const full = await panelOf(page, open.text).evaluate(
           (el) => el.getBoundingClientRect().height,

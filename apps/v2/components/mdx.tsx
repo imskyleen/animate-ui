@@ -27,6 +27,7 @@ import {
 } from './docs/preview-grids';
 import { Installation } from './docs/installation';
 import { PageTransitionEffects } from './docs/page-transition-effects';
+import { VueComponentPreview } from './docs/vue-component-preview';
 import { RegistryInstallation } from './docs/registry-installation';
 import {
   CodeBlockTab,
@@ -67,6 +68,7 @@ export function getMDXComponents(components?: MDXComponents) {
     Installation,
     RegistryInstallation,
     PageTransitionEffects,
+    VueComponentPreview,
     Changelog,
     ChangelogItem,
     ChangelogItemDescription,

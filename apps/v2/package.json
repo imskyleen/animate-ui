@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "build": "pnpm registry && next build",
-    "dev": "pnpm registry && next dev",
+    "build": "pnpm registry && pnpm --filter vue-demos build:demos && next build",
+    "dev": "pnpm registry && pnpm --filter vue-demos build:demos && next dev",
     "start": "next start",
     "lint": "eslint",
     "check-types": "next typegen && tsc --noEmit",

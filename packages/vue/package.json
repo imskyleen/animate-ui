@@ -1,0 +1,71 @@
+{
+  "name": "@animate-ui/vue",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "description": "Animated drop-in primitives for reka-ui, built with Motion for Vue.",
+  "keywords": [
+    "animate-ui",
+    "vue",
+    "motion",
+    "motion-v",
+    "animation",
+    "reka-ui",
+    "shadcn-vue",
+    "primitives",
+    "components"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imskyleen/animate-ui.git",
+    "directory": "packages/vue"
+  },
+  "homepage": "https://animate-ui.com",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node scripts/generate-barrel.mts && tsdown",
+    "dev": "tsdown --watch",
+    "gen": "node scripts/generate-barrel.mts",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "exports": {
+    "./*": "./src/*/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      "./*": {
+        "types": "./dist/*/index.d.ts",
+        "default": "./dist/*/index.js"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "peerDependencies": {
+    "motion-v": "^2.8.0",
+    "reka-ui": "^2.11.0",
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "reka-ui": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@workspace/eslint-config": "workspace:*",
+    "eslint": "catalog:",
+    "motion-v": "^2.8.0",
+    "reka-ui": "^2.11.0",
+    "tsdown": "^0.23.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.3",
+    "vue": "^3.5.44"
+  }
+}

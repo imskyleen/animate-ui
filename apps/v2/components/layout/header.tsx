@@ -21,6 +21,7 @@ import { useSyncExternalStore, type ComponentProps } from 'react';
 
 import { AnimateUILogo } from '@/lib/libraries';
 import { docsVersions, gitConfig } from '@/lib/shared';
+import { isVuePath, VUE_COLORS } from '@/lib/vue';
 import {
   ThemeTogglerButton,
   ThemeTogglerButtonIcon,
@@ -203,7 +204,12 @@ export function SiteHeader({
           aria-label="Animate UI"
           className="flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent"
         >
-          <AnimateUILogo className="size-5 md:size-4.5" />
+          <AnimateUILogo
+            className="size-5 md:size-4.5"
+            style={
+              isVuePath(pathname) ? { color: VUE_COLORS.green } : undefined
+            }
+          />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

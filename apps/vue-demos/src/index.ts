@@ -1,0 +1,30 @@
+import { createApp, h, reactive, type Component } from 'vue'
+
+type Props = Record<string, unknown>
+
+const demos: Record<string, () => Promise<{ default: Component }>> = {
+  'reka-ui/accordion': () => import('./demos/reka-ui/accordion.vue'),
+  'fixtures/reka-ui-accordion': () =>
+    import('./fixtures/reka-ui-accordion.vue'),
+}
+
+export const names = Object.keys(demos)
+
+/** Mounts a demo into `element`; the handle updates its props and unmounts it. */
+export async function mount(name: string, element: Element, props: Props = {}) {
+  const load = demos[name]
+  if (!load) throw new Error(`No Vue demo named "${name}"`)
+  const { default: Demo } = await load()
+  const state = reactive({ ...props })
+  const app = createApp({ render: () => h(Demo, state) })
+  app.mount(element)
+  return {
+    update(next: Props) {
+      for (const key of Object.keys(state)) if (!(key in next)) delete state[key]
+      Object.assign(state, next)
+    },
+    unmount() {
+      app.unmount()
+    },
+  }
+}

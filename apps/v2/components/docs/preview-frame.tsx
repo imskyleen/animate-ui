@@ -30,6 +30,7 @@ import {
   type ControlValue,
 } from './controls-panel';
 import { CopyButton, getPreText } from './copy-button';
+import { VueDemo } from './vue-demo';
 
 const COLLAPSED_HEIGHT = 160;
 const PANEL_SIZE = 250;
@@ -99,6 +100,7 @@ export function PreviewFrame({
   code,
   fullBleed = false,
   demo: Demo,
+  vueDemo,
   controls: initialControls,
   values,
   iframe,
@@ -108,6 +110,7 @@ export function PreviewFrame({
   fullBleed?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   demo?: ComponentType<any>;
+  vueDemo?: string;
   controls?: Controls;
   values?: Record<string, ControlValue>;
   iframe?: string;
@@ -211,7 +214,12 @@ export function PreviewFrame({
                   fullBleed && 'absolute inset-0',
                 )}
               >
-                {Demo && controls ? (
+                {vueDemo ? (
+                  <VueDemo
+                    name={vueDemo}
+                    {...(controls && controlsToProps(controls))}
+                  />
+                ) : Demo && controls ? (
                   <Demo {...controlsToProps(controls)} />
                 ) : (
                   children
