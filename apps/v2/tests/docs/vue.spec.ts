@@ -12,6 +12,7 @@ const PAGES = [
   ['menubar', 'Always Show Full URLs'],
   ['navigation-menu', 'Getting started'],
   ['popover', 'Set the dimensions for the layer'],
+  ['preview-link-card', 'click to dive in'],
   ['checkbox', 'Enable notifications'],
   ['collapsible', '@radix-ui/primitives'],
   ['progress', 'progress.value = 66'],
@@ -131,7 +132,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(21);
+  await expect(cards).toHaveCount(22);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

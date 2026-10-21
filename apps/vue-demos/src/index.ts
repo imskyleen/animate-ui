@@ -22,6 +22,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/tooltip': () => import('./demos/reka-ui/tooltip.vue'),
   'reka-ui/hover-card': () => import('./demos/reka-ui/hover-card.vue'),
   'reka-ui/toggle-group': () => import('./demos/reka-ui/toggle-group.vue'),
+  'reka-ui/preview-link-card': () =>
+    import('./demos/reka-ui/preview-link-card.vue'),
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
   'fixtures/reka-ui-toggle': () => import('./fixtures/reka-ui-toggle.vue'),
   'fixtures/reka-ui-dialog': () => import('./fixtures/reka-ui-dialog.vue'),
@@ -53,6 +55,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./fixtures/reka-ui-toggle-group.vue'),
   'fixtures/reka-ui-toggle-group-surfaces': () =>
     import('./fixtures/reka-ui-toggle-group-surfaces.vue'),
+  'fixtures/preview-link-card': () =>
+    import('./fixtures/preview-link-card.vue'),
   'fixtures/reka-ui-radio-group': () =>
     import('./fixtures/reka-ui-radio-group.vue'),
   'reka-ui/progress': () => import('./demos/reka-ui/progress.vue'),

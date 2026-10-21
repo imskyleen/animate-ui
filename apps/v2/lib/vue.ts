@@ -57,6 +57,27 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
     },
   },
+  'reka-ui/preview-link-card': {
+    PreviewLinkCard: {
+      followCursor: {
+        value: false,
+        options: { false: false, true: true, x: 'x', y: 'y' },
+      },
+      href: { value: 'https://animate-ui.com/docs' },
+    },
+    PreviewLinkCardContent: {
+      side: {
+        value: 'top',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 4 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+  },
   'reka-ui/select': {
     SelectContent: {
       position: {

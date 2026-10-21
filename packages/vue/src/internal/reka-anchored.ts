@@ -40,6 +40,7 @@ const AnchoredMotion = defineComponent({
     open: Boolean,
     keepMounted: Boolean,
     kind: String as PropType<AnchoredKind>,
+    as: { type: String, default: 'div' },
   },
   emits: ['exited'],
   setup(props, { emit, slots }) {
@@ -48,7 +49,7 @@ const AnchoredMotion = defineComponent({
     return () => {
       const { initial, animate, style } = motionProps.value;
       return h(
-        motion.div as Component,
+        (motion as unknown as Record<string, Component>)[props.as]!,
         {
           initial,
           animate,
@@ -157,6 +158,7 @@ export function createRekaAnchored(
                     open: root.open.value,
                     keepMounted: keepMounted(),
                     kind,
+                    as: typeof attrs.as === 'string' ? attrs.as : 'div',
                     transition: props.transition,
                     exitTransition: props.exitTransition,
                     onExited: exited,

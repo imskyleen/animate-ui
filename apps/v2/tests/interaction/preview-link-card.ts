@@ -49,14 +49,20 @@ export function expectMicrolinkQuery(
 }
 
 type PreviewLinkCardCase = {
-  library: 'radix-ui' | 'base-ui' | 'react-aria';
+  library: 'radix-ui' | 'base-ui' | 'react-aria' | 'vue-reka-ui';
   selector: string;
   openDelay: number;
   closeDelay: number;
 };
 
 export function describePreviewLinkCard(c: PreviewLinkCardCase) {
-  const path = `/tests/demos/${c.library}/preview-link-card`;
+  const vue = c.library === 'vue-reka-ui';
+  const path = vue
+    ? '/tests/vue-demos/reka-ui/preview-link-card'
+    : `/tests/demos/${c.library}/preview-link-card`;
+  const fixture = vue
+    ? '/tests/vue-demos/fixtures/preview-link-card'
+    : '/tests/fixtures/preview-link-card';
   const trigger = (page: Page) =>
     page.getByRole('link', { name: 'Animate UI Docs' }).first();
 
@@ -131,7 +137,7 @@ export function describePreviewLinkCard(c: PreviewLinkCardCase) {
   test.describe(`${c.library} preview-link-card props`, () => {
     test.describe.configure({ timeout: 180_000 });
     test.beforeEach(async ({ page }) => {
-      await gotoReady(page, '/tests/fixtures/preview-link-card');
+      await gotoReady(page, fixture);
     });
 
     test('src: an image of your own, preloaded, instead of the screenshot', async ({

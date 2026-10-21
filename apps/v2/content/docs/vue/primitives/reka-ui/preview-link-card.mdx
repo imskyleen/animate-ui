@@ -1,0 +1,165 @@
+---
+title: Preview Link Card
+description: A link that shows a screenshot of the page it leads to when hovered, in a card that links there too. Built on reka-ui's Hover Card.
+---
+
+<VueComponentPreview name="reka-ui/preview-link-card" />
+
+## Installation
+
+<Installation />
+
+It's built on reka-ui's Hover Card, a peer dependency of this primitive:
+
+```npm
+npm install reka-ui
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  PreviewLinkCard,
+  PreviewLinkCardContent,
+  PreviewLinkCardImage,
+  PreviewLinkCardPortal,
+  PreviewLinkCardTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <PreviewLinkCard href="https://animate-ui.com/docs">
+    <PreviewLinkCardTrigger>Animate UI Docs</PreviewLinkCardTrigger>
+    <PreviewLinkCardPortal>
+      <PreviewLinkCardContent>
+        <PreviewLinkCardImage alt="Animate UI Docs" />
+      </PreviewLinkCardContent>
+    </PreviewLinkCardPortal>
+  </PreviewLinkCard>
+</template>
+```
+
+The screenshot comes from [Microlink](https://microlink.io)'s API: it captures `href` on a mobile viewport three times the image's size. Pass `src` to show an image of your own instead. Either way, it's preloaded (a `<link rel="preload">` in the head) as soon as the card mounts, so it's there when the card opens.
+
+## Animation
+
+It is Animate UI's [Hover Card](/docs/vue/primitives/reka-ui/hover-card), so the card moves exactly like it:
+
+- **Content** grows from 0.8 and fades in, from the trigger (`--reka-hover-card-content-transform-origin`), on a spring (stiffness 400, damping 29) that overshoots a little before it settles.
+- It opens after reka-ui's `open-delay` (700ms by default) and, once its `close-delay` is over (300ms), closes the same way: it shrinks back to 0.8 on the same spring while it fades out, then unmounts.
+- Reopening while it closes picks up from where it is, on the same spring.
+- reka-ui only opens it for mouse-like pointers: a tap on a touch screen follows the link, nothing sticks.
+- With `follow-cursor` on the Root, the card leans towards the pointer while it moves over the trigger, on a spring (stiffness 200, damping 17).
+- Under reduced motion, it only fades (no scale).
+
+## API Reference
+
+The parts take the props of Animate UI's [Hover Card](/docs/vue/primitives/reka-ui/hover-card#api-reference), so those of [reka-ui's Hover Card](https://reka-ui.com/docs/components/hover-card#api-reference), plus the ones below.
+
+### PreviewLinkCard
+
+Hover Card's [Root](/docs/vue/primitives/reka-ui/hover-card#root) (`openDelay`, `closeDelay`, `open`, `followCursor`…), plus:
+
+<TypeTable
+  type={{
+    href: {
+      description:
+        'The page the link leads to, and the one the screenshot shows.',
+      type: 'string',
+      required: true,
+    },
+    src: {
+      description: 'The image to show instead of the screenshot of `href`.',
+      type: 'string',
+    },
+    width: {
+      description:
+        'The width of the image, in CSS pixels. The page is captured on a viewport three times as wide.',
+      type: 'number',
+      default: '240',
+    },
+    height: {
+      description:
+        'The height of the image, in CSS pixels. The page is captured on a viewport three times as tall.',
+      type: 'number',
+      default: '135',
+    },
+    'device-scale-factor': {
+      description: 'The device scale factor of the screenshot.',
+      type: 'number',
+      default: '1',
+    },
+    'color-scheme': {
+      description: 'The color scheme the page is captured in.',
+      type: "'light' | 'dark'",
+      default: "'light'",
+    },
+  }}
+/>
+
+### PreviewLinkCardTrigger
+
+Hover Card's [Trigger](https://reka-ui.com/docs/components/hover-card#trigger): a link, to the Root's `href` unless it has its own.
+
+### PreviewLinkCardPortal, PreviewLinkCardArrow
+
+Hover Card's [Portal](https://reka-ui.com/docs/components/hover-card#portal) and [Arrow](https://reka-ui.com/docs/components/hover-card#arrow).
+
+### PreviewLinkCardContent
+
+Hover Card's [Content](/docs/vue/primitives/reka-ui/hover-card#content) (`transition`, `exit-transition`, `side`, `align`…), rendered as a link to the Root's `href`: it is the card, and its `class` styles it. With `as-child`, your element is rendered instead.
+
+<TypeTable
+  type={{
+    side: {
+      description: 'The side of the trigger the card opens on.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+      default: "'top'",
+    },
+    'side-offset': {
+      description: 'The distance from the trigger, in pixels.',
+      type: 'number',
+      default: '10',
+    },
+    align: {
+      description: 'The alignment against the trigger.',
+      type: "'start' | 'center' | 'end'",
+      default: "'center'",
+    },
+    href: {
+      description: "The card's link. Defaults to the Root's `href`.",
+      type: 'string',
+    },
+    'target, rel, download, hreflang, ping, referrerpolicy': {
+      description: "The card's link attributes.",
+      type: 'string',
+    },
+  }}
+/>
+
+### PreviewLinkCardImage
+
+<TypeTable
+  type={{
+    alt: {
+      description: 'The text alternative of the image.',
+      type: 'string',
+      default: "'preview image'",
+    },
+    '...props': {
+      description:
+        "An `<img>`'s props, but `src`, `width` and `height`: they come from the Root.",
+      type: 'ImgHTMLAttributes',
+    },
+  }}
+/>
+
+### usePreviewLinkCard
+
+Returns getters for the card's `href`, its image's `src`, `width` and `height`: for an image of your own.
+
+## Credits
+
+- [reka-ui's Hover Card](https://reka-ui.com/docs/components/hover-card).
+- Inspired by [Aceternity UI's Link Preview](https://ui.aceternity.com/components/link-preview).

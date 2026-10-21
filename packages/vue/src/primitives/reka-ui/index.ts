@@ -665,6 +665,22 @@ export {
 } from './popover';
 
 export {
+  PreviewLinkCard,
+  PreviewLinkCardTrigger,
+  PreviewLinkCardPortal,
+  PreviewLinkCardContent,
+  PreviewLinkCardImage,
+  PreviewLinkCardArrow,
+  usePreviewLinkCard,
+  type PreviewLinkCardProps,
+  type PreviewLinkCardTriggerProps,
+  type PreviewLinkCardPortalProps,
+  type PreviewLinkCardContentProps,
+  type PreviewLinkCardArrowProps,
+  type PreviewLinkCardContextType,
+} from './preview-link-card';
+
+export {
   ProgressRoot,
   type ProgressRootEmits,
   type ProgressRootProps,
