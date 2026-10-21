@@ -126,13 +126,13 @@ export function DocsTabs({
     >
       <div className="not-prose flex items-center justify-between gap-2">
         <TabsHighlight
-          className="absolute inset-0 z-0 rounded-lg bg-background shadow-xs dark:bg-accent"
+          className="absolute inset-0 z-0 rounded-lg bg-accent"
           transition={ready ? undefined : INSTANT}
         >
           <TabsList
             aria-label={label}
             className={cn(
-              'inline-flex h-9 w-fit items-center gap-1 rounded-xl bg-accent/50 p-1 text-muted-foreground',
+              'inline-flex h-9 w-fit items-center text-muted-foreground',
               listClassName,
             )}
           >
