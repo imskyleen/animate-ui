@@ -40,7 +40,7 @@ async function switchToComponents(page: Page) {
 export function describeNavigationMenuClicks(
   title: string,
   path: string,
-  library: 'radix-ui' | 'base-ui',
+  library: 'radix-ui' | 'base-ui' | 'vue-reka-ui',
 ) {
   test.describe(title, () => {
     test.describe.configure({ timeout: 180_000 });

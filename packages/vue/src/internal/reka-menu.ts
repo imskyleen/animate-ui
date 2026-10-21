@@ -1,4 +1,6 @@
 import {
+  Comment,
+  Fragment,
   defineComponent,
   h,
   inject,
@@ -359,17 +361,29 @@ export function withHighlight(
   children: VNode[] | undefined,
   copies: VNode[],
   asChild: boolean,
-) {
+): VNode[] | undefined {
   if (copies.length === 0) return children;
   if (!asChild) return [...(children ?? []), ...copies];
-  const [first, ...rest] = children ?? [];
-  if (!isVNode(first) || typeof first.type !== 'string') return children;
+  const at = (children ?? []).findIndex(
+    (child) => !isVNode(child) || child.type !== Comment,
+  );
+  const first = children?.[at];
+  if (!children || !isVNode(first)) return children;
+  const before = children.slice(0, at);
+  const rest = children.slice(at + 1);
+  // A wrapper's `<slot />` hands its element over in a fragment.
+  if (first.type === Fragment && Array.isArray(first.children)) {
+    const inner = withHighlight(first.children as VNode[], copies, true);
+    if (inner === first.children) return children;
+    return [...before, h(Fragment, first.props, inner), ...rest];
+  }
+  if (typeof first.type !== 'string') return children;
   const own = Array.isArray(first.children)
     ? (first.children as VNode[])
     : typeof first.children === 'string'
       ? [first.children]
       : [];
-  return [h(first.type, first.props, [...own, ...copies]), ...rest];
+  return [...before, h(first.type, first.props, [...own, ...copies]), ...rest];
 }
 
 /** An item that wears its list's highlight. */

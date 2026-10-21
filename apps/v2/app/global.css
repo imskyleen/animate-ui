@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @source '../demos/**/*.{ts,tsx}';
 @source '../../../packages/react/src/**/*.{ts,tsx}';
-@source '../../vue-demos/src/**/*.vue';
+@source '../../vue-demos/src/**/*.{vue,ts}';
 
 @custom-variant dark (&:is(.dark *));
 

@@ -753,6 +753,13 @@ function takeOver(
 }
 
 export {
+  freeze,
+  release,
+  layers,
+  positioned,
+  LAYER,
+  UNIQUE_ATTRIBUTES,
+  type Layer,
   HandoffNestedKey,
   MenuHandoffKey,
   takeOver,

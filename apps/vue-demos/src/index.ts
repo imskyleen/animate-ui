@@ -16,6 +16,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/select': () => import('./demos/reka-ui/select.vue'),
   'reka-ui/slider': () => import('./demos/reka-ui/slider.vue'),
   'reka-ui/tabs': () => import('./demos/reka-ui/tabs.vue'),
+  'reka-ui/navigation-menu': () =>
+    import('./demos/reka-ui/navigation-menu.vue'),
   'reka-ui/popover': () => import('./demos/reka-ui/popover.vue'),
   'reka-ui/tooltip': () => import('./demos/reka-ui/tooltip.vue'),
   'reka-ui/hover-card': () => import('./demos/reka-ui/hover-card.vue'),
@@ -24,6 +26,10 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/reka-ui-toggle': () => import('./fixtures/reka-ui-toggle.vue'),
   'fixtures/reka-ui-dialog': () => import('./fixtures/reka-ui-dialog.vue'),
   'fixtures/reka-ui-menubar': () => import('./fixtures/reka-ui-menubar.vue'),
+  'fixtures/reka-ui-navigation-menu': () =>
+    import('./fixtures/reka-ui-navigation-menu.vue'),
+  'fixtures/reka-ui-navigation-menu-swap': () =>
+    import('./fixtures/reka-ui-navigation-menu-swap.vue'),
   'fixtures/reka-ui-select': () => import('./fixtures/reka-ui-select.vue'),
   'fixtures/reka-ui-slider': () => import('./fixtures/reka-ui-slider.vue'),
   'fixtures/reka-ui-tabs': () => import('./fixtures/reka-ui-tabs.vue'),

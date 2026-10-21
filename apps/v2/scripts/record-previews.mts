@@ -429,7 +429,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
       await away(page);
     },
     tail: 900,
-    viewport: { width: 640, height: 480 },
+    viewport: { width: 800, height: 480 },
   },
   pagination: {
     async play(page) {

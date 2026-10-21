@@ -107,31 +107,33 @@ async function expectResizeKeepsSpeed(page: Page, container: string) {
     expect(speed(i) / before, `frame ${i}: ${trace}`).toBeGreaterThan(0.3);
 }
 
-export function describeRadixNavigationMenuCases() {
-  test.describe('radix-ui navigation-menu content, more setups', () => {
+export function describeRadixNavigationMenuCases(
+  library = 'radix-ui',
+  fixture = '/tests/fixtures/radix-ui-navigation-menu-swap',
+  { first = 'Strict' }: { first?: string } = {},
+) {
+  test.describe(`${library} navigation-menu content, more setups`, () => {
     test.describe.configure({ timeout: 180_000 });
     test.use({ viewport: { width: 1280, height: 900 } });
     test.beforeEach(async ({ page }) => {
-      await page.goto('/tests/fixtures/radix-ui-navigation-menu-swap', {
-        waitUntil: 'networkidle',
-      });
+      await page.goto(fixture, { waitUntil: 'networkidle' });
     });
 
-    test('under StrictMode, the content still changes in place', async ({
+    test(`${first === 'Strict' ? 'under StrictMode' : 'left to right'}, the content still changes in place`, async ({
       page,
     }) => {
-      await hover(page, 'Strict one');
+      await hover(page, `${first} one`);
       await page.waitForTimeout(700);
-      const one = await restOf(page, 'Strict one link');
+      const one = await restOf(page, `${first} one link`);
       const recording = recordSwap(page, 'body', 600);
-      await hover(page, 'Strict two');
+      await hover(page, `${first} two`);
       const frames = await recording;
-      const two = await restOf(page, 'Strict two link');
-      const leaving = seriesOf(frames, 'Strict one link', true);
+      const two = await restOf(page, `${first} two link`);
+      const leaving = seriesOf(frames, `${first} one link`, true);
       expect(leaving.length).toBeGreaterThan(2);
       expect(Math.abs(leaving[0]!.left - one)).toBeLessThan(1.5);
-      expect(seriesOf(frames, 'Strict two link', true)).toEqual([]);
-      const coming = seriesOf(frames, 'Strict two link', false);
+      expect(seriesOf(frames, `${first} two link`, true)).toEqual([]);
+      const coming = seriesOf(frames, `${first} two link`, false);
       expect(coming[0]!.shown).toBeLessThan(0.2);
       expect(coming[0]!.left - two).toBeGreaterThan(SHIFT / 2);
     });

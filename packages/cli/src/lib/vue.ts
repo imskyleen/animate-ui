@@ -16,6 +16,9 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   'dropdown-menu': [/^duration-100$/],
   'hover-card': [/^duration-100$/],
   menubar: [/^duration-100$/],
+  'navigation-menu': [
+    /^group-data-\[viewport=false\]\/navigation-menu:duration-200$/,
+  ],
   popover: [/^duration-100$/],
   progress: [/^transition-all$/],
   select: [/^duration-100$/],

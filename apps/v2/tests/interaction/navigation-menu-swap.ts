@@ -585,7 +585,11 @@ export function describeNavigationMenuTriggerColors(
   });
 }
 
-export function describeNavigationMenuTriggers(title: string, path: string) {
+export function describeNavigationMenuTriggers(
+  title: string,
+  path: string,
+  { rest }: { rest?: string } = {},
+) {
   const setup: BarSetup = {
     triggers:
       '[data-slot="navigation-menu-trigger"], [data-slot="navigation-menu-list"] > li > [data-slot="navigation-menu-link"]',
@@ -602,6 +606,7 @@ export function describeNavigationMenuTriggers(title: string, path: string) {
     },
     open: (page, name) => hover(page, name),
     escapeClears: false,
+    rest,
   };
   test.describe(`${title} triggers`, () => {
     test.use({ viewport: { width: 1280, height: 800 } });

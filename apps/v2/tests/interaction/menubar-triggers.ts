@@ -9,6 +9,8 @@ export type BarSetup = {
   menu: { trigger: string; content: (page: Page) => Locator };
   open: (page: Page, name: string) => Promise<void>;
   escapeClears: boolean;
+  /** A background the triggers wear at rest (shadcn-vue's `bg-background`). */
+  rest?: string;
 };
 
 const MENUBAR: BarSetup = {
@@ -92,12 +94,13 @@ function recordTriggers(page: Page, bar: BarSetup, duration: number) {
 
 const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
-function expectOneHighlight(frames: TriggerFrame[]) {
+function expectOneHighlight(frames: TriggerFrame[], rest?: string) {
   expect(frames.length).toBeGreaterThan(5);
+  const allowed = rest ? [TRANSPARENT, rest] : [TRANSPARENT];
   for (const frame of frames) {
     expect(frame.surfaces.length, `${frame.t}ms`).toBeLessThanOrEqual(1);
     for (const [name, color] of Object.entries(frame.own))
-      expect(color, `${frame.t}ms: ${name}`).toBe(TRANSPARENT);
+      expect(allowed, `${frame.t}ms: ${name}`).toContain(color);
   }
 }
 
@@ -140,7 +143,7 @@ export function describeBarTriggers(
       const recording = recordTriggers(page, bar, 500);
       await hover(page, first);
       const frames = await recording;
-      expectOneHighlight(frames);
+      expectOneHighlight(frames, bar.rest);
       const lit = frames.filter((frame) => frame.surfaces.length);
       expect(lit.length).toBeGreaterThan(5);
       const file = await boxOf(page, first);
@@ -161,7 +164,7 @@ export function describeBarTriggers(
       const recording = recordTriggers(page, bar, 600);
       await hover(page, second);
       const frames = await recording;
-      expectOneHighlight(frames);
+      expectOneHighlight(frames, bar.rest);
       const file = await boxOf(page, first);
       const edit = await boxOf(page, second);
       const lefts = frames.map((frame) => frame.surfaces[0]!.left);
@@ -212,7 +215,7 @@ export function describeBarTriggers(
       const recording = recordTriggers(page, bar, 900);
       await leave(page);
       const frames = await recording;
-      expectOneHighlight(frames);
+      expectOneHighlight(frames, bar.rest);
       const edit = await boxOf(page, second);
       const fading = frames.filter(
         (frame) => frame.surfaces[0] && frame.surfaces[0].opacity < 0.99,
@@ -254,7 +257,7 @@ export function describeBarTriggers(
         .toBeLessThan(0.9);
       await hover(page, third);
       const frames = await recording;
-      expectOneHighlight(frames);
+      expectOneHighlight(frames, bar.rest);
       const edit = await boxOf(page, second);
       const view = await boxOf(page, third);
       const shown = frames.filter((frame) => frame.surfaces.length);
@@ -291,7 +294,7 @@ export function describeBarTriggers(
       await page.waitForTimeout(400);
       await bar.menu.content(page).hover();
       const frames = await recording;
-      expectOneHighlight(frames);
+      expectOneHighlight(frames, bar.rest);
       const file = await boxOf(page, first);
       const profiles = await boxOf(page, bar.menu.trigger);
       const lefts = frames.map((frame) => frame.surfaces[0]!.left);
@@ -321,7 +324,7 @@ export function describeBarTriggers(
       const recording = recordTriggers(page, bar, 400);
       await hover(page, second);
       const frames = await recording;
-      expectOneHighlight(frames);
+      expectOneHighlight(frames, bar.rest);
       const file = await boxOf(page, first);
       const edit = await boxOf(page, second);
       for (const frame of frames) {
