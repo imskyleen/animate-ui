@@ -1,0 +1,96 @@
+---
+title: Tooltip
+description: A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.
+---
+
+<VueComponentPreview name="reka-ui/tooltip" />
+
+## Installation
+
+<Installation name="tooltip" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <TooltipProvider>
+    <TooltipRoot>
+      <TooltipTrigger>Hover</TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent>Add to library</TooltipContent>
+      </TooltipPortal>
+    </TooltipRoot>
+  </TooltipProvider>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React Tooltip, starting from 0.7, with a warm-up:
+
+- **Content** grows from 0.7 and fades in, from the trigger (`--reka-tooltip-content-transform-origin`), on a spring (stiffness 400, damping 29) that overshoots a little before it settles.
+- It closes the same way: it shrinks back to 0.7 on the same spring while it fades out, then unmounts.
+- Tooltips warm up: once one is open, moving along a toolbar shows the next one at once, without its entrance, and hides the previous one at once. 300ms after the last one closed, the next one plays its entrance again. Animate UI tracks it across all of its tooltips, whatever their Provider.
+- reka-ui only opens it on hover for mouse-like pointers, and on keyboard focus.
+- With `force-mount` (on the Content or the Portal), the closed content stays in the DOM: it plays its exit, then is hidden and `inert`.
+- Open from the start (`default-open`), it plays the same entrance on page load.
+- With `follow-cursor` on the Root, the content leans towards the pointer while it moves over the trigger, by half its offset from the trigger's center, on a spring (stiffness 200, damping 17): on both axes, or only `'x'` or `'y'`. Under reduced motion it follows without the spring.
+- Under reduced motion, it only fades (no scale).
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Tooltip](https://reka-ui.com/docs/components/tooltip#api-reference). Animate UI adds the animation props below.
+
+### TooltipRoot
+
+[reka-ui props](https://reka-ui.com/docs/components/tooltip#root), plus:
+
+<TypeTable
+  type={{
+    'follow-cursor': {
+      description:
+        'Make the content follow the pointer over the trigger, on both axes or only one.',
+      type: "boolean | 'x' | 'y'",
+      default: 'false',
+    },
+    'follow-cursor-spring-options': {
+      description: 'The spring the content follows the pointer on.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 200, damping: 17 }',
+    },
+  }}
+/>
+
+### TooltipProvider, TooltipTrigger, TooltipPortal, TooltipArrow
+
+[reka-ui props](https://reka-ui.com/docs/components/tooltip#provider) only. They are not animated.
+
+### TooltipContent
+
+[reka-ui props](https://reka-ui.com/docs/components/tooltip#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 400, damping: 29 }",
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>

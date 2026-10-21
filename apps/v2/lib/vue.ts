@@ -40,6 +40,60 @@ export const frameworkOf = (pathname: string) =>
 
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
+  'reka-ui/tooltip': {
+    Tooltip: {
+      followCursor: {
+        value: false,
+        options: { false: false, true: true, x: 'x', y: 'y' },
+      },
+    },
+    TooltipContent: {
+      side: {
+        value: 'top',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 0 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+  },
+  'reka-ui/hover-card': {
+    HoverCard: {
+      followCursor: {
+        value: false,
+        options: { false: false, true: true, x: 'x', y: 'y' },
+      },
+    },
+    HoverCardContent: {
+      side: {
+        value: 'bottom',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 4 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+  },
+  'reka-ui/popover': {
+    PopoverContent: {
+      side: {
+        value: 'bottom',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 4 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+  },
   'reka-ui/accordion': {
     Accordion: {
       multiple: { value: false },

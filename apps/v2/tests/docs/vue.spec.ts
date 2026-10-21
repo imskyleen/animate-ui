@@ -6,6 +6,8 @@ const PAGES = [
   ['accordion', 'Product Information'],
   ['alert-dialog', 'Show Dialog'],
   ['dialog', 'Open Dialog'],
+  ['hover-card', '@nuxt'],
+  ['popover', 'Set the dimensions for the layer'],
   ['checkbox', 'Enable notifications'],
   ['collapsible', '@radix-ui/primitives'],
   ['progress', 'progress.value = 66'],
@@ -14,6 +16,7 @@ const PAGES = [
   ['switch', 'Airplane Mode'],
   ['toggle', 'TextBoldIcon'],
   ['toggle-group', 'TextUnderlineIcon'],
+  ['tooltip', 'variant="outline"'],
 ] as const;
 
 for (const [name, text] of PAGES)
@@ -118,7 +121,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(11);
+  await expect(cards).toHaveCount(14);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

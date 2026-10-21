@@ -1,0 +1,120 @@
+import { expect, test } from '../test';
+import {
+  describeAnchoredOverlay,
+  expectEntranceOnLoad,
+  gotoReady,
+} from './anchored-overlay';
+
+const PATH = '/tests/vue-demos/reka-ui/popover';
+const CONTENT = '[data-slot="popover-content"]';
+const trigger = 'Open popover';
+
+describeAnchoredOverlay('vue-reka-ui popover demo', {
+  path: PATH,
+  selector: CONTENT,
+  open: (page) => page.getByRole('button', { name: trigger }).click(),
+  close: (page) => page.keyboard.press('Escape'),
+});
+
+test.describe('vue-reka-ui popover keyboard', () => {
+  test.describe.configure({ timeout: 180_000 });
+  test('opens from the keyboard and gives focus back on close', async ({
+    page,
+  }) => {
+    await gotoReady(page, PATH);
+    await page.getByRole('button', { name: trigger }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator(CONTENT)).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator(CONTENT)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: trigger })).toBeFocused();
+  });
+});
+
+test.describe('vue-reka-ui popover API', () => {
+  test.describe.configure({ timeout: 180_000 });
+  test.beforeEach(async ({ page }) => {
+    await gotoReady(page, '/tests/vue-demos/fixtures/reka-ui-popover');
+  });
+
+  test('open and update:open', async ({ page }) => {
+    const content = page.getByTestId('controlled-content');
+    await page.getByRole('button', { name: 'Controlled trigger' }).click();
+    await expect(page.getByTestId('controlled-open')).toHaveText('open');
+    await expect(page.getByTestId('changes')).toHaveText('1');
+    await expect(content).toBeVisible();
+    await page.getByRole('button', { name: 'Close controlled' }).click();
+    await expect(page.getByTestId('controlled-open')).toHaveText('closed');
+    await expect(content).toHaveCount(0, { timeout: 1500 });
+    await page.getByRole('button', { name: 'Open from outside' }).click();
+    await expect(content).toBeVisible();
+    await expect(page.getByTestId('changes')).toHaveText('2');
+  });
+
+  test('reopening during the exit picks up from where it is', async ({
+    page,
+  }) => {
+    const trigger = page.getByRole('button', { name: 'Controlled trigger' });
+    await trigger.click();
+    const content = page.getByTestId('controlled-content');
+    await expect(content).toBeVisible();
+    await page.waitForTimeout(650);
+    const element = await content.elementHandle();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(120);
+    await trigger.click();
+    await page.waitForTimeout(650);
+    expect(await element!.evaluate((el) => el.isConnected)).toBe(true);
+    expect(
+      await element!.evaluate((el) => Number(getComputedStyle(el).opacity)),
+    ).toBe(1);
+  });
+
+  test('default-open plays its entrance on page load, even without a Portal', async ({
+    page,
+  }) => {
+    await expectEntranceOnLoad(
+      page,
+      '/tests/vue-demos/fixtures/reka-ui-popover',
+      '[data-testid="default-open-content"]',
+      'popover',
+    );
+    const content = page.getByTestId('default-open-content');
+    await page.getByRole('button', { name: 'Default open trigger' }).click();
+    await expect(content).toHaveCount(0, { timeout: 1500 });
+  });
+
+  test('force-mount keeps closed content mounted, hidden and inert', async ({
+    page,
+  }) => {
+    const content = page.getByTestId('force-mount-content');
+    const state = () =>
+      content.evaluate((el) => ({
+        inert: el.closest('[inert]') !== null,
+        visibility: getComputedStyle(el).visibility,
+      }));
+    await expect(content).toHaveCount(1);
+    expect(await state()).toEqual({ inert: true, visibility: 'hidden' });
+    await page.getByRole('button', { name: 'Force mounted trigger' }).click();
+    await expect(
+      page.getByRole('button', { name: 'Hidden button' }),
+    ).toBeVisible();
+    expect(await state()).toEqual({ inert: false, visibility: 'visible' });
+    await page.keyboard.press('Escape');
+    await expect.poll(state).toEqual({ inert: true, visibility: 'hidden' });
+    await expect(content).toHaveCount(1);
+  });
+
+  test('class, style and transition', async ({ page }) => {
+    await page.getByRole('button', { name: 'Star trigger' }).click();
+    const content = page.getByTestId('star-content');
+    await expect(content).toHaveClass(/custom-class/);
+    expect(
+      await content.evaluate((el) => getComputedStyle(el).transformOrigin),
+    ).toBe('0px 0px');
+    await page.waitForTimeout(260);
+    expect(
+      await content.evaluate((el) => Number(getComputedStyle(el).opacity)),
+    ).toBe(1);
+  });
+});

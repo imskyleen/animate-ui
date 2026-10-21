@@ -1,0 +1,74 @@
+---
+title: Popover
+description: Displays rich content in a portal, triggered by a button.
+---
+
+<VueComponentPreview name="reka-ui/popover" />
+
+## Installation
+
+<Installation name="popover" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  PopoverContent,
+  PopoverPortal,
+  PopoverRoot,
+  PopoverTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <PopoverRoot>
+    <PopoverTrigger>Open popover</PopoverTrigger>
+    <PopoverPortal>
+      <PopoverContent :side-offset="4"
+        >Place content for the popover here.</PopoverContent
+      >
+    </PopoverPortal>
+  </PopoverRoot>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React Popover:
+
+- **Content** grows from 0.8 and fades in, from the trigger (`--reka-popover-content-transform-origin`, set inline so it works without styles), on a spring (stiffness 400, damping 29) that overshoots a little before it settles, by ~440ms.
+- It closes the same way: it shrinks back to 0.8 on the same spring while it fades out, then unmounts.
+- Opening from the keyboard animates the same way. Focus goes back to the trigger once the exit is over.
+- With `force-mount` (on the Content or the Portal), the closed content stays in the DOM: it plays its exit, then is hidden and `inert`.
+- Reopening while it closes picks up from where it is, on the same spring.
+- Open from the start (`default-open`), it plays the same entrance on page load.
+- Under reduced motion, it only fades (no scale).
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Popover](https://reka-ui.com/docs/components/popover#api-reference). Animate UI adds the animation props below.
+
+### PopoverRoot, PopoverTrigger, PopoverAnchor, PopoverPortal, PopoverClose, PopoverArrow
+
+[reka-ui props](https://reka-ui.com/docs/components/popover#root) only. They are not animated.
+
+### PopoverContent
+
+[reka-ui props](https://reka-ui.com/docs/components/popover#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the opening, and of the closing unless `exitTransition` is set.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 400, damping: 29 }",
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>

@@ -1,11 +1,17 @@
 import { expect, test, type Page } from '../test';
 
+const REACT = '/tests/fixtures/follow-cursor';
+const VUE = '/tests/vue-demos/fixtures/reka-ui-follow-cursor';
+
 const CASES = [
-  ['Radix both', 'radix-both', 'both'],
-  ['Radix x', 'radix-x', 'x'],
-  ['Radix card', 'radix-card', 'both'],
-  ['Base both', 'base-both', 'both'],
-  ['Base card', 'base-card', 'both'],
+  ['Radix both', 'radix-both', 'both', REACT],
+  ['Radix x', 'radix-x', 'x', REACT],
+  ['Radix card', 'radix-card', 'both', REACT],
+  ['Base both', 'base-both', 'both', REACT],
+  ['Base card', 'base-card', 'both', REACT],
+  ['Reka both', 'reka-both', 'both', VUE],
+  ['Reka x', 'reka-x', 'x', VUE],
+  ['Reka card', 'reka-card', 'both', VUE],
 ] as const;
 
 const offsetOf = (page: Page, testId: string) =>
@@ -16,15 +22,12 @@ const offsetOf = (page: Page, testId: string) =>
 
 test.describe('followCursor', () => {
   test.describe.configure({ timeout: 120_000 });
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/tests/fixtures/follow-cursor', {
-      waitUntil: 'networkidle',
-    });
-    await page.mouse.move(1, 1);
-  });
-
-  for (const [name, testId, axes] of CASES) {
+  for (const [name, testId, axes, path] of CASES) {
     test(`${name}: the popup leans towards the pointer`, async ({ page }) => {
+      await page.goto(path, { waitUntil: 'networkidle' });
+      if (path === VUE)
+        await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+      await page.mouse.move(1, 1);
       const box = (await page.getByText(name, { exact: true }).boundingBox())!;
       const midY = box.y + box.height / 2;
       await page.mouse.move(box.x - 40, midY);

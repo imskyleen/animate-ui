@@ -14,6 +14,8 @@ export type OverlayCase = {
 
 export async function gotoReady(page: Page, path: string) {
   await page.goto(path, { waitUntil: 'networkidle', timeout: 150_000 });
+  if (path.includes('/vue-demos/'))
+    await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
   await page.mouse.move(1, 1);
   await page.mouse.move(2, 2);
 }

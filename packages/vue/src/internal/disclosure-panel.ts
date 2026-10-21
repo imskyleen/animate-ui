@@ -61,7 +61,8 @@ function useDisclosureTransitions(
     () => transition() ?? motionTokens.transition.disclosure,
   );
   const exit = useTempoTransition(
-    () => exitTransition() ?? transition() ?? motionTokens.transition.disclosure,
+    () =>
+      exitTransition() ?? transition() ?? motionTokens.transition.disclosure,
   );
   const instantMoves = (value: Transition): Transition =>
     reduce.value ? { ...value, height: INSTANT } : value;

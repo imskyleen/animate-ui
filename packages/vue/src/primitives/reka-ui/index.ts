@@ -259,11 +259,6 @@ export type {
   HSBColor,
   HSLColor,
   HoverCardArrowProps,
-  HoverCardContentProps,
-  HoverCardPortalProps,
-  HoverCardRootEmits,
-  HoverCardRootProps,
-  HoverCardTriggerProps,
   LabelProps,
   ListboxContentProps,
   ListboxFilterEmits,
@@ -358,11 +353,6 @@ export type {
   PopoverAnchorProps,
   PopoverArrowProps,
   PopoverCloseProps,
-  PopoverContentEmits,
-  PopoverContentProps,
-  PopoverPortalProps,
-  PopoverRootEmits,
-  PopoverRootProps,
   PopoverTriggerProps,
   PresenceProps,
   PrimitiveProps,
@@ -493,13 +483,6 @@ export type {
   ToolbarToggleGroupProps,
   ToolbarToggleItemProps,
   TooltipArrowProps,
-  TooltipContentEmits,
-  TooltipContentProps,
-  TooltipPortalProps,
-  TooltipProviderProps,
-  TooltipRootEmits,
-  TooltipRootProps,
-  TooltipTriggerProps,
   TreeItemEmits,
   TreeItemProps,
   TreeItemSelectEvent,
@@ -602,6 +585,34 @@ export {
 } from './dialog';
 
 export {
+  HoverCardArrow,
+  type HoverCardRootEmits,
+  type HoverCardTriggerProps,
+  type HoverCardPortalProps,
+  HoverCardRoot,
+  HoverCardTrigger,
+  HoverCardPortal,
+  HoverCardContent,
+  type HoverCardRootProps,
+  type HoverCardContentProps,
+} from './hover-card';
+
+export {
+  PopoverRoot,
+  PopoverTrigger,
+  PopoverAnchor,
+  PopoverClose,
+  PopoverArrow,
+  type PopoverRootProps,
+  type PopoverRootEmits,
+  type PopoverContentEmits,
+  type PopoverPortalProps,
+  PopoverPortal,
+  PopoverContent,
+  type PopoverContentProps,
+} from './popover';
+
+export {
   ProgressRoot,
   type ProgressRootEmits,
   type ProgressRootProps,
@@ -641,3 +652,19 @@ export {
   type ToggleGroupRootProps,
   type ToggleGroupItemProps,
 } from './toggle-group';
+
+export {
+  TooltipProvider,
+  TooltipArrow,
+  type TooltipProviderProps,
+  type TooltipRootEmits,
+  type TooltipTriggerProps,
+  type TooltipPortalProps,
+  type TooltipContentEmits,
+  TooltipRoot,
+  TooltipTrigger,
+  TooltipPortal,
+  TooltipContent,
+  type TooltipRootProps,
+  type TooltipContentProps,
+} from './tooltip';

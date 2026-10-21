@@ -12,12 +12,15 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   checkbox: [],
   collapsible: [],
   dialog: DIALOG_STRIP,
+  'hover-card': [/^duration-100$/],
+  popover: [/^duration-100$/],
   progress: [/^transition-all$/],
   'radio-group': [],
   sheet: DIALOG_STRIP,
   switch: [/^transition-transform$/, /^transition-all$/],
   toggle: [],
   'toggle-group': [],
+  tooltip: [/^duration-100$/],
 };
 
 const REKA_IMPORT = /(\bfrom\s+)(["'])reka-ui\2/g;
