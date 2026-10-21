@@ -24,39 +24,37 @@ export function LibraryTabs({
     <div
       role="tablist"
       aria-label="Library"
-      className="-mb-2 flex flex-wrap items-center gap-1"
+      className="-mb-2 flex w-fit flex-wrap items-center gap-1 rounded-xl bg-accent/50 p-1"
     >
       <Highlight
         controlledItems
         value={current}
-        className="inset-0 rounded-lg bg-accent"
+        className="inset-0 rounded-lg bg-background shadow-xs dark:bg-accent"
       >
-        {LIBRARIES.filter((library) => urls[library.id]).map(
-          (library) => {
-            const active = library.id === current;
-            const { Logo } = getLibrary(library.id)!;
-            return (
-              <HighlightItem key={library.id} value={library.id}>
-                <Link
-                  role="tab"
-                  aria-selected={active}
-                  href={urls[library.id]!}
-                  scroll={false}
-                  transitionTypes={['library']}
-                  className={cn(
-                    'inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
-                    active
-                      ? 'text-foreground'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  <Logo className="size-3.5" />
-                  {library.title}
-                </Link>
-              </HighlightItem>
-            );
-          },
-        )}
+        {LIBRARIES.filter((library) => urls[library.id]).map((library) => {
+          const active = library.id === current;
+          const { Logo } = getLibrary(library.id)!;
+          return (
+            <HighlightItem key={library.id} value={library.id}>
+              <Link
+                role="tab"
+                aria-selected={active}
+                href={urls[library.id]!}
+                scroll={false}
+                transitionTypes={['library']}
+                className={cn(
+                  'inline-flex h-7 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors duration-300',
+                  active
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <Logo className="size-3.5" />
+                {library.title}
+              </Link>
+            </HighlightItem>
+          );
+        })}
       </Highlight>
     </div>
   );
