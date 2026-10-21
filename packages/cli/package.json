@@ -1,6 +1,6 @@
 {
   "name": "@animate-ui/cli",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Swap your shadcn/ui primitives for Animate UI's animated ones, and migrate from Animate UI v1.",
   "keywords": [
     "animate-ui",

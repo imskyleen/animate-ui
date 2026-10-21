@@ -11,7 +11,7 @@ const isDev = process.env.NODE_ENV === 'development';
 export const docsVersions = [
   {
     id: 'v2',
-    label: 'v2.1',
+    label: 'v2.2',
     note: undefined,
     url:
       process.env.NEXT_PUBLIC_V2_URL ??
