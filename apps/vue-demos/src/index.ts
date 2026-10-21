@@ -11,6 +11,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/alert-dialog': () => import('./demos/reka-ui/alert-dialog.vue'),
   'reka-ui/sheet': () => import('./demos/reka-ui/sheet.vue'),
   'reka-ui/dropdown-menu': () => import('./demos/reka-ui/dropdown-menu.vue'),
+  'reka-ui/combobox': () => import('./demos/reka-ui/combobox.vue'),
   'reka-ui/context-menu': () => import('./demos/reka-ui/context-menu.vue'),
   'reka-ui/menubar': () => import('./demos/reka-ui/menubar.vue'),
   'reka-ui/select': () => import('./demos/reka-ui/select.vue'),
@@ -41,6 +42,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./fixtures/reka-ui-menubar-triggers.vue'),
   'fixtures/reka-ui-dropdown-menu': () =>
     import('./fixtures/reka-ui-dropdown-menu.vue'),
+  'fixtures/reka-ui-combobox': () => import('./fixtures/reka-ui-combobox.vue'),
   'fixtures/reka-ui-context-menu': () =>
     import('./fixtures/reka-ui-context-menu.vue'),
   'fixtures/reka-ui-follow-cursor': () =>

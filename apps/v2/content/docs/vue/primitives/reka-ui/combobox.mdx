@@ -1,0 +1,129 @@
+---
+title: Combobox
+description: Choose from a list of suggested values with full keyboard support.
+---
+
+<VueComponentPreview name="reka-ui/combobox" />
+
+## Installation
+
+<Installation name="combobox" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxItemIndicator,
+  ComboboxPortal,
+  ComboboxRoot,
+  ComboboxViewport,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <ComboboxRoot>
+    <ComboboxAnchor>
+      <ComboboxInput placeholder="Search a framework…" />
+    </ComboboxAnchor>
+    <ComboboxPortal>
+      <ComboboxContent position="popper" :side-offset="4">
+        <ComboboxViewport>
+          <ComboboxItem value="nuxt">
+            Nuxt
+            <ComboboxItemIndicator>✓</ComboboxItemIndicator>
+          </ComboboxItem>
+          <ComboboxItem value="astro">
+            Astro
+            <ComboboxItemIndicator>✓</ComboboxItemIndicator>
+          </ComboboxItem>
+        </ComboboxViewport>
+      </ComboboxContent>
+    </ComboboxPortal>
+  </ComboboxRoot>
+</template>
+```
+
+### Check animation
+
+The chosen item's check draws itself while the previous one erases itself. With `animation="pop"` on every item's ComboboxItemIndicator, the check glides from the previous item to the chosen one instead (a first choice pops it in from half its size).
+
+The same demo with `check-animation="pop"` (its Controls switch it back to `draw`):
+
+<VueComponentPreview
+  name="reka-ui/combobox"
+  values={{ checkAnimation: 'pop' }}
+  code={false}
+/>
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `check-animation="pop"` on an [`AnimateUIProvider`](/docs/vue/installation) instead.
+
+## Animation
+
+The motion of Animate UI's React Combobox:
+
+- **ComboboxContent** with `position="popper"` fades and scales in from 0.9, from its anchor (`--reka-combobox-content-transform-origin`), in 220ms (`{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }`, a soft ease-out), and closes the same way before it unmounts. Laid inline (reka-ui's default `position`), it only fades. Reopening while it closes picks up from where it is.
+- **The highlight**: one surface glides behind the highlighted item on a spring (stiffness 500, damping 40), following the pointer and the arrow keys alike. Moving to another item, it carries on from where it is, at its speed: however fast the pointer or the arrow keys go, there's one highlight on screen. It only fades in (200ms, on CSS's `ease`) when it appears from nothing, and its color changes the same way when the item's highlighted background differs from the previous one's. It glides on the compositor (a Web Animation of `transform`), so a busy main thread doesn't stall it. It wears the item's own highlighted background (`data-[highlighted]:bg-accent`…), read from your styles: the item's background is cleared while it's highlighted; its text colors stay.
+- Filtering while typing is instant: items appear and disappear on the next frame, with no per-item or height animation.
+- **ComboboxItemIndicator** (kept mounted on every item, so a check can hide itself): with a single value, the chosen item's check draws itself like a Checkbox's check (its stroke and opacity in 0.3s on Motion's easeOut, at once) while the previous one erases itself, and the list holds still for 250ms before it closes, so the change is seen nearly done before the list fades out. With `animation="pop"` (or `check-animation="pop"` on an `AnimateUIProvider`), the check glides there instead, on the highlight's spring (stiffness 500, damping 40), and the list holds for 150ms, and a first choice pops it in from half its size out of a 2px blur (a spring, stiffness 500, damping 24). The demo's Controls switch between the two. Choosing the item already chosen, and closing any other way (Escape, a click outside), don't wait. With `multiple`, a selected item's check draws itself, and erases itself when it's deselected; with `pop`, it pops in from half its size and shrinks back out in 0.15s. Only a change of selection animates the checks: opening the list shows them at rest.
+- A closing list is `inert`, and a press on its trigger while it leaves reopens it.
+- Open from the start (`default-open`), the list plays its entrance on page load.
+- Under reduced motion, nothing scales or glides: the list and checks only fade, and the list doesn't hold; the highlight jumps from item to item and only fades in when it appears.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Combobox](https://reka-ui.com/docs/components/combobox#api-reference). Animate UI adds the animation props below.
+
+### ComboboxRoot, ComboboxAnchor, ComboboxInput, ComboboxTrigger, ComboboxCancel, ComboboxPortal, ComboboxViewport, ComboboxEmpty, ComboboxGroup, ComboboxLabel, ComboboxSeparator, ComboboxArrow, ComboboxVirtualizer
+
+[reka-ui props](https://reka-ui.com/docs/components/combobox#api-reference) only. They are not animated.
+
+### ComboboxItem
+
+[reka-ui props](https://reka-ui.com/docs/components/combobox#item) only. It takes part in the highlight; it needs nothing more.
+
+### ComboboxContent
+
+[reka-ui props](https://reka-ui.com/docs/components/combobox#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the opening, and of the closing unless `exit-transition` is set.',
+      type: 'Transition',
+      default: '{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    'exit-transition': {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>
+
+### ComboboxItemIndicator
+
+[reka-ui props](https://reka-ui.com/docs/components/combobox#itemindicator), plus:
+
+<TypeTable
+  type={{
+    animation: {
+      description:
+        "How the check shows and hides: `draw` (it draws itself and erases itself) or `pop` (it pops in from half its size and shrinks back out; a single selection's check glides to the chosen item).",
+      type: "'draw' | 'pop'",
+      default: "the closest AnimateUIProvider's checkAnimation, else 'draw'",
+    },
+    transition: {
+      description:
+        "Transition of the check showing and hiding itself, and of a single selection's check gliding (`pop`).",
+      type: 'Transition',
+      default:
+        "draw: 0.3s on Motion's easeOut both ways (a Checkbox's, without its delay); pop: a spring (stiffness 500, damping 24) in, 0.15s out, and the highlight's spring (stiffness 500, damping 40) for the glide",
+    },
+  }}
+/>

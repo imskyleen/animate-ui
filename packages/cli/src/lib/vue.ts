@@ -11,6 +11,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   'alert-dialog': DIALOG_STRIP,
   checkbox: [],
   collapsible: [],
+  combobox: [],
   'context-menu': [/^duration-100$/],
   dialog: DIALOG_STRIP,
   'dropdown-menu': [/^duration-100$/],

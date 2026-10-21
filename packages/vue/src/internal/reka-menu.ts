@@ -44,8 +44,10 @@ import type { CheckAnimation } from '../utils/motion';
 
 export const isOn = (value: unknown) => value === '' || value === true;
 
-export const elementOf = (node: unknown) =>
-  ((node as { $el?: unknown } | null)?.$el ?? node) as HTMLElement | null;
+export const elementOf = (node: unknown) => {
+  const element = (node as { $el?: unknown } | null)?.$el ?? node;
+  return element instanceof HTMLElement ? element : null;
+};
 
 type MenuState = { open: () => boolean; picked: () => Picked };
 

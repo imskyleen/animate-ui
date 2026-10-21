@@ -29,6 +29,11 @@ const FILL = 0.78;
 const MAX_ZOOM = 1.6;
 const VIEWPORT = { width: 400, height: 300 };
 const LARGE = { width: 480, height: 360 };
+// shadcn-vue's combobox opens a list with its own search field: the demo
+// sits higher, unzoomed, so the open list fits.
+const VUE_TALL: Record<string, Omit<Preview, 'id' | 'demo' | 'play'>> = {
+  combobox: { viewport: LARGE, zoom: false, shift: 220 },
+};
 
 const zoomed = (size: { width: number; height: number }, zoom: number) => ({
   width: Math.round(size.width / zoom),
@@ -369,7 +374,13 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   collapsible: { play: toggle((page) => buttons(page).first(), 1100) },
   combobox: {
     async play(page) {
-      await press(page, page.locator('main input').first());
+      const input = page.locator('main input');
+      await press(
+        page,
+        (await input.count())
+          ? input.first()
+          : page.locator('main button').first(),
+      );
       await wait(page, 500);
       await hoverItems(page, page.locator('[role="option"]'));
       await wait(page, 300);
@@ -785,6 +796,7 @@ function previews(): Preview[] {
         id: `vue/primitives/${slug}`,
         demo: `/tests/vue-demos/reka-ui/${slug}`,
         ...(ROOMY.has(slug) ? { viewport: LARGE } : {}),
+        ...VUE_TALL[slug],
         ...(TEXTS.has(slug) ? { nowrap: true as const } : {}),
         ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
       });

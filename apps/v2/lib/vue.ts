@@ -99,6 +99,11 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
     },
   },
+  'reka-ui/combobox': {
+    AnimateUIProvider: {
+      checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
+    },
+  },
   'reka-ui/menubar': {
     AnimateUIProvider: {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
