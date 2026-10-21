@@ -14,4 +14,15 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       collapsible: { value: true },
     },
   },
+  'reka-ui/checkbox': {
+    Checkbox: {
+      checked: {
+        value: true,
+        options: { true: true, false: false, indeterminate: 'indeterminate' },
+      },
+    },
+    AnimateUIProvider: {
+      checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
+    },
+  },
 };

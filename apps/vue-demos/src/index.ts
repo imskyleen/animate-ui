@@ -5,7 +5,9 @@ type Props = Record<string, unknown>
 const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/accordion': () => import('./demos/reka-ui/accordion.vue'),
   'reka-ui/collapsible': () => import('./demos/reka-ui/collapsible.vue'),
+  'reka-ui/checkbox': () => import('./demos/reka-ui/checkbox.vue'),
   'reka-ui/switch': () => import('./demos/reka-ui/switch.vue'),
+  'fixtures/reka-ui-checkbox': () => import('./fixtures/reka-ui-checkbox.vue'),
   'fixtures/reka-ui-switch': () => import('./fixtures/reka-ui-switch.vue'),
   'fixtures/reka-ui-accordion': () =>
     import('./fixtures/reka-ui-accordion.vue'),

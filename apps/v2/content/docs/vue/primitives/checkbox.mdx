@@ -1,0 +1,90 @@
+---
+title: Checkbox
+description: A control that allows the user to toggle between checked and not checked.
+---
+
+<VueComponentPreview name="reka-ui/checkbox" />
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+In your shadcn-vue checkbox (`components/ui/checkbox`), import from Animate UI instead of reka-ui. `@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does, so swapping the whole import is enough.
+
+```vue
+<script setup lang="ts">
+import { CheckboxIndicator, CheckboxRoot } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { CheckboxIndicator, CheckboxRoot } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+
+<template>
+  <CheckboxRoot id="terms">
+    <CheckboxIndicator>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12l5 5L20 7" />
+      </svg>
+    </CheckboxIndicator>
+  </CheckboxRoot>
+</template>
+```
+
+## Animation
+
+The motion of Animate UI's React checkbox:
+
+- **Indicator**: the check draws itself when the box is checked. Its stroke (`pathLength`) and its opacity go from 0 to 1 together in 0.3s, after a 0.2s delay, on an ease-out. Unchecking erases it in 0.3s, without the delay, then the indicator unmounts, as in reka-ui. The indicator element itself never moves: its content animates, so your layout and classes stay as they are. Content that isn't an SVG shape fades the same way.
+- With `animation="pop"` (or `check-animation="pop"` on an `AnimateUIProvider`), the check pops instead: after the same 0.2s, it springs in from half its size out of a 2px blur (stiffness 500, damping 24, a little past its size), and shrinks back into its blur in 0.15s when the box is unchecked. Its stroke stays whole. The demo's Controls switch between the two.
+- **Root** doesn't move: the check (and, in the demo, the box's fill) answers the click.
+- In the demo, the box's fill is a layer of its own (`before:` in its classes) that grows from 70% while it fades in, in 300ms, and shrinks back as it fades out: the check draws over a box that is nearly full. The layer covers the box's border (`before:-inset-px`) and the border keeps its color. It's CSS, so copy the classes for the same effect; under reduced motion the layer only fades.
+- A box that is already checked when it appears (the page loading, a dialog opening) shows its check at rest: only checking and unchecking animate it.
+- Checking with Space animates the same way: the state changes at once, the animation never delays it.
+- Toggling again mid-animation turns back from where the check is.
+- `indeterminate` shows the indicator like `checked`. An icon swapped for the indeterminate state draws without the delay.
+- Under reduced motion, the check only fades, drawn or popped (its stroke stays whole, nothing scales).
+- With `force-mount`, the unchecked indicator stays in the DOM with its check hidden.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Checkbox](https://reka-ui.com/docs/components/checkbox#api-reference). Animate UI adds the animation props below. With `as-child`, the indicator renders your element with reka-ui's behaviour, without the animation.
+
+### CheckboxRoot
+
+[reka-ui props](https://reka-ui.com/docs/components/checkbox#root) only. It isn't animated.
+
+### CheckboxIndicator
+
+[reka-ui props](https://reka-ui.com/docs/components/checkbox#indicator), plus:
+
+<TypeTable
+  type={{
+    animation: {
+      description:
+        'How the check shows and hides: `draw` (it draws itself and erases itself) or `pop` (it pops in from half its size and shrinks back out).',
+      type: "'draw' | 'pop'",
+      default: "the closest AnimateUIProvider's checkAnimation, else 'draw'",
+    },
+    transition: {
+      description: 'Transition of the check drawing itself (or popping in).',
+      type: 'Transition',
+      default:
+        "draw: { duration: 0.3, delay: 0.2, ease: [0, 0, 0.58, 1] }; pop: { type: 'spring', stiffness: 500, damping: 24, delay: 0.2 }",
+    },
+    exitTransition: {
+      description: 'Transition of the check erasing itself (or popping out).',
+      type: 'Transition',
+      default:
+        'draw: { duration: 0.3, ease: [0, 0, 0.58, 1] }; pop: { duration: 0.15, ease: [0.23, 1, 0.32, 1] }',
+    },
+  }}
+/>
+
+`AnimateUIProvider`'s `tempo` scales these transitions with everything else.

@@ -4,6 +4,7 @@ const PAGE = '/docs/vue/primitives/accordion';
 
 const PAGES = [
   ['accordion', 'Product Information'],
+  ['checkbox', 'Enable notifications'],
   ['collapsible', '@radix-ui/primitives'],
   ['switch', 'Airplane Mode'],
 ] as const;

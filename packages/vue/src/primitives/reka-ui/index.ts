@@ -57,9 +57,6 @@ export type {
   CheckboxCheckedState,
   CheckboxGroupRootEmits,
   CheckboxGroupRootProps,
-  CheckboxIndicatorProps,
-  CheckboxRootEmits,
-  CheckboxRootProps,
   CollapsibleContentEmits,
   Color,
   ColorAreaAreaProps,
@@ -573,6 +570,14 @@ export {
   AccordionContent,
   type AccordionContentProps,
 } from './accordion';
+
+export {
+  CheckboxRoot,
+  type CheckboxRootEmits,
+  type CheckboxRootProps,
+  CheckboxIndicator,
+  type CheckboxIndicatorProps,
+} from './checkbox';
 
 export {
   CollapsibleTrigger,
