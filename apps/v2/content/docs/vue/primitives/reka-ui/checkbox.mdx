@@ -13,13 +13,21 @@ description: A control that allows the user to toggle between checked and not ch
 
 ```vue
 <script setup lang="ts">
-import { CheckboxIndicator, CheckboxRoot } from '@animate-ui/vue/primitives/reka-ui'
+import {
+  CheckboxIndicator,
+  CheckboxRoot,
+} from '@animate-ui/vue/primitives/reka-ui';
 </script>
 
 <template>
   <CheckboxRoot id="terms">
     <CheckboxIndicator>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path d="M5 12l5 5L20 7" />
       </svg>
     </CheckboxIndicator>

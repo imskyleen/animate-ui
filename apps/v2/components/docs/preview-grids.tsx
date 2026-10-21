@@ -7,7 +7,8 @@ import { Sent } from '@/registry/hugeicons/sent';
 import { Settings02 } from '@/registry/hugeicons/settings-02';
 import { Sparkles as HugeSparkles } from '@/registry/hugeicons/sparkles';
 import { Sun03 } from '@/registry/hugeicons/sun-03';
-import { LIBRARIES, type LibraryId } from '@/lib/libraries';
+import { getPrimitive } from '@/lib/docs';
+import { LIBRARIES } from '@/lib/libraries';
 import { pageBadge } from '@/lib/page-badges';
 import {
   primitiveSection,
@@ -42,32 +43,33 @@ const SECTIONS: { id: PrimitiveSection; title: string }[] = [
 
 const LIBRARY_ORDER = LIBRARIES.map((library) => library.id);
 
-export function PrimitivesGrid() {
+export function PrimitivesGrid({
+  framework = 'react',
+}: {
+  framework?: 'react' | 'vue';
+}) {
   const entries = new Map<string, PrimitiveCardEntry>();
   const pages = source
     .getPages()
-    .filter((page) => /^\/docs\/primitives\/[^/]+\/[^/]+$/.test(page.url))
+    .flatMap((page) => {
+      const primitive = getPrimitive(page);
+      return primitive?.framework === framework ? [{ page, primitive }] : [];
+    })
     .sort(
       (a, b) =>
-        LIBRARY_ORDER.indexOf(a.url.split('/')[3] as LibraryId) -
-        LIBRARY_ORDER.indexOf(b.url.split('/')[3] as LibraryId),
+        LIBRARY_ORDER.indexOf(a.primitive.library) -
+        LIBRARY_ORDER.indexOf(b.primitive.library),
     );
-  for (const page of pages) {
-    const [, , , library, slug] = page.url.split('/') as [
-      string,
-      string,
-      string,
-      LibraryId,
-      string,
-    ];
-    const entry = entries.get(slug) ?? {
-      slug,
+  for (const { page, primitive } of pages) {
+    const entry = entries.get(primitive.name) ?? {
+      slug: primitive.name,
+      framework,
       title: page.data.title,
       badge: pageBadge(page.data),
       urls: {},
     };
-    entry.urls[library] = page.url;
-    entries.set(slug, entry);
+    entry.urls[primitive.library] = page.url;
+    entries.set(primitive.name, entry);
   }
   const all = [...entries.values()].sort((a, b) =>
     a.title.localeCompare(b.title),

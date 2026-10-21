@@ -29,7 +29,7 @@ export function InstallTabs({
     >
       <TabsList
         aria-label={label}
-        className="not-prose gap-1 rounded-xl bg-accent/50 p-1 group-data-horizontal/tabs:h-9"
+        className="not-prose gap-1 rounded-xl bg-accent p-1 group-data-horizontal/tabs:h-9 dark:bg-accent/50"
       >
         {tabs.map((tab) => (
           <TabsTrigger

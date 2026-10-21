@@ -1,0 +1,98 @@
+---
+title: CLI
+description: Use the Animate UI CLI to animate your shadcn-vue components.
+---
+
+The CLI changes your components in place, without copying anything: it swaps their `reka-ui` imports for `@animate-ui/vue`'s animated primitives and removes the CSS animations Motion replaces. It needs Node.js 22.12 or later.
+
+## animate
+
+Use the `animate` command to animate the shadcn-vue components installed in your project.
+
+```npm
+npx @animate-ui/cli@latest animate all
+```
+
+Name the components to animate only some of them:
+
+```npm
+npx @animate-ui/cli@latest animate accordion switch
+```
+
+Or animate all of them but some, with `--exclude`:
+
+```npm
+npx @animate-ui/cli@latest animate all --exclude toggle
+```
+
+**Usage**
+
+```txt
+Usage: animate-ui animate <components...|all> [options]
+
+Arguments:
+  components      the components to animate (their folder names in your ui
+                  folder), or all
+
+Options:
+  --cwd <path>    the project directory (default: the current directory)
+  --dry-run       show the changes without writing them
+  --exclude <components...>
+                  leave these components out: comma-separated
+                  (--exclude toggle,switch) or repeated
+  -h, --help      show the help
+```
+
+### What it changes
+
+`animate` recognizes a shadcn-vue project by its `components.json`, finds your components through its `ui` alias (resolved with your `tsconfig.json` or `tsconfig.app.json` paths), and changes two things in every file of a component's folder (`components/ui/accordion/*.vue` and its `index.ts`):
+
+1. **The import source.**
+
+```ts
+import { AccordionContent } from 'reka-ui'; // [!code --]
+import { AccordionContent } from '@animate-ui/vue/primitives/reka-ui'; // [!code ++]
+```
+
+`@animate-ui/vue/primitives/reka-ui` re-exports everything else from Reka UI, so an import mixing animated and plain parts (`{ AccordionItem, useForwardProps }`) keeps working, types included.
+
+2. **The CSS animations Motion replaces.** Left in place, they would run on top of Motion, so `animate` removes them, wherever the classes are written (`class`, `:class`, `cn()`, `cva()`):
+
+- the tw-animate-css utilities (`animate-in`, `animate-out`, `fade-in-0`, `zoom-in-95`, `slide-in-from-top-2`…), whatever their variants (`data-[state=closed]:`…);
+- shadcn-vue's keyframes (`animate-accordion-down`, `animate-collapsible-up`…);
+- each primitive's own CSS transitions that Motion takes over (the switch's `transition-all` and its thumb's `transition-transform`, the progress indicator's `transition-all`).
+
+The rest of each file stays as it is: your styles, parts, props and markup.
+
+### Output
+
+```txt
+✔ src/components/ui/accordion/AccordionContent.vue
+    reka-ui → @animate-ui/vue/primitives/reka-ui
+    removed CSS animations: data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down
+
+1 file animated.
+```
+
+- A component that isn't installed is reported with the `shadcn-vue add` command to install it, and the CLI exits with code 1.
+- Components Animate UI doesn't animate yet are listed under **Not animated yet** and left as they are.
+- If `@animate-ui/vue` isn't installed (neither in your `package.json` nor in `node_modules`) and files were animated, the CLI tells you to install it with `motion-v`.
+- Running it again changes nothing: a component already animated is skipped.
+
+### Supported primitives
+
+| Library | Primitives                                                 |
+| ------- | ---------------------------------------------------------- |
+| Reka UI | Accordion, Checkbox, Collapsible, Progress, Switch, Toggle |
+
+## Options
+
+| Option                      | Description                                                                                   |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| `--cwd <path>`              | The project directory, with its `components.json`.                                            |
+| `--dry-run`                 | Show the changes without writing them.                                                        |
+| `--exclude <components...>` | Leave these components out of `all`: comma-separated (`--exclude toggle,switch`) or repeated. |
+| `-h, --help`                | Show the help.                                                                                |
+| `-v, --version`             | Show the CLI's version.                                                                       |
+
+The CLI exits with code 1 when a component can't be found or a command fails.

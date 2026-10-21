@@ -333,7 +333,7 @@ test('the command block is built from Animate UI tabs, copy button and buttons',
   const managers = hero.locator('[data-slot="tabs-list"]');
   await expect(managers).toHaveAttribute('aria-label', 'Package manager');
   const highlight = () =>
-    hero
+    managers
       .locator('[data-slot="motion-highlight"]')
       .first()
       .evaluate((el) => Math.round(el.getBoundingClientRect().left));

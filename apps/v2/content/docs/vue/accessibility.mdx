@@ -1,0 +1,44 @@
+---
+title: Accessibility
+description: Animation that never gets in the way of anyone using your interface.
+---
+
+Animate UI primitives are Reka UI's accessible primitives, with motion added on top. Roles, ARIA attributes, focus management and keyboard interactions stay exactly Reka UI's: the animation never changes what assistive technologies see or when they see it.
+
+## Reduced motion
+
+When the operating system asks for reduced motion (`prefers-reduced-motion: reduce`), every primitive drops movement and keeps only what helps understanding:
+
+- Disclosures change height at once; their content still fades.
+- Thumbs and indicators jump to their new position.
+- Checks only fade, without drawing or scaling.
+
+It works without any setup, follows the setting live, and respects an app-level `<MotionConfig reduced-motion="always">`. To choose for your app, set `reduced-motion` on `AnimateUIProvider`: `'never'` keeps full motion whatever the system asks, `'always'` reduces it everywhere.
+
+```vue
+<AnimateUIProvider reduced-motion="never">
+  <RouterView />
+</AnimateUIProvider>
+```
+
+## Keyboard
+
+Keyboard users move fast, so nothing driven from the keyboard waits for an animation: a switch or a checkbox toggled with Space changes at once while it animates, and an accordion opened with Enter can be closed again right away, its height turning back from where it is. Focus is managed by Reka UI, exactly as without Animate UI.
+
+## Pointer and touch
+
+Press effects follow the pointer, the keyboard and touch alike, and never leave a stuck state on a touch screen.
+
+## Screen readers
+
+Content kept mounted while closed (`force-mount`) is made `inert` as soon as it closes, so it can't be reached with the keyboard or read out while it folds away.
+
+## Timing
+
+Animations run on springs and short tweens with a strong ease-out, so most of the movement happens at once and the interface responds right away; exits are quicker than entrances. If your product needs a different pace, `AnimateUIProvider` changes every duration from one place:
+
+```vue
+<AnimateUIProvider :tempo="0.8">
+  <RouterView />
+</AnimateUIProvider>
+```

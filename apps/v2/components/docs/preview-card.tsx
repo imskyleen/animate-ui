@@ -154,6 +154,7 @@ export function PreviewCard({
 
 export type PrimitiveCardEntry = {
   slug: string;
+  framework?: 'react' | 'vue';
   title: string;
   badge: PageBadge | null;
   urls: Partial<Record<LibraryId, string>>;
@@ -171,7 +172,11 @@ export function PrimitiveCard({ entry }: { entry: PrimitiveCardEntry }) {
       href={entry.urls[library.id] ?? Object.values(entry.urls)[0]!}
       title={entry.title}
       badge={entry.badge}
-      preview={`primitives/${entry.slug}`}
+      preview={
+        entry.framework === 'vue'
+          ? `vue/primitives/${entry.slug}`
+          : `primitives/${entry.slug}`
+      }
     />
   );
 }

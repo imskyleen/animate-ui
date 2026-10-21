@@ -16,9 +16,16 @@ import {
   TabsTrigger,
 } from '@animate-ui/react/primitives/tabs';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ease, ReducedMotionConfig } from '@animate-ui/react/utils/motion';
-import { motion } from 'motion/react';
+import {
+  ease,
+  motionTokens,
+  ReducedMotionConfig,
+  scaleTransition,
+  useMotionTokens,
+} from '@animate-ui/react/utils/motion';
+import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { HeroTitle } from '@/components/home/hero-title';
 import { useIntroDone } from '@/components/home/intro';
@@ -29,7 +36,35 @@ import {
   type Manager,
 } from '@/components/docs/package-managers';
 import { useSyncedValue } from '@/components/docs/tabs';
+import {
+  FrameworkTabs,
+  type Framework,
+} from '@/components/layout/framework-switch';
 import { LIBRARIES } from '@/lib/libraries';
+import { frameworkOf, VUE_HOME } from '@/lib/vue';
+
+export const HOMES = {
+  react: {
+    href: '/',
+    libraries: ['shadcn/ui', 'Radix UI', 'Base UI', 'React Aria'],
+    subtitle:
+      'Drop-in animated primitives for Radix UI, Base UI and React Aria. Swap the import, keep your components, your styles and your API.',
+    docs: '/docs',
+    primitives: '/docs/primitives',
+    logos: LIBRARIES.filter((library) => library.peer),
+  },
+  vue: {
+    href: VUE_HOME,
+    libraries: ['shadcn-vue', 'Reka UI'],
+    subtitle:
+      'Drop-in animated primitives for Reka UI. Swap the import, keep your components, your styles and your API.',
+    docs: '/docs/vue',
+    primitives: '/docs/vue/primitives',
+    logos: LIBRARIES.filter((library) => library.id === 'reka-ui'),
+  },
+} satisfies Record<Framework, unknown>;
+
+export const useHomeFramework = () => frameworkOf(usePathname());
 
 const animateAll = (dlx: string) => `${dlx} @animate-ui/cli@latest animate all`;
 
@@ -109,50 +144,91 @@ export function CopyCommand({
   );
 }
 
-export function CallsToAction() {
+export function CallsToAction({
+  framework = 'react',
+}: {
+  framework?: Framework;
+}) {
+  const home = HOMES[framework];
   return (
     <div className="flex gap-3">
       <Button
         asChild
         className="inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85"
       >
-        <Link href="/docs">Get started</Link>
+        <Link href={home.docs}>Get started</Link>
       </Button>
       <Button
         asChild
         className="inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-medium transition-colors hover:bg-accent/70"
       >
-        <Link href="/docs/primitives">Browse primitives</Link>
+        <Link href={home.primitives}>Browse primitives</Link>
       </Button>
     </div>
   );
 }
 
+/** Swaps a framework's own text in place, fading through a blur. */
+function Swap({
+  framework,
+  className,
+  children,
+}: {
+  framework: Framework;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const { tempo } = useMotionTokens();
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.span
+        key={framework}
+        className={className}
+        initial={{ opacity: 0, filter: motionTokens.blur.panel }}
+        animate={{
+          opacity: 1,
+          filter: 'blur(0px)',
+          transitionEnd: { filter: 'none' },
+          transition: scaleTransition(motionTokens.transition.panelIn, tempo),
+        }}
+        exit={{
+          opacity: 0,
+          filter: motionTokens.blur.panel,
+          transition: scaleTransition(motionTokens.transition.panelOut, tempo),
+        }}
+      >
+        {children}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
+
 export function Hero() {
   const done = useIntroDone();
+  const framework = useHomeFramework();
+  const home = HOMES[framework];
   return (
     <ReducedMotionConfig>
       <section className="flex flex-col items-center px-5 pt-36 text-center md:pt-44">
-        <motion.div {...rise(0, done)}>
-          <Link
-            href="/docs/changelog"
-            className="mb-8 inline-flex items-center gap-2 rounded-full bg-accent py-1 pr-3 pl-1 text-sm text-neutral-600 dark:text-neutral-400"
-          >
-            <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-              v2
-            </span>
-            Animate UI is now a package
-          </Link>
+        <motion.div {...rise(0, done)} className="mb-8">
+          <FrameworkTabs
+            pill
+            current={framework}
+            target={(id) => ({
+              href: HOMES[id].href,
+              same: false,
+              scroll: false,
+            })}
+          />
         </motion.div>
 
-        <HeroTitle done={done} />
+        <HeroTitle done={done} libraries={home.libraries} />
 
         <motion.p
           {...rise(5, done)}
           className="mt-5 max-w-[620px] text-lg text-balance text-muted-foreground"
         >
-          Drop-in animated primitives for Radix UI, Base UI and React Aria. Swap
-          the import, keep your components, your styles and your API.
+          <Swap framework={framework}>{home.subtitle}</Swap>
         </motion.p>
 
         <motion.div
@@ -160,21 +236,21 @@ export function Hero() {
           className="mt-8 flex max-w-full flex-col items-center gap-4"
         >
           <CopyCommand />
-          <CallsToAction />
+          <CallsToAction framework={framework} />
         </motion.div>
 
-        <motion.div
-          {...rise(7, done)}
-          className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
-        >
-          {LIBRARIES.filter((library) => library.peer).map(
-            ({ id, title, Logo }) => (
+        <motion.div {...rise(7, done)} className="mt-12">
+          <Swap
+            framework={framework}
+            className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground"
+          >
+            {home.logos.map(({ id, title, Logo }) => (
               <span key={id} className="flex items-center gap-2">
                 <Logo className="size-4" />
                 {title}
               </span>
-            ),
-          )}
+            ))}
+          </Swap>
         </motion.div>
       </section>
     </ReducedMotionConfig>

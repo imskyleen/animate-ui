@@ -6,6 +6,12 @@ export const VUE_COLORS = { green: '#40B883', slate: '#34495E' } as const;
 export const isVuePath = (pathname: string) =>
   pathname === '/docs/vue' || pathname.startsWith('/docs/vue/');
 
+export const VUE_HOME = '/vue';
+
+/** The framework a home page or a docs page is about. */
+export const frameworkOf = (pathname: string) =>
+  pathname === VUE_HOME || isVuePath(pathname) ? 'vue' : 'react';
+
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
   'reka-ui/accordion': {

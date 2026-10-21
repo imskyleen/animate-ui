@@ -1,3 +1,4 @@
+import { Hero } from '@/components/home/hero';
 import { HomeHeader } from '@/components/home/home-header';
 import { IntroProvider } from '@/components/home/intro';
 import { getGitHubStars } from '@/lib/github-stars';
@@ -7,7 +8,10 @@ export default async function Layout({ children }: LayoutProps<'/'>) {
   return (
     <IntroProvider>
       <HomeHeader stars={stars} />
-      <main className="flex flex-1 flex-col">{children}</main>
+      <main className="flex flex-1 flex-col">
+        <Hero />
+        {children}
+      </main>
     </IntroProvider>
   );
 }

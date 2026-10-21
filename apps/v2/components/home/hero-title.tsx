@@ -9,8 +9,6 @@ import { ease } from '@animate-ui/react/utils/motion';
 import { motion } from 'motion/react';
 import { useLayoutEffect, useRef, useState } from 'react';
 
-const LIBRARIES = ['shadcn/ui', 'Radix UI', 'Base UI', 'React Aria'];
-
 const WORD_IN = {
   initial: { opacity: 0, y: 24, filter: 'blur(12px)' },
   animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
@@ -61,7 +59,7 @@ function useOwnLine(ref: React.RefObject<HTMLElement | null>, done: boolean) {
   return ownLine;
 }
 
-function Library({ done }: { done: boolean }) {
+function Library({ done, libraries }: { done: boolean; libraries: string[] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const ownLine = useOwnLine(ref, done);
   return (
@@ -75,7 +73,7 @@ function Library({ done }: { done: boolean }) {
       transition={{ ...WORD_IN.transition, delay: 2 * WORD_IN.stagger }}
     >
       <RotatingTextContainer
-        text={done ? LIBRARIES : LIBRARIES.slice(0, 1)}
+        text={done ? libraries : libraries.slice(0, 1)}
         duration={2600}
         delay={1400}
         align={ownLine ? 'center' : 'start'}
@@ -87,12 +85,18 @@ function Library({ done }: { done: boolean }) {
   );
 }
 
-export function HeroTitle({ done }: { done: boolean }) {
+export function HeroTitle({
+  done,
+  libraries,
+}: {
+  done: boolean;
+  libraries: string[];
+}) {
   return (
     <h1 className="flex max-w-[860px] flex-col items-center text-4xl font-medium md:text-6xl">
       <span className="text-center">
         <Line text="Animate your" done={done} delay={0} />{' '}
-        <Library done={done} />
+        <Library done={done} libraries={libraries} />
       </span>
       <Line text="components in one command" done={done} delay={300} />
     </h1>

@@ -24,6 +24,8 @@ import {
   type ComponentType,
 } from 'react';
 
+import { cn } from 'cn';
+
 import { AnimateUILogo } from '@/lib/libraries';
 
 import { AutoplayScope, VIGNETTES } from './vignettes';
@@ -31,9 +33,11 @@ import { AutoplayScope, VIGNETTES } from './vignettes';
 const STAGE = { width: 1200, height: 780 };
 const CARD = { width: 300, height: 188 };
 const GAP = 16;
-const COLUMNS = 3;
 const RADIUS = { x: 400, y: 240 };
-const COUNT = VIGNETTES.length;
+
+type Vignettes = typeof VIGNETTES;
+const VignettesContext = createContext<Vignettes>(VIGNETTES);
+const columnsOf = (count: number) => (count === 4 ? 2 : 3);
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const clamp = (t: number) => Math.min(1, Math.max(0, t));
@@ -121,19 +125,22 @@ function OrbitCard({
   turn: MotionValue<number>;
   drift: MotionValue<number>;
 }) {
-  const { title, Vignette } = VIGNETTES[index]!;
-  const column = index % COLUMNS;
-  const row = Math.floor(index / COLUMNS);
-  const rows = Math.ceil(COUNT / COLUMNS);
+  const vignettes = use(VignettesContext);
+  const { title, Vignette } = vignettes[index]!;
+  const count = vignettes.length;
+  const columns = columnsOf(count);
+  const column = index % columns;
+  const row = Math.floor(index / columns);
+  const rows = Math.ceil(count / columns);
   const slot = {
-    x: (column - (COLUMNS - 1) / 2) * (CARD.width + GAP),
+    x: (column - (columns - 1) / 2) * (CARD.width + GAP),
     y: (row - (rows - 1) / 2) * (CARD.height + GAP) + 40,
   };
 
   const place = useTransform(
     [enter, settle, turn, drift] as MotionValue<number>[],
     ([e, s, t, d]: number[]) => {
-      const angle = (index / COUNT) * Math.PI * 2 + t! + d! * (1 - s!);
+      const angle = (index / count) * Math.PI * 2 + t! + d! * (1 - s!);
       const depth = (Math.sin(angle) + 1) / 2;
       const reach = 0.3 + 0.7 * e!;
       const orbit = {
@@ -215,6 +222,7 @@ function Headline({
 }
 
 function OrbitStage() {
+  const vignettes = use(VignettesContext);
   const ref = useRef<HTMLElement>(null);
   const onScreen = useInView(ref);
   const scale = useStageScale();
@@ -290,7 +298,7 @@ function OrbitStage() {
               <AnimateUILogo className="h-[240px] w-[256px] text-foreground drop-shadow-[0_30px_60px_rgb(0_0_0/0.25)]" />
             </motion.div>
 
-            {VIGNETTES.map(({ title }, index) => (
+            {vignettes.map(({ title }, index) => (
               <OrbitCard
                 key={title}
                 index={index}
@@ -308,6 +316,8 @@ function OrbitStage() {
 }
 
 function StaticGrid() {
+  const vignettes = use(VignettesContext);
+  const columns = columnsOf(vignettes.length);
   const ref = useRef<HTMLElement>(null);
   const onScreen = useInView(ref);
   return (
@@ -326,8 +336,13 @@ function StaticGrid() {
         >
           Every primitive, alive.
         </motion.h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          {VIGNETTES.map(({ title, Vignette }, index) => (
+        <div
+          className={cn(
+            'grid gap-4',
+            columns === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3',
+          )}
+        >
+          {vignettes.map(({ title, Vignette }, index) => (
             <motion.div
               key={title}
               initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
@@ -336,7 +351,7 @@ function StaticGrid() {
               transition={{
                 duration: 0.6,
                 ease: ease.out,
-                delay: (index % COLUMNS) * 0.06,
+                delay: (index % columns) * 0.06,
               }}
               style={{ height: CARD.height + 20 }}
             >
@@ -349,8 +364,16 @@ function StaticGrid() {
   );
 }
 
-export function Orbit() {
+/** `only`: the vignettes to show, by title (the components a framework has). */
+export function Orbit({ only }: { only?: string[] }) {
   const wide = useWide();
   const reduce = useShouldReduceMotion();
-  return wide && !reduce ? <OrbitStage /> : <StaticGrid />;
+  const vignettes = only
+    ? VIGNETTES.filter(({ title }) => only.includes(title))
+    : VIGNETTES;
+  return (
+    <VignettesContext value={vignettes}>
+      {wide && !reduce ? <OrbitStage /> : <StaticGrid />}
+    </VignettesContext>
+  );
 }

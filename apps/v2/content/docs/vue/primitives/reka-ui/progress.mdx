@@ -13,14 +13,20 @@ description: Displays an indicator showing the completion progress of a task, ty
 
 ```vue
 <script setup lang="ts">
-import { ref } from 'vue'
-import { ProgressIndicator, ProgressRoot } from '@animate-ui/vue/primitives/reka-ui'
+import { ref } from 'vue';
+import {
+  ProgressIndicator,
+  ProgressRoot,
+} from '@animate-ui/vue/primitives/reka-ui';
 
-const value = ref(40)
+const value = ref(40);
 </script>
 
 <template>
-  <ProgressRoot :model-value="value" class="h-2 w-full overflow-hidden rounded-full">
+  <ProgressRoot
+    :model-value="value"
+    class="h-2 w-full overflow-hidden rounded-full"
+  >
     <ProgressIndicator
       class="h-full w-full bg-primary"
       :style="`transform: translateX(-${100 - value}%);`"

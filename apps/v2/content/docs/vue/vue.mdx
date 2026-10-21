@@ -1,0 +1,103 @@
+---
+title: '@animate-ui/vue'
+description: The @animate-ui/vue package, its exports, peer dependencies and AnimateUIProvider.
+---
+
+`@animate-ui/vue` ships Reka UI's primitives with **exactly their API** and [Motion for Vue](https://motion.dev/docs/vue) inside. Swap the import and your components animate: parts, props, emits, slots, data attributes and accessibility stay Reka UI's.
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+| Package    | Needed for           |
+| ---------- | -------------------- |
+| `motion-v` | Everything           |
+| `vue`      | Everything (Vue 3.5) |
+| `reka-ui`  | `primitives/reka-ui` |
+
+## Usage
+
+Change the import source, nothing else:
+
+```ts
+import { AccordionContent } from 'reka-ui'; // [!code --]
+import { AccordionContent } from '@animate-ui/vue/primitives/reka-ui'; // [!code ++]
+```
+
+`@animate-ui/vue/primitives/reka-ui` re-exports everything else from Reka UI (`Primitive`, `Label`, `useForwardPropsEmits`, every props type…), so an import mixing animated and plain parts keeps working, and so does `defineProps<AccordionItemProps>()`. In a shadcn-vue project, the [CLI](/docs/vue/cli) makes the change for you.
+
+## Entry points
+
+| Import                                      | What it holds                                                                 |
+| ------------------------------------------- | ----------------------------------------------------------------------------- |
+| `@animate-ui/vue/primitives/reka-ui`        | [Reka UI primitives](/docs/vue/primitives), animated, and the rest of Reka UI |
+| `@animate-ui/vue/primitives/reka-ui/<name>` | One primitive's parts (`accordion`, `switch`…)                                |
+| `@animate-ui/vue/provider`                  | `AnimateUIProvider`                                                           |
+| `@animate-ui/vue/utils/motion`              | The motion tokens and reduced-motion helpers                                  |
+
+Every entry point is its own module: you only ship what you import.
+
+## Customization
+
+### Pace and checks
+
+`AnimateUIProvider` is optional. Without it, the defaults apply.
+
+```vue
+<script setup lang="ts">
+import { AnimateUIProvider } from '@animate-ui/vue/provider';
+</script>
+
+<template>
+  <AnimateUIProvider :tempo="1.2" check-animation="pop">
+    <slot />
+  </AnimateUIProvider>
+</template>
+```
+
+| Prop             | Type                            | Default  | Description                                                              |
+| ---------------- | ------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `tempo`          | `number`                        | `1`      | Multiplies every duration and spring: `0.8` crisper, `1.2` more relaxed. |
+| `checkAnimation` | `'draw' \| 'pop'`               | `'draw'` | How checks show and hide: drawn like a pen, or popped in.                |
+| `reducedMotion`  | `'user' \| 'never' \| 'always'` | `'user'` | Reduced motion: follow the system setting, never, or always.             |
+
+Providers can be nested: the closest one sets what it's given, the rest comes from the one around it. See [Installation](/docs/vue/installation) for more.
+
+### One animation
+
+Animated parts accept two optional props, `transition` and `exitTransition` (Motion [transitions](https://motion.dev/docs/vue-transitions)), to change their own timing:
+
+```vue
+<AccordionContent
+  :transition="{ type: 'spring', stiffness: 300, damping: 30 }"
+/>
+```
+
+### Your own components
+
+The tokens every primitive moves with are exported, to animate your own components the same way:
+
+```vue
+<script setup lang="ts">
+import { motion } from 'motion-v';
+import { spring, useTempoTransition } from '@animate-ui/vue/utils/motion';
+
+const transition = useTempoTransition(() => spring.pop);
+</script>
+
+<template>
+  <motion.span
+    :initial="{ scale: 0.7, opacity: 0 }"
+    :animate="{ scale: 1, opacity: 1 }"
+    :transition="transition"
+  />
+</template>
+```
+
+`useTempoTransition` applies the provider's `tempo`.
+
+## Accessibility
+
+Reduced motion, keyboard and focus work without any setup. See [Accessibility](/docs/vue/accessibility).

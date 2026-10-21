@@ -73,7 +73,7 @@ test('switching to the same component plays no page transition', async ({
 test('a page without a counterpart goes to the introduction', async ({
   page,
 }) => {
-  await page.goto('/docs/cli', { waitUntil: 'networkidle' });
+  await page.goto('/docs/backgrounds', { waitUntil: 'networkidle' });
   await ready(page);
   await tab(page, 'Vue').click();
   await page.waitForURL(/\/docs\/vue$/);
@@ -82,9 +82,48 @@ test('a page without a counterpart goes to the introduction', async ({
   );
 });
 
+test('a guide page switches to its Vue counterpart, the package page to the other package page', async ({
+  page,
+}) => {
+  await page.goto('/docs/cli', { waitUntil: 'networkidle' });
+  await ready(page);
+  await tab(page, 'Vue').click();
+  await page.waitForURL('**/docs/vue/cli');
+  await page.goto('/docs/react', { waitUntil: 'networkidle' });
+  await ready(page);
+  await tab(page, 'Vue').click();
+  await page.waitForURL('**/docs/vue/vue');
+  await expect(tab(page, 'Vue')).toHaveAttribute('aria-selected', 'true');
+  await ready(page);
+  await tab(page, 'React').click();
+  await page.waitForURL('**/docs/react');
+});
+
+test('in light mode, the docs tabs with a background sit on the code block gray', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/docs/vue/primitives/reka-ui/switch', {
+    waitUntil: 'networkidle',
+  });
+  const gray = await page
+    .locator('figure.shiki')
+    .first()
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
+  for (const list of [
+    page.getByRole('tablist', { name: 'Framework' }),
+    page.locator('[data-slot="install-tabs"] [role="tablist"]').first(),
+  ])
+    expect(
+      await list.evaluate((el) => getComputedStyle(el).backgroundColor),
+    ).toBe(gray);
+});
+
 test('each framework has its own sidebar', async ({ page }) => {
   const sidebar = page.locator('#nd-sidebar');
-  await page.goto('/docs/vue/primitives/reka-ui/switch', { waitUntil: 'networkidle' });
+  await page.goto('/docs/vue/primitives/reka-ui/switch', {
+    waitUntil: 'networkidle',
+  });
   await expect(sidebar.getByRole('link', { name: 'Checkbox' })).toHaveAttribute(
     'href',
     '/docs/vue/primitives/reka-ui/checkbox',

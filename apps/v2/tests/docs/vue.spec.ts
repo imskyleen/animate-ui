@@ -92,3 +92,36 @@ test('visiting a Vue page keeps the React library you picked', async ({
     await page.evaluate(() => localStorage.getItem('animate-ui:library')),
   ).toBe('react-aria');
 });
+
+test('the Vue guide has the same pages as React, adapted to Vue', async ({
+  page,
+}) => {
+  for (const [url, heading] of [
+    ['/docs/vue', 'Introduction'],
+    ['/docs/vue/installation', 'Installation'],
+    ['/docs/vue/vue', '@animate-ui/vue'],
+    ['/docs/vue/cli', 'CLI'],
+    ['/docs/vue/accessibility', 'Accessibility'],
+  ]) {
+    await page.goto(url!);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading!);
+  }
+});
+
+test('the Vue primitives grid shows the Vue components with their own recordings', async ({
+  page,
+}) => {
+  await page.goto('/docs/vue/primitives');
+  const cards = page.locator('[data-slot="preview-card-root"]');
+  await expect(cards).toHaveCount(6);
+  const posters = await cards
+    .locator('img')
+    .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));
+  expect(posters.length).toBeGreaterThan(0);
+  for (const src of posters)
+    expect(src).toMatch(/^\/previews\/vue\/primitives\//);
+  for (const card of await cards.all())
+    expect(await card.locator('a').first().getAttribute('href')).toMatch(
+      /^\/docs\/vue\/primitives\/reka-ui\//,
+    );
+});

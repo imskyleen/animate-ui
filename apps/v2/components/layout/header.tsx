@@ -21,7 +21,7 @@ import { useSyncExternalStore, type ComponentProps } from 'react';
 
 import { AnimateUILogo } from '@/lib/libraries';
 import { docsVersions, gitConfig } from '@/lib/shared';
-import { isVuePath, VUE_COLORS } from '@/lib/vue';
+import { isVuePath, VUE_COLORS, VUE_HOME } from '@/lib/vue';
 import {
   ThemeTogglerButton,
   ThemeTogglerButtonIcon,
@@ -200,7 +200,7 @@ export function SiteHeader({
     >
       <div className="mx-auto flex h-full max-w-[1670px] items-center gap-3 px-3 md:px-5">
         <Link
-          href="/"
+          href={isVuePath(pathname) ? VUE_HOME : '/'}
           aria-label="Animate UI"
           className="flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent"
         >
@@ -216,7 +216,9 @@ export function SiteHeader({
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.url}
-              href={item.url}
+              href={
+                item.url === '/' && isVuePath(pathname) ? VUE_HOME : item.url
+              }
               className={cn(
                 'inline-flex h-8 items-center rounded-md px-3 text-sm text-neutral-700 transition-colors hover:text-black dark:text-neutral-200 dark:hover:text-white',
                 isActive(pathname, item.url) && 'text-black dark:text-white',

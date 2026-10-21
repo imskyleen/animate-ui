@@ -1,0 +1,56 @@
+---
+title: Installation
+description: Install Animate UI and animate your shadcn-vue components.
+---
+
+## Install the packages
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+`@animate-ui/vue` uses `reka-ui`, the primitive library your shadcn-vue components already depend on.
+
+## Animate your components
+
+Run the CLI in your project. It finds your shadcn-vue components through `components.json`, swaps their `reka-ui` imports for Animate UI's and removes the CSS animation classes Motion replaces.
+
+```npm
+npx @animate-ui/cli@latest animate all
+```
+
+Animate one component at a time by naming it, and preview the changes with `--dry-run`:
+
+```npm
+npx @animate-ui/cli@latest animate accordion --dry-run
+```
+
+## Change the pace (optional)
+
+Every animation follows the same timing. Wrap your app in `AnimateUIProvider` to make it all faster or slower:
+
+```vue
+<script setup lang="ts">
+import { AnimateUIProvider } from '@animate-ui/vue/provider';
+</script>
+
+<template>
+  <AnimateUIProvider :tempo="1.2">
+    <RouterView />
+  </AnimateUIProvider>
+</template>
+```
+
+`tempo` multiplies every duration: `0.8` feels crisper, `1.2` more relaxed. Without the provider, the defaults apply.
+
+## Choose how checks animate (optional)
+
+Checks draw themselves: their stroke is drawn when they're checked and erased when they're unchecked, like a pen. Only checking and unchecking animate them: a check already there when the page loads shows at rest. `check-animation="pop"` makes them pop instead: in from half their size out of a light blur, and back out.
+
+```vue
+<AnimateUIProvider check-animation="pop">
+  <RouterView />
+</AnimateUIProvider>
+```
+
+It applies to every checkbox inside. A check's own `animation` prop wins over it. Nested providers keep what they don't set: an inner `<AnimateUIProvider :tempo="0.8">` keeps the outer `check-animation`.

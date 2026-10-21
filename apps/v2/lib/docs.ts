@@ -23,20 +23,47 @@ export function getPrimitiveUrls(name: string, framework: Framework = 'react') {
   return urls;
 }
 
+type TreeNode = ReturnType<typeof source.getPageTree>['children'][number];
+
+/** The Vue guide in its sidebar order, then its primitives by name. */
 function getVueNeighbours(page: Page) {
-  const pages = source.getPages().filter((p) => p.slugs[0] === 'vue');
-  const intro = pages.filter((p) => !getPrimitive(p));
-  const primitives = pages
-    .filter((p) => getPrimitive(p))
-    .sort((a, b) => a.slugs.at(-1)!.localeCompare(b.slugs.at(-1)!));
-  const order = [...intro, ...primitives].map((p) => ({
-    name: p.data.title,
-    url: p.url,
+  const tree = source.getPageTree();
+  const vue = [...tree.children, ...(tree.fallback?.children ?? [])].find(
+    (node) =>
+      node.type === 'folder' &&
+      (node.index?.url ?? node.children.find((c) => c.type === 'page')?.url) ===
+        '/docs/vue',
+  );
+  if (vue?.type !== 'folder') return {};
+  const titles = new Map(source.getPages().map((p) => [p.url, p.data.title]));
+  const guide: string[] = vue.index ? [vue.index.url] : [];
+  const walk = (nodes: TreeNode[]) => {
+    for (const node of nodes) {
+      if (node.type === 'page' && !getPrimitiveUrl(node.url))
+        guide.push(node.url);
+      if (node.type === 'folder') {
+        if (node.index) guide.push(node.index.url);
+        walk(node.children);
+      }
+    }
+  };
+  walk(vue.children);
+  const primitives = source
+    .getPages()
+    .filter((p) => getPrimitive(p)?.framework === 'vue')
+    .sort((a, b) => a.slugs.at(-1)!.localeCompare(b.slugs.at(-1)!))
+    .map((p) => p.url);
+  const order = [...guide, ...primitives].map((url) => ({
+    name: titles.get(url) ?? url,
+    url,
   }));
   const index = order.findIndex((item) => item.url === page.url);
   if (index === -1) return {};
   return { previous: order[index - 1], next: order[index + 1] };
 }
+
+const getPrimitiveUrl = (url: string) =>
+  /^\/docs\/vue\/primitives\/[^/]+\/[^/]+$/.test(url);
 
 export function getNeighbours(page: Page) {
   if (page.slugs[0] === 'vue') return getVueNeighbours(page);

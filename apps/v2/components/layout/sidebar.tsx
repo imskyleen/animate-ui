@@ -303,6 +303,12 @@ function FolderSections({
         url: node.url,
         active: pathname === node.url,
       });
+    if (node.type === 'folder' && node.index)
+      guide.push({
+        name: node.name,
+        url: node.index.url,
+        active: pathname === node.index.url,
+      });
     if (node.type === 'folder')
       sections.push({
         title: node.name === 'Primitives' ? 'Components' : String(node.name),

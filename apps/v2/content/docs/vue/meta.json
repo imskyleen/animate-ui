@@ -1,5 +1,12 @@
 {
   "title": "Vue",
   "root": true,
-  "pages": ["index", "primitives"]
+  "pages": [
+    "index",
+    "installation",
+    "primitives",
+    "vue",
+    "cli",
+    "accessibility"
+  ]
 }
