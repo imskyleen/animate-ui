@@ -1,0 +1,113 @@
+---
+title: Alert Dialog
+description: A modal dialog that interrupts the user with important content and expects a response.
+---
+
+<VueComponentPreview name="reka-ui/alert-dialog" />
+
+## Installation
+
+<Installation name="alert-dialog" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogRoot,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <AlertDialogRoot>
+    <AlertDialogTrigger>Delete account</AlertDialogTrigger>
+    <AlertDialogPortal>
+      <AlertDialogOverlay />
+      <AlertDialogContent>
+        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+        <AlertDialogDescription
+          >This action cannot be undone.</AlertDialogDescription
+        >
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction>Continue</AlertDialogAction>
+      </AlertDialogContent>
+    </AlertDialogPortal>
+  </AlertDialogRoot>
+</template>
+```
+
+## Animation
+
+Animate UI's React alert dialog motion, with a smoother overlay and a quicker exit.
+
+- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, along with the content's fade, and it leaves the same way.
+- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it with the overlay (400ms on a soft ease-out): it's there first, then it settles. Dismissed, it goes back the way it came, at once, quicker and speeding away (0.2s, a steady push from half its average speed to one and a half), out of sight just before the overlay has cleared, then unmounts.
+- `from` picks the edge the content tips from: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`).
+- On the overlay, `exit-transition` defaults to `transition`: change `transition` and both directions follow. The dialog's own exit is the quicker one above unless you set `exit-transition`.
+- Animate UI keeps the Overlay and the Content mounted while they exit, and they leave together; Cancel is focused as soon as it opens, and focus returns to the trigger once the exit is over, unless it has moved on meanwhile.
+- Reopening while it closes picks up from where it is.
+- `force-mount` doesn't keep the closed alert dialog in the DOM: it plays its exit, then leaves, so a closed alert dialog never locks the page's scroll or hides it from screen readers.
+- Under reduced motion, the content fades and un-blurs without tilting or scaling.
+- `AnimateUIProvider`'s `tempo` scales every duration and spring.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Alert Dialog](https://reka-ui.com/docs/components/alert-dialog#api-reference). Animate UI adds the animation props below.
+
+### AlertDialogRoot, AlertDialogTrigger, AlertDialogPortal, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel
+
+[reka-ui props](https://reka-ui.com/docs/components/alert-dialog#root) only. They are not animated.
+
+### AlertDialogOverlay
+
+[reka-ui props](https://reka-ui.com/docs/components/alert-dialog#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the fade in (background color and backdrop filter).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>
+
+### AlertDialogContent
+
+[reka-ui props](https://reka-ui.com/docs/components/alert-dialog#content), plus:
+
+<TypeTable
+  type={{
+    from: {
+      description: 'The edge the content tips from as it comes in.',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
+    transition: {
+      description:
+        'Transition of the opening. One you pass drives its fade too.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 150, damping: 25, opacity: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] } }",
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',
+    },
+  }}
+/>

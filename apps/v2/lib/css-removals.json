@@ -1112,8 +1112,72 @@
         "added": []
       }
     ],
+    "alert-dialog": [
+      {
+        "part": "AlertDialogOverlay",
+        "removed": [
+          "data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0"
+        ],
+        "added": []
+      },
+      {
+        "part": "AlertDialogContent",
+        "removed": [
+          "data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95",
+          "data-[state=open]:zoom-in-95",
+          "duration-200"
+        ],
+        "added": []
+      }
+    ],
     "checkbox": [],
     "collapsible": [],
+    "dialog": [
+      {
+        "part": "DialogContent",
+        "removed": [
+          "data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95",
+          "data-[state=open]:zoom-in-95",
+          "duration-200"
+        ],
+        "added": []
+      },
+      {
+        "part": "DialogOverlay",
+        "removed": [
+          "cn('data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0",
+          "fixed"
+        ],
+        "added": [
+          "cn('fixed"
+        ]
+      },
+      {
+        "part": "forwarded",
+        "removed": [
+          "data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0",
+          "duration-200"
+        ],
+        "added": []
+      }
+    ],
     "progress": [
       {
         "part": "ProgressIndicator",
@@ -1124,6 +1188,46 @@
       }
     ],
     "radio-group": [],
+    "sheet": [
+      {
+        "part": "forwarded",
+        "removed": [],
+        "added": [
+          "side"
+        ]
+      },
+      {
+        "part": "SheetContent",
+        "removed": [
+          "data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "transition",
+          "ease-in-out",
+          "data-[state=closed]:slide-out-to-right",
+          "data-[state=open]:slide-in-from-right",
+          "data-[state=closed]:slide-out-to-left",
+          "data-[state=open]:slide-in-from-left",
+          "data-[state=closed]:slide-out-to-top",
+          "data-[state=open]:slide-in-from-top",
+          "data-[state=closed]:slide-out-to-bottom",
+          "data-[state=open]:slide-in-from-bottom"
+        ],
+        "added": []
+      },
+      {
+        "part": "SheetOverlay",
+        "removed": [
+          "cn('data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0",
+          "fixed"
+        ],
+        "added": [
+          "cn('fixed"
+        ]
+      }
+    ],
     "switch": [
       {
         "part": "Switch",

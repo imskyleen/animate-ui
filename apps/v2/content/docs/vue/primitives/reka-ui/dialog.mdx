@@ -1,0 +1,118 @@
+---
+title: Dialog
+description: A window overlaid on either the primary window or another dialog window, rendering the content underneath inert. Also the primitive under shadcn-vue's Sheet.
+---
+
+<VueComponentPreview name="reka-ui/dialog" />
+
+## Installation
+
+<Installation name="dialog" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <DialogRoot>
+    <DialogTrigger>Edit profile</DialogTrigger>
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogContent>
+        <DialogTitle>Edit profile</DialogTitle>
+        <DialogDescription
+          >Make changes to your profile here.</DialogDescription
+        >
+        <DialogClose>Save</DialogClose>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+```
+
+## Sheet
+
+shadcn-vue's Sheet is built on this primitive: with `data-side` on its content, it slides in from that edge instead of tipping in. See [Sheet](/docs/vue/primitives/reka-ui/sheet).
+
+## Animation
+
+Animate UI's React dialog motion, with a smoother overlay and a quicker exit.
+
+- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out, along with the content's fade, and it leaves the same way.
+- **Content** tips forward into place, around its center: it starts from `perspective(500px) rotateX(-20deg) scale(0.8)`, transparent and blurred (4px), and comes upright and sharp on a spring (stiffness 150, damping 25), fading in ahead of it with the overlay (400ms on a soft ease-out): it's there first, then it settles. Dismissed, it goes back the way it came, at once, quicker and speeding away (0.2s, a steady push from half its average speed to one and a half), out of sight just before the overlay has cleared, then unmounts.
+- `from` picks the edge the content tips from: `top` by default (`rotateX(-20deg)`), `bottom` (`rotateX(20deg)`), `left` (`rotateY(20deg)`) or `right` (`rotateY(-20deg)`) (a sheet, with `data-side`, slides from its side instead).
+- On the overlay, `exit-transition` defaults to `transition`: change `transition` and both directions follow. A dialog's or a sheet's own exit is the quicker one above unless you set `exit-transition`.
+- Animate UI keeps the Overlay and the Content mounted while they exit, and they leave together. Clicks go through to the page as soon as the dialog closes, and focus returns to the trigger once the exit is over, unless it has moved on meanwhile.
+- Reopening while it closes picks up from where it is.
+- Opening from the keyboard animates the same way; focus moves into the dialog at once.
+- `force-mount` doesn't keep the closed dialog in the DOM: it plays its exit, then leaves, so a closed dialog never locks the page's scroll or hides it from screen readers.
+- A DialogContent rendered without a DialogPortal animates on its own, and `as-child` renders your element with reka-ui's behaviour, without the animation.
+- Under reduced motion, the content fades and un-blurs without tilting, scaling or sliding.
+- `AnimateUIProvider`'s `tempo` scales every duration and spring.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Dialog](https://reka-ui.com/docs/components/dialog#api-reference). Animate UI adds the animation props below.
+
+### DialogRoot, DialogTrigger, DialogPortal, DialogTitle, DialogDescription, DialogClose
+
+[reka-ui props](https://reka-ui.com/docs/components/dialog#root) only. They are not animated.
+
+### DialogOverlay
+
+[reka-ui props](https://reka-ui.com/docs/components/dialog#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the fade in (background color and backdrop filter).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>
+
+### DialogContent
+
+[reka-ui props](https://reka-ui.com/docs/components/dialog#content), plus:
+
+<TypeTable
+  type={{
+    from: {
+      description:
+        'The edge the content tips from as it comes in. Ignored by a sheet (data-side).',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
+    transition: {
+      description:
+        'Transition of the opening. One you pass drives its fade too.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 150, damping: 25, opacity: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] } }; with data-side: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }",
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',
+    },
+  }}
+/>

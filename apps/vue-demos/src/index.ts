@@ -7,9 +7,15 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/collapsible': () => import('./demos/reka-ui/collapsible.vue'),
   'reka-ui/checkbox': () => import('./demos/reka-ui/checkbox.vue'),
   'reka-ui/toggle': () => import('./demos/reka-ui/toggle.vue'),
+  'reka-ui/dialog': () => import('./demos/reka-ui/dialog.vue'),
+  'reka-ui/alert-dialog': () => import('./demos/reka-ui/alert-dialog.vue'),
+  'reka-ui/sheet': () => import('./demos/reka-ui/sheet.vue'),
   'reka-ui/toggle-group': () => import('./demos/reka-ui/toggle-group.vue'),
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
   'fixtures/reka-ui-toggle': () => import('./fixtures/reka-ui-toggle.vue'),
+  'fixtures/reka-ui-dialog': () => import('./fixtures/reka-ui-dialog.vue'),
+  'fixtures/reka-ui-sheet-side': () =>
+    import('./fixtures/reka-ui-sheet-side.vue'),
   'fixtures/reka-ui-toggle-group': () =>
     import('./fixtures/reka-ui-toggle-group.vue'),
   'fixtures/reka-ui-toggle-group-surfaces': () =>

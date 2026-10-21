@@ -1,0 +1,113 @@
+---
+title: Sheet
+description: Extends the Dialog component to display content that complements the main content of the screen.
+---
+
+<VueComponentPreview name="reka-ui/sheet" />
+
+## Installation
+
+<Installation name="sheet" />
+
+shadcn-vue's Sheet is built on reka-ui's Dialog: there is no separate primitive. Animate UI's [Dialog](/docs/vue/primitives/reka-ui/dialog) slides its content in from the edge given by `data-side` instead of tipping it in. shadcn-vue's `SheetContent` keeps its `side` to itself, so the CLI passes it on with `:data-side="side"`.
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <DialogRoot>
+    <DialogTrigger>Open</DialogTrigger>
+    <DialogPortal>
+      <DialogOverlay class="fixed inset-0" />
+      <DialogContent
+        data-side="right"
+        class="fixed inset-y-0 right-0 w-3/4 sm:max-w-sm"
+      >
+        <DialogTitle>Edit profile</DialogTitle>
+        <DialogDescription
+          >Make changes to your profile here.</DialogDescription
+        >
+        <DialogClose>Close</DialogClose>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
+</template>
+```
+
+### Side
+
+Use the `side` prop on `SheetContent` to set the edge of the screen where the sheet appears: `top`, `right`, `bottom` or `left`.
+
+## Animation
+
+Animate UI's React Sheet, sliding in on a soft ease-out, with a smoother overlay and a quicker exit.
+
+- **Overlay** fades in from nothing to what its classes set: its background color deepens while its backdrop filter grows, so the page behind blurs progressively from 0 (fading its opacity would cross-fade the sharp page with an already blurred one). Over 400ms on a soft ease-out (`cubic-bezier(0.215, 0.61, 0.355, 1)`), and it clears the same way, outlasting the sheet.
+- **Content** slides in from its `data-side` edge by its own size (`translateX(100%)` from the right, `-100%` from the left, `translateY(-100%)` from the top, `100%` from the bottom) and fades in, in 0.4s on the same soft ease-out: it answers at once and slows down all the way in. Unlike a drawer it never goes past its rest: held against the screen's edge, it would open a gap there.
+- Dismissed (Escape, a click on the overlay, the close button or a `Close`), it leaves at once, quicker than it came, speeding off its edge (0.2s, a steady push from half its average speed to one and a half) and fading out, then unmounts. The overlay clears behind it.
+- On the overlay, `exit-transition` defaults to `transition`: change `transition` and both directions follow. The sheet's own exit is the quicker one above unless you set `exit-transition`.
+- Animate UI keeps the Overlay and the Content mounted while they exit, and they leave together. Clicks go through to the page as soon as the sheet closes, and focus returns to the trigger once the exit is over, unless it has moved on meanwhile.
+- A sheet doesn't follow the finger: for a panel you drag away, use the [Drawer](/docs/vue/primitives/reka-ui/drawer).
+- Under reduced motion, the sheet fades in place without sliding; the overlay still fades.
+- `AnimateUIProvider`'s `tempo` scales every duration.
+
+## API Reference
+
+The Sheet takes exactly the props of [reka-ui's Dialog](https://reka-ui.com/docs/components/dialog#api-reference): see the [Dialog's API Reference](/docs/vue/primitives/reka-ui/dialog#api-reference). Animate UI adds the animation props below.
+
+### DialogOverlay
+
+[reka-ui props](https://reka-ui.com/docs/components/dialog#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the fade in (background color and backdrop filter).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the fade out.',
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>
+
+### DialogContent
+
+[reka-ui props](https://reka-ui.com/docs/components/dialog#content), plus:
+
+<TypeTable
+  type={{
+    'data-side': {
+      description:
+        'The edge the sheet slides in from. Without it, the content is a dialog and tips in.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+    },
+    transition: {
+      description: 'Transition of the opening (slide and fade).',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description: 'Transition of the closing.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',
+    },
+  }}
+/>

@@ -4,12 +4,17 @@ export const VUE_PACKAGE = '@animate-ui/vue';
 export const VUE_MODULE = `${VUE_PACKAGE}/primitives/reka-ui`;
 
 /** shadcn-vue components Animate UI animates, with the extra classes each one drops. */
+const DIALOG_STRIP = [/^duration-(100|200)$/, /^transition$/, /^ease-in-out$/];
+
 export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   accordion: [],
+  'alert-dialog': DIALOG_STRIP,
   checkbox: [],
   collapsible: [],
+  dialog: DIALOG_STRIP,
   progress: [/^transition-all$/],
   'radio-group': [],
+  sheet: DIALOG_STRIP,
   switch: [/^transition-transform$/, /^transition-all$/],
   toggle: [],
   'toggle-group': [],
@@ -55,11 +60,21 @@ function centerClassLists(code: string) {
   return { code: out, centering };
 }
 
+/** shadcn-vue's Sheet keeps its side to itself: the content slides from `data-side`. */
+function withSheetSide(code: string) {
+  if (!/\bside\b/.test(code) || /data-side/.test(code)) return code;
+  return code.replace(
+    /<DialogContent(?=[\s>])/g,
+    '<DialogContent :data-side="side"',
+  );
+}
+
 export type VueTransformResult = {
   code: string;
   imports: number;
   removedClasses: string[];
   centering: string[];
+  sheetSide: boolean;
 };
 
 /** A file of a shadcn-vue component folder: reka-ui imports swapped, CSS animations removed. */
@@ -78,10 +93,17 @@ export function transformVue(
       return `${from}${quote}${VUE_MODULE}${quote}`;
     },
   );
-  const { code: stripped, removed } = stripAnimationClasses(swapped, extra);
+  const sided = component === 'sheet' ? withSheetSide(swapped) : swapped;
+  const { code: stripped, removed } = stripAnimationClasses(sided, extra);
   const { code: centered, centering } =
     options.tailwind === 3
       ? centerClassLists(stripped)
       : { code: stripped, centering: [] };
-  return { code: centered, imports, removedClasses: removed, centering };
+  return {
+    code: centered,
+    imports,
+    removedClasses: removed,
+    centering,
+    sheetSide: sided !== swapped,
+  };
 }

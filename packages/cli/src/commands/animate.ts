@@ -247,6 +247,8 @@ function animateVue(
         log(`    reka-ui → ${VUE_PACKAGE}/primitives/reka-ui`);
       if (result.removedClasses.length > 0)
         log(`    removed CSS animations: ${result.removedClasses.join(' ')}`);
+      if (result.sheetSide)
+        log('    :data-side="side" added: the sheet slides in from its side');
       if (result.centering.length > 0)
         log(
           `    centered with margins: ${result.centering.join(' ')} → inset-0 m-auto h-fit (under Tailwind 3 a translate would fight Motion's transform)`,

@@ -73,6 +73,36 @@ describe('transformVue, on shadcn-vue’s own files', () => {
       expect(removed(name), name).toEqual([]);
   });
 
+  test('dialogs and sheets lose their CSS enter and exit, like the React CLI', () => {
+    const removed = (name: string) => [
+      ...new Set(
+        files(name).flatMap(
+          ({ code }) => transformVue(code, name)!.removedClasses,
+        ),
+      ),
+    ];
+    for (const name of ['dialog', 'alert-dialog', 'sheet']) {
+      expect(removed(name), name).toContain('data-[state=open]:animate-in');
+      expect(removed(name), name).toContain('data-[state=closed]:animate-out');
+    }
+    expect(removed('dialog')).toContain('duration-200');
+    expect(removed('sheet')).toEqual(
+      expect.arrayContaining(['transition', 'ease-in-out']),
+    );
+  });
+
+  test('the sheet passes its side to the content, which slides from it', () => {
+    const [content] = files('sheet').filter(
+      ({ file }) => file === 'SheetContent.vue',
+    );
+    const result = transformVue(content!.code, 'sheet')!;
+    expect(result.sheetSide).toBe(true);
+    expect(result.code).toMatch(/<DialogContent :data-side="side"\s/);
+    expect(transformVue(result.code, 'sheet')!.sheetSide).toBe(false);
+    for (const { code } of files('dialog'))
+      expect(transformVue(code, 'dialog')!.code).not.toContain('data-side');
+  });
+
   test('a class list keeps its spacing once a class is removed', () => {
     const { code } = transformVue(
       'class="data-[state=closed]:animate-accordion-up overflow-hidden"\nclass="a animate-in b"\n',

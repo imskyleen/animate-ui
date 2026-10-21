@@ -1,6 +1,7 @@
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   h,
   inject,
   onBeforeUnmount,
@@ -300,10 +301,21 @@ function toCssTiming(motionTransition: Transition): CssTiming {
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
+// Once the app has mounted (hydrated), later components read the setting at once.
+const appMounted = () =>
+  Boolean(
+    (
+      getCurrentInstance()?.appContext.app as
+        { _container?: unknown } | undefined
+    )?._container,
+  );
+
 /** False on the server and while hydrating, then follows the OS setting. */
 function useShouldReduceMotion(): ComputedRef<boolean> {
   const setting = useReducedMotionSetting();
-  const prefersReduced = ref(false);
+  const prefersReduced = ref(
+    appMounted() && window.matchMedia(REDUCED_MOTION_QUERY).matches,
+  );
   let query: MediaQueryList | undefined;
   const update = () => {
     prefersReduced.value = query?.matches ?? false;

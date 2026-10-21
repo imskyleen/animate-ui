@@ -18,7 +18,6 @@ import {
 
 const SHEET = '[data-slot="sheet-content"]';
 const OVERLAY = '[data-slot="sheet-overlay"]';
-const REST = { bg: 0.1, blur: 4 };
 
 const SIDES = Object.keys(SHEET_TRAVEL) as (keyof typeof SHEET_TRAVEL)[];
 
@@ -40,12 +39,31 @@ async function importDiff(page: Page, path: string) {
     );
 }
 
-export function sheetCases(
-  library: 'radix-ui' | 'base-ui' | 'react-aria',
-  install: string[],
-) {
-  const demo = (name: string) => `/tests/demos/${library}/${name}`;
+type SheetOptions = {
+  /** Opens a demo or fixture page, by its name. */
+  goto?: (page: Page, name: string) => Promise<unknown>;
+  /** The page with one button per side, and Cancel inside. */
+  sides?: string;
+  /** The demo's overlay at rest: shadcn/ui's tint and backdrop blur. */
+  rest?: { bg: number; blur: number };
+  docs?: string;
+  noCloseButton?: boolean;
+};
 
+export function sheetCases(
+  library: 'radix-ui' | 'base-ui' | 'react-aria' | 'vue-reka-ui',
+  install: string[],
+  {
+    goto = (page, name) =>
+      page.goto(`/tests/demos/${library}/${name}`, {
+        waitUntil: 'networkidle',
+      }),
+    sides = 'sheet-side',
+    rest: REST = { bg: 0.1, blur: 4 },
+    docs = `/docs/primitives/${library}/sheet`,
+    noCloseButton = true,
+  }: SheetOptions = {},
+) {
   async function open(page: Page) {
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     await expectSheetSettled(page, SHEET, 'right');
@@ -53,7 +71,7 @@ export function sheetCases(
 
   test.describe(`${library} sheet demo`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(demo('sheet'), { waitUntil: 'networkidle' });
+      await goto(page, 'sheet');
     });
 
     test('slides and fades in from the right edge on its curve, never past its rest, as the overlay fades in', async ({
@@ -199,7 +217,7 @@ export function sheetCases(
 
   test.describe(`${library} sheet sides`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(demo('sheet-side'), { waitUntil: 'networkidle' });
+      await goto(page, sides);
     });
 
     for (const side of SIDES) {
@@ -229,9 +247,8 @@ export function sheetCases(
 
   test.describe(`${library} sheet without a close button`, () => {
     test('has no close button; a click outside closes it', async ({ page }) => {
-      await page.goto(demo('sheet-no-close-button'), {
-        waitUntil: 'networkidle',
-      });
+      test.skip(!noCloseButton, 'No such demo');
+      await goto(page, 'sheet-no-close-button');
       await page.getByRole('button', { name: 'Open Sheet' }).click();
       await expectSheetSettled(page, SHEET, 'right');
       await expect(
@@ -247,7 +264,7 @@ export function sheetCases(
   test(`${library} sheet docs: installs shadcn/ui's sheet, swapping its Dialog import`, async ({
     page,
   }) => {
-    const lines = await importDiff(page, `/docs/primitives/${library}/sheet`);
+    const lines = await importDiff(page, docs);
     expect(lines.filter((line) => !line.startsWith(' '))).toEqual(install);
     await page
       .getByRole('tablist', { name: 'Installation' })

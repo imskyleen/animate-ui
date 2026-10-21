@@ -4,10 +4,13 @@ const PAGE = '/docs/vue/primitives/reka-ui/accordion';
 
 const PAGES = [
   ['accordion', 'Product Information'],
+  ['alert-dialog', 'Show Dialog'],
+  ['dialog', 'Open Dialog'],
   ['checkbox', 'Enable notifications'],
   ['collapsible', '@radix-ui/primitives'],
   ['progress', 'progress.value = 66'],
   ['radio-group', 'id="r3"'],
+  ['sheet', 'Save changes'],
   ['switch', 'Airplane Mode'],
   ['toggle', 'TextBoldIcon'],
   ['toggle-group', 'TextUnderlineIcon'],
@@ -115,7 +118,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(8);
+  await expect(cards).toHaveCount(11);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

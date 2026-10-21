@@ -6,13 +6,8 @@ export type {
   AcceptableValue,
   AlertDialogActionProps,
   AlertDialogCancelProps,
-  AlertDialogContentEmits,
-  AlertDialogContentProps,
   AlertDialogDescriptionProps,
-  AlertDialogEmits,
-  AlertDialogOverlayProps,
   AlertDialogPortalProps,
-  AlertDialogProps,
   AlertDialogTitleProps,
   AlertDialogTriggerProps,
   AsTag,
@@ -174,13 +169,8 @@ export type {
   DateRangePickerTriggerProps,
   DateValue,
   DialogCloseProps,
-  DialogContentEmits,
-  DialogContentProps,
   DialogDescriptionProps,
-  DialogOverlayProps,
   DialogPortalProps,
-  DialogRootEmits,
-  DialogRootProps,
   DialogTitleProps,
   DialogTriggerProps,
   Direction,
@@ -559,6 +549,24 @@ export {
 } from './accordion';
 
 export {
+  AlertDialogRoot,
+  AlertDialogTrigger,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+  type AlertDialogProps,
+  type AlertDialogEmits,
+  type AlertDialogContentEmits,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  type AlertDialogOverlayProps,
+  type AlertDialogContentProps,
+  type AlertDialogFlipDirection,
+} from './alert-dialog';
+
+export {
   CheckboxRoot,
   type CheckboxRootEmits,
   type CheckboxRootProps,
@@ -575,6 +583,23 @@ export {
   CollapsibleContent,
   type CollapsibleContentProps,
 } from './collapsible';
+
+export {
+  DialogRoot,
+  DialogTrigger,
+  DialogPortal,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  type DialogRootProps,
+  type DialogRootEmits,
+  type DialogContentEmits,
+  DialogOverlay,
+  DialogContent,
+  type DialogOverlayProps,
+  type DialogContentProps,
+  type DialogFlipDirection,
+} from './dialog';
 
 export {
   ProgressRoot,
