@@ -34,6 +34,7 @@ import {
 } from '@/lib/primitive-sections';
 
 import { AnimatedNav, NavItemContent, useNavHover } from './animated-nav';
+import { FrameworkSwitch } from './framework-switch';
 import { GitHubLink, NAV_ITEMS, ThemeToggle } from './header';
 
 type Link = { name: ReactNode; url: string; active: boolean };
@@ -185,6 +186,67 @@ function SidebarScroll({ children }: { children: ReactNode }) {
   );
 }
 
+function MenuSection() {
+  return (
+    <Section
+      title="Menu"
+      icon={Menu01Icon}
+      links={NAV_ITEMS.map((item) => ({
+        name: item.title,
+        url: item.url,
+        active: false,
+      }))}
+    />
+  );
+}
+
+/** A framework's own tree: its pages as the guide, each folder as a section. */
+function FolderSections({
+  folder,
+  pathname,
+}: {
+  folder: PageTree.Folder;
+  pathname: string;
+}) {
+  const guide: Link[] = [];
+  const sections: { title: string; links: Link[] }[] = [];
+  if (folder.index)
+    guide.push({
+      name: folder.index.name,
+      url: folder.index.url,
+      active: pathname === folder.index.url,
+    });
+  for (const node of folder.children) {
+    if (node.type === 'page')
+      guide.push({
+        name: node.name,
+        url: node.url,
+        active: pathname === node.url,
+      });
+    if (node.type === 'folder')
+      sections.push({
+        title: node.name === 'Primitives' ? 'Components' : String(node.name),
+        links: folderLinks(node).map((link) => ({
+          ...link,
+          active: pathname === link.url,
+        })),
+      });
+  }
+  return (
+    <>
+      <Section title="Guide" icon={BookOpen02Icon} links={guide} />
+      {sections.map((section) => (
+        <Section
+          key={section.title}
+          title={section.title}
+          icon={ComponentIcon}
+          links={section.links}
+        />
+      ))}
+    </>
+  );
+}
+
 function SidebarBody({ mobile }: { mobile: boolean }) {
   const { root } = useTreeContext();
   const pathname = usePathname();
@@ -197,6 +259,7 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
     let icons: Omit<Link, 'active'>[] = [];
     for (const node of root.children) {
       if (node.type === 'page') guide.push({ name: node.name, url: node.url });
+      if (node.type === 'folder' && node.root) continue;
       if (node.type === 'folder' && node.index) {
         guide.push({ name: node.name, url: node.index.url });
         if (node.index.url === PRIMITIVES_URL) primitivesFolder = node;
@@ -247,8 +310,24 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
     ]);
   }
 
+  const frameworkRoot =
+    root.type === 'folder' && (root as PageTree.Folder).root
+      ? (root as PageTree.Folder)
+      : null;
+  if (frameworkRoot)
+    return (
+      <SidebarScroll>
+        <FrameworkSwitch />
+        <AnimatedNav>
+          {mobile && <MenuSection />}
+          <FolderSections folder={frameworkRoot} pathname={pathname} />
+        </AnimatedNav>
+      </SidebarScroll>
+    );
+
   return (
     <SidebarScroll>
+      <FrameworkSwitch />
       <AnimatedNav>
         {mobile && (
           <Section

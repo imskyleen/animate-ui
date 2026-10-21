@@ -1,4 +1,5 @@
 {
   "title": "Vue",
-  "pages": ["primitives"]
+  "root": true,
+  "pages": ["index", "primitives"]
 }

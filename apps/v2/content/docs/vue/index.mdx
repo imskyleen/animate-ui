@@ -1,0 +1,34 @@
+---
+title: Introduction
+description: Animated drop-in primitives for reka-ui, built with Motion for Vue.
+---
+
+Animate UI for Vue animates your shadcn-vue components: they keep their structure, their styles and reka-ui's API, and only the import changes.
+
+```vue
+<script setup lang="ts">
+// Before
+import { AccordionContent } from 'reka-ui'
+// After
+import { AccordionContent } from '@animate-ui/vue/primitives/reka-ui'
+</script>
+```
+
+## Installation
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+`@animate-ui/vue/primitives/reka-ui` exports everything reka-ui does, helpers and props types included: swap a file's whole `reka-ui` import, and the parts Animate UI animates take over. It's built on [Motion for Vue](https://motion.dev/docs/vue), with the same springs, curves and timings as Animate UI for React.
+
+## Components
+
+The Vue port is in progress. These components move exactly like their React versions:
+
+- [Accordion](/docs/vue/primitives/accordion)
+- [Checkbox](/docs/vue/primitives/checkbox)
+- [Collapsible](/docs/vue/primitives/collapsible)
+- [Progress](/docs/vue/primitives/progress)
+- [Switch](/docs/vue/primitives/switch)
+- [Toggle](/docs/vue/primitives/toggle)
