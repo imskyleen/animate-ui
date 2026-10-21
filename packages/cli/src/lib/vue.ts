@@ -20,6 +20,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   progress: [/^transition-all$/],
   'radio-group': [],
   sheet: DIALOG_STRIP,
+  slider: [],
   switch: [/^transition-transform$/, /^transition-all$/],
   tabs: [],
   toggle: [],

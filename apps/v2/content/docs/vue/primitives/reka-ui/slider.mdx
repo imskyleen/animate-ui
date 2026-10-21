@@ -1,0 +1,80 @@
+---
+title: Slider
+description: An input where the user selects a value from within a given range.
+---
+
+<VueComponentPreview name="reka-ui/slider" />
+
+## Installation
+
+<Installation name="slider" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  SliderRange,
+  SliderRoot,
+  SliderThumb,
+  SliderTrack,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <SliderRoot :default-value="[50]" :max="100" :step="1">
+    <SliderTrack>
+      <SliderRange />
+    </SliderTrack>
+    <SliderThumb aria-label="Volume" />
+  </SliderRoot>
+</template>
+```
+
+## Animation
+
+It moves like Animate UI's React slider.
+
+- **The pressed or dragged thumb stretches along the track**: its width grows by 3/16 (a 16px thumb becomes 19px), on a spring (stiffness 400, damping 32), and springs back on release. It's the thumb's real width, so its round ends stay round, and reka-ui centers it on its value, so it grows on both sides (along its height in a vertical slider).
+- **A press on the track glides** the thumb and the range to the new value on the same spring: it goes about 1.5% past the value. reka-ui positions them with layout: they jump to the new place, and a transform offset springs back (FLIP), so nothing animates `left`. With a range slider, only the thumb that moves glides.
+- **Dragging follows the pointer instantly**, and keyboard changes are instant. Dragging right after a press cancels the glide: the thumb sits under the pointer.
+- Under reduced motion, presses jump and nothing stretches.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Slider](https://reka-ui.com/docs/components/slider#api-reference). Animate UI adds the animation props below.
+
+### SliderRoot, SliderTrack
+
+[reka-ui props](https://reka-ui.com/docs/components/slider#api-reference) only.
+
+### SliderRange
+
+[reka-ui props](https://reka-ui.com/docs/components/slider#range), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the range after a press on the track.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 400, damping: 32 }",
+    },
+  }}
+/>
+
+### SliderThumb
+
+[reka-ui props](https://reka-ui.com/docs/components/slider#thumb), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Transition of the thumb after a press on the track, and of its stretch while pressed.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 400, damping: 32 }",
+    },
+  }}
+/>
+
+The pressed thumb also gets `data-pressed`. `AnimateUIProvider`'s `tempo` scales these transitions with everything else.

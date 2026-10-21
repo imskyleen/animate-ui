@@ -16,6 +16,7 @@ const PAGES = [
   ['progress', 'progress.value = 66'],
   ['radio-group', 'id="r3"'],
   ['sheet', 'Save changes'],
+  ['slider', 'w-[60%]'],
   ['switch', 'Airplane Mode'],
   ['toggle', 'TextBoldIcon'],
   ['toggle-group', 'TextUnderlineIcon'],
@@ -128,7 +129,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(18);
+  await expect(cards).toHaveCount(19);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

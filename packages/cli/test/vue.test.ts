@@ -67,6 +67,7 @@ describe('transformVue, on shadcn-vue’s own files', () => {
       'checkbox',
       'collapsible',
       'radio-group',
+      'slider',
       'toggle',
       'toggle-group',
     ])

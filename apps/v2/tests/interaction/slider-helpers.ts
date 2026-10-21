@@ -31,6 +31,16 @@ const sizeOf = (locator: Locator) =>
 
 const STRETCH = 19 / 16;
 
+const VUE = 'vue-reka-ui';
+const sliderDemo = (library: string) =>
+  library === VUE
+    ? '/tests/vue-demos/reka-ui/slider'
+    : `/tests/demos/${library}/slider`;
+const sliderFixture = (library: string) =>
+  library === VUE
+    ? '/tests/vue-demos/fixtures/reka-ui-slider'
+    : `/tests/fixtures/${library}-slider`;
+
 async function startSampling(
   page: Page,
   sliderIndex: number,
@@ -108,10 +118,20 @@ async function trackPoint(page: Page, sliderIndex: number, ratio: number) {
   return { x: box.x + box.width * ratio, y: box.y + box.height / 2 };
 }
 
-export function describeSliderDemo(library: string) {
+/**
+ * reka-ui keeps the pointer's offset on the thumb from the first move after a
+ * press, as a real mouse's 1px nudge: `grabMove` makes that nudge first.
+ */
+export function describeSliderDemo(
+  library: string,
+  { grabMove = false }: { grabMove?: boolean } = {},
+) {
+  const grab = async (page: Page, x: number, y: number, toward: number) => {
+    if (grabMove) await page.mouse.move(x + Math.sign(toward - x), y);
+  };
   test.describe(`${library} slider demo`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`/tests/demos/${library}/slider`, {
+      await page.goto(sliderDemo(library), {
         waitUntil: 'networkidle',
       });
     });
@@ -223,6 +243,7 @@ export function describeSliderDemo(library: string) {
       await page.mouse.move(box.x + box.width / 2, y);
       await page.mouse.down();
       const target = await trackPoint(page, 0, 0.3);
+      await grab(page, box.x + box.width / 2, y, target.x);
       await page.mouse.move(target.x, y, { steps: 8 });
       expect(Math.abs((await centerX(thumb)) - target.x)).toBeLessThan(8);
       await page.mouse.up();
@@ -236,6 +257,7 @@ export function describeSliderDemo(library: string) {
       const drag = await trackPoint(page, 0, 0.8);
       await page.mouse.move(jump.x, jump.y);
       await page.mouse.down();
+      await grab(page, jump.x, jump.y, drag.x);
       await page.mouse.move(drag.x, drag.y, { steps: 4 });
       expect(Math.abs((await centerX(thumb)) - drag.x)).toBeLessThan(8);
       await page.mouse.up();
@@ -295,7 +317,7 @@ export function describeSliderDemo(library: string) {
 
   test.describe(`${library} slider demo, range`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`/tests/fixtures/${library}-slider`, {
+      await page.goto(sliderFixture(library), {
         waitUntil: 'networkidle',
       });
     });

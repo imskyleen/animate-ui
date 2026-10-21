@@ -351,11 +351,6 @@ export type {
   SeparatorProps,
   SingleOrMultipleProps,
   SingleOrMultipleType,
-  SliderRangeProps,
-  SliderRootEmits,
-  SliderRootProps,
-  SliderThumbProps,
-  SliderTrackProps,
   SplitterGroupEmits,
   SplitterGroupProps,
   SplitterPanelEmits,
@@ -683,6 +678,18 @@ export {
   type RadioGroupItemProps,
   type RadioGroupIndicatorProps,
 } from './radio-group';
+
+export {
+  SliderTrack,
+  type SliderRootProps,
+  type SliderRootEmits,
+  type SliderTrackProps,
+  SliderRoot,
+  SliderRange,
+  SliderThumb,
+  type SliderRangeProps,
+  type SliderThumbProps,
+} from './slider';
 
 export {
   type SwitchRootEmits,
