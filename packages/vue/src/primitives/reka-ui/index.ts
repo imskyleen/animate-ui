@@ -371,12 +371,7 @@ export type {
   StepperTitleProps,
   StepperTriggerProps,
   StringOrNumber,
-  TabsContentProps,
   TabsIndicatorProps,
-  TabsListProps,
-  TabsRootEmits,
-  TabsRootProps,
-  TabsTriggerProps,
   TagGroupItemDeleteProps,
   TagGroupItemProps,
   TagGroupItemTextProps,
@@ -696,6 +691,19 @@ export {
   SwitchThumb,
   type SwitchThumbProps,
 } from './switch';
+
+export {
+  TabsIndicator,
+  type TabsRootProps,
+  type TabsRootEmits,
+  type TabsTriggerProps,
+  TabsRoot,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  type TabsListProps,
+  type TabsContentProps,
+} from './tabs';
 
 export {
   type ToggleEmits,

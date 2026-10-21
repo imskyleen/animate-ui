@@ -27,7 +27,20 @@ export const PANEL_SHIFT = 12;
 export const PANEL_BLUR = 5;
 const COLOR: CurveOptions = { duration: 200, ease: [0.25, 0.1, 0.25, 1] };
 
+const VUE = 'vue-reka-ui';
+
+/** A library's tabs demo and fixture pages (Vue's live under /tests/vue-demos). */
+export const tabsDemo = (library: string) =>
+  library === VUE
+    ? '/tests/vue-demos/reka-ui/tabs'
+    : `/tests/demos/${library}/tabs`;
+export const tabsFixture = (library: string) =>
+  library === VUE
+    ? '/tests/vue-demos/fixtures/reka-ui-tabs'
+    : `/tests/fixtures/${library}-tabs`;
+
 export async function waitForTabs(page: Page) {
+  if (page.url().includes('/vue-demos/')) return;
   await page.waitForFunction(() => {
     const tabs = [...document.querySelectorAll('[role="tab"]')];
     return (
@@ -41,7 +54,7 @@ export async function waitForTabs(page: Page) {
 
 export async function gotoTabs(page: Page, url: string) {
   await page.goto(url, { waitUntil: 'networkidle' });
-  await waitForTabs(page);
+  if (!url.includes('/vue-demos/')) await waitForTabs(page);
   await page.waitForTimeout(250);
 }
 
@@ -401,7 +414,7 @@ export function describeTabsDemo(
   library: string,
   { selectKeys }: { selectKeys: string[] },
 ) {
-  const url = `/tests/demos/${library}/tabs`;
+  const url = tabsDemo(library);
   test.describe(`${library} tabs demo`, () => {
     test.beforeEach(async ({ page }) => {
       await gotoTabs(page, url);
@@ -471,6 +484,11 @@ export function describeTabsDemo(
       "the tabs' text color changes on transition.color (200ms, ease)",
       { tag: '@timing' },
       async ({ page }) => {
+        // shadcn-vue's tabs keep one text color in the light theme.
+        if (library === VUE) {
+          await page.emulateMedia({ colorScheme: 'dark' });
+          await gotoTabs(page, url);
+        }
         const tab = page.getByRole('tab', { name: 'Analytics' });
         expectCssCurve(
           await tab.evaluate((el) => {
@@ -766,18 +784,22 @@ export function describeTabsDemo(
 export function describeTabsMounted(library: string) {
   test.describe(`${library} tabs, mounted after the page has loaded`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/tests/fixtures/tabs-indicator-mount', {
-        waitUntil: 'networkidle',
-      });
-      await page.waitForFunction(() => {
-        const buttons = [...document.querySelectorAll('button')];
-        return (
-          buttons.length > 0 &&
-          buttons.every((button) =>
-            Object.keys(button).some((key) => key.startsWith('__reactProps')),
-          )
-        );
-      });
+      await page.goto(
+        library === VUE
+          ? '/tests/vue-demos/fixtures/reka-ui-tabs-indicator-mount'
+          : '/tests/fixtures/tabs-indicator-mount',
+        { waitUntil: 'networkidle' },
+      );
+      if (library !== VUE)
+        await page.waitForFunction(() => {
+          const buttons = [...document.querySelectorAll('button')];
+          return (
+            buttons.length > 0 &&
+            buttons.every((button) =>
+              Object.keys(button).some((key) => key.startsWith('__reactProps')),
+            )
+          );
+        });
       await page.waitForTimeout(250);
     });
 
@@ -868,7 +890,7 @@ export function describeTabsMounted(library: string) {
 }
 
 export function describeTabsHeights(library: string) {
-  const url = `/tests/fixtures/${library}-tabs`;
+  const url = tabsFixture(library);
   const scope = '[data-testid="heights"]';
 
   test.describe(`${library} tabs, panels of different heights`, () => {
@@ -1200,8 +1222,8 @@ export function expectBoxStays(
 
 export function describeTabsFrames(library: string) {
   test.describe(`${library} tabs, panels holding a box`, () => {
-    const demo = `/tests/demos/${library}/tabs`;
-    const fixture = `/tests/fixtures/${library}-tabs`;
+    const demo = tabsDemo(library);
+    const fixture = tabsFixture(library);
     const root = '[data-slot="tabs"]';
     const frames = '[data-testid="frames"]';
 

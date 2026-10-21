@@ -21,6 +21,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   'radio-group': [],
   sheet: DIALOG_STRIP,
   switch: [/^transition-transform$/, /^transition-all$/],
+  tabs: [],
   toggle: [],
   'toggle-group': [],
   tooltip: [/^duration-100$/],

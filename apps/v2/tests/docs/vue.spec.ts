@@ -19,6 +19,7 @@ const PAGES = [
   ['switch', 'Airplane Mode'],
   ['toggle', 'TextBoldIcon'],
   ['toggle-group', 'TextUnderlineIcon'],
+  ['tabs', 'Analytics'],
   ['tooltip', 'variant="outline"'],
 ] as const;
 
@@ -127,7 +128,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(17);
+  await expect(cards).toHaveCount(18);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));
