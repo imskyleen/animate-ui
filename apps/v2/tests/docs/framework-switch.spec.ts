@@ -100,3 +100,52 @@ test('each framework has its own sidebar', async ({ page }) => {
     sidebar.locator('a[href^="/docs/vue"]:not([role="tab"])'),
   ).toHaveCount(0);
 });
+
+const samplePanel = (page: Page) =>
+  page.evaluate(async () => {
+    const out: { x: number; opacity: number; vue: boolean }[] = [];
+    const start = performance.now();
+    while (performance.now() - start < 2500) {
+      await new Promise((r) => requestAnimationFrame(r));
+      const panel = document.querySelector(
+        '#nd-sidebar [data-slot="sidebar-scroll"] > div:nth-child(2)',
+      );
+      if (!panel) continue;
+      const style = getComputedStyle(panel);
+      out.push({
+        x: new DOMMatrix(style.transform).m41,
+        opacity: Number(style.opacity),
+        vue: !panel.textContent!.includes('Backgrounds'),
+      });
+      if (out.length > 5 && out.at(-1)!.vue && out.at(-1)!.opacity === 1) break;
+    }
+    return out;
+  });
+
+for (const reduced of [false, true])
+  test(`the sidebar's links slide toward the framework picked${reduced ? ', or only fade under reduced motion' : ''}`, async ({
+    page,
+  }) => {
+    if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/docs/vue/primitives/switch', {
+      waitUntil: 'networkidle',
+    });
+    await page.goto('/docs/primitives/radix-ui/switch', {
+      waitUntil: 'networkidle',
+    });
+    await ready(page);
+    const frames = samplePanel(page);
+    await tab(page, 'Vue').click();
+    const samples = await frames;
+    const leaving = samples.filter((s) => !s.vue && s.opacity < 1);
+    const coming = samples.filter((s) => s.vue && s.opacity < 1);
+    expect(leaving.length).toBeGreaterThan(1);
+    expect(coming.length).toBeGreaterThan(2);
+    if (reduced) {
+      for (const s of samples) expect(s.x).toBe(0);
+    } else {
+      expect(Math.min(...leaving.map((s) => s.x))).toBeLessThan(-4);
+      expect(Math.max(...coming.map((s) => s.x))).toBeGreaterThan(4);
+    }
+    expect(samples.at(-1)).toMatchObject({ x: 0, opacity: 1, vue: true });
+  });

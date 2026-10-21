@@ -12,6 +12,12 @@ import {
   TextNumberSignIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
+import {
+  motionTokens,
+  scaleTransition,
+  useMotionTokens,
+  useShouldReduceMotion,
+} from '@animate-ui/react/utils/motion';
 import { cn } from 'cn';
 import {
   SidebarContent,
@@ -22,8 +28,9 @@ import {
 import { useTreeContext } from 'fumadocs-ui/contexts/tree';
 import type { SidebarProps } from 'fumadocs-ui/layouts/docs/slots/sidebar';
 import type * as PageTree from 'fumadocs-core/page-tree';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
 import { usePathname } from 'next/navigation';
-import { Fragment, useMemo, type ReactNode } from 'react';
+import { Fragment, useMemo, useState, type ReactNode } from 'react';
 
 import { AnimateUILogo, LIBRARIES, type LibraryId } from '@/lib/libraries';
 import { ICON_LIBRARY_LOGOS } from '@/lib/icon-libraries';
@@ -186,6 +193,66 @@ function SidebarScroll({ children }: { children: ReactNode }) {
   );
 }
 
+const FRAMEWORK_ORDER = { react: 0, vue: 1 };
+
+const panel: Variants = {
+  hidden: ({ way, reduce }: Slide) => ({
+    opacity: 0,
+    x: reduce ? 0 : way * motionTokens.shift.tabs,
+    filter: motionTokens.blur.panel,
+  }),
+  shown: ({ tempo }: Slide) => ({
+    opacity: 1,
+    x: 0,
+    filter: 'blur(0px)',
+    transitionEnd: { filter: 'none' },
+    transition: scaleTransition(motionTokens.transition.panelIn, tempo),
+  }),
+  gone: ({ way, reduce, tempo }: Slide) => ({
+    opacity: 0,
+    x: reduce ? 0 : -way * motionTokens.shift.tabs,
+    filter: motionTokens.blur.panel,
+    transition: scaleTransition(motionTokens.transition.panelOut, tempo),
+  }),
+};
+
+type Slide = { way: number; reduce: boolean; tempo: number };
+
+/** The sidebar's links change framework like tab panels: out, then in, sliding toward the tab picked. */
+function FrameworkPanel({
+  framework,
+  children,
+}: {
+  framework: keyof typeof FRAMEWORK_ORDER;
+  children: ReactNode;
+}) {
+  const reduce = useShouldReduceMotion();
+  const { tempo } = useMotionTokens();
+  const [shown, setShown] = useState({ framework, way: 1 });
+  if (shown.framework !== framework)
+    setShown({
+      framework,
+      way:
+        FRAMEWORK_ORDER[framework] > FRAMEWORK_ORDER[shown.framework] ? 1 : -1,
+    });
+  const slide: Slide = { way: shown.way, reduce, tempo };
+
+  return (
+    <AnimatePresence mode="wait" initial={false} custom={slide}>
+      <motion.div
+        key={framework}
+        custom={slide}
+        variants={panel}
+        initial="hidden"
+        animate="shown"
+        exit="gone"
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function MenuSection() {
   return (
     <Section
@@ -314,67 +381,65 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
     root.type === 'folder' && (root as PageTree.Folder).root
       ? (root as PageTree.Folder)
       : null;
-  if (frameworkRoot)
-    return (
-      <SidebarScroll>
-        <FrameworkSwitch />
-        <AnimatedNav>
-          {mobile && <MenuSection />}
-          <FolderSections folder={frameworkRoot} pathname={pathname} />
-        </AnimatedNav>
-      </SidebarScroll>
-    );
-
   return (
     <SidebarScroll>
       <FrameworkSwitch />
-      <AnimatedNav>
-        {mobile && (
-          <Section
-            title="Menu"
-            icon={Menu01Icon}
-            links={NAV_ITEMS.map((item) => ({
-              name: item.title,
-              url: item.url,
-              active: false,
-            }))}
-          />
+      <FrameworkPanel framework={frameworkRoot ? 'vue' : 'react'}>
+        {frameworkRoot ? (
+          <AnimatedNav>
+            {mobile && <MenuSection />}
+            <FolderSections folder={frameworkRoot} pathname={pathname} />
+          </AnimatedNav>
+        ) : (
+          <AnimatedNav>
+            {mobile && (
+              <Section
+                title="Menu"
+                icon={Menu01Icon}
+                links={NAV_ITEMS.map((item) => ({
+                  name: item.title,
+                  url: item.url,
+                  active: false,
+                }))}
+              />
+            )}
+            <Section
+              title="Guide"
+              icon={BookOpen02Icon}
+              links={guide.map((link) => ({
+                ...link,
+                active: pathname === link.url,
+              }))}
+            />
+            {PRIMITIVE_SECTIONS.map((section) => (
+              <Section
+                key={section.id}
+                title={section.title}
+                icon={section.icon}
+                links={sections.get(section.id) ?? []}
+                hideSuffix={section.id in SECTION_SUFFIX}
+              />
+            ))}
+            <Section
+              title="Backgrounds"
+              icon={Image02Icon}
+              hideSuffix
+              links={backgrounds.map((link) => ({
+                ...link,
+                active: pathname === link.url,
+              }))}
+            />
+            <Section
+              title="Icons"
+              icon={GridIcon}
+              links={icons.map((link) => ({
+                ...link,
+                active: pathname === link.url,
+              }))}
+            />
+          </AnimatedNav>
         )}
-        <Section
-          title="Guide"
-          icon={BookOpen02Icon}
-          links={guide.map((link) => ({
-            ...link,
-            active: pathname === link.url,
-          }))}
-        />
-        {PRIMITIVE_SECTIONS.map((section) => (
-          <Section
-            key={section.id}
-            title={section.title}
-            icon={section.icon}
-            links={sections.get(section.id) ?? []}
-            hideSuffix={section.id in SECTION_SUFFIX}
-          />
-        ))}
-        <Section
-          title="Backgrounds"
-          icon={Image02Icon}
-          hideSuffix
-          links={backgrounds.map((link) => ({
-            ...link,
-            active: pathname === link.url,
-          }))}
-        />
-        <Section
-          title="Icons"
-          icon={GridIcon}
-          links={icons.map((link) => ({
-            ...link,
-            active: pathname === link.url,
-          }))}
-        />
-      </AnimatedNav>
+      </FrameworkPanel>
     </SidebarScroll>
   );
 }
