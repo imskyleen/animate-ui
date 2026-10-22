@@ -43,6 +43,10 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'animate-ui/button': () => import('./demos/animate-ui/button.vue'),
+  'animate-ui/copy-button': () => import('./demos/animate-ui/copy-button.vue'),
+  'animate-ui/icon-button': () => import('./demos/animate-ui/icon-button.vue'),
+  'animate-ui/ripple-button': () => import('./demos/animate-ui/ripple-button.vue'),
   'animate-ui/theme-toggler': () => import('./demos/animate-ui/theme-toggler.vue'),
   'animate-ui/rolling-text': () =>
     import('./demos/animate-ui/rolling-text.vue'),

@@ -93,6 +93,53 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       range: { value: 120 },
     },
   },
+  'animate-ui/button': {
+    Button: {
+      tapScale: { value: 0.97, min: 0, max: 2, step: 0.01 },
+    },
+  },
+  'animate-ui/ripple-button': {
+    RippleButton: {
+      tapScale: { value: 0.97, min: 0, max: 2, step: 0.01 },
+    },
+  },
+  'animate-ui/copy-button': {
+    CopyButton: {
+      variant: {
+        value: 'default',
+        options: {
+          default: 'default',
+          accent: 'accent',
+          destructive: 'destructive',
+          outline: 'outline',
+          secondary: 'secondary',
+          ghost: 'ghost',
+          link: 'link',
+        },
+      },
+      size: {
+        value: 'default',
+        options: { default: 'default', xs: 'xs', sm: 'sm', lg: 'lg' },
+      },
+    },
+  },
+  'animate-ui/icon-button': {
+    IconButton: {
+      variant: {
+        value: 'outline',
+        options: {
+          default: 'default',
+          accent: 'accent',
+          outline: 'outline',
+          ghost: 'ghost',
+        },
+      },
+      size: {
+        value: 'default',
+        options: { default: 'default', sm: 'sm', lg: 'lg' },
+      },
+    },
+  },
   'animate-ui/particles': {
     ParticlesEffect: {
       side: {

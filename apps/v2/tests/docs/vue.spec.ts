@@ -39,6 +39,10 @@ const OWN_PAGES = [
   ['image-zoom', 'Black porcelain mug, zoomable'],
   ['magnetic', "onlyOnHover === 'true'"],
   ['particles', 'ParticlesLabel'],
+  ['button', ':tap-scale="Number(tapScale)"'],
+  ['copy-button', 'Tick02Icon'],
+  ['icon-button', 'iconButtonVariants'],
+  ['ripple-button', 'ripple-button-ripple-color:var(--primary-foreground)'],
   ['scroll-fade', 'Ripple on keyboard press'],
   ['shine', 'on(enableOnTap)'],
   ['slide', 'Number(offset)'],
@@ -169,7 +173,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(51);
+  await expect(cards).toHaveCount(55);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

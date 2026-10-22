@@ -1,0 +1,138 @@
+---
+title: Icon Button
+description: A button that bursts into particles when clicked.
+---
+
+<VueComponentPreview name="animate-ui/icon-button" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { IconButton, IconButtonParticles } from '@animate-ui/vue/primitives/buttons/icon';
+</script>
+
+<template>
+  <IconButton aria-label="Star">
+    <StarIcon />
+    <IconButtonParticles class="text-neutral-500" />
+  </IconButton>
+</template>
+```
+
+## Animation
+
+- Each click bursts particles from the top edge of the button (built on [Particles](/docs/vue/primitives/animate-ui/particles)): 6 dots fly 30px out around it (spread evenly at the full 360°), growing then shrinking back to nothing as they fade in and out, over 0.8s with an `easeOut`, one after another 50ms apart. A click during a burst starts it over.
+- Pressing scales the button to `tap-scale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hover-scale`.
+- `<AnimateUIProvider :tempo>` paces the press spring.
+- Under reduced motion, the particles don't burst and the button doesn't scale.
+
+## API Reference
+
+### IconButton
+
+<TypeTable
+  type={{
+    'hover-scale': {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    'tap-scale': {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    transition: {
+      description: 'Transition of the tap (and hover) scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+    'as-child': {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### useIconButton
+
+Returns `bursts()`, the number of clicks so far: each one starts a new burst.
+
+### IconButtonParticles
+
+<TypeTable
+  type={{
+    size: {
+      description:
+        'Diameter of a particle, in pixels. Particles are filled with `currentColor`.',
+      type: 'number',
+      default: '4',
+    },
+    side: {
+      description: 'Edge of the button the particles burst from.',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+    },
+    'side-offset': {
+      description: 'Distance from that edge, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    align: {
+      description: 'Where along that edge.',
+      type: "'start' | 'center' | 'end'",
+      default: "'center'",
+    },
+    'align-offset': {
+      description: 'Offset along that edge, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    count: {
+      description: 'Number of particles.',
+      type: 'number',
+      default: '6',
+    },
+    radius: {
+      description: 'Distance the particles travel, in pixels.',
+      type: 'number',
+      default: '30',
+    },
+    spread: {
+      description: 'Angle the particles spread over, in degrees.',
+      type: 'number',
+      default: '360',
+    },
+    duration: {
+      description: 'Duration of a particle, in seconds.',
+      type: 'number',
+      default: '0.8',
+    },
+    'hold-delay': {
+      description: 'Delay between two particles, in seconds.',
+      type: 'number',
+      default: '0.05',
+    },
+    delay: {
+      description: 'Delay before the burst, in seconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description:
+        "Props of each particle ([Particles](/docs/vue/primitives/animate-ui/particles)'s `ParticlesEffect`).",
+      type: 'ParticlesEffectProps',
+    },
+  }}
+/>
