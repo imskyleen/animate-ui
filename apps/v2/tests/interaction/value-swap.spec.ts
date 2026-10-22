@@ -251,33 +251,50 @@ for (const { name, demo, over } of [
   { name: 'vue reka-ui', demo: '/tests/vue-demos/reka-ui/select', over: true },
   { name: 'react-aria', demo: '/tests/demos/react-aria/select', over: false },
 ]) {
-  test(`${name} select: the swap ${over ? 'waits for the list over the trigger to be half gone' : 'starts at once under a list below'}`, async ({ page }) => {
+  test(`${name} select: the swap ${over ? 'waits for the list over the trigger to have mostly gone, showing the old value' : 'starts at once under a list below'}`, async ({ page }) => {
     await page.goto(demo, { waitUntil: 'networkidle' });
     const trigger = page.locator('[role="combobox"], button[aria-haspopup]').first();
     await trigger.click();
     await expect(page.getByRole('option').first()).toBeVisible();
     await page.waitForTimeout(500);
-    const started = page.evaluate(
-      () =>
-        new Promise<{ after: number; list: number }>((resolve) => {
+    const started = trigger.evaluate(
+      (button) =>
+        new Promise<{ after: number; list: number; early: string[] }>((resolve) => {
           const start = performance.now();
+          const early: string[] = [];
+          const visible = () =>
+            [...button.querySelectorAll('*')]
+              .filter((node) => !node.childElementCount && node.textContent?.trim())
+              .filter((node) => {
+                let opacity = 1;
+                for (let n: Element | null = node; n && n !== button.parentElement; n = n.parentElement)
+                  opacity *= Number(getComputedStyle(n).opacity);
+                return opacity > 0.5;
+              })
+              .map((node) => node.textContent!.trim())
+              .join(' ');
           const tick = () => {
-            if (!document.querySelector('[data-animate-ui-value-ghost]'))
+            if (!document.querySelector('[data-animate-ui-value-ghost]')) {
+              if (performance.now() - start > 30) early.push(visible());
               return void requestAnimationFrame(tick);
+            }
             const list = document.querySelector('[role="listbox"]');
             let opacity = list ? 1 : 0;
             for (let node: Element | null = list; node; node = node.parentElement)
               opacity *= Number(getComputedStyle(node).opacity);
-            resolve({ after: performance.now() - start, list: opacity });
+            resolve({ after: performance.now() - start, list: opacity, early });
           };
           requestAnimationFrame(tick);
         }),
     );
     await page.getByRole('option', { name: 'Banana', exact: true }).first().click();
-    const { after, list } = await started;
+    const { after, list, early } = await started;
     if (over) {
       expect(after).toBeGreaterThan(200);
-      expect(list).toBeLessThan(0.6);
+      expect(list).toBeLessThan(0.25);
+      // Bug: the new value showed through the list right away, and the swap then went from it to itself.
+      expect(early.length).toBeGreaterThan(3);
+      expect(early.filter((text) => text.includes('Banana'))).toEqual([]);
     } else expect(after).toBeLessThan(150);
   });
 }

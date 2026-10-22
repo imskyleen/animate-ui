@@ -101,7 +101,7 @@ function crossfade(
   return stop;
 }
 
-/** A list laid over its trigger (item-aligned) hides the value until it is half faded out. */
+/** A list laid over its trigger (item-aligned) hides the value until it has mostly faded out. */
 function covered(el: HTMLElement) {
   const rect = el.getBoundingClientRect();
   const x = rect.left + rect.width / 2;
@@ -114,7 +114,7 @@ function covered(el: HTMLElement) {
     let opacity = 1;
     for (let node: Element | null = list; node; node = node.parentElement)
       opacity *= Number(getComputedStyle(node).opacity);
-    if (opacity > 0.5) return true;
+    if (opacity > 0.3) return true;
   }
   return false;
 }
@@ -127,15 +127,34 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
   let stop: (() => void) | null = null;
 
   let frame = 0;
+  let held: (() => void) | null = null;
+
+  /** Under a list, the old text stays, as a copy over the new one, until the swap. */
+  const hold = () => {
+    const parent = el.parentElement!;
+    const release = holdPosition(parent);
+    const old = copy.cloneNode(true) as HTMLElement;
+    place(el, old, box);
+    const { opacity } = el.style;
+    el.style.opacity = '0';
+    return () => {
+      old.remove();
+      el.style.opacity = opacity;
+      release();
+    };
+  };
 
   /** Once a frame, before it's painted: a text changed and changed back in between doesn't swap. */
   const settle = () => {
     const next = el.textContent ?? '';
-    if (next === text) return;
-    if (covered(el)) {
+    if (next !== text && covered(el)) {
+      held ??= el.parentElement ? hold() : null;
       frame = requestAnimationFrame(settle);
       return;
     }
+    held?.();
+    held = null;
+    if (next === text) return;
     stop?.();
     stop = crossfade(el, copy, box, timing(), (options) => {
       const incoming = el.cloneNode(true) as HTMLElement;
@@ -169,6 +188,8 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
     box = boxOf(el);
   };
   const observer = new MutationObserver(() => {
+    if (!held && el.textContent !== text && el.parentElement && covered(el))
+      held = hold();
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(settle);
   });
@@ -181,6 +202,7 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
     cancelAnimationFrame(frame);
     observer.disconnect();
     resize.disconnect();
+    held?.();
     stop?.();
   };
 }
