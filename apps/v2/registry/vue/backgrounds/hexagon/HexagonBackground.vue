@@ -28,8 +28,13 @@ const HEXAGON_CLASSES = [
 
 const hexagonWidth = computed(() => props.hexagonSize)
 const hexagonHeight = computed(() => props.hexagonSize * 1.1)
-const rowSpacing = computed(() => props.hexagonSize * 0.8)
-const computedMarginTop = computed(() => -36 - 0.275 * (props.hexagonSize - 100) + props.hexagonMargin)
+// Rows a slanted side apart, so every border is hexagonMargin thick.
+const rowSpacing = computed(() => {
+  const corner = hexagonHeight.value / 4
+  const side = Math.hypot(corner, hexagonWidth.value / 2)
+  return hexagonHeight.value - corner + (props.hexagonMargin * (2 * side - corner)) / hexagonWidth.value
+})
+const computedMarginTop = computed(() => rowSpacing.value - hexagonHeight.value)
 const oddRowMarginLeft = computed(() => -(props.hexagonSize / 2))
 const evenRowMarginLeft = computed(() => props.hexagonMargin / 2)
 
@@ -83,7 +88,7 @@ const hexagonAttrs = computed(() => {
           marginTop: `${computedMarginTop}px`,
           marginLeft: `${((rowIndex + 1) % 2 === 0 ? evenRowMarginLeft : oddRowMarginLeft) - 10}px`,
         }"
-        class="inline-flex"
+        class="flex w-max"
       >
         <div
           v-for="colIndex in range(grid.columns)"

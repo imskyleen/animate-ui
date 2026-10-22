@@ -23,9 +23,14 @@ function HexagonBackground({
 }: HexagonBackgroundProps) {
   const hexagonWidth = hexagonSize;
   const hexagonHeight = hexagonSize * 1.1;
-  const rowSpacing = hexagonSize * 0.8;
-  const baseMarginTop = -36 - 0.275 * (hexagonSize - 100);
-  const computedMarginTop = baseMarginTop + hexagonMargin;
+  // Rows a slanted side apart, so every border is hexagonMargin thick.
+  const corner = hexagonHeight / 4;
+  const side = Math.hypot(corner, hexagonWidth / 2);
+  const rowSpacing =
+    hexagonHeight -
+    corner +
+    (hexagonMargin * (2 * side - corner)) / hexagonWidth;
+  const computedMarginTop = rowSpacing - hexagonHeight;
   const oddRowMarginLeft = -(hexagonSize / 2);
   const evenRowMarginLeft = hexagonMargin / 2;
 
@@ -86,7 +91,7 @@ function HexagonBackground({
                   ? evenRowMarginLeft
                   : oddRowMarginLeft) - 10,
             }}
-            className="inline-flex"
+            className="flex w-max"
           >
             {range(gridDimensions.columns).map((colIndex) => (
               <div

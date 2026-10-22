@@ -263,7 +263,7 @@ for (const fw of BACKGROUND_FRAMEWORKS) {
         const section = page.getByTestId('hexagon');
         await show(section);
         const cells = section.locator(
-          '[data-slot="hexagon-background"] .inline-flex > div',
+          '[data-slot="hexagon-background"] > [aria-hidden] > div > div',
         );
         expect(await cells.count()).toBeGreaterThan(20);
         const sectionBox = (await section.boundingBox())!;
@@ -273,12 +273,43 @@ for (const fw of BACKGROUND_FRAMEWORKS) {
         );
       });
 
+      // Bug: the rows sat too close, so the slanted borders were thinner than the upright ones.
+      test('every border between hexagons is as thick as the others', async ({
+        page,
+      }) => {
+        await open(page, fw.fixture);
+        const section = page.getByTestId('hexagon');
+        await show(section);
+        const { upright, slanted } = await section
+          .locator('[data-slot="hexagon-background"] > [aria-hidden]')
+          .evaluate((grid) => {
+            const [first, second] = [...grid.children].map((row) =>
+              [...row.children].map((cell) => cell.getBoundingClientRect()),
+            );
+            const [a, b] = first!;
+            const below = second!.find((cell) => cell.left > a!.left)!;
+            const w = a!.width;
+            const h = a!.height;
+            const corner = h / 4;
+            const side = Math.hypot(corner, w / 2);
+            // From A's lower-right side to the upper-left side of the cell below it.
+            const dx = below.left - a!.right;
+            const dy = below.top + corner - (a!.bottom - corner);
+            return {
+              upright: b!.left - a!.right,
+              slanted: (corner * dx + (w / 2) * dy) / side,
+            };
+          });
+        expect(upright).toBeGreaterThan(1);
+        expect(slanted).toBeCloseTo(upright, 1);
+      });
+
       test('a hovered hexagon lights up', async ({ page }) => {
         await open(page, fw.fixture);
         const section = page.getByTestId('hexagon');
         await show(section);
         const cell = section
-          .locator('[data-slot="hexagon-background"] .inline-flex')
+          .locator('[data-slot="hexagon-background"] > [aria-hidden] > div')
           .nth(2)
           .locator('> div')
           .nth(3);
@@ -979,7 +1010,7 @@ for (const fw of BACKGROUND_FRAMEWORKS) {
       const pitch = (id: string) =>
         page
           .getByTestId(id)
-          .locator('[data-slot="hexagon-background"] .inline-flex')
+          .locator('[data-slot="hexagon-background"] > [aria-hidden] > div')
           .evaluateAll((rows) => {
             const tops = rows
               .slice(0, 3)
