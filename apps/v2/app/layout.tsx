@@ -2,6 +2,7 @@ import { RootProvider } from 'fumadocs-ui/provider/next';
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 
+import { SearchDialog } from '@/components/layout/search-dialog';
 import { Toaster } from '@/components/ui/sonner';
 import { changelogSeenScript } from '@/lib/changelog-seen';
 import { source } from '@/lib/source';
@@ -37,7 +38,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
         </head>
       )}
       <body className="flex min-h-screen flex-col">
-        <RootProvider>
+        <RootProvider search={{ SearchDialog }}>
           {children}
           <Toaster position="top-center" />
         </RootProvider>

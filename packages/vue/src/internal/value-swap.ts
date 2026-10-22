@@ -11,6 +11,7 @@ import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 type Timing = { duration: number; easing: string; blur: string };
 
 const GHOST = 'data-animate-ui-value-ghost';
+const SWAP = { ...motionTokens.transition.swap, duration: 0.25 };
 
 function holdPosition(parent: HTMLElement) {
   if (getComputedStyle(parent).position !== 'static') return () => {};
@@ -107,7 +108,7 @@ function withValueSwap<C extends Component>(component: C, name: string) {
     name,
     inheritAttrs: false,
     setup(_, { attrs, slots }) {
-      const swap = useTempoTransition(() => motionTokens.transition.swap);
+      const swap = useTempoTransition(() => SWAP);
       const timing = () => ({
         ...toCssTiming(swap.value),
         blur: motionTokens.blur.icon,

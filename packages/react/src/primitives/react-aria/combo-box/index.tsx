@@ -9,11 +9,11 @@ import {
 import { mergeRefs } from '../../../internal/controls/indicator';
 import { useInputSwap } from '../../../internal/value-swap';
 
-function ComboBox<T extends object>({
+function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   ref,
   onSelectionChange,
   ...props
-}: ComboBoxProps<T> & React.RefAttributes<HTMLDivElement>) {
+}: ComboBoxProps<T, M> & React.RefAttributes<HTMLDivElement>) {
   const swap = useInputSwap();
   const rootRef = React.useCallback(
     (node: HTMLDivElement | null) => {
@@ -28,11 +28,13 @@ function ComboBox<T extends object>({
   );
 
   return (
-    <ComboBoxPrimitive
+    <ComboBoxPrimitive<T, M>
       {...props}
       ref={mergedRef}
-      onSelectionChange={(key) => {
-        onSelectionChange?.(key);
+      onSelectionChange={(
+        ...args: Parameters<NonNullable<typeof onSelectionChange>>
+      ) => {
+        onSelectionChange?.(...args);
         swap.changed();
       }}
     />
