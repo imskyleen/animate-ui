@@ -15,6 +15,7 @@ import {
   MENU_TRANSITION,
   MORPH_TRANSITION,
 } from '../../../internal/anchored';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import {
   ContentSwapper,
   useContentSwapper,
@@ -479,6 +480,9 @@ function ContentMotion({
       node.style.opacity = '0';
     }
   }, [state.open, state.activationDirection, swapper, id]);
+  useStaggerOnOpen(nodeRef, state.open, {
+    fresh: wayOf(state.activationDirection) === null,
+  });
 
   return (
     <MotionSlot

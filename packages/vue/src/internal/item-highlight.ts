@@ -28,6 +28,7 @@ import {
   useTempoTransition,
 } from '../utils/motion';
 import { layoutScale } from './layout-scale';
+import { staggerLeft } from './stagger';
 
 export const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
 const FADE_TRANSITION = motionTokens.transition.color;
@@ -726,6 +727,8 @@ const SurfaceCopy = defineComponent({
           el.animate([{ opacity: start.opacity }, { opacity: 1 }], {
             duration,
             easing,
+            delay: start.fresh ? staggerLeft(el.parentElement) : 0,
+            fill: 'backwards',
           }),
         );
       }

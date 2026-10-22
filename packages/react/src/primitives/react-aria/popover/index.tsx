@@ -21,6 +21,7 @@ import {
   useAnchoredMotion,
   type AnchoredAnimationProps,
 } from '../../../internal/anchored';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import {
   CheckRegistryContext,
   usePickHold,
@@ -187,6 +188,9 @@ function AnimatedPopover({
   const skip = Boolean(
     props.shouldSkipAnimation ?? context?.shouldSkipAnimation,
   );
+  useStaggerOnOpen(nodeRef, isPresent, {
+    skip: skip || !(trigger && MENU_TRIGGERS.has(trigger)),
+  });
   const { exit, ...motionProps } = useAnchoredMotion({
     kind: trigger && MENU_TRIGGERS.has(trigger) ? 'menu' : 'popover',
     open: true,

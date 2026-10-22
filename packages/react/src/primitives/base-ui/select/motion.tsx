@@ -19,6 +19,10 @@ import {
   withHighlight,
 } from '../../../internal/item-highlight';
 import {
+  staggerFromClosed,
+  useStaggerTiming,
+} from '../../../internal/stagger';
+import {
   CheckRegistryContext,
   ItemCheck,
   usePickHold,
@@ -117,6 +121,9 @@ function usePopupRender(
       : exit;
   const group = useCheckGroup();
   const shownRef = React.useRef(false);
+  const nodeRef = React.useRef<HTMLElement | null>(null);
+  const staggerRef = React.useRef<(() => void) | null>(null);
+  const stagger = useStaggerTiming();
 
   return (
     { children, ...renderProps }: PopupRenderProps,
@@ -132,6 +139,7 @@ function usePopupRender(
     return (
       <motion.div
         {...(renderProps as HTMLMotionProps<'div'>)}
+        ref={mergeRefs(renderProps.ref, nodeRef)}
         initial={hidden}
         animate={
           open
@@ -139,7 +147,16 @@ function usePopupRender(
             : { ...hidden, transition: held }
         }
         onAnimationStart={() => {
-          if (open) shownRef.current = true;
+          if (!open) {
+            staggerRef.current?.();
+            staggerRef.current = null;
+            return;
+          }
+          shownRef.current = true;
+          const node = nodeRef.current;
+          if (node && !reduce)
+            staggerRef.current =
+              staggerFromClosed(node, stagger.current) ?? staggerRef.current;
         }}
         onAnimationComplete={() => {
           if (open || !shownRef.current) return;

@@ -9,6 +9,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
+import { useSubmenuStagger } from './stagger';
 
 const collapsed = {
   height: 0,
@@ -99,6 +100,7 @@ function useDisclosurePanel(
 
   const visible = open || !settled;
   const vars = sizeVars?.join(' ');
+  useSubmenuStagger(ref, open);
 
   React.useLayoutEffect(() => {
     const element = ref.current;

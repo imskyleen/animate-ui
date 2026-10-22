@@ -5,6 +5,7 @@ import { Select as SelectPrimitive } from 'radix-ui';
 import { AnimatePresence, type Transition } from 'motion/react';
 
 import { useValueSwap } from '../../../internal/value-swap';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
@@ -219,6 +220,8 @@ function ContentMotion({
   const leave: Transition =
     picked && !reduce ? { ...exit, delay: exitDelay + hold(picked) } : exit;
   const group = useCheckGroup();
+  const ref = React.useRef<HTMLElement>(null);
+  useStaggerOnOpen(ref, open);
   const popper = props.position === 'popper';
   const hidden = popper
     ? { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu }
@@ -229,6 +232,7 @@ function ContentMotion({
   return (
     <SelectPrimitive.Content {...props} forceMount asChild>
       <MotionSlot
+        ref={ref}
         element={slot.element}
         initial={hidden}
         animate={

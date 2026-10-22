@@ -21,6 +21,7 @@ import {
   useMenuHandoff,
   type HandoffGroup,
 } from '../../../internal/menu-handoff';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import {
   CheckRegistryContext,
   ItemCheck,
@@ -222,6 +223,7 @@ function PopupMotion({
       if (!openRef.current) unmount();
     },
   });
+  useStaggerOnOpen(nodeRef, state.open, { skip: Boolean(handoff.from) });
   React.useEffect(() => {
     if (handoff.dropped && !state.open) unmount();
   }, [handoff.dropped, state.open, unmount]);

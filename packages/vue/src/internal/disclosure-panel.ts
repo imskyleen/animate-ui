@@ -2,6 +2,7 @@ import {
   computed,
   defineComponent,
   h,
+  shallowRef,
   type Component,
   type ComputedRef,
   type PropType,
@@ -13,6 +14,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
+import { useSubmenuStagger } from './stagger';
 
 const collapsed = {
   height: 0,
@@ -120,12 +122,18 @@ function createDisclosureContent(
         () => props.exitTransition,
       );
       let element: HTMLElement | null = null;
+      const node = shallowRef<HTMLElement | null>(null);
       const setElement = (instance: unknown) => {
         element =
           (instance as { $el?: HTMLElement } | null)?.$el ??
           (instance as HTMLElement | null);
         fitGap(element);
+        node.value = element instanceof HTMLElement ? element : null;
       };
+      useSubmenuStagger(
+        () => node.value,
+        () => open.value,
+      );
       const auto = Object.fromEntries(sizeVars.map((name) => [name, 'auto']));
 
       return () => {

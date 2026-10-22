@@ -24,6 +24,7 @@ import {
   type CheckAnimation,
 } from '../utils/motion';
 import { HIDDEN_SCALE, MENU_TRANSITION } from './anchored';
+import { staggerRows, useStaggerTiming } from './stagger';
 import { provideHighlightScope, useItemHighlight } from './item-highlight';
 import {
   createCheckGroup,
@@ -152,6 +153,8 @@ export function createListContent(
           : { opacity: 0 };
       let shown: HTMLElement | null = null;
       let controls: AnimationPlaybackControls | null = null;
+      const stagger = useStaggerTiming();
+      let unstagger: (() => void) | null = null;
       watch(
         () => [present.value, Boolean(state?.open())] as const,
         ([isPresent, open]) => {
@@ -167,6 +170,7 @@ export function createListContent(
           shown = el;
           controls?.stop();
           if (open) {
+            if (fresh && !reduce.value) unstagger = staggerRows(el, stagger());
             const from = hidden();
             controls = animate(
               el,
@@ -184,6 +188,8 @@ export function createListContent(
             );
             return;
           }
+          unstagger?.();
+          unstagger = null;
           const picked = state.picked();
           const exit =
             picked && !reduce.value
@@ -283,7 +289,10 @@ export function createListItem(Item: Component, name: string) {
 }
 
 /** The chosen item's check: drawn or popped in, gliding to the next choice. */
-export function createListItemIndicator(ItemIndicator: Component, name: string) {
+export function createListItemIndicator(
+  ItemIndicator: Component,
+  name: string,
+) {
   return defineComponent({
     name,
     inheritAttrs: false,

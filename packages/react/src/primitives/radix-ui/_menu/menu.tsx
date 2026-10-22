@@ -26,6 +26,7 @@ import {
   useHandoffNested,
   useMenuHandoff,
 } from '../../../internal/menu-handoff';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import {
   CheckRegistryContext,
   ItemCheck,
@@ -255,6 +256,7 @@ function ContentMotion({
     },
   );
   useHandoffNested(ref, Boolean(options.sub));
+  useStaggerOnOpen(ref, open, { skip: Boolean(handoff.from) });
   const exit: Transition = handoff.dropped
     ? { duration: 0 }
     : picked && !reduce

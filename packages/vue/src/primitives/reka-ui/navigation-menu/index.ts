@@ -47,6 +47,7 @@ import {
   MENU_TRANSITION,
   MORPH_TRANSITION,
 } from '../../../internal/anchored';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import {
   ContentSwapper,
   MoveFollower,
@@ -364,6 +365,11 @@ const ViewportContentMotion = defineComponent({
     onBeforeUnmount(() => {
       if (menu && element.value) menu.swapper.leave(element.value, id);
     });
+    useStaggerOnOpen(
+      () => element.value,
+      () => true,
+      { fresh: () => way === null },
+    );
     return () =>
       h(
         'div',
@@ -403,6 +409,11 @@ const InlineContentMotion = defineComponent({
       { flush: 'sync' },
     );
     provideTriggerHighlightScope();
+    const element = shallowRef<HTMLElement | null>(null);
+    useStaggerOnOpen(
+      () => element.value,
+      () => props.open,
+    );
     return () => {
       const hidden = {
         opacity: 0,
@@ -412,6 +423,10 @@ const InlineContentMotion = defineComponent({
         motion.div as Component,
         {
           ...attrs,
+          ref: (node: unknown) => {
+            const el = (node as { $el?: unknown } | null)?.$el ?? node;
+            element.value = el instanceof HTMLElement ? el : null;
+          },
           initial: hidden,
           animate: props.open
             ? { opacity: 1, scale: 1, transition: enter.value }

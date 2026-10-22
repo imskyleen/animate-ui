@@ -22,6 +22,7 @@ import {
   MORPH_TRANSITION,
   mergeRefs,
 } from '../../../internal/anchored';
+import { useStaggerOnOpen } from '../../../internal/stagger';
 import {
   SwapContext,
   useContentSwapper,
@@ -348,6 +349,7 @@ function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
     swapper.enter(node, id, way);
     return () => swapper.leave(node, id);
   }, [swapper, id, way]);
+  useStaggerOnOpen(nodeRef, true, { fresh: way === null });
 
   return (
     <div
@@ -359,6 +361,7 @@ function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
 }
 
 function InlineContentMotion({
+  ref,
   open,
   keepMounted,
   transition,
@@ -376,10 +379,14 @@ function InlineContentMotion({
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu };
   const [settledClosed, setSettledClosed] = React.useState(!open);
   if (open && settledClosed) setSettledClosed(false);
+  const nodeRef = React.useRef<HTMLDivElement>(null);
+  const mergedRef = React.useMemo(() => mergeRefs(ref, nodeRef), [ref]);
+  useStaggerOnOpen(nodeRef, open);
 
   return (
     <motion.div
       {...(props as React.ComponentProps<typeof motion.div>)}
+      ref={mergedRef}
       initial={hidden}
       animate={
         open

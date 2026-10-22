@@ -15,6 +15,7 @@ import {
   useTempoTransition,
 } from '../utils/motion';
 import { layoutScale } from './layout-scale';
+import { staggerLeft } from './stagger';
 
 const HIGHLIGHT_TRANSITION = motionTokens.spring.highlight;
 const FADE_TRANSITION = motionTokens.transition.color;
@@ -815,6 +816,8 @@ function SurfaceCopy({
         element.animate([{ opacity: start.opacity }, { opacity: 1 }], {
           duration,
           easing,
+          delay: start.fresh ? staggerLeft(element.parentElement) : 0,
+          fill: 'backwards',
         }),
       );
     }

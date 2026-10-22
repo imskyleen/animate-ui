@@ -15,6 +15,7 @@ import {
   releasePanel,
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
+import { useSubmenuStagger } from '../../../internal/stagger';
 import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
@@ -67,6 +68,7 @@ function Content({
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
   const ref = React.useRef<HTMLDivElement>(null);
   React.useLayoutEffect(() => fitGap(ref.current), [open]);
+  useSubmenuStagger(ref, open);
 
   const slot = slotChild(asChild, children);
   return (

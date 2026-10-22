@@ -23,6 +23,7 @@ import {
   useTempoTransition,
 } from '../utils/motion';
 import { HIDDEN_SCALE, MENU_TRANSITION, MORPH_TRANSITION } from './anchored';
+import { useStaggerOnOpen } from './stagger';
 import {
   HandoffNestedKey,
   MenuHandoffKey,
@@ -181,6 +182,11 @@ const ContentMotion = defineComponent({
       },
     );
     useHandoffNested(element, props.sub);
+    useStaggerOnOpen(
+      () => element.value,
+      () => props.open,
+      { skip: () => Boolean(handoff.from.value) },
+    );
     if (!props.sub)
       provide(HandoffNestedKey, props.handoff ? handoff.entry : null);
 
