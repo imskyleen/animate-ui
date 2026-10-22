@@ -42,9 +42,9 @@ type ChipsMotion = {
 const ChipsContext = React.createContext<ChipsMotion | null>(null);
 
 // The root tells its input when an option is picked, so the input's text swaps.
-const PickedContext = React.createContext<React.RefObject<
-  (() => void) | null
-> | null>(null);
+const PickedContext = React.createContext<
+  ((changed: () => void) => () => void) | null
+>(null);
 
 function Root<
   Value,
@@ -61,11 +61,17 @@ function Root<
     Boolean(props.multiple),
     onOpenChange,
   );
-  const picked = React.useRef<(() => void) | null>(null);
+  const pickedRef = React.useRef<(() => void) | null>(null);
+  const registerPicked = React.useCallback((changed: () => void) => {
+    pickedRef.current = changed;
+    return () => {
+      if (pickedRef.current === changed) pickedRef.current = null;
+    };
+  }, []);
 
   return (
     <RootContext value={context}>
-      <PickedContext value={picked}>
+      <PickedContext value={registerPicked}>
         <ComboboxPrimitive.Root
           {...props}
           actionsRef={internalRef}
@@ -74,7 +80,7 @@ function Root<
             ...args: Parameters<NonNullable<typeof onValueChange>>
           ) => {
             onValueChange?.(...args);
-            picked.current?.();
+            pickedRef.current?.();
           }}
         />
       </PickedContext>
@@ -299,15 +305,10 @@ export import useFilteredItems = ComboboxPrimitive.useFilteredItems;
 export import createItems = ComboboxPrimitive.createItems;
 
 function Input({ ref, ...props }: Input.Props) {
-  const picked = React.use(PickedContext);
+  const registerPicked = React.use(PickedContext);
   const swap = useInputSwap();
-  React.useEffect(() => {
-    if (!picked) return;
-    picked.current = swap.changed;
-    return () => {
-      if (picked.current === swap.changed) picked.current = null;
-    };
-  });
+  const { changed } = swap;
+  React.useEffect(() => registerPicked?.(changed));
   return <ComboboxPrimitive.Input ref={mergeRefs(ref, swap.ref)} {...props} />;
 }
 

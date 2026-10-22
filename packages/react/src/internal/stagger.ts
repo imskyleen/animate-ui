@@ -146,12 +146,14 @@ function staggerFromClosed(el: HTMLElement, timing: StaggerTiming) {
 
 function useStaggerTiming() {
   const transition = useTempoTransition(STAGGER);
-  const timing = React.useRef<StaggerTiming>(null!);
-  timing.current = {
-    ...toCssTiming(transition),
-    step: (transition.delay ?? 0) * 1000,
-  };
-  return timing;
+  const timingRef = React.useRef<StaggerTiming>(null!);
+  React.useLayoutEffect(() => {
+    timingRef.current = {
+      ...toCssTiming(transition),
+      step: (transition.delay ?? 0) * 1000,
+    };
+  });
+  return timingRef;
 }
 
 /**
@@ -169,7 +171,7 @@ function useStaggerOnOpen(
   } = {},
 ) {
   const reduce = useShouldReduceMotion();
-  const timing = useStaggerTiming();
+  const timingRef = useStaggerTiming();
   const {
     skip = false,
     fresh,
@@ -179,8 +181,8 @@ function useStaggerOnOpen(
     const el = ref.current;
     if (!open || reduce || skip || !el) return;
     if (fresh === undefined ? !closed(el) : !fresh) return;
-    return staggerRows(el, timing.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return staggerRows(el, timingRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, [open]);
 }
 

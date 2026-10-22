@@ -306,38 +306,49 @@ function watchInputValue(input: HTMLInputElement, timing: () => Timing) {
 
 function useSwapTiming() {
   const swap = useTempoTransition(SWAP);
-  const timing = React.useRef<Timing>(null!);
-  timing.current = { ...toCssTiming(swap), blur: BLUR, shift: SHIFT };
-  return () => timing.current;
+  const timingRef = React.useRef<Timing>(null!);
+  React.useLayoutEffect(() => {
+    timingRef.current = { ...toCssTiming(swap), blur: BLUR, shift: SHIFT };
+  });
+  return timingRef;
+}
+
+function setRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
+  if (typeof ref === 'function') ref(node);
+  else if (ref) (ref as React.RefObject<T | null>).current = node;
 }
 
 /** A ref for an element showing a value: its text swaps through a blur as it changes. */
 function useValueSwap<T extends HTMLElement>(
   ref?: React.Ref<T>,
 ): React.RefCallback<T> {
-  const timing = useSwapTiming();
+  const timingRef = useSwapTiming();
   return React.useCallback(
     (node: T | null) => {
-      if (typeof ref === 'function') ref(node);
-      else if (ref) (ref as React.RefObject<T | null>).current = node;
+      setRef(ref, node);
       if (!node) return;
-      return watchValueText(node, timing);
+      return watchValueText(node, () => timingRef.current);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ref],
+    [ref, timingRef],
   );
 }
 
 /** Watches a combobox's input: call `changed()` when the selection changes. */
 function useInputSwap() {
-  const timing = useSwapTiming();
-  const watcher = React.useRef<ReturnType<typeof watchInputValue> | null>(null);
-  const ref = React.useCallback((node: HTMLInputElement | null) => {
-    watcher.current?.stop();
-    watcher.current = node ? watchInputValue(node, timing) : null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return { ref, changed: () => watcher.current?.changed() };
+  const timingRef = useSwapTiming();
+  const watcherRef = React.useRef<ReturnType<typeof watchInputValue> | null>(
+    null,
+  );
+  const ref = React.useCallback(
+    (node: HTMLInputElement | null) => {
+      watcherRef.current?.stop();
+      watcherRef.current = node
+        ? watchInputValue(node, () => timingRef.current)
+        : null;
+    },
+    [timingRef],
+  );
+  return { ref, changed: () => watcherRef.current?.changed() };
 }
 
 export {

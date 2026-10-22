@@ -15,12 +15,12 @@ function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   ...props
 }: ComboBoxProps<T, M> & React.RefAttributes<HTMLDivElement>) {
   const swap = useInputSwap();
+  const inputRef = swap.ref;
   const rootRef = React.useCallback(
     (node: HTMLDivElement | null) => {
-      swap.ref(node?.querySelector('input') ?? null);
+      inputRef(node?.querySelector('input') ?? null);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [inputRef],
   );
   const mergedRef = React.useMemo(
     () => mergeRefs(ref, rootRef),
