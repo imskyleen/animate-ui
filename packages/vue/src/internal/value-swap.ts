@@ -8,10 +8,13 @@ import {
 
 import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 
-type Timing = { duration: number; easing: string; blur: string };
+type Timing = { duration: number; easing: string; blur: string; shift: number };
 
 const GHOST = 'data-animate-ui-value-ghost';
+const INCOMING = 'data-animate-ui-value-incoming';
 const SWAP = { ...motionTokens.transition.swap, duration: 0.25 };
+const BLUR = 'blur(4px)';
+const SHIFT = 6;
 
 function holdPosition(parent: HTMLElement) {
   if (getComputedStyle(parent).position !== 'static') return () => {};
@@ -24,22 +27,27 @@ function holdPosition(parent: HTMLElement) {
 
 type Box = { left: number; top: number; width: number; height: number };
 
-const boxOf = (el: HTMLElement): Box => ({
-  left: el.offsetLeft,
-  top: el.offsetTop,
-  width: el.offsetWidth,
-  height: el.offsetHeight,
-});
-
-/** The old content fades out into a blur where it was, as the new one fades in out of it. */
-function crossfade(el: HTMLElement, ghost: HTMLElement, box: Box, timing: Timing) {
+/** Where `el` sits in its parent, to the subpixel (offsetTop rounds) and unscaled. */
+function boxOf(el: HTMLElement): Box {
   const parent = el.parentElement;
-  if (!parent) return null;
-  const release = holdPosition(parent);
-  ghost.setAttribute(GHOST, '');
-  ghost.setAttribute('aria-hidden', 'true');
-  ghost.removeAttribute('id');
-  Object.assign(ghost.style, {
+  const rect = el.getBoundingClientRect();
+  if (!parent)
+    return { left: 0, top: 0, width: rect.width, height: rect.height };
+  const outer = parent.getBoundingClientRect();
+  const scale = parent.offsetWidth ? outer.width / parent.offsetWidth : 1;
+  return {
+    left:
+      (rect.left - outer.left) / scale - parent.clientLeft + parent.scrollLeft,
+    top: (rect.top - outer.top) / scale - parent.clientTop + parent.scrollTop,
+    width: rect.width / scale,
+    height: rect.height / scale,
+  };
+}
+
+function place(el: HTMLElement, copy: HTMLElement, box: Box) {
+  copy.setAttribute('aria-hidden', 'true');
+  copy.removeAttribute('id');
+  Object.assign(copy.style, {
     position: 'absolute',
     left: `${box.left}px`,
     top: `${box.top}px`,
@@ -48,29 +56,48 @@ function crossfade(el: HTMLElement, ghost: HTMLElement, box: Box, timing: Timing
     margin: '0',
     pointerEvents: 'none',
   });
-  parent.insertBefore(ghost, el.nextSibling);
+  el.parentElement!.insertBefore(copy, el.nextSibling);
+}
+
+/**
+ * The old text rises out into a blur where it was, as `enter` brings the
+ * new one up out of it.
+ */
+function crossfade(
+  el: HTMLElement,
+  ghost: HTMLElement,
+  from: Box,
+  timing: Timing,
+  enter: (options: KeyframeAnimationOptions) => {
+    animation: Animation;
+    stop: () => void;
+  },
+) {
+  const parent = el.parentElement;
+  if (!parent) return null;
+  const release = holdPosition(parent);
+  ghost.setAttribute(GHOST, '');
+  place(el, ghost, from);
   const options = { duration: timing.duration, easing: timing.easing };
   const out = ghost.animate(
     [
-      { opacity: 1, filter: 'blur(0px)' },
-      { opacity: 0, filter: timing.blur },
+      { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' },
+      {
+        opacity: 0,
+        filter: timing.blur,
+        transform: `translateY(${-timing.shift}px)`,
+      },
     ],
     { ...options, fill: 'forwards' },
   );
-  const inside = el.animate(
-    [
-      { opacity: 0, filter: timing.blur },
-      { opacity: 1, filter: 'blur(0px)' },
-    ],
-    options,
-  );
+  const inside = enter({ ...options, fill: 'forwards' });
   const stop = () => {
     out.cancel();
-    inside.cancel();
+    inside.stop();
     ghost.remove();
     release();
   };
-  out.finished.then(stop, () => {});
+  inside.animation.finished.then(stop, () => {});
   return stop;
 }
 
@@ -85,7 +112,33 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
     const next = el.textContent ?? '';
     if (next === text) return;
     stop?.();
-    stop = crossfade(el, copy, box, timing());
+    stop = crossfade(el, copy, box, timing(), (options) => {
+      const incoming = el.cloneNode(true) as HTMLElement;
+      incoming.setAttribute(INCOMING, '');
+      place(el, incoming, boxOf(el));
+      const { opacity } = el.style;
+      el.style.opacity = '0';
+      const t = timing();
+      const animation = incoming.animate(
+        [
+          {
+            opacity: 0,
+            filter: t.blur,
+            transform: `translateY(${t.shift}px)`,
+          },
+          { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' },
+        ],
+        options,
+      );
+      return {
+        animation,
+        stop: () => {
+          animation.cancel();
+          incoming.remove();
+          el.style.opacity = opacity;
+        },
+      };
+    });
     text = next;
     copy = el.cloneNode(true) as HTMLElement;
     box = boxOf(el);
@@ -111,7 +164,8 @@ function withValueSwap<C extends Component>(component: C, name: string) {
       const swap = useTempoTransition(() => SWAP);
       const timing = () => ({
         ...toCssTiming(swap.value),
-        blur: motionTokens.blur.icon,
+        blur: BLUR,
+        shift: SHIFT,
       });
       const part = shallowRef<{ $el?: unknown } | null>(null);
       watchPostEffect((onCleanup) => {

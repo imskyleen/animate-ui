@@ -2,11 +2,13 @@ import * as React from 'react';
 
 import { motionTokens, toCssTiming, useTempoTransition } from '../utils/motion';
 
-type Timing = { duration: number; easing: string; blur: string };
+type Timing = { duration: number; easing: string; blur: string; shift: number };
 
 const GHOST = 'data-animate-ui-value-ghost';
 const INCOMING = 'data-animate-ui-value-incoming';
 const SWAP = { ...motionTokens.transition.swap, duration: 0.25 };
+const BLUR = 'blur(4px)';
+const SHIFT = 6;
 
 function holdPosition(parent: HTMLElement) {
   if (getComputedStyle(parent).position !== 'static') return () => {};
@@ -19,17 +21,27 @@ function holdPosition(parent: HTMLElement) {
 
 type Box = { left: number; top: number; width: number; height: number };
 
-const boxOf = (el: HTMLElement): Box => ({
-  left: el.offsetLeft,
-  top: el.offsetTop,
-  width: el.offsetWidth,
-  height: el.offsetHeight,
-});
+/** Where `el` sits in its parent, to the subpixel (offsetTop rounds) and unscaled. */
+function boxOf(el: HTMLElement): Box {
+  const parent = el.parentElement;
+  const rect = el.getBoundingClientRect();
+  if (!parent)
+    return { left: 0, top: 0, width: rect.width, height: rect.height };
+  const outer = parent.getBoundingClientRect();
+  const scale = parent.offsetWidth ? outer.width / parent.offsetWidth : 1;
+  return {
+    left:
+      (rect.left - outer.left) / scale - parent.clientLeft + parent.scrollLeft,
+    top: (rect.top - outer.top) / scale - parent.clientTop + parent.scrollTop,
+    width: rect.width / scale,
+    height: rect.height / scale,
+  };
+}
 
-function place(el: HTMLElement, span: HTMLElement, box: Box) {
-  span.setAttribute('aria-hidden', 'true');
-  span.removeAttribute('id');
-  Object.assign(span.style, {
+function place(el: HTMLElement, copy: HTMLElement, box: Box) {
+  copy.setAttribute('aria-hidden', 'true');
+  copy.removeAttribute('id');
+  Object.assign(copy.style, {
     position: 'absolute',
     left: `${box.left}px`,
     top: `${box.top}px`,
@@ -38,44 +50,48 @@ function place(el: HTMLElement, span: HTMLElement, box: Box) {
     margin: '0',
     pointerEvents: 'none',
   });
-  el.parentElement!.insertBefore(span, el.nextSibling);
+  el.parentElement!.insertBefore(copy, el.nextSibling);
 }
 
-/** The old content fades out into a blur where it was, as the new one fades in out of it. */
+/**
+ * The old text rises out into a blur where it was, as `enter` brings the
+ * new one up out of it.
+ */
 function crossfade(
   el: HTMLElement,
   ghost: HTMLElement,
-  box: Box,
+  from: Box,
   timing: Timing,
-  fade: (keyframes: Keyframe[], options: KeyframeAnimationOptions) => () => void,
+  enter: (options: KeyframeAnimationOptions) => {
+    animation: Animation;
+    stop: () => void;
+  },
 ) {
   const parent = el.parentElement;
   if (!parent) return null;
   const release = holdPosition(parent);
   ghost.setAttribute(GHOST, '');
-  place(el, ghost, box);
+  place(el, ghost, from);
   const options = { duration: timing.duration, easing: timing.easing };
   const out = ghost.animate(
     [
-      { opacity: 1, filter: 'blur(0px)' },
-      { opacity: 0, filter: timing.blur },
+      { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' },
+      {
+        opacity: 0,
+        filter: timing.blur,
+        transform: `translateY(${-timing.shift}px)`,
+      },
     ],
     { ...options, fill: 'forwards' },
   );
-  const stopInside = fade(
-    [
-      { opacity: 0, filter: timing.blur },
-      { opacity: 1, filter: 'blur(0px)' },
-    ],
-    options,
-  );
+  const inside = enter({ ...options, fill: 'forwards' });
   const stop = () => {
     out.cancel();
-    stopInside();
+    inside.stop();
     ghost.remove();
     release();
   };
-  out.finished.then(stop, () => {});
+  inside.animation.finished.then(stop, () => {});
   return stop;
 }
 
@@ -90,9 +106,32 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
     const next = el.textContent ?? '';
     if (next === text) return;
     stop?.();
-    stop = crossfade(el, copy, box, timing(), (keyframes, options) => {
-      const inside = el.animate(keyframes, options);
-      return () => inside.cancel();
+    stop = crossfade(el, copy, box, timing(), (options) => {
+      const incoming = el.cloneNode(true) as HTMLElement;
+      incoming.setAttribute(INCOMING, '');
+      place(el, incoming, boxOf(el));
+      const { opacity } = el.style;
+      el.style.opacity = '0';
+      const t = timing();
+      const animation = incoming.animate(
+        [
+          {
+            opacity: 0,
+            filter: t.blur,
+            transform: `translateY(${t.shift}px)`,
+          },
+          { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' },
+        ],
+        options,
+      );
+      return {
+        animation,
+        stop: () => {
+          animation.cancel();
+          incoming.remove();
+          el.style.opacity = opacity;
+        },
+      };
     });
     text = next;
     copy = el.cloneNode(true) as HTMLElement;
@@ -151,28 +190,47 @@ function watchInputValue(input: HTMLInputElement, timing: () => Timing) {
     return span;
   };
 
-  /** The input's own text can't blur without its border: a copy of it does, over it. */
+  /**
+   * The input's own text can't blur without its border: the old one leaves
+   * as a copy, the new one comes in as its text's shadow, right where it is.
+   */
   const swap = (previous: string) => {
     stop?.();
-    const box = boxOf(input);
-    stop = crossfade(input, copyOf(previous), box, timing(), (keyframes, options) => {
-      const incoming = copyOf(input.value);
-      incoming.setAttribute(INCOMING, '');
-      place(input, incoming, box);
-      const { color, caretColor, transition } = input.style;
-      input.style.transition = 'none';
-      input.style.caretColor = getComputedStyle(input).color;
-      input.style.color = 'transparent';
-      const inside = incoming.animate(keyframes, options);
-      return () => {
-        inside.cancel();
-        incoming.remove();
-        input.style.color = color;
-        input.style.caretColor = caretColor;
-        void input.offsetWidth;
-        input.style.transition = transition;
-      };
-    });
+    stop = crossfade(
+      input,
+      copyOf(previous),
+      boxOf(input),
+      timing(),
+      (options) => {
+        const t = timing();
+        const color = getComputedStyle(input).color;
+        const radius = 2 * Number(t.blur.match(/[\d.]+/)?.[0] ?? 0);
+        const { caretColor, transition } = input.style;
+        const own = input.style.color;
+        input.setAttribute(INCOMING, '');
+        input.style.transition = 'none';
+        input.style.caretColor = color;
+        input.style.color = 'transparent';
+        const animation = input.animate(
+          [
+            { textShadow: `0 ${t.shift}px ${radius}px transparent` },
+            { textShadow: `0 0 0 ${color}` },
+          ],
+          options,
+        );
+        return {
+          animation,
+          stop: () => {
+            animation.cancel();
+            input.removeAttribute(INCOMING);
+            input.style.color = own;
+            input.style.caretColor = caretColor;
+            void input.offsetWidth;
+            input.style.transition = transition;
+          },
+        };
+      },
+    );
   };
 
   return {
@@ -197,7 +255,7 @@ function watchInputValue(input: HTMLInputElement, timing: () => Timing) {
 function useSwapTiming() {
   const swap = useTempoTransition(SWAP);
   const timing = React.useRef<Timing>(null!);
-  timing.current = { ...toCssTiming(swap), blur: motionTokens.blur.icon };
+  timing.current = { ...toCssTiming(swap), blur: BLUR, shift: SHIFT };
   return () => timing.current;
 }
 
