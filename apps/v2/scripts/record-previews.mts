@@ -454,13 +454,18 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     async play(page) {
       const link = (name: string) =>
         page
-          .locator('main [data-slot="pagination-link"]')
+          .locator('main :is([data-slot="pagination-link"],[data-type="page"])')
           .filter({ hasText: new RegExp(`^${name}$`) });
       await press(page, link('5'));
       await wait(page, 800);
       await press(page, link('1'));
       await wait(page, 700);
-      await press(page, page.locator('main [aria-label="Go to next page"]'));
+      await press(
+        page,
+        page.locator(
+          'main :is([aria-label="Go to next page"],[aria-label="Next Page"])',
+        ),
+      );
       await away(page);
     },
     viewport: { width: 320, height: 240 },

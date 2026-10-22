@@ -77,6 +77,7 @@ describe('transformVue, on shadcn-vue’s own files', () => {
       'checkbox',
       'collapsible',
       'input-otp',
+      'pagination',
       'radio-group',
       'slider',
       'toggle',

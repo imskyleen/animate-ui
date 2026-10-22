@@ -264,8 +264,6 @@ export type {
   PaginationListProps,
   PaginationNextProps,
   PaginationPrevProps,
-  PaginationRootEmits,
-  PaginationRootProps,
   PinInputInputProps,
   PinInputRootEmits,
   PinInputRootProps,
@@ -667,6 +665,12 @@ export {
   type NavigationMenuViewportProps,
   type NavigationMenuIndicatorProps,
 } from './navigation-menu';
+
+export {
+  PaginationRoot,
+  type PaginationRootProps,
+  type PaginationRootEmits,
+} from './pagination';
 
 export {
   PopoverRoot,

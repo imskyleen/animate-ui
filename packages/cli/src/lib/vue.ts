@@ -18,6 +18,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   'hover-card': [/^duration-100$/],
   'input-otp': [],
   menubar: [/^duration-100$/],
+  pagination: [],
   'navigation-menu': [
     /^group-data-\[viewport=false\]\/navigation-menu:duration-200$/,
   ],

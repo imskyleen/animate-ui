@@ -74,6 +74,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/select': () => import('./demos/reka-ui/select.vue'),
   'reka-ui/slider': () => import('./demos/reka-ui/slider.vue'),
   'reka-ui/tabs': () => import('./demos/reka-ui/tabs.vue'),
+  'reka-ui/pagination': () => import('./demos/reka-ui/pagination.vue'),
   'reka-ui/navigation-menu': () =>
     import('./demos/reka-ui/navigation-menu.vue'),
   'reka-ui/popover': () => import('./demos/reka-ui/popover.vue'),

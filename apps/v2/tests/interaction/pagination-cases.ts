@@ -10,7 +10,8 @@ import {
   type SpringOptions,
 } from './spring-curves';
 
-export const LINK = '[data-slot="pagination-link"]';
+// shadcn/ui's links, or reka-ui's page items (shadcn-vue).
+export const LINK = ':is([data-slot="pagination-link"],[data-type="page"])';
 export const INDICATOR = '[data-slot="pagination-indicator"]';
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 export const SELECTION: SpringOptions = { stiffness: 300, damping: 30 };
@@ -149,7 +150,9 @@ function readPagination(nav: Element | null) {
       };
     });
   const current = Array.from(
-    nav.querySelectorAll('[data-slot="pagination-link"][aria-current="page"]'),
+    nav.querySelectorAll(
+      ':is([data-slot="pagination-link"],[data-type="page"])[aria-current="page"]',
+    ),
   ).find(
     (el) =>
       el.closest('[data-animate-ui-pagination]') === nav &&
@@ -226,7 +229,9 @@ export const linkBox = (page: Page, nav: string, label: string) =>
       const root = document.querySelector(nav)!;
       const origin = root.getBoundingClientRect();
       const link = Array.from(
-        root.querySelectorAll('[data-slot="pagination-link"]'),
+        root.querySelectorAll(
+          ':is([data-slot="pagination-link"],[data-type="page"])',
+        ),
       ).find(
         (el) =>
           el.closest('[data-animate-ui-pagination]') === root &&
@@ -249,7 +254,9 @@ export const clickLink = (page: Page, nav: string, label: string) =>
     ({ nav, label }) => {
       const root = document.querySelector(nav)!;
       Array.from(
-        root.querySelectorAll<HTMLElement>('[data-slot="pagination-link"]'),
+        root.querySelectorAll<HTMLElement>(
+          ':is([data-slot="pagination-link"],[data-type="page"])',
+        ),
       )
         .find(
           (el) =>
@@ -278,7 +285,9 @@ export const clickTwice = (
       const root = document.querySelector(nav)!;
       const link = (label: string) =>
         Array.from(
-          root.querySelectorAll<HTMLElement>('[data-slot="pagination-link"]'),
+          root.querySelectorAll<HTMLElement>(
+            ':is([data-slot="pagination-link"],[data-type="page"])',
+          ),
         ).find(
           (el) =>
             el.closest('[data-animate-ui-pagination]') === root &&
@@ -336,7 +345,7 @@ export const outlineOf = (page: Page, nav: string) =>
     const root = document.querySelector(nav)!;
     const link = Array.from(
       root.querySelectorAll(
-        '[data-slot="pagination-link"][aria-current="page"]',
+        ':is([data-slot="pagination-link"],[data-type="page"])[aria-current="page"]',
       ),
     ).find(
       (el) =>
@@ -581,15 +590,19 @@ export function expectCrossfade(frames: Frame[], from: Box, to: Box) {
 export async function waitForPagination(page: Page) {
   await page.waitForFunction(() => {
     const links = [
-      ...document.querySelectorAll('[data-slot="pagination-link"]'),
+      ...document.querySelectorAll(
+        ':is([data-slot="pagination-link"],[data-type="page"])',
+      ),
     ];
     const roots = [
       ...document.querySelectorAll('[data-animate-ui-pagination]'),
     ];
     return (
       links.length > 0 &&
-      links.every((el) =>
-        Object.keys(el).some((key) => key.startsWith('__reactProps')),
+      links.every(
+        (el) =>
+          el.hasAttribute('data-type') ||
+          Object.keys(el).some((key) => key.startsWith('__reactProps')),
       ) &&
       roots.length > 0 &&
       roots.every((el) => el.hasAttribute('data-animate-ui-pagination-ready'))
@@ -604,14 +617,18 @@ export async function gotoPagination(page: Page, url: string) {
   await page.waitForTimeout(250);
 }
 
-export function describePagination(library: string) {
-  const url = `/tests/demos/${library}/pagination`;
+export function describePagination(
+  library: string,
+  url = `/tests/demos/${library}/pagination`,
+) {
   const NAV = '[data-slot="pagination"]';
   const box = (page: Page, label: string) => linkBox(page, NAV, label);
   const link = (page: Page, label: string) =>
     page
       .locator(NAV)
-      .locator(LINK)
+      .locator(
+        `:is(${LINK},[data-slot="pagination-previous"],[data-slot="pagination-next"])`,
+      )
       .filter({ hasText: new RegExp(`^${label}$`) });
 
   test.describe(`${library} pagination demo`, () => {
@@ -686,6 +703,10 @@ export function describePagination(library: string) {
     test('pressed with the pointer: it lands where the link rests, not where its press nudge has it', async ({
       page,
     }) => {
+      test.skip(
+        library === 'vue-reka-ui',
+        'shadcn-vue’s buttons have no press nudge (active:translate-y-px)',
+      );
       const to = await box(page, '3');
       const target = (await link(page, '3').boundingBox())!;
       const frames = await record(page, NAV, '3', async () => {
