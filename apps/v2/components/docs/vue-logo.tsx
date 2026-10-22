@@ -14,12 +14,13 @@ export function VueLogo({
       <path
         d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z"
         fill={colored ? VUE_COLORS.green : 'currentColor'}
+        fillOpacity={colored ? 1 : 0.5}
         style={{ transition: FILL_TRANSITION }}
       />
       <path
         d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z"
         fill={colored ? VUE_COLORS.slate : 'currentColor'}
-        fillOpacity={colored ? 1 : 0.55}
+        fillOpacity={1}
         style={{ transition: FILL_TRANSITION }}
       />
     </svg>
