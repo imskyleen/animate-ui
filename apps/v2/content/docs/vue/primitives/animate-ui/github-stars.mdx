@@ -1,0 +1,177 @@
+---
+title: GitHub Stars
+description: A repository's GitHub stars, counted up with a filling star and a burst of particles.
+---
+
+<VueComponentPreview name="animate-ui/github-stars" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  GithubStars,
+  GithubStarsIcon,
+  GithubStarsLogo,
+  GithubStarsNumber,
+  GithubStarsParticles,
+} from '@animate-ui/vue/primitives/github-stars';
+</script>
+
+<template>
+  <GithubStars username="imskyleen" repo="animate-ui" class="flex items-center gap-2">
+    <GithubStarsLogo class="size-6" />
+    <GithubStarsNumber />
+    <GithubStarsParticles>
+      <GithubStarsIcon :icon="StarIcon" class="size-4" color="gold" />
+    </GithubStarsParticles>
+  </GithubStars>
+</template>
+```
+
+The count is fetched from the GitHub API (`api.github.com/repos/<username>/<repo>`), unauthenticated. To avoid the request (rate limits, server-side data), pass the count with `value`.
+
+## Animation
+
+- Once the count is loaded, the number counts up from 0 with rolling digits ([Sliding Number](/docs/vue/primitives/animate-ui/sliding-number)).
+- The star fills from the bottom as the number climbs, and bursts into particles when the count is reached.
+- Nothing is rendered until the count is loaded (with `as-child`, the child is there but hidden); the container is marked `aria-busy` meanwhile.
+- With `in-view`, the request waits for the element to be on screen.
+- Under reduced motion, the digits change without rolling and the burst is skipped.
+
+## API Reference
+
+### GithubStars
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    username: {
+      description: 'Owner of the repository.',
+      type: 'string',
+    },
+    repo: {
+      description: 'Name of the repository.',
+      type: 'string',
+    },
+    value: {
+      description: 'A fixed star count. The API is not called.',
+      type: 'number',
+    },
+    delay: {
+      description: 'Delay before the request, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '#default': {
+      description: 'The parts to display.',
+      type: 'slot',
+      required: true,
+    },
+    'in-view': {
+      description: 'Wait for the element to be in view before the request.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-once': {
+      description: 'Only wait for the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### GithubStarsNumber
+
+The count, as a [Sliding Number](/docs/vue/primitives/animate-ui/sliding-number#api-reference).
+
+<TypeTable
+  type={{
+    'pad-start': {
+      description:
+        'Pad with leading zeros while counting, so the width stays stable.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Sliding Number props.',
+      type: "Omit<SlidingNumberProps, 'number' | 'fromNumber'>",
+    },
+  }}
+/>
+
+### GithubStarsIcon
+
+Renders the icon twice: empty, and filled as the count climbs.
+
+<TypeTable
+  type={{
+    icon: {
+      description: 'The icon component (not an element).',
+      type: 'Component',
+      required: true,
+    },
+    color: {
+      description: 'Fill and stroke color of the filled icon.',
+      type: 'string',
+      default: "'currentColor'",
+    },
+    'active-class': {
+      description: 'Class names of the filled icon.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Props of both icons.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### GithubStarsParticles
+
+Bursts when the count is reached. Takes the [ParticlesEffect](/docs/vue/primitives/animate-ui/particles#particleseffect) props.
+
+<TypeTable
+  type={{
+    '#default': {
+      description: 'The element the particles burst from.',
+      type: 'slot',
+      required: true,
+    },
+    size: {
+      description: 'Size of each particle, in pixels.',
+      type: 'number',
+      default: '4',
+    },
+    '...props': {
+      description: 'ParticlesEffect props.',
+      type: 'ParticlesEffectProps',
+    },
+  }}
+/>
+
+### GithubStarsLogo
+
+The GitHub mark, labelled for screen readers. Takes `svg` props.
+
+### useGithubStars
+
+Returns getters for `stars`, `currentStars` (the displayed value), `isLoading` and `isCompleted`.

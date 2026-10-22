@@ -58,7 +58,7 @@ export const test = base.extend<{
           await page
             .locator('[data-slot="vue-demo"][data-mounted]')
             .first()
-            .waitFor();
+            .waitFor({ state: 'attached' });
       };
       const goto = page.goto.bind(page);
       page.goto = async (...args) => {

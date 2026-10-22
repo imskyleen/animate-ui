@@ -1,0 +1,186 @@
+---
+title: Pinned List
+description: A list whose items glide between a pinned and an unpinned group.
+---
+
+<VueComponentPreview name="animate-ui/pinned-list" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import {
+  PinnedList,
+  PinnedListItem,
+  PinnedListItems,
+  PinnedListLabel,
+  PinnedListPinned,
+  PinnedListTrigger,
+  PinnedListUnpinned,
+} from '@animate-ui/vue/primitives/pinned-list';
+
+const items = ref(ITEMS);
+const toggle = (id: string) =>
+  (items.value = items.value.map((i) => (i.id === id ? { ...i, pinned: !i.pinned } : i)));
+
+const pinned = computed(() => items.value.filter((i) => i.pinned));
+const unpinned = computed(() => items.value.filter((i) => !i.pinned));
+</script>
+
+<template>
+  <PinnedList @pinned-change="toggle">
+    <PinnedListPinned>
+      <PinnedListLabel :hide="pinned.length === 0">Pinned</PinnedListLabel>
+      <PinnedListItems>
+        <PinnedListItem v-for="item in pinned" :id="item.id" :key="item.id" custom-trigger>
+          {{ item.name }}
+          <PinnedListTrigger :aria-label="`Unpin ${item.name}`">…</PinnedListTrigger>
+        </PinnedListItem>
+      </PinnedListItems>
+    </PinnedListPinned>
+    <PinnedListUnpinned>
+      <PinnedListLabel :hide="unpinned.length === 0">All</PinnedListLabel>
+      <PinnedListItems>
+        <PinnedListItem v-for="item in unpinned" :id="item.id" :key="item.id" custom-trigger>
+          {{ item.name }}
+          <PinnedListTrigger :aria-label="`Pin ${item.name}`">…</PinnedListTrigger>
+        </PinnedListItem>
+      </PinnedListItems>
+    </PinnedListUnpinned>
+  </PinnedList>
+</template>
+```
+
+You own the pinned state: `@pinned-change` tells you which item to move. Without `custom-trigger`, clicking the whole item toggles it.
+
+## Animation
+
+- The item glides to its new place on a spring (stiffness 320, damping 25, mass 0.8: a shared layout animation with a slight overshoot), above the other items while it moves. The others make room.
+- Labels fade in and out when a group becomes empty or filled (220ms, ease-out), and slide with the items making room, on the items' spring.
+- Triggers, and items without `custom-trigger`, shrink on press (scale 0.97) on a quick spring (the item's own spring for items). Nothing scales on hover.
+- `<AnimateUIProvider :tempo>` paces the default transitions.
+- Under reduced motion, items jump to their new place and don't scale.
+
+## API Reference
+
+### PinnedList
+
+<TypeTable
+  type={{
+    '@pinned-change': {
+      description: 'Emitted with the id of the item to pin or unpin.',
+      type: '(id: string) => void',
+    },
+    '#default': {
+      description: 'The pinned and unpinned groups.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the list.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### PinnedListPinned, PinnedListUnpinned, PinnedListItems
+
+Plain `div`s that structure the groups. They take `div` props.
+
+### PinnedListLabel
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a p, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    hide: {
+      description: 'Fade the label out (when its group is empty).',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Transition of the fade.',
+      type: 'Transition',
+      default:
+        "{ duration: 0.22, ease: [0.23, 1, 0.32, 1], layout: { type: 'spring', stiffness: 320, damping: 25, mass: 0.8 } }",
+    },
+    '...props': {
+      description: 'Props of the label.',
+      type: "HTMLMotionProps<'p'>",
+    },
+  }}
+/>
+
+### PinnedListItem
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    id: {
+      description: 'Unique id of the item, passed to `@pinned-change`.',
+      type: 'string',
+      required: true,
+    },
+    'custom-trigger': {
+      description:
+        'Toggle with a `PinnedListTrigger` inside instead of clicking the whole item.',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Transition of the move, and of the press scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 320, damping: 25, mass: 0.8 }",
+    },
+    '#default': {
+      description: 'The item content.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the item.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### PinnedListTrigger
+
+A button that pins or unpins its item. Give it an accessible label.
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a button, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### usePinnedList, usePinnedListItem
+
+`usePinnedList` returns the `movingId` ref (the item moving between the lists) and `pin(id)`. `usePinnedListItem` returns an `id()` getter.
+
+## Credits
+
+- Based on [@arhamkhnz](https://github.com/arhamkhnz)'s Pin List.

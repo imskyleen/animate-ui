@@ -43,6 +43,9 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'animate-ui/github-stars': () => import('./demos/animate-ui/github-stars.vue'),
+  'animate-ui/pinned-list': () => import('./demos/animate-ui/pinned-list.vue'),
+  'animate-ui/spring': () => import('./demos/animate-ui/spring.vue'),
   'animate-ui/motion-grid': () => import('./demos/animate-ui/motion-grid.vue'),
   'animate-ui/scroll-progress': () => import('./demos/animate-ui/scroll-progress.vue'),
   'animate-ui/button': () => import('./demos/animate-ui/button.vue'),
@@ -79,6 +82,10 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./fixtures/animate-ui-highlight-cases.vue'),
   'fixtures/animate-ui-motion-grid-duration': () =>
     import('./fixtures/animate-ui-motion-grid-duration.vue'),
+  'fixtures/animate-ui-github-stars': () =>
+    import('./fixtures/animate-ui-github-stars.vue'),
+  'fixtures/animate-ui-number-events': () =>
+    import('./fixtures/animate-ui-number-events.vue'),
   'fixtures/animate-ui-scroll-fade': () =>
     import('./fixtures/animate-ui-scroll-fade.vue'),
   'fixtures/animate-ui-image-zoom-props': () =>

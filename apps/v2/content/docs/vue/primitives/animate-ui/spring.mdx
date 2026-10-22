@@ -1,0 +1,143 @@
+---
+title: Spring
+description: A draggable element tied to its place by a spring coil, which pulls it back on release.
+---
+
+<VueComponentPreview name="animate-ui/spring" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Spring, SpringElement, SpringProvider } from '@animate-ui/vue/primitives/spring';
+</script>
+
+<template>
+  <SpringProvider>
+    <Spring class="text-muted-foreground" />
+    <SpringElement>
+      <img src="/avatar.png" alt="Avatar" draggable="false" />
+    </SpringElement>
+  </SpringProvider>
+</template>
+```
+
+<Callout type="info">
+  Add `draggable="false"` to images inside `SpringElement`, so the browser's
+  native drag image doesn't take over the drag.
+</Callout>
+
+## Animation
+
+- Dragging stretches a coil between the element's place and the element. The coil tightens as it stretches.
+- On release, the element springs back with a bounce, the coil following it.
+- `Spring` is a full-viewport SVG that never catches the pointer.
+- Under reduced motion, the element is back in place at once on release.
+
+## API Reference
+
+### SpringProvider
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Spring pulling the element back.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 200, damping: 16 }',
+    },
+    'path-config': {
+      description: 'Shape of the coil.',
+      type: 'SpringPathConfig',
+      default: '{}',
+    },
+    '#default': {
+      description: 'The coil and the element.',
+      type: 'slot',
+      required: true,
+    },
+  }}
+/>
+
+#### SpringPathConfig
+
+<TypeTable
+  type={{
+    'coil-count': {
+      description: 'Number of coils.',
+      type: 'number',
+      default: '8',
+    },
+    'amplitude-min': {
+      description: 'Smallest coil amplitude, when stretched, in pixels.',
+      type: 'number',
+      default: '8',
+    },
+    'amplitude-max': {
+      description: 'Largest coil amplitude, at rest, in pixels.',
+      type: 'number',
+      default: '20',
+    },
+    'curve-ratio-min': {
+      description: 'Curve ratio when stretched.',
+      type: 'number',
+      default: '0.5',
+    },
+    'curve-ratio-max': {
+      description: 'Curve ratio at rest.',
+      type: 'number',
+      default: '1',
+    },
+    'bezier-offset': {
+      description: 'Roundness of each coil.',
+      type: 'number',
+      default: '8',
+    },
+  }}
+/>
+
+### Spring
+
+The coil. Its color is `currentColor`.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Props of the SVG.',
+      type: 'SVGAttributes',
+    },
+  }}
+/>
+
+### SpringElement
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '#default': {
+      description: 'The draggable element.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### useSpring
+
+Returns the spring state: the `x`/`y` and `springX`/`springY` motion values, the `isDragging` ref, a `path()` getter for the coil and the `child` ref.
+
+## Credits
+
+- Inspired by [Anh](https://x.com/pwign)'s [post](https://x.com/pwign/status/1927760004183970067).

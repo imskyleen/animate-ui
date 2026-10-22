@@ -328,10 +328,14 @@ const ScrollingNumber = defineComponent({
     delay: { type: Number, default: 0 },
   },
   emits: ['completed'],
-  setup(props, { attrs, slots }) {
+  setup(props, { attrs, slots, emit }) {
     return () =>
       h(ReducedMotionConfig, { remount: true }, () =>
-        h(ScrollingNumberContent, { ...attrs, ...props }, slots),
+        h(
+          ScrollingNumberContent,
+          { ...attrs, ...props, onCompleted: () => emit('completed') },
+          slots,
+        ),
       );
   },
 });

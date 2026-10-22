@@ -340,10 +340,14 @@ const SlidingNumber = defineComponent({
   inheritAttrs: false,
   props: slidingNumberProps,
   emits: ['numberChange'],
-  setup(props, { attrs }) {
+  setup(props, { attrs, emit }) {
     return () =>
       h(ReducedMotionConfig, { remount: true }, () =>
-        h(SlidingNumberContent, { ...attrs, ...props }),
+        h(SlidingNumberContent, {
+          ...attrs,
+          ...props,
+          onNumberChange: (value: number) => emit('numberChange', value),
+        }),
       );
   },
 });

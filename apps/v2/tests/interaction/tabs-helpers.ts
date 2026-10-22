@@ -940,7 +940,6 @@ export function describeTabsHeights(library: string) {
     }) => {
       const before = await panelHeight(page);
       const tall = await tabCenter(page, 'Tall', scope);
-      const short = await tabCenter(page, 'Short', scope);
       const frames = await recordSwitch(
         page,
         'Tall',
@@ -962,6 +961,8 @@ export function describeTabsHeights(library: string) {
             },
             { scope, panel: ANY_PANEL, before },
           );
+          // The growing panel can move the tabs (a centered page): aim where Short is now.
+          const short = await tabCenter(page, 'Short', scope);
           await page.mouse.click(short.x, short.y);
         },
         scope,
