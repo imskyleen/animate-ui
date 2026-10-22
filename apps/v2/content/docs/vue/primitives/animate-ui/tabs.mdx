@@ -1,0 +1,195 @@
+---
+title: Tabs
+description: "Animate UI's own tabs: a highlight glides between triggers and panels slide, with the height following the active panel."
+---
+
+<VueComponentPreview name="animate-ui/tabs" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  Tabs,
+  TabsContent,
+  TabsContents,
+  TabsHighlight,
+  TabsHighlightItem,
+  TabsList,
+  TabsTrigger,
+} from '@animate-ui/vue/primitives/tabs';
+</script>
+
+<template>
+  <Tabs default-value="account">
+    <TabsHighlight class="absolute inset-0 rounded-md bg-background">
+      <TabsList class="flex rounded-lg bg-muted p-1">
+        <TabsHighlightItem value="account" class="flex-1">
+          <TabsTrigger value="account">Account</TabsTrigger>
+        </TabsHighlightItem>
+        <TabsHighlightItem value="password" class="flex-1">
+          <TabsTrigger value="password">Password</TabsTrigger>
+        </TabsHighlightItem>
+      </TabsList>
+    </TabsHighlight>
+    <TabsContents>
+      <TabsContent value="account">Make changes to your account here.</TabsContent>
+      <TabsContent value="password">Change your password here.</TabsContent>
+    </TabsContents>
+  </Tabs>
+</template>
+```
+
+Unlike the library tabs, these are Animate UI's own: no reka-ui underneath. `TabsHighlight` and `TabsHighlightItem` are optional; without them, style the active trigger with `data-state="active"`. Without `default-value`, the first trigger is selected.
+
+## Animation
+
+- The highlight slides to the selected trigger on a spring (stiffness 300, damping 30): one surface is handed from the previous trigger to the new one, at full opacity ([Highlight](/docs/vue/primitives/animate-ui/highlight)).
+- Panels sit side by side and slide to the selected one on a critically damped spring (stiffness 300, damping 35): they glide into place without bouncing past it. The container's height follows the active panel on the same spring. Mounted hidden (in a closed panel, or a tab waiting its turn), the container shows at its height once it's on screen, without growing in. Inactive panels blur (4px, spring with stiffness 300, damping 30) and are `inert`.
+- Keyboard: arrow keys move to the next or previous enabled trigger (wrapping) and select it, Home and End jump to the ends; only the selected trigger is in the Tab order. Keyboard selection animates exactly like a click.
+- `<AnimateUIProvider :tempo>` paces every spring.
+- Under reduced motion, the highlight, panels and height change at once.
+
+## API Reference
+
+### Tabs
+
+<TypeTable
+  type={{
+    'default-value': {
+      description:
+        'The tab selected at first (uncontrolled). Defaults to the first trigger.',
+      type: 'string',
+    },
+    'v-model': {
+      description: 'The selected tab (controlled).',
+      type: 'string',
+    },
+    '@update:model-value': {
+      description: 'Emitted with the tab to select.',
+      type: '(value: string) => void',
+    },
+    orientation: {
+      description:
+        'Arrow keys that move between triggers: Left/Right (mirrored in RTL) or Up/Down. Sets `aria-orientation` on the list.',
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+    },
+    '...props': {
+      description: 'Props of the root.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### TabsHighlight
+
+Takes the [Highlight](/docs/vue/primitives/animate-ui/highlight#highlight) props, except `controlled-items` and `v-model`.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the highlight.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 30 }",
+    },
+  }}
+/>
+
+### TabsHighlightItem
+
+Takes the [HighlightItem](/docs/vue/primitives/animate-ui/highlight#highlightitem) props.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'Value of the trigger it wraps.',
+      type: 'string',
+      required: true,
+    },
+  }}
+/>
+
+### TabsList
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Props of the list (`role="tablist"`).',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### TabsTrigger
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a button, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    value: {
+      description: 'Value of the tab.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description:
+        'Props of the button (`role="tab"`, `aria-selected`, `aria-controls`). `disabled` triggers are skipped by the arrow keys; an own `id` is kept and referenced by the panel.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### TabsContents
+
+Holds the panels and animates between them.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the slide and the height.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 300, damping: 35, restDelta: 0.01 }",
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### TabsContent
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    value: {
+      description: 'Value of the tab.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description:
+        'Props of the panel (`role="tabpanel"`, `aria-labelledby`). An own `id` is kept and referenced by the trigger.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### useTabs
+
+Returns an `activeValue()` getter, `handleValueChange`, an `orientation()` getter, and `getTriggerId` / `getContentId` to link your own parts by id.

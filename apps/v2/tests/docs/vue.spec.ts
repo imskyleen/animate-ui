@@ -39,6 +39,7 @@ const OWN_PAGES = [
   ['image-zoom', 'Black porcelain mug, zoomable'],
   ['magnetic', "onlyOnHover === 'true'"],
   ['particles', 'ParticlesLabel'],
+  ['tabs', 'Bounce rate'],
   ['tooltip', 'Strikethrough'],
   ['avatar-group', 'Guillermo Rauch'],
   ['cursor', 'on(enableCursorFollow)'],
