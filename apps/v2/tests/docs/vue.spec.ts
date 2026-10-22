@@ -425,3 +425,39 @@ test('a Vue component in Reka UI and Animate UI lists Reka UI first', async ({
     .filter({ hasText: /^(Reka UI|Animate UI)$/ });
   await expect(tabs).toHaveText(['Reka UI', 'Animate UI']);
 });
+
+test('the framework tabs show a logo in color only on the active tab', async ({
+  page,
+}) => {
+  const logos = () =>
+    page.locator('#nd-sidebar [role="tab"]').evaluateAll((tabs) =>
+      tabs.map((tab) => {
+        const svg = tab.querySelector('svg')!;
+        const path = svg.querySelector('path')!;
+        return {
+          name: tab.textContent!.trim(),
+          active: tab.getAttribute('aria-selected') === 'true',
+          react: getComputedStyle(svg).color,
+          vue: getComputedStyle(path).fill,
+          text: getComputedStyle(tab).color,
+        };
+      }),
+    );
+  await page.goto('/docs');
+  await expect
+    .poll(async () => (await logos()).find((l) => l.name === 'React')!.react)
+    .toBe('rgb(8, 126, 164)');
+  const onReact = await logos();
+  const vueOff = onReact.find((l) => l.name === 'Vue')!;
+  expect(vueOff.active).toBe(false);
+  expect(vueOff.vue).toBe(vueOff.text);
+
+  await page.goto('/docs/vue');
+  await expect
+    .poll(async () => (await logos()).find((l) => l.name === 'Vue')!.vue)
+    .toBe('rgb(64, 184, 131)');
+  const onVue = await logos();
+  const reactOff = onVue.find((l) => l.name === 'React')!;
+  expect(reactOff.active).toBe(false);
+  expect(reactOff.react).toBe(reactOff.text);
+});

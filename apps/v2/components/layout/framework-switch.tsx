@@ -75,13 +75,32 @@ function counterpart(
     : { href: '/docs', same: false };
 }
 
-const FRAMEWORKS: { id: Framework; title: string; logo: React.ReactNode }[] = [
+// In color on the active tab only: react.dev's blue, Vue's green.
+const FRAMEWORKS: {
+  id: Framework;
+  title: string;
+  logo: (active: boolean) => React.ReactNode;
+}[] = [
   {
     id: 'react',
     title: 'React',
-    logo: <HugeiconsIcon icon={ReactIcon} strokeWidth={2} size={14} />,
+    logo: (active) => (
+      <HugeiconsIcon
+        icon={ReactIcon}
+        strokeWidth={2}
+        size={14}
+        className={cn(
+          'transition-colors duration-300',
+          active && 'text-[#087ea4] dark:text-[#58c4dc]',
+        )}
+      />
+    ),
   },
-  { id: 'vue', title: 'Vue', logo: <VueLogo className="size-3.5" /> },
+  {
+    id: 'vue',
+    title: 'Vue',
+    logo: (active) => <VueLogo className="size-3.5" colored={active} />,
+  },
 ];
 
 export function FrameworkTabs({
@@ -142,7 +161,7 @@ export function FrameworkTabs({
                     : 'text-muted-foreground hover:text-foreground',
                 )}
               >
-                {framework.logo}
+                {framework.logo(active)}
                 {framework.title}
               </Link>
             </HighlightItem>
