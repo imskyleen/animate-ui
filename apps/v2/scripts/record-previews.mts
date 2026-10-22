@@ -646,10 +646,19 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   'rotating-text': { mount: true, tail: 3000 },
   'swapping-text': { mount: true, tail: 5000 },
   'sliding-text': {
-    play: hoverOver(
-      (page) => page.locator('main [data-slot="sliding-text"]').first(),
-      700,
-    ),
+    async play(page) {
+      await pointAt(
+        page,
+        page.locator('main [data-slot="sliding-text"]').first(),
+      );
+      await wait(page, 700);
+      await pointAt(
+        page,
+        page.locator('main a').filter({ hasText: 'Get started' }),
+      );
+      await wait(page, 700);
+      await away(page);
+    },
   },
   'scroll-fade': {
     async play(page) {
