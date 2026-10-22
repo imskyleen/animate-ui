@@ -1,0 +1,152 @@
+---
+title: Scrolling Number
+description: A wheel of numbers that spins to its value and settles under a highlight.
+---
+
+<VueComponentPreview name="animate-ui/scrolling-number" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  ScrollingNumber,
+  ScrollingNumberContainer,
+  ScrollingNumberHighlight,
+  ScrollingNumberItems,
+} from '@animate-ui/vue/primitives/texts/scrolling-number';
+</script>
+
+<template>
+  <ScrollingNumberContainer :number="1000" :step="100" :items-size="40">
+    <ScrollingNumber>
+      <ScrollingNumberItems />
+    </ScrollingNumber>
+    <ScrollingNumberHighlight />
+  </ScrollingNumberContainer>
+</template>
+```
+
+## Animation
+
+- After `delay`, the strip spins through every step up to `number` on a spring (`stiffness: 90, damping: 30`): fast through the range, then it settles without overshoot.
+- A new `number` springs on from where the strip is.
+- The strip is written by a motion value, without a Vue render per frame. `@number-change` reports the value under the highlight as it passes.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+- Under reduced motion, the wheel lands on the number right away.
+- The strip is hidden from screen readers, which read the number once from the container.
+
+## API Reference
+
+### ScrollingNumberContainer
+
+<TypeTable
+  type={{
+    number: {
+      description: 'The number to land on.',
+      type: 'number',
+      required: true,
+    },
+    step: {
+      description: 'The gap between two items of the strip.',
+      type: 'number',
+      required: true,
+    },
+    'items-size': {
+      description: 'Height (or width, horizontally) of each item, in pixels.',
+      type: 'number',
+      default: '30',
+    },
+    'side-items-count': {
+      description: 'Number of items shown on each side of the highlight.',
+      type: 'number',
+      default: '2',
+    },
+    direction: {
+      description:
+        'Direction of the spin: bottom to top, top to bottom, left to right or right to left.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      default: "'btt'",
+    },
+    '@number-change': {
+      description: 'Called with the value under the highlight as it changes.',
+      type: '(value: number) => void',
+    },
+    'in-view': {
+      description: 'Wait for the wheel to be in view before spinning.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'in-view-once': {
+      description: 'Only trigger the in-view start once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### ScrollingNumber
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'Delay before the wheel spins, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '@completed': {
+      description: 'Called once the wheel (nearly) lands on the number.',
+      type: '() => void',
+    },
+    transition: {
+      description:
+        'Transition of the spin. Spring options (`stiffness`, `damping`, `mass`…) animate as a spring; a transition with a `type` or an `ease` is used as is.',
+      type: 'Transition',
+      default: '{ stiffness: 90, damping: 30 }',
+    },
+    '...props': {
+      description: 'Props of the strip.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### ScrollingNumberItems
+
+<TypeTable
+  type={{
+    '...props': {
+      description:
+        'Props of each item. Each one gets `data-value` with its number.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### ScrollingNumberHighlight
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Props of the highlight, centered behind the landing slot.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### useScrollingNumber
+
+Returns the container's state inside it (`number`, `step`, `range`, `direction`, `isInView`…).

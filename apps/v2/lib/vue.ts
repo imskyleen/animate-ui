@@ -40,6 +40,114 @@ export const frameworkOf = (pathname: string) =>
 
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
+  'animate-ui/counting-number': {
+    CountingNumber: {
+      number: { value: 2025 },
+      fromNumber: { value: 0 },
+      padStart: { value: false },
+      decimalSeparator: { value: '.' },
+      decimalPlaces: { value: 0 },
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+    },
+  },
+  'animate-ui/gradient-text': {
+    GradientText: {
+      neon: { value: false },
+    },
+  },
+  'animate-ui/highlight-text': {
+    HighlightText: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+    },
+  },
+  'animate-ui/morphing-text': {
+    MorphingText: {
+      loop: { value: true },
+      holdDelay: { value: 2500, min: 0, max: 3000, step: 100 },
+    },
+  },
+  'animate-ui/rotating-text': {
+    RotatingTextContainer: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      y: { value: -50, min: -100, max: 100, step: 10 },
+      duration: { value: 2000, min: 1000, max: 5000, step: 100 },
+      align: {
+        value: 'none',
+        options: { none: 'none', start: 'start', center: 'center', end: 'end' },
+      },
+    },
+  },
+  'animate-ui/scrolling-number': {
+    ScrollingNumberContainer: {
+      direction: {
+        value: 'btt',
+        options: { btt: 'btt', ttb: 'ttb', ltr: 'ltr', rtl: 'rtl' },
+      },
+    },
+    ScrollingNumber: {
+      delay: { value: 1000, min: 0, max: 3000, step: 100 },
+    },
+  },
+  'animate-ui/shimmering-text': {
+    ShimmeringText: {
+      wave: { value: false },
+      duration: { value: 1, min: 0.1, max: 3, step: 0.1 },
+    },
+  },
+  'animate-ui/sliding-number': {
+    SlidingNumber: {
+      number: { value: 2025 },
+      fromNumber: { value: true },
+      padStart: { value: true },
+      decimalSeparator: { value: ',' },
+      decimalPlaces: { value: 0 },
+      thousandSeparator: { value: '.' },
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+    },
+  },
+  'animate-ui/sliding-text': {
+    SlidingText: {
+      direction: {
+        value: 'down',
+        options: { down: 'down', up: 'up' },
+      },
+      trigger: {
+        value: 'hover',
+        options: { hover: 'hover', click: 'click' },
+      },
+    },
+  },
+  'animate-ui/splitting-text': {
+    SplittingText: {
+      type: {
+        value: 'chars',
+        options: { chars: 'chars', words: 'words', lines: 'lines' },
+      },
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      animation: {
+        value: 'default',
+        options: { default: 'default', vibe: 'vibe', writing: 'writing' },
+      },
+    },
+  },
+  'animate-ui/swapping-text': {
+    SwappingText: {
+      direction: {
+        value: 'up',
+        options: { up: 'up', down: 'down' },
+      },
+      stagger: { value: 0.07, min: 0, max: 0.15, step: 0.01 },
+      duration: { value: 2000, min: 500, max: 5000, step: 100 },
+    },
+  },
+  'animate-ui/typing-text': {
+    TypingText: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      holdDelay: { value: 1000, min: 0, max: 3000, step: 100 },
+      loop: { value: false },
+      cursor: { value: true },
+    },
+  },
   'animate-ui/rolling-text': {
     RollingText: {
       delay: { value: 0, min: 0, max: 3000, step: 100 },

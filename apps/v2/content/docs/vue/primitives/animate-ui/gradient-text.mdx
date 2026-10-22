@@ -1,0 +1,64 @@
+---
+title: Gradient Text
+description: Text filled with a gradient that sweeps slowly across it.
+---
+
+<VueComponentPreview name="animate-ui/gradient-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { GradientText } from '@animate-ui/vue/primitives/texts/gradient';
+</script>
+
+<template>
+  <GradientText text="Gradient Text" neon />
+</template>
+```
+
+## Animation
+
+- The gradient sweeps across the text in a 50s linear loop, driven by one motion value: no Vue render per frame.
+- `<AnimateUIProvider :tempo>` paces the default loop.
+- The sweep pauses off screen and in a hidden tab, and resumes where it stopped.
+- Under reduced motion, the gradient holds still.
+- `neon` adds a blurred copy of the text as a glow. It is decorative and hidden from screen readers, which read the text once.
+
+## API Reference
+
+### GradientText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    gradient: {
+      description: 'The gradient filling the text.',
+      type: 'string',
+      default:
+        "'linear-gradient(90deg, #3b82f6 0%, #a855f7 20%, #ec4899 50%, #a855f7 80%, #3b82f6 100%)'",
+    },
+    neon: {
+      description: 'Add a blurred glow behind the text.',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Transition of the sweep.',
+      type: 'Transition',
+      default: "{ duration: 50, repeat: Infinity, ease: 'linear' }",
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>

@@ -3,6 +3,30 @@ import { createApp, h, reactive, type Component } from 'vue';
 type Props = Record<string, unknown>;
 
 const demos: Record<string, () => Promise<{ default: Component }>> = {
+  'animate-ui/counting-number': () =>
+    import('./demos/animate-ui/counting-number.vue'),
+  'animate-ui/morphing-text': () =>
+    import('./demos/animate-ui/morphing-text.vue'),
+  'animate-ui/rotating-text': () =>
+    import('./demos/animate-ui/rotating-text.vue'),
+  'animate-ui/splitting-text': () =>
+    import('./demos/animate-ui/splitting-text.vue'),
+  'animate-ui/scrolling-number': () =>
+    import('./demos/animate-ui/scrolling-number.vue'),
+  'animate-ui/sliding-number': () =>
+    import('./demos/animate-ui/sliding-number.vue'),
+  'animate-ui/shimmering-text': () =>
+    import('./demos/animate-ui/shimmering-text.vue'),
+  'animate-ui/sliding-text': () =>
+    import('./demos/animate-ui/sliding-text.vue'),
+  'animate-ui/gradient-text': () =>
+    import('./demos/animate-ui/gradient-text.vue'),
+  'animate-ui/highlight-text': () =>
+    import('./demos/animate-ui/highlight-text.vue'),
+  'animate-ui/swapping-text': () =>
+    import('./demos/animate-ui/swapping-text.vue'),
+  'animate-ui/typing-text': () =>
+    import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/rolling-text': () =>
     import('./demos/animate-ui/rolling-text.vue'),
   'reka-ui/accordion': () => import('./demos/reka-ui/accordion.vue'),

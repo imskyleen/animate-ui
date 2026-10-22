@@ -1,0 +1,109 @@
+---
+title: Counting Number
+description: A number that counts up to its value, written straight to the DOM.
+---
+
+<VueComponentPreview name="animate-ui/counting-number" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { CountingNumber } from '@animate-ui/vue/primitives/texts/counting-number';
+</script>
+
+<template>
+  <CountingNumber :number="2025" in-view />
+</template>
+```
+
+A new `number` springs on from where the count is instead of restarting it.
+
+## Animation
+
+- Counts from `from-number` to `number` on a spring (`stiffness: 90, damping: 50`): most of the range goes by in the first second, then the last units tick in slowly (2025 lands after about 4.5s).
+- The ticking value is written to the DOM directly, without a Vue render per frame.
+- `transition` takes other spring options, or any Motion transition with a `type` or an `ease`.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+- Under reduced motion, the number shows its target right away.
+- Screen readers read the target value once, never the ticking values.
+
+## API Reference
+
+### CountingNumber
+
+<TypeTable
+  type={{
+    number: {
+      description: 'The number to count to.',
+      type: 'number',
+      required: true,
+    },
+    'from-number': {
+      description: 'The number to start counting from.',
+      type: 'number',
+      default: '0',
+    },
+    'pad-start': {
+      description:
+        'Pad the number with leading zeros to the length of `number`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'decimal-separator': {
+      description: 'The separator of the decimal part.',
+      type: 'string',
+      default: "'.'",
+    },
+    'thousand-separator': {
+      description:
+        'The separator between groups of thousands, while counting too.',
+      type: 'string',
+    },
+    'decimal-places': {
+      description: 'Decimal places to show.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description:
+        'Transition of the count. Spring options animate as a spring; a transition with a `type` or an `ease` is used as is.',
+      type: 'SpringOptions | Transition',
+      default: '{ stiffness: 90, damping: 50 }',
+    },
+    delay: {
+      description: 'Delay before counting, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    'initially-stable': {
+      description:
+        'Render `number` from the start, without counting. Useful with many counters on a page.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view': {
+      description: 'Wait for the number to be in view before counting.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'in-view-once': {
+      description: 'Only count the first time the number comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>

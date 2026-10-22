@@ -1,0 +1,110 @@
+---
+title: Splitting Text
+description: Text that comes in piece by piece, by character, word or line.
+---
+
+<VueComponentPreview name="animate-ui/splitting-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { SplittingText } from '@animate-ui/vue/primitives/texts/splitting';
+</script>
+
+<template>
+  <SplittingText text="Splitting Text" type="words" in-view />
+</template>
+```
+
+Pass an array of lines with `type="lines"`:
+
+```vue
+<SplittingText
+  type="lines"
+  :text="['Introducing Splitting Text', 'Made with Motion.']"
+/>
+```
+
+## Animation
+
+- Each piece fades in and slides 150px in from the right over 0.7s on an ease-out, 0.05s apart for characters, 0.2s for words, 0.3s for lines.
+- `initial`, `animate` and `transition` customise every piece.
+- Words never break in the middle; emoji and accented letters stay whole.
+- `<AnimateUIProvider :tempo>` paces the default transition and stagger.
+- Under reduced motion (or with `disable-animation`), every piece is in place at once.
+- Screen readers read the text once, not piece by piece.
+
+## API Reference
+
+### SplittingText
+
+<TypeTable
+  type={{
+    text: {
+      description:
+        'The text to display, or an array of lines when `type` is `lines`.',
+      type: 'string | string[]',
+      required: true,
+    },
+    type: {
+      description: 'How to split the text.',
+      type: "'chars' | 'words' | 'lines'",
+      default: "'chars'",
+    },
+    stagger: {
+      description: 'Delay between two pieces, in seconds.',
+      type: 'number',
+      default: '0.05 (chars), 0.2 (words), 0.3 (lines)',
+    },
+    delay: {
+      description: 'Delay before the first piece, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    initial: {
+      description: 'Hidden state of each piece.',
+      type: 'TargetAndTransition',
+      default: '{ x: 150, opacity: 0 }',
+    },
+    animate: {
+      description: 'Visible state of each piece.',
+      type: 'TargetAndTransition',
+      default: '{ x: 0, opacity: 1 }',
+    },
+    transition: {
+      description:
+        'Transition of each piece. Its `delay` is added to the stagger.',
+      type: 'Transition',
+      default: "{ duration: 0.7, ease: 'easeOut' }",
+    },
+    'disable-animation': {
+      description: 'Render the text in its visible state, without animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view': {
+      description: 'Wait for the text to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'in-view-once': {
+      description: 'Only animate the first time the text comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<HTMLMotionProps<'div'>, 'children' | 'initial' | 'animate' | 'transition'>",
+    },
+  }}
+/>

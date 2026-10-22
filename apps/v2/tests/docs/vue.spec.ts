@@ -29,7 +29,21 @@ const PAGES = [
 ] as const;
 
 /** Animate UI's own primitives in Vue, with a text from their demo's source. */
-const OWN_PAGES = [['rolling-text', 'Replay']] as const;
+const OWN_PAGES = [
+  ['counting-number', 'tabular-nums'],
+  ['gradient-text', "neon === 'true'"],
+  ['highlight-text', 'dark:from-blue-500'],
+  ['morphing-text', 'Handles emojis'],
+  ['rolling-text', 'Replay'],
+  ['rotating-text', "'Demo'"],
+  ['scrolling-number', 'isVertical ? 40 : 75'],
+  ['shimmering-text', "wave === 'true'"],
+  ['sliding-number', 'on(fromNumber)'],
+  ['sliding-text', 'cursor-pointer'],
+  ['splitting-text', 'ANIMATIONS'],
+  ['swapping-text', 'inline-grid'],
+  ['typing-text', 'Highly customizable'],
+] as const;
 
 for (const [library, pages] of [
   ['reka-ui', PAGES],
@@ -140,7 +154,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(24);
+  await expect(cards).toHaveCount(36);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

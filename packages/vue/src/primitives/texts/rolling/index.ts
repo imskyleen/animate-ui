@@ -11,7 +11,7 @@ import {
 } from '../../../utils/motion';
 import { VISUALLY_HIDDEN, splitGraphemes } from '../_text';
 
-const formatCharacter = (char: string) => (char === ' ' ? ' ' : char);
+const formatCharacter = (char: string) => (char === ' ' ? '\u00a0' : char);
 
 const CHAR_STYLE = {
   position: 'absolute',
@@ -70,70 +70,76 @@ const RollingTextContent = defineComponent({
       const rolled = isInView.value || reduce.value;
       const stepDelay = transition.delay ?? 0;
       let charIdx = 0;
-      return h('span', { ...attrs, ref: element, 'data-slot': 'rolling-text' }, [
-        h(
-          'span',
-          { 'aria-hidden': 'true' },
-          words.value.map((word, wi) => {
-            if (word.space) return h('span', { key: `space-${wi}` }, word.part);
-            return h(
-              'span',
-              {
-                key: `word-${wi}`,
-                style: { display: 'inline-block', whiteSpace: 'nowrap' },
-              },
-              word.chars.map((char, ci) => {
-                const charDelay = props.delay / 1000 + charIdx++ * stepDelay;
-                const label = formatCharacter(char);
-                return h(
-                  'span',
-                  {
-                    key: `c-${wi}-${ci}`,
-                    style: {
-                      position: 'relative',
-                      display: 'inline-block',
-                      perspective: '9999999px',
-                      transformStyle: 'preserve-3d',
-                      width: 'auto',
+      return h(
+        'span',
+        { ...attrs, ref: element, 'data-slot': 'rolling-text' },
+        [
+          h(
+            'span',
+            { 'aria-hidden': 'true' },
+            words.value.map((word, wi) => {
+              if (word.space)
+                return h('span', { key: `space-${wi}` }, word.part);
+              return h(
+                'span',
+                {
+                  key: `word-${wi}`,
+                  style: { display: 'inline-block', whiteSpace: 'nowrap' },
+                },
+                word.chars.map((char, ci) => {
+                  const charDelay = props.delay / 1000 + charIdx++ * stepDelay;
+                  const label = formatCharacter(char);
+                  return h(
+                    'span',
+                    {
+                      key: `c-${wi}-${ci}`,
+                      style: {
+                        position: 'relative',
+                        display: 'inline-block',
+                        perspective: '9999999px',
+                        transformStyle: 'preserve-3d',
+                        width: 'auto',
+                      },
                     },
-                  },
-                  [
-                    h(
-                      motion.span,
-                      {
-                        style: { ...CHAR_STYLE, transformOrigin: '50% 25%' },
-                        initial: reduce.value ? false : { rotateX: 0 },
-                        animate: rolled ? { rotateX: 90 } : undefined,
-                        transition: reduce.value
-                          ? motionTransition.instant
-                          : { ...transition, delay: charDelay },
-                      },
-                      () => label,
-                    ),
-                    h(
-                      motion.span,
-                      {
-                        style: { ...CHAR_STYLE, transformOrigin: '50% 100%' },
-                        initial: reduce.value ? false : { rotateX: 90 },
-                        animate: rolled ? { rotateX: 0 } : undefined,
-                        transition: reduce.value
-                          ? motionTransition.instant
-                          : {
-                              ...transition,
-                              delay: charDelay + BACK_OFFSET * tokens.value.tempo,
-                            },
-                      },
-                      () => label,
-                    ),
-                    h('span', { style: { visibility: 'hidden' } }, label),
-                  ],
-                );
-              }),
-            );
-          }),
-        ),
-        h('span', { class: 'sr-only', style: VISUALLY_HIDDEN }, props.text),
-      ]);
+                    [
+                      h(
+                        motion.span,
+                        {
+                          style: { ...CHAR_STYLE, transformOrigin: '50% 25%' },
+                          initial: reduce.value ? false : { rotateX: 0 },
+                          animate: rolled ? { rotateX: 90 } : undefined,
+                          transition: reduce.value
+                            ? motionTransition.instant
+                            : { ...transition, delay: charDelay },
+                        },
+                        () => label,
+                      ),
+                      h(
+                        motion.span,
+                        {
+                          style: { ...CHAR_STYLE, transformOrigin: '50% 100%' },
+                          initial: reduce.value ? false : { rotateX: 90 },
+                          animate: rolled ? { rotateX: 0 } : undefined,
+                          transition: reduce.value
+                            ? motionTransition.instant
+                            : {
+                                ...transition,
+                                delay:
+                                  charDelay + BACK_OFFSET * tokens.value.tempo,
+                              },
+                        },
+                        () => label,
+                      ),
+                      h('span', { style: { visibility: 'hidden' } }, label),
+                    ],
+                  );
+                }),
+              );
+            }),
+          ),
+          h('span', { class: 'sr-only', style: VISUALLY_HIDDEN }, props.text),
+        ],
+      );
     };
   },
 });

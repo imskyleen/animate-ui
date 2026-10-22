@@ -1,0 +1,77 @@
+---
+title: Highlight Text
+description: Text with a background that sweeps in from the left, like a highlighter.
+---
+
+<VueComponentPreview name="animate-ui/highlight-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { HighlightText } from '@animate-ui/vue/primitives/texts/highlight';
+</script>
+
+<template>
+  <HighlightText
+    text="Highlight Text"
+    class="bg-linear-to-r from-blue-100 to-purple-100"
+    in-view
+  />
+</template>
+```
+
+## Animation
+
+- The background grows from the left edge over 2s on an ease-in-out: slow at first, fastest midway, easing into place.
+- With `inViewOnce={false}`, it resets off screen and sweeps again on the next entrance.
+- `<AnimateUIProvider :tempo>` paces the default duration.
+- Under reduced motion, the text is highlighted at once.
+
+## API Reference
+
+### HighlightText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    delay: {
+      description: 'Delay before the highlight starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the sweep.',
+      type: 'Transition',
+      default: "{ duration: 2, ease: 'easeInOut' }",
+    },
+    'in-view': {
+      description: 'Wait for the text to be in view before highlighting.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'in-view-once': {
+      description:
+        'Only highlight once. When `false`, it replays each time the text comes back into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<HTMLMotionProps<'span'>, 'children'>",
+    },
+  }}
+/>

@@ -1,0 +1,69 @@
+---
+title: Sliding Text
+description: Text that slides out of its box while a copy slides in, on hover or on click, like a menu link.
+---
+
+<VueComponentPreview name="animate-ui/sliding-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { SlidingText } from '@animate-ui/vue/primitives/texts/sliding';
+</script>
+
+<template>
+  <a href="/docs">
+    <SlidingText text="Docs" />
+  </a>
+</template>
+```
+
+## Animation
+
+- The text sits in a box that clips it. On `hover`, it slides out by its own height plus a small gap (0.6em) while a copy of it slides in from the other side, in 0.25s on an ease-in-out.
+- `direction="down"` sends the text down and brings the copy from above; `direction="up"` does the opposite.
+- With `trigger="hover"`, leaving slides it back the other way. Left halfway, it turns back from where it is.
+- With `trigger="click"`, each click slides it once more in the same direction. A click during a slide carries it on without a jump.
+- The box keeps the text's size and baseline, so it fits inside a line, a link or a button. A text on several lines slides as a whole.
+- `<AnimateUIProvider :tempo>` paces the default transition.
+- Under reduced motion, the text doesn't move.
+- Screen readers read the text once: the copy is hidden from them.
+
+## API Reference
+
+### SlidingText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    direction: {
+      description: 'Where the text slides to.',
+      type: "'down' | 'up'",
+      default: "'down'",
+    },
+    trigger: {
+      description:
+        'What slides it: hovering it (and leaving slides it back), or each click.',
+      type: "'hover' | 'click'",
+      default: "'hover'",
+    },
+    transition: {
+      description: 'Transition of the slide.',
+      type: 'Transition',
+      default: '{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<HTMLMotionProps<'span'>, 'children'>",
+    },
+  }}
+/>

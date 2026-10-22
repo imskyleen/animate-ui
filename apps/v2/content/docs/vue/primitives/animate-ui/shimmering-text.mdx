@@ -1,0 +1,73 @@
+---
+title: Shimmering Text
+description: Text with a glint of light that runs across its letters.
+---
+
+<VueComponentPreview name="animate-ui/shimmering-text" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { ShimmeringText } from '@animate-ui/vue/primitives/texts/shimmering';
+</script>
+
+<template>
+  <ShimmeringText text="Thinking…" />
+</template>
+```
+
+## Animation
+
+- Each letter pulses from `color` to `shimmering-color` and back over `duration` (ease-in-out), one after the other (`duration / letters` apart), the loop pausing `0.05s × letters` between runs. `wave` also lifts each letter as the glint passes (5px right and up, 1.1× scale, 15° turn).
+- Emoji and accented letters stay whole.
+- The shimmer pauses off screen and in a hidden tab.
+- `<AnimateUIProvider :tempo>` paces the loop.
+- Under reduced motion, the text holds still in its `color`.
+- Screen readers read the text once, not letter by letter.
+
+## API Reference
+
+### ShimmeringText
+
+<TypeTable
+  type={{
+    text: {
+      description: 'The text to display.',
+      type: 'string',
+      required: true,
+    },
+    duration: {
+      description: 'Duration of the glint on each letter, in seconds.',
+      type: 'number',
+      default: '1',
+    },
+    wave: {
+      description: 'Lift each letter as the glint passes.',
+      type: 'boolean',
+      default: 'false',
+    },
+    color: {
+      description: 'Color of the text.',
+      type: 'string',
+      default: "'var(--color-neutral-500)'",
+    },
+    'shimmering-color': {
+      description: 'Color of the glint.',
+      type: 'string',
+      default: "'var(--color-neutral-300)'",
+    },
+    transition: {
+      description: 'Overrides the transition of each letter.',
+      type: 'Transition',
+    },
+    '...props': {
+      description: 'Props of the root element.',
+      type: "Omit<HTMLMotionProps<'span'>, 'children'>",
+    },
+  }}
+/>
