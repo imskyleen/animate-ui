@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { AISection } from '@/components/home/ai-section';
 import { HomeFooter } from '@/components/home/home-footer';
 import { Orbit } from '@/components/home/orbit';
 import { appName } from '@/lib/shared';
@@ -42,6 +43,7 @@ export default function VueHomePage() {
   return (
     <>
       <Orbit />
+      <AISection />
       <HomeFooter docs="/docs/vue" />
     </>
   );

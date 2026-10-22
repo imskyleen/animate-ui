@@ -44,17 +44,25 @@ Every component takes the shortest path to its animation:
 
 The values every Animate UI primitive moves with: springs, tweens and curves by role, scales, blur, shifts, rotations and staggers, plus the `tempo` of `AnimateUIProvider` to change the pace of every animation at once.
 
-### Recipes and Interactions
+### Recipes
 
-How each kind of component animates (overlays, menus, modals, sheets and drawers, disclosures, moving indicators, presses and swaps, page transitions with Vue Router or Nuxt), and ready patterns for what people ask for by name: a button showing loading then success, a list adding and removing items, a drag to reorder, a card opening into a larger view, a skeleton, a counting badge, a field shaking on an error, a row swiped away, a filtered grid, the steps of a form, a banner. Each one is written with Motion for Vue in your templates, on your markup and styles.
+How each kind of component animates: overlays, menus, modals, sheets and drawers, disclosures, moving indicators, presses and swaps, and page transitions with Vue Router or Nuxt. Each recipe shows how to wire Motion for Vue into Reka UI or plain markup.
+
+### Interactions
+
+Ready patterns for what people ask for by name: a button showing loading then success, a list adding and removing items, a drag to reorder, a card opening into a larger view, a skeleton giving way to content, a counting badge, a field shaking on an error, a row swiped away, a grid filtered or sorted, the steps of a form, a banner pushing the page. Each one is written with Motion for Vue in your templates, on your markup and styles, not pasted over them.
 
 ### Animated Icons
 
-How to turn any icon, from Lucide, Hugeicons, Tabler, Phosphor, Heroicons or your own SVG, into an animated `.vue` icon that works with `AnimateIcon` and every trigger (hover, tap, in view, loop).
+How to turn any icon, from Lucide, Hugeicons, Tabler, Phosphor, Heroicons or your own SVG, into an animated `.vue` icon that works with `AnimateIcon` and every trigger (hover, tap, in view, loop, speed). Each part moves like the real object, smooth before literal, inside the icon's grid, whatever the style: outline, solid, duotone, multicolor or pixel.
 
-### Feel, Levels and Reproduce
+### Feel and Levels
 
-Words like _snappy_, _calm_, _bouncy_ or _plus doux_ turn into the same values every time; when you don't say how much motion you want, it asks: **subtle** (the default), **more**, or **expressive**. Show it a link, a video or a GIF and it copies only the motion onto your component.
+Words like _snappy_, _calm_, _bouncy_, _plus doux_ or _plus vif_ turn into the same values every time, and "faster" or "bouncier" are steps it can repeat. When you don't say how much motion you want, it asks: **subtle** (the default), **more**, or **expressive**. It can also give any spring or curve as CSS for a stylesheet.
+
+### Reproduce
+
+Show it a link, a video or a GIF: it measures the motion (what moves, how far, how long, on which curve or spring) and copies only that onto your component, which keeps its own look.
 
 ### Review
 

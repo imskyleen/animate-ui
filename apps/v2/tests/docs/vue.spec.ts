@@ -398,3 +398,20 @@ test('the Vue sidebar has the React sections, names and order', async ({
     ]),
   );
 });
+
+test('the Vue home has the skill section, pointing at the Vue docs', async ({
+  page,
+}) => {
+  await page.goto('/vue');
+  const section = page.locator('[data-slot="home-ai"]');
+  await section.scrollIntoViewIfNeeded();
+  await expect(
+    section.getByRole('link', { name: 'Read the skill docs' }),
+  ).toHaveAttribute('href', '/docs/vue/skills');
+  await expect(
+    section.getByRole('link', { name: 'Audit with the CLI' }),
+  ).toHaveAttribute('href', '/docs/vue/cli#audit');
+  await expect(section).toContainText('shadcn-vue on Reka UI', {
+    timeout: 15_000,
+  });
+});

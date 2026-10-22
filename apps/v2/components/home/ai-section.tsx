@@ -31,7 +31,7 @@ import { AnimatePresence, motion, useInView } from 'motion/react';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 
-import { CopyCommand } from '@/components/home/hero';
+import { CopyCommand, useHomeFramework } from '@/components/home/hero';
 import { ArrowRight01 } from '@/registry/hugeicons/arrow-right-01';
 import { CheckmarkCircle02 } from '@/registry/hugeicons/checkmark-circle-02';
 import { Loading03 } from '@/registry/hugeicons/loading-03';
@@ -376,6 +376,27 @@ const SCENARIOS: Scenario[] = [
   },
 ];
 
+const VUE_SCENARIOS: Scenario[] = SCENARIOS.map((scenario) => {
+  const vue: Partial<Record<string, Partial<Scenario>>> = {
+    button: {
+      steps: [
+        'Read `components.json`: shadcn-vue on Reka UI',
+        ...scenario.steps.slice(1),
+      ],
+      result: 'Edited `components/SaveButton.vue`',
+    },
+    icon: { result: 'Created `components/icons/Notification.vue`' },
+    list: {
+      steps: [
+        'Read `package.json`: Vue and Motion for Vue',
+        ...scenario.steps.slice(1),
+      ],
+      result: 'Edited `components/TodoList.vue`',
+    },
+  };
+  return { ...scenario, ...vue[scenario.id] };
+});
+
 function useScenarioClock(
   scenario: Scenario,
   running: boolean,
@@ -539,6 +560,9 @@ const reveal = (index: number) => ({
 });
 
 export function AISection() {
+  const framework = useHomeFramework();
+  const scenarios = framework === 'vue' ? VUE_SCENARIOS : SCENARIOS;
+  const docs = framework === 'vue' ? '/docs/vue' : '/docs';
   const [active, setActive] = useState(SCENARIOS[0]!.id);
   const [auto, setAuto] = useState(true);
   const windowRef = useRef<HTMLDivElement>(null);
@@ -546,8 +570,8 @@ export function AISection() {
 
   const advance = () => {
     if (!auto) return;
-    const index = SCENARIOS.findIndex((scenario) => scenario.id === active);
-    setActive(SCENARIOS[(index + 1) % SCENARIOS.length]!.id);
+    const index = scenarios.findIndex((scenario) => scenario.id === active);
+    setActive(scenarios[(index + 1) % scenarios.length]!.id);
   };
 
   return (
@@ -596,7 +620,7 @@ export function AISection() {
               aria-label="Example request"
               className="inline-flex flex-wrap items-center justify-center gap-1 text-sm"
             >
-              {SCENARIOS.map((scenario) => (
+              {scenarios.map((scenario) => (
                 <TabsHighlightItem key={scenario.id} value={scenario.id}>
                   <TabsTrigger
                     value={scenario.id}
@@ -620,7 +644,7 @@ export function AISection() {
               </span>
             </div>
             <TabsContents className="rounded-lg">
-              {SCENARIOS.map((scenario) => (
+              {scenarios.map((scenario) => (
                 <TabsContent key={scenario.id} value={scenario.id}>
                   <ScenarioPane
                     scenario={scenario}
@@ -649,13 +673,13 @@ export function AISection() {
             asChild
             className="inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85"
           >
-            <Link href="/docs/skills">Read the skill docs</Link>
+            <Link href={`${docs}/skills`}>Read the skill docs</Link>
           </Button>
           <Button
             asChild
             className="inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-medium transition-colors hover:bg-accent/70"
           >
-            <Link href="/docs/cli#audit">Audit with the CLI</Link>
+            <Link href={`${docs}/cli#audit`}>Audit with the CLI</Link>
           </Button>
         </div>
       </motion.div>
