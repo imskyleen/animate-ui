@@ -249,7 +249,7 @@ A changing text (a label, a status, a word, a number) also never scales: it fade
 
 1. **Subtle**: opacity through `blur.icon` on `transition.swap`, nothing else. Noticeable without drawing the eye: a button's label, a status, a value in a form.
 2. **More**: the same, pushed: `blur.surface` instead of `blur.icon`, a short slide (`shift.handoff`, up for what comes next or grows) and `transition.reveal`. A headline, a hero's changing word, a confirmation worth seeing.
-3. **Expressive**: Animate UI's texts (`catalog.md`), before anything by hand: Rotating Text for words taking turns, Morphing Text for one string turning into the next, Rolling Text for letters rolling over, Sliding Number or Counting Number for a number.
+3. **Expressive**: Animate UI's texts (`catalog.md`), before anything by hand: Rotating Text for words taking turns, Morphing Text for one string turning into the next when they share most letters, Swapping Text when they share few (each changed letter sliding out as the new one slides in), Rolling Text for letters rolling over, Sliding Number or Counting Number for a number. Sliding Text is a hover flourish on a call to action, not a state change.
 
 Go up a level when asked (the level question, "plus animé", feel.md's "bolder") or when the text is the point of the page.
 
