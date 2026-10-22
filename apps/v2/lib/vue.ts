@@ -533,6 +533,9 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
     },
   },
+  'reka-ui/toast': {
+    Toaster: { progressBar: { value: true } },
+  },
   'backgrounds/bubble': {
     BubbleBackground: { interactive: { value: true } },
   },

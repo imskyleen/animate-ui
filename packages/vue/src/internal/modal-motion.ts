@@ -7,6 +7,7 @@ export const OVERLAY_TRANSITION = motionTokens.transition.overlay;
 export const DIALOG_TRANSITION = motionTokens.spring.dialog;
 export const DISMISS_TRANSITION = motionTokens.transition.dismiss;
 export const SHEET_TRANSITION = motionTokens.transition.sheet;
+export const TOAST_TRANSITION = motionTokens.spring.toast;
 const CONTENT_FADE = motionTokens.transition.dialogFade;
 
 export type ModalAnimationProps = {

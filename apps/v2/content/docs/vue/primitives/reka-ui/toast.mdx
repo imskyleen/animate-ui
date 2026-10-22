@@ -1,0 +1,185 @@
+---
+title: Toast
+description: Generates toast notifications.
+---
+
+<VueComponentPreview name="reka-ui/toast" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+Import the parts from Animate UI instead of reka-ui. The toasts come from reka-ui's toast manager; the list sits in its own component, inside the provider.
+
+```vue title="Toaster.vue"
+<script setup lang="ts">
+import {
+  ToastPortal,
+  ToastProvider,
+  ToastViewport,
+  type ToastManager,
+} from '@animate-ui/vue/primitives/reka-ui/toast';
+import ToastList from './ToastList.vue';
+
+defineProps<{ toastManager: ToastManager }>();
+</script>
+
+<template>
+  <ToastProvider :toast-manager="toastManager">
+    <slot />
+    <ToastPortal>
+      <ToastViewport>
+        <ToastList />
+      </ToastViewport>
+    </ToastPortal>
+  </ToastProvider>
+</template>
+```
+
+```vue title="ToastList.vue"
+<script setup lang="ts">
+import {
+  ToastClose,
+  ToastContent,
+  ToastDescription,
+  ToastRoot,
+  ToastTitle,
+  useToastManager,
+} from '@animate-ui/vue/primitives/reka-ui/toast';
+
+const { toasts } = useToastManager();
+</script>
+
+<template>
+  <ToastRoot v-for="toast in toasts" :key="toast.id" :toast="toast">
+    <ToastContent>
+      <ToastTitle />
+      <ToastDescription />
+      <ToastClose aria-label="Close">×</ToastClose>
+    </ToastContent>
+  </ToastRoot>
+</template>
+```
+
+`ToastContent` is Animate UI's own, as reka-ui has none: it wraps what the toast shows, fades it out behind the front toast (`data-behind`) and back in when the stack unfolds (`data-expanded`).
+
+### Types
+
+Set the `status` option to render a status icon (`data-slot="toast-icon"` in the demos). Each status's icon shows in its own way once the toast has landed: the success check draws itself, the error cross draws itself and shakes, the others pop in.
+
+<VueComponentPreview name="reka-ui/toast-types" />
+
+### Promise
+
+`toast.promise` (or `toast.update`) changes one toast in place: its spinner turns into a drawn check (or cross), its text swaps through a light blur, and its height glides to the new content's.
+
+<VueComponentPreview name="reka-ui/toast-promise" />
+
+### Remaining time
+
+A thin bar along each toast's bottom edge shows the time it has left, in the color of its status: its icon's (the demos color the error's), else its text's. `:progress-bar="false"` on the `ToastProvider` (or on one `ToastRoot`) leaves it out.
+
+```vue
+<ToastProvider :progress-bar="false">…</ToastProvider>
+```
+
+The bar is `[data-animate-ui-toast-progress-bar]` inside `[data-animate-ui-toast-progress]`, styled at zero specificity (2px, the toast's text color at 25%): any class or selector of yours wins, for instance `[data-type=error] [data-animate-ui-toast-progress-bar] { background: var(--destructive) }`.
+
+## Animation
+
+Animate UI v1 had no toast. A toast rises from its edge like v1's Sheet, and lands; anchored toasts move like tooltips.
+
+reka-ui drives the stack through CSS variables (`--reka-toast-index`, `--reka-toast-offset-y`, `--reka-toast-height`, `--reka-toast-frontmost-height`). The ToastRoot keeps each toast mounted until its exit transition ends, swipes it the way React's does (any of its `swipeDirection`s, with a rubber band the other ways), and animates with CSS transitions (a JavaScript animation would fight the swipe), springs written as the `linear()` curve Motion itself would use, set from its state, so `AnimateUIProvider tempo` applies.
+
+- **A toast rises from its edge**, a full toast height away, from 0.96 and out of a 4px blur, fading in, on a spring (stiffness 280, damping 24): there in ~165ms, it goes ~4% past its rest and settles by ~525ms, so it lands rather than stops.
+- **Dismissed, it leaves the way it came, quicker**: back through its edge, to 0.96 and into the blur, fading out, in 0.2s on the dismissal curve of dialogs and sheets (`cubic-bezier(0.33, 0.17, 0.67, 0.5)`): it leaves at once, speeding away.
+- **Its icon shows by status**, once the toast has landed (after 0.2s): a success check draws its stroke in 0.3s like a checkbox's check; an error cross draws the same way and, half drawn, shakes "no" (3px, a few dying swings in 0.4s); any other icon (info, warning, the loading spinner) pops in from half its size out of a 2px blur (stiffness 500, damping 24). The icon is the first element of `data-slot="toast-icon"` (as in the demos).
+- **An update changes it in place** (`toast.update`, `toast.promise`): the previous icon (a spinner still spinning) shrinks into a 2px blur while the new one shows as above, so the spinner turns into a drawn check or cross; text that changed swaps through the same blur (0.15s, ease-out); the toast's height glides to its new content's on its spring. Updated while it's still coming in, it keeps rising; dismissed mid-update, it just leaves.
+- **Stack**: collapsed, each toast behind the front one scales down by 0.05 per step (never below 0.9) and peeks out by 0.75rem; its content fades out (`data-behind`) in 200ms, ease-out. Hovering or focusing the viewport unfolds the stack with a 0.75rem gap **front to back**, each toast 30ms after the one in front of it, its content fading back in with it, and it folds back the same way. The stack moves on the same spring, and toasts added quickly retarget instead of restarting.
+- **A swipe follows the finger**, fading as it goes (gone at its own size away). Dragged the way it can't be swiped, it rubber-bands: it follows at half the finger's pace at first, then resists up to 48px. Let go short of the threshold, it springs back; past it, it's thrown the way it was swiped at the finger's speed (linear, its own size at that speed, between 80 and 360ms, like a drawer's swipe dismissal).
+- **The remaining-time bar** (`progressBar`) shrinks linearly over the toast's timeout, in real time (`tempo` doesn't pace a timer). It pauses whenever reka-ui pauses the timer (the stack hovered or focused, the window in the background) and resumes from there; a loading toast, which has no timer, has no bar, and resolved, its bar starts full. Only the front toast's shows while the stack is collapsed. It takes the color of the toast's status: its icon's color at 80% when the icon has its own (the error's red in the demos), else the text's at 25%.
+- Toasts swiped up (`swipeDirection="up"`) live at the top edge: they rise from it and leave through it. Anchored toasts (`ToastPositioner`) are small bubbles, like tooltips: they grow from their anchor from 0.7 with a fade, on a spring (stiffness 400, damping 29), and leave the same way.
+- Under reduced motion, toasts fade in place out of their blur and the stack changes at once (no cascade); icons only fade (no drawing, popping or shaking), and a toast updated in place swaps its text and icon through their blur without shrinking. A swipe still follows the finger and throws the toast along the swipe, and the remaining-time bar still shrinks: it tells time, it doesn't move anything across the screen.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Toast](https://reka-ui.com/docs/components/toast#api-reference). Animate UI adds the animation props below. They are CSS transitions: a spring becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier or named `ease`.
+
+### ToastProvider
+
+[reka-ui props](https://reka-ui.com/docs/components/toast#provider), plus:
+
+<TypeTable
+  type={{
+    progressBar: {
+      description:
+        "Shows a bar of the time each toast has left, in its status's color (a ToastRoot's own `progressBar` wins).",
+      type: 'boolean',
+      default: 'true',
+    },
+    swipeDirection: {
+      description:
+        'The directions toasts are swiped in, unless a ToastRoot sets its own.',
+      type: "'up' | 'down' | 'left' | 'right' | Array",
+      default: "['down', 'right']",
+    },
+  }}
+/>
+
+### ToastViewport, ToastPortal, ToastPositioner, ToastTitle, ToastDescription, ToastAction, ToastClose, ToastArrow
+
+[reka-ui props](https://reka-ui.com/docs/components/toast#viewport) only.
+
+### ToastRoot
+
+[reka-ui props](https://reka-ui.com/docs/components/toast#root), plus:
+
+<TypeTable
+  type={{
+    swipeDirection: {
+      description: 'The directions this toast is swiped in.',
+      type: "'up' | 'down' | 'left' | 'right' | Array",
+      default: "the ToastProvider's swipeDirection",
+    },
+    transition: {
+      description: 'Transition of the entrance and the stack.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 280, damping: 24 }; anchored: { type: 'spring', stiffness: 400, damping: 29 }",
+    },
+    exitTransition: {
+      description:
+        "Transition of the exit (a swiped toast is thrown at the finger's speed instead).",
+      type: 'Transition',
+      default:
+        '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }; anchored: transition',
+    },
+    progressBar: {
+      description:
+        'Shows a bar of the time the toast has left, paused while reka-ui pauses its timer.',
+      type: 'boolean',
+      default: "the ToastProvider's progressBar",
+    },
+  }}
+/>
+
+The ToastRoot sets its `transform`, `filter`, transition and `opacity` in its style; a `style` of your own still applies on top. Its swipe listeners (`@pointerdown`, `@pointermove`, `@pointerup`, `@pointercancel`) still run yours.
+
+### ToastContent
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the fade behind the front toast.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
+    },
+    asChild: {
+      description: 'Renders its child instead of a div.',
+      type: 'boolean',
+      default: 'false',
+    },
+  }}
+/>
