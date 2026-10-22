@@ -102,3 +102,25 @@ describeCheckedOnMount(
   FIXTURE,
   'checkbox',
 );
+
+// Bug: the blue checkbox recolored its border at once, so its box showed full size around the fill still growing.
+test('vue reka-ui checkbox demo: every box keeps its border color as it checks, the fill alone grows', async ({
+  page,
+}) => {
+  await gotoVueMounted(page, '/tests/vue-demos/reka-ui/checkbox');
+  for (const id of ['terms', 'toggle-2']) {
+    const box = page.locator(`#${id}`);
+    const border = () =>
+      box.evaluate((el) => getComputedStyle(el).borderTopColor);
+    if ((await box.getAttribute('data-state')) === 'checked') {
+      await box.click();
+      await expect(box).toHaveAttribute('data-state', 'unchecked');
+      await page.waitForTimeout(400);
+    }
+    const unchecked = await border();
+    await box.click();
+    await expect(box).toHaveAttribute('data-state', 'checked');
+    await page.waitForTimeout(400);
+    expect(await border(), id).toBe(unchecked);
+  }
+});
