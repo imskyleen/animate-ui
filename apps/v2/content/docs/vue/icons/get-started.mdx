@@ -1,0 +1,159 @@
+---
+title: Get Started
+description: How animated icons work, whatever the icon library. Each icon is a .vue file in your project, animated by one small core from @animate-ui/vue.
+---
+
+## Installation
+
+Add icons one by one from your icon library's page ([Lucide Icons](/docs/vue/icons/lucide-icons) or [Hugeicons](/docs/vue/icons/hugeicons)), here Lucide's Bell. Each icon is a file in your project; the core that animates them comes from `@animate-ui/vue/icons`, which the CLI installs with the first icon.
+
+<VueRegistryInstallation name="icons-lucide-bell" />
+
+## Usage
+
+An icon animates on its own trigger:
+
+```vue
+<script setup lang="ts">
+import Bell from '@/components/animate-ui/icons/Bell.vue';
+</script>
+
+<template>
+  <Bell animate-on-hover />
+</template>
+```
+
+Or let a parent decide, so hovering a whole button animates its icon:
+
+```vue
+<script setup lang="ts">
+import { AnimateIcon } from '@animate-ui/vue/icons';
+import Bell from '@/components/animate-ui/icons/Bell.vue';
+</script>
+
+<template>
+  <AnimateIcon animate-on-hover as-child>
+    <button><Bell /> Notifications</button>
+  </AnimateIcon>
+</template>
+```
+
+Icons inside an `AnimateIcon` inherit its props and can override them individually.
+
+### Triggers
+
+- `animate`: animates while `true` (or plays the named animation).
+- `animate-on-hover`: animates while the pointer is over the icon, and returns to rest when it leaves. A touch doesn't play it (a finger can't leave): add `animate-on-tap` for touch screens.
+- `animate-on-tap`: animates while pressed, and returns to rest on release or when the pointer leaves. Add `complete-on-stop` to always finish the animation.
+- `animate-on-view`: plays when the icon scrolls into view (`animate-on-view-margin`, `animate-on-view-once`).
+
+### Animations
+
+Every icon has a `default` animation, often a few named ones, plus `path` (draws the strokes) and `path-loop`. Pick one with `animation`; the [Lucide Icons](/docs/vue/icons/lucide-icons) and [Hugeicons](/docs/vue/icons/hugeicons) pages list each icon's. Icons drawing their strokes add one small CSS rule to the page themselves, so their paths rest solid: no Tailwind setup needed.
+
+```vue
+<ArrowRight animate-on-hover animation="pointing" />
+```
+
+### Timing
+
+- `speed`: playback rate (`2` is twice as fast). At `1`, the default, icons play exactly as authored. It follows `AnimateUIProvider`'s `tempo`.
+- `delay`: milliseconds before the animation starts.
+- `loop`, `loop-delay`: repeat, with a pause between iterations. Off screen, a loop waits after its current lap until the icon is back in view.
+
+### Persistence
+
+- `persist-on-animate-end`: stay in the animated state when it ends.
+- `initial-on-animate-end`: jump back to the initial state, without transition, when it ends.
+- `complete-on-stop`: finish the current animation before returning to rest.
+
+Under reduced motion, icons don't animate.
+
+### How an icon is written
+
+Each icon is a single-file component: its `animations` (the same as the React icon's, exported from a plain `<script>`) and an `IconWrapper` whose slot draws the SVG with the `variants` of the animation playing, the `controls` that play them, the `size` and the `attrs` you passed.
+
+## API Reference
+
+<TypeTable
+  type={{
+    size: {
+      description: 'Width and height in pixels.',
+      type: 'number',
+      default: '28',
+    },
+    animation: {
+      description: 'The animation to play.',
+      type: "'default' | 'path' | 'path-loop' | string",
+      default: "'default'",
+    },
+    animate: {
+      description: 'Animate while true, or play the named animation.',
+      type: 'boolean | string',
+      default: 'false',
+    },
+    'animate-on-hover': {
+      description: 'Animate while hovered.',
+      type: 'boolean | string',
+      default: 'false',
+    },
+    'animate-on-tap': {
+      description: 'Animate while pressed.',
+      type: 'boolean | string',
+      default: 'false',
+    },
+    'animate-on-view': {
+      description: 'Animate when scrolled into view.',
+      type: 'boolean | string',
+      default: 'false',
+    },
+    'animate-on-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'animate-on-view-once': {
+      description: 'Only animate the first time it comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    speed: {
+      description: 'Playback rate of the animation.',
+      type: 'number',
+      default: '1',
+    },
+    delay: {
+      description: 'Delay before animating, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    loop: {
+      description: 'Loop the animation.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'loop-delay': {
+      description: 'Pause between loops, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    'persist-on-animate-end': {
+      description: 'Keep the animated state when the animation ends.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'initial-on-animate-end': {
+      description:
+        'Return to the initial state without transition when it ends.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'complete-on-stop': {
+      description: 'Finish the current animation before stopping.',
+      type: 'boolean',
+      default: 'false',
+    },
+  }}
+/>
+
+`AnimateIcon` takes the same props (except `size`), plus `as-child` to animate through its child element.

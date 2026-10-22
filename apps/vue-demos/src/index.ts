@@ -44,6 +44,16 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'backgrounds/bubble': () => import('./demos/backgrounds/bubble.vue'),
+  'backgrounds/fireworks-circle': () => import('./demos/backgrounds/fireworks-circle.vue'),
+  'backgrounds/fireworks': () => import('./demos/backgrounds/fireworks.vue'),
+  'backgrounds/glyph': () => import('./demos/backgrounds/glyph.vue'),
+  'backgrounds/gradient': () => import('./demos/backgrounds/gradient.vue'),
+  'backgrounds/gravity-stars': () => import('./demos/backgrounds/gravity-stars.vue'),
+  'backgrounds/hexagon': () => import('./demos/backgrounds/hexagon.vue'),
+  'backgrounds/hole': () => import('./demos/backgrounds/hole.vue'),
+  'backgrounds/stars': () => import('./demos/backgrounds/stars.vue'),
+  'backgrounds/topography': () => import('./demos/backgrounds/topography.vue'),
   'animate-ui/input-otp': () => import('./demos/animate-ui/input-otp.vue'),
   'animate-ui/tabs': () => import('./demos/animate-ui/tabs.vue'),
   'animate-ui/avatar-group': () => import('./demos/animate-ui/avatar-group.vue'),
@@ -107,6 +117,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./fixtures/animate-ui-input-otp.vue'),
   'fixtures/icons-sweep': () => import('./fixtures/icons-sweep.vue'),
   'fixtures/icons': () => import('./fixtures/icons.vue'),
+  'fixtures/backgrounds': () => import('./fixtures/backgrounds.vue'),
   'fixtures/animate-ui-scroll-fade': () =>
     import('./fixtures/animate-ui-scroll-fade.vue'),
   'fixtures/animate-ui-image-zoom-props': () =>

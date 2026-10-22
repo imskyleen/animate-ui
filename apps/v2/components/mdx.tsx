@@ -28,7 +28,10 @@ import {
 import { Installation } from './docs/installation';
 import { PageTransitionEffects } from './docs/page-transition-effects';
 import { VueComponentPreview } from './docs/vue-component-preview';
-import { RegistryInstallation } from './docs/registry-installation';
+import {
+  RegistryInstallation,
+  VueRegistryInstallation,
+} from './docs/registry-installation';
 import {
   CodeBlockTab,
   CodeBlockTabs,
@@ -67,6 +70,7 @@ export function getMDXComponents(components?: MDXComponents) {
     IconLibrariesGrid,
     Installation,
     RegistryInstallation,
+    VueRegistryInstallation,
     PageTransitionEffects,
     VueComponentPreview,
     Changelog,

@@ -12,20 +12,25 @@ const DEMOS = path.join(process.cwd(), '..', 'vue-demos', 'src', 'demos');
 /** A Vue demo from apps/vue-demos in the preview frame, with its .vue source. */
 export async function VueComponentPreview({
   name,
+  fullBleed = false,
   values,
   code: showCode = true,
   iframe = false,
 }: {
   name: string;
+  fullBleed?: boolean;
   values?: Record<string, string | number | boolean>;
   code?: boolean;
   iframe?: boolean;
 }) {
-  const source = await readFile(path.join(DEMOS, `${name}.vue`), 'utf8');
+  const source = (
+    await readFile(path.join(DEMOS, `${name}.vue`), 'utf8')
+  ).replace(/(?:\.\.\/)+v2\/registry\/vue\//g, '@/components/animate-ui/');
 
   return (
     <PreviewFrame
       vueDemo={name}
+      fullBleed={fullBleed}
       {...(iframe && { iframe: `/examples/vue/${name}` })}
       controls={VUE_DEMO_CONTROLS[name]}
       values={values}

@@ -101,10 +101,19 @@ export function PrimitivesGrid({
   );
 }
 
-export function BackgroundsGrid() {
+export function BackgroundsGrid({
+  framework = 'react',
+}: {
+  framework?: 'react' | 'vue';
+}) {
+  const vue = framework === 'vue';
+  const docs = vue ? '/docs/vue/backgrounds/' : '/docs/backgrounds/';
   const pages = source
     .getPages()
-    .filter((page) => /^\/docs\/backgrounds\/[^/]+$/.test(page.url))
+    .filter(
+      (page) =>
+        page.url.startsWith(docs) && !page.url.slice(docs.length).includes('/'),
+    )
     .sort((a, b) => a.data.title.localeCompare(b.data.title));
   return (
     <PreviewGrid>
@@ -114,18 +123,47 @@ export function BackgroundsGrid() {
           href={page.url}
           title={page.data.title.replace(/ Background$/, '')}
           badge={pageBadge(page.data)}
-          preview={`backgrounds/${page.url.split('/').pop()}`}
+          preview={`${vue ? 'vue/' : ''}backgrounds/${page.url.split('/').pop()}`}
         />
       ))}
     </PreviewGrid>
   );
 }
 
-export function IconLibrariesGrid() {
+const VUE_LUCIDE = [
+  'bell',
+  'sparkles',
+  'settings',
+  'heart',
+  'send',
+  'check-check',
+  'message-square',
+  'refresh-cw',
+].map((name) => `icons/lucide/${name}`);
+
+const VUE_HUGEICONS = [
+  'notification-01',
+  'sparkles',
+  'settings-02',
+  'favourite',
+  'sent',
+  'sun-03',
+  'mail-01',
+  'delete-02',
+].map((name) => `icons/hugeicons/${name}`);
+
+export function IconLibrariesGrid({
+  framework = 'react',
+}: {
+  framework?: 'react' | 'vue';
+}) {
+  const vue = framework === 'vue';
+  const docs = vue ? '/docs/vue/icons' : '/docs/icons';
   return (
     <PreviewGrid>
       <IconLibraryCard
-        href="/docs/icons/lucide-icons"
+        href={`${docs}/lucide-icons`}
+        vueIcons={vue ? VUE_LUCIDE : undefined}
         title="Lucide Icons"
         logo={
           <LucideLogo monochrome className="size-4 text-muted-foreground" />
@@ -142,7 +180,8 @@ export function IconLibrariesGrid() {
         ]}
       />
       <IconLibraryCard
-        href="/docs/icons/hugeicons"
+        href={`${docs}/hugeicons`}
+        vueIcons={vue ? VUE_HUGEICONS : undefined}
         title="Hugeicons"
         logo={<HugeiconsLogo className="size-4 text-muted-foreground" />}
         icons={[

@@ -42,6 +42,7 @@ import { Check } from '@/registry/icons/check';
 
 import { ClientCommand } from './client-command';
 import { DynamicCodeBlock } from './dynamic-codeblock';
+import { VueDemo } from './vue-demo';
 import { InstallTabs } from './install-tabs';
 import { isRecent } from '@/lib/new-badge';
 
@@ -110,6 +111,13 @@ type IconLibraryId = keyof typeof ICON_LIBRARIES;
 
 const LibraryContext = createContext<IconLibrary>(ICON_LIBRARIES.lucide);
 
+type Framework = 'react' | 'vue';
+
+const FrameworkContext = createContext<Framework>('react');
+
+const vueName = (library: IconLibrary, entry: IconEntry) =>
+  `icons/${library.prefix.replace('icons-', '')}/${entry.name}`;
+
 const cache = new Map<string, Promise<Loaded>>();
 
 function loadIcon(library: IconLibrary, entry: IconEntry) {
@@ -156,17 +164,24 @@ function IconTile({
   selected: boolean;
   onSelect: () => void;
 }) {
-  const isNew = use(LibraryContext).newIcons.has(entry.name);
+  const library = use(LibraryContext);
+  const vue = use(FrameworkContext) === 'vue';
+  const isNew = library.newIcons.has(entry.name);
+  const [hovered, setHovered] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
   const inView = useInView(ref, { once: true, margin: '200px' });
   const icon = useIcon(entry, inView);
 
   return (
-    <AnimateIcon animateOnHover asChild>
+    <AnimateIcon animateOnHover={!vue} asChild>
       <button
         ref={ref}
         type="button"
         onClick={onSelect}
+        onPointerEnter={(event) => {
+          if (vue && event.pointerType !== 'touch') setHovered(true);
+        }}
+        onPointerLeave={() => setHovered(false)}
         aria-pressed={selected}
         title={entry.title}
         className={cn(
@@ -175,7 +190,16 @@ function IconTile({
         )}
       >
         <span className="flex size-8 items-center justify-center">
-          {icon && <icon.Icon size={28} />}
+          {icon &&
+            (vue ? (
+              <VueDemo
+                name={vueName(library, entry)}
+                size={28}
+                animate={hovered}
+              />
+            ) : (
+              <icon.Icon size={28} />
+            ))}
         </span>
         <span className="w-full truncate text-center text-xs">
           {entry.title}
@@ -210,8 +234,12 @@ function loadItem(name: string) {
     item = fetch(`/r/${name}.json`)
       .then((response) => response.json())
       .then(
-        (json: { files: { content: string; target: string }[] }) =>
-          json.files[0]!,
+        (json: {
+          files: { content: string; target?: string; path: string }[];
+        }) => {
+          const file = json.files[0]!;
+          return { content: file.content, target: file.target ?? file.path };
+        },
       );
     items.set(name, item);
   }
@@ -219,17 +247,21 @@ function loadItem(name: string) {
 }
 
 function IconInstallation({ entry }: { entry: IconEntry }) {
+  const vue = use(FrameworkContext) === 'vue';
   const item = `${use(LibraryContext).prefix}-${entry.name}`;
+  const url = `https://animate-ui.com/r/vue/${item}.json`;
   const [file, setFile] = useState<{ content: string; target: string } | null>(
     null,
   );
   useEffect(() => {
     let active = true;
-    void loadItem(item).then((loaded) => active && setFile(loaded));
+    void loadItem(vue ? `vue/${item}` : item).then(
+      (loaded) => active && setFile(loaded),
+    );
     return () => {
       active = false;
     };
-  }, [item]);
+  }, [item, vue]);
 
   return (
     <InstallTabs
@@ -242,7 +274,11 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
           content: (
             <ClientCommand
               className="my-0"
-              command={(m) => `${m.dlx} shadcn@latest add @animate-ui/${item}`}
+              command={(m) =>
+                vue
+                  ? `${m.dlx} shadcn-vue@latest add ${url}`
+                  : `${m.dlx} shadcn@latest add @animate-ui/${item}`
+              }
             />
           ),
         },
@@ -253,14 +289,18 @@ function IconInstallation({ entry }: { entry: IconEntry }) {
             <div className="flex flex-col gap-3">
               <ClientCommand
                 className="my-0"
-                command={(m) => `${m.add} @animate-ui/react motion`}
+                command={(m) =>
+                  vue
+                    ? `${m.add} @animate-ui/vue motion-v`
+                    : `${m.add} @animate-ui/react motion`
+                }
               />
               {file && (
                 <DynamicCodeBlock
-                  lang="tsx"
+                  lang={vue ? 'vue' : 'tsx'}
                   codeblock={{
                     className: 'my-0',
-                    title: toProjectPath(file.target),
+                    title: vue ? file.target : toProjectPath(file.target),
                     viewportClassName: 'max-h-44',
                   }}
                   code={file.content.trimEnd()}
@@ -286,6 +326,7 @@ function IconDetail({
   onLoopChange: (loop: boolean) => void;
 }) {
   const library = use(LibraryContext);
+  const vue = use(FrameworkContext) === 'vue';
   const icon = useIcon(entry);
   const [animation, setAnimation] = useState('default');
   const [run, setRun] = useState(0);
@@ -294,15 +335,25 @@ function IconDetail({
   return (
     <div className="grid gap-4 p-4 sm:grid-cols-[180px_1fr] sm:gap-6">
       <div className="relative flex aspect-square items-center justify-center rounded-xl bg-accent/50 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[7.5px_7.5px] max-sm:hidden">
-        {icon && (
-          <icon.Icon
-            key={`${animation}-${run}-${loop}`}
-            size={120}
-            animation={animation}
-            animate
-            loop={loop}
-          />
-        )}
+        {icon &&
+          (vue ? (
+            <VueDemo
+              key={`${animation}-${run}-${loop}`}
+              name={vueName(library, entry)}
+              size={120}
+              animation={animation}
+              animate
+              loop={loop}
+            />
+          ) : (
+            <icon.Icon
+              key={`${animation}-${run}-${loop}`}
+              size={120}
+              animation={animation}
+              animate
+              loop={loop}
+            />
+          ))}
         <button
           type="button"
           aria-label="Loop"
@@ -382,9 +433,13 @@ function IconDetail({
 
         <IconInstallation entry={entry} />
         <DynamicCodeBlock
-          lang="tsx"
+          lang={vue ? 'vue' : 'tsx'}
           codeblock={{ className: 'my-0' }}
-          code={`import { ${component} } from '${library.importPath}/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`}
+          code={
+            vue
+              ? `<script setup lang="ts">\nimport ${component} from '${library.importPath}/${component}.vue';\n</script>\n\n<template>\n  <${component} animate-on-hover${animation === 'default' ? '' : ` animation="${animation}"`} />\n</template>`
+              : `import { ${component} } from '${library.importPath}/${entry.name}';\n\n<${component} animateOnHover${animation === 'default' ? '' : ` animation="${animation}"`} />`
+          }
         />
       </div>
     </div>
@@ -557,8 +612,10 @@ function FilterChip({
 
 export function IconsGallery({
   library: id = 'lucide',
+  framework = 'react',
 }: {
   library?: IconLibraryId;
+  framework?: Framework;
 }) {
   const library: IconLibrary = ICON_LIBRARIES[id];
   const { icons: allIcons, newIcons: newOnes, tags } = library;
@@ -601,72 +658,74 @@ export function IconsGallery({
 
   return (
     <LibraryContext value={library}>
-      <div ref={galleryRef} className="not-prose my-6 text-foreground">
-        <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
-          <HugeiconsIcon
-            icon={Search01Icon}
-            strokeWidth={2}
-            size={16}
-            className="text-muted-foreground"
-          />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={`Search ${allIcons.length} icons…`}
-            className="h-full flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
-          />
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {icons.length}
-          </span>
-        </label>
+      <FrameworkContext value={framework}>
+        <div ref={galleryRef} className="not-prose my-6 text-foreground">
+          <label className="mb-4 flex h-10 items-center gap-2 rounded-lg bg-accent px-3 text-sm focus-within:ring-2 focus-within:ring-ring/50">
+            <HugeiconsIcon
+              icon={Search01Icon}
+              strokeWidth={2}
+              size={16}
+              className="text-muted-foreground"
+            />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={`Search ${allIcons.length} icons…`}
+              className="h-full flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+            />
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {icons.length}
+            </span>
+          </label>
 
-        {(tags.length > 0 || newOnes.size > 0) && (
-          <div className="mb-4 flex flex-wrap gap-1.5">
-            <FilterChip
-              active={filter === 'all'}
-              onClick={() => setFilter('all')}
-            >
-              All
-            </FilterChip>
-            {newOnes.size > 0 && newOnes.size < allIcons.length && (
+          {(tags.length > 0 || newOnes.size > 0) && (
+            <div className="mb-4 flex flex-wrap gap-1.5">
               <FilterChip
-                active={filter === 'new'}
-                onClick={() => setFilter('new')}
+                active={filter === 'all'}
+                onClick={() => setFilter('all')}
               >
-                New
+                All
               </FilterChip>
-            )}
-            {tags.map((category) => (
-              <FilterChip
-                key={category.id}
-                active={filter === category.id}
-                onClick={() => setFilter(category.id)}
-              >
-                {category.title}
-              </FilterChip>
-            ))}
-          </div>
-        )}
+              {newOnes.size > 0 && newOnes.size < allIcons.length && (
+                <FilterChip
+                  active={filter === 'new'}
+                  onClick={() => setFilter('new')}
+                >
+                  New
+                </FilterChip>
+              )}
+              {tags.map((category) => (
+                <FilterChip
+                  key={category.id}
+                  active={filter === category.id}
+                  onClick={() => setFilter(category.id)}
+                >
+                  {category.title}
+                </FilterChip>
+              ))}
+            </div>
+          )}
 
-        {icons.length === 0 ? (
-          <p className="py-10 text-center text-sm text-muted-foreground">
-            {query ? <>No icon matches “{query}”.</> : 'No icon here yet.'}
-          </p>
-        ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2">
-            {icons.map((icon) => (
-              <IconTile
-                key={icon.name}
-                entry={icon}
-                selected={selected?.name === icon.name}
-                onSelect={() => setSelected(icon)}
-              />
-            ))}
-          </div>
-        )}
+          {icons.length === 0 ? (
+            <p className="py-10 text-center text-sm text-muted-foreground">
+              {query ? <>No icon matches “{query}”.</> : 'No icon here yet.'}
+            </p>
+          ) : (
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2">
+              {icons.map((icon) => (
+                <IconTile
+                  key={icon.name}
+                  entry={icon}
+                  selected={selected?.name === icon.name}
+                  onSelect={() => setSelected(icon)}
+                />
+              ))}
+            </div>
+          )}
 
-        <IconDrawer entry={selected} onClose={closeDrawer} />
-      </div>
+          <IconDrawer entry={selected} onClose={closeDrawer} />
+        </div>
+      </FrameworkContext>
     </LibraryContext>
   );
 }

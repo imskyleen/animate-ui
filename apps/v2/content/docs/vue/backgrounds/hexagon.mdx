@@ -1,0 +1,63 @@
+---
+title: Hexagon Background
+description: A background component featuring an interactive hexagon grid.
+---
+
+<VueComponentPreview name="backgrounds/hexagon" fullBleed />
+
+## Installation
+
+<VueRegistryInstallation name="backgrounds-hexagon" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import HexagonBackground from '@/components/animate-ui/backgrounds/hexagon/HexagonBackground.vue';
+</script>
+
+<template>
+  <section class="relative h-[480px] overflow-hidden">
+    <HexagonBackground class="absolute inset-0" />
+  </section>
+</template>
+```
+
+## Animation
+
+- A grid of hexagons that fills its container and recounts its cells when the container resizes.
+- A hovered hexagon lights up instantly, and fades back over 1s when the pointer leaves, leaving a trail. Hover only applies to devices that can hover, so a tap doesn't leave a cell lit.
+- Nothing loops, so there is nothing to pause.
+- Reduced motion keeps the fade: it's a color change, not movement.
+
+## API Reference
+
+### HexagonBackground
+
+<TypeTable
+  type={{
+    hexagonSize: {
+      description: 'Width of a hexagon, in pixels. Keep it above 50.',
+      type: 'number',
+      default: '75',
+    },
+    hexagonMargin: {
+      description: 'Gap between hexagons, in pixels.',
+      type: 'number',
+      default: '3',
+    },
+    hexagonProps: {
+      description: 'Attributes of every hexagon.',
+      type: 'HTMLAttributes',
+    },
+    '...attrs': {
+      description:
+        'Attributes of the container div. The default slot renders above the grid.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Denis Klak](https://codepen.io/d3nis031/pen/QWyeNYx) for the inspiration

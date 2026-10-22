@@ -196,3 +196,109 @@ test('the Vue primitives grid shows the Vue components with their own recordings
       /^\/docs\/vue\/primitives\/(reka-ui|animate-ui)\//,
     );
 });
+
+test('the Vue icon galleries animate the Vue icons and install them with shadcn-vue', async ({
+  page,
+}) => {
+  for (const [library, title, file] of [
+    ['lucide-icons', 'Bell', 'icons/Bell.vue'],
+    ['hugeicons', 'Notification 01', 'icons/hugeicons/Notification01.vue'],
+  ] as const) {
+    await page.goto(`/docs/vue/icons/${library}`, { waitUntil: 'networkidle' });
+    const tile = page.locator(`button[aria-pressed][title="${title}"]`);
+    await tile.scrollIntoViewIfNeeded();
+    const svg = tile.locator('[data-slot="vue-demo"] svg');
+    await expect(svg).toBeVisible();
+    await tile.hover();
+    await expect
+      .poll(() => svg.evaluate((el) => getComputedStyle(el).transform))
+      .not.toBe('none');
+    await tile.click();
+    const drawer = page.locator('[data-slot="icon-drawer"]');
+    await expect(drawer).toContainText(
+      'shadcn-vue@latest add https://animate-ui.com/r/vue/',
+    );
+    await expect(drawer).toContainText(`@/components/animate-ui/${file}`);
+  }
+});
+
+test('the Vue icons page links to the Vue icon libraries, shown with Vue icons', async ({
+  page,
+}) => {
+  await page.goto('/docs/vue/icons', { waitUntil: 'networkidle' });
+  await expect(page.locator('[data-slot="vue-demo"] svg')).toHaveCount(16);
+  for (const library of ['lucide-icons', 'hugeicons'])
+    await expect(
+      page.locator(
+        `[data-slot="preview-card-root"][href="/docs/vue/icons/${library}"], [data-slot="preview-card-root"] a[href="/docs/vue/icons/${library}"]`,
+      ),
+    ).toHaveCount(1);
+});
+
+const BACKGROUNDS = [
+  'bubble',
+  'fireworks',
+  'glyph',
+  'gradient',
+  'gravity-stars',
+  'hexagon',
+  'hole',
+  'stars',
+  'topography',
+];
+
+for (const name of BACKGROUNDS)
+  test(`the Vue ${name} background page fills its preview with the Vue demo and installs with shadcn-vue`, async ({
+    page,
+  }) => {
+    await page.goto(`/docs/vue/backgrounds/${name}`, {
+      waitUntil: 'networkidle',
+    });
+    const demo = page.locator('[data-slot="vue-demo"][data-mounted]').first();
+    await demo.waitFor();
+    const background = demo.locator('[data-slot$="-background"]').first();
+    await expect(background).toBeVisible();
+    const stage = async () =>
+      page
+        .locator('[data-slot="preview"]')
+        .first()
+        .evaluate((el) => ({
+          overflow: getComputedStyle(el).overflow,
+          height: el
+            .querySelector('[data-slot="preview-stage"]')!
+            .getBoundingClientRect().height,
+        }));
+    const vue = await stage();
+    const box = (await background.boundingBox())!;
+    expect(box.height).toBeCloseTo(vue.height, 0);
+    await expect(
+      page
+        .locator('pre')
+        .filter({ hasText: '<script setup lang="ts">' })
+        .filter({ hasText: '@/components/animate-ui/backgrounds/' }),
+    ).not.toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText('../v2/registry');
+    await expect(page.locator('body')).toContainText(
+      `https://animate-ui.com/r/vue/backgrounds-${name}.json`,
+    );
+    await page.goto(`/docs/backgrounds/${name}`);
+    await page.locator('[data-slot$="-background"]').first().waitFor();
+    expect(vue).toEqual(await stage());
+  });
+
+test('the Vue backgrounds grid links to the Vue pages, with their own recordings', async ({
+  page,
+}) => {
+  await page.goto('/docs/vue/backgrounds');
+  const cards = page.locator('[data-slot="preview-card-root"]');
+  await expect(cards).toHaveCount(BACKGROUNDS.length);
+  for (const src of await cards
+    .locator('img')
+    .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src'))))
+    expect(src).toMatch(/^\/previews\/vue\/backgrounds\//);
+  for (const card of await cards.all())
+    expect(
+      (await card.getAttribute('href')) ??
+        (await card.locator('a').first().getAttribute('href')),
+    ).toMatch(/^\/docs\/vue\/backgrounds\/[a-z-]+$/);
+});

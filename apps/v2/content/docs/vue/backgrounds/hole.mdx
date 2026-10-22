@@ -1,0 +1,69 @@
+---
+title: Hole Background
+description: A background component featuring an animated tunnel of rings with rising particles.
+---
+
+<VueComponentPreview name="backgrounds/hole" fullBleed />
+
+## Installation
+
+<VueRegistryInstallation name="backgrounds-hole" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import HoleBackground from '@/components/animate-ui/backgrounds/hole/HoleBackground.vue';
+</script>
+
+<template>
+  <section class="relative h-[480px] overflow-hidden">
+    <HoleBackground class="absolute inset-0" />
+  </section>
+</template>
+```
+
+## Animation
+
+- Rings slide down into a tunnel drawn on a canvas while particles rise out of it, under a glowing aurora that scrolls through its colors every 5s.
+- The canvas is sized to its container at the device pixel ratio. The rings and particles advance one step per displayed frame, so they move faster on 120Hz screens.
+- It pauses off screen and while the tab is hidden.
+- Under reduced motion, the tunnel, the particles and the aurora hold still.
+
+## API Reference
+
+### HoleBackground
+
+<TypeTable
+  type={{
+    strokeColor: {
+      description: 'Color of the tunnel lines.',
+      type: 'string',
+      default: "'#737373'",
+    },
+    numberOfLines: {
+      description: 'Number of lines running down the tunnel.',
+      type: 'number',
+      default: '50',
+    },
+    numberOfDiscs: {
+      description: 'Number of rings in the tunnel (one in five is drawn).',
+      type: 'number',
+      default: '50',
+    },
+    particleRGBColor: {
+      description: 'Color of the particles, as [r, g, b].',
+      type: '[number, number, number]',
+      default: '[255, 255, 255]',
+    },
+    '...attrs': {
+      description:
+        'Attributes of the container div. The default slot renders below the canvas.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Antoine Wodniack](https://codepen.io/wodniack/pen/VYwGEGg) for the inspiration

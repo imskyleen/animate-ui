@@ -1,0 +1,26 @@
+---
+title: Lucide Icons
+description: Every Lucide icon Animate UI animates. Preview each animation, then add the icons you need.
+---
+
+<IconsGallery framework="vue" />
+
+## Installation
+
+Add icons one by one, here Bell. Each icon is a .vue file in your project; the core that animates them comes from `@animate-ui/vue/icons`, which the CLI installs with the first icon.
+
+<VueRegistryInstallation name="icons-lucide-bell" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import Bell from '@/components/animate-ui/icons/Bell.vue';
+</script>
+
+<template>
+  <Bell animate-on-hover />
+</template>
+```
+
+Triggers, animations, timing and every prop are the same for all icon libraries: see [Get Started](/docs/vue/icons/get-started).

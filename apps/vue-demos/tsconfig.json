@@ -29,6 +29,9 @@
       ],
       "@animate-ui/vue/*": [
         "../../packages/vue/src/*"
+      ],
+      "cn": [
+        "./node_modules/cn"
       ]
     }
   },

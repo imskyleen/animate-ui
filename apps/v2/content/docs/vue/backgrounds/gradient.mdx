@@ -1,0 +1,49 @@
+---
+title: Gradient Background
+description: A background component featuring a subtle yet engaging animated gradient effect, smoothly transitioning colors to enhance visual depth.
+---
+
+<VueComponentPreview name="backgrounds/gradient" fullBleed />
+
+## Installation
+
+<VueRegistryInstallation name="backgrounds-gradient" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import GradientBackground from '@/components/animate-ui/backgrounds/gradient/GradientBackground.vue';
+</script>
+
+<template>
+  <section class="relative h-[480px] overflow-hidden">
+    <GradientBackground class="absolute inset-0" />
+  </section>
+</template>
+```
+
+## Animation
+
+- A large gradient slides back and forth behind the container (`background-position`), one round trip every 15s.
+- It pauses off screen and while the tab is hidden.
+- Under reduced motion, it holds its first frame.
+
+## API Reference
+
+### GradientBackground
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the loop.',
+      type: 'Transition',
+      default: "{ duration: 15, ease: 'easeInOut', repeat: Infinity }",
+    },
+    '...attrs': {
+      description:
+        'Props of the motion div. Set the gradient with Tailwind classes: from-*, via-*, to-*.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>

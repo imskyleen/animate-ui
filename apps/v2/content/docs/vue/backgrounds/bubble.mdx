@@ -1,0 +1,66 @@
+---
+title: Bubble Background
+description: An interactive background featuring smoothly animated gradient bubbles, creating a playful, dynamic, and visually engaging backdrop.
+---
+
+<VueComponentPreview name="backgrounds/bubble" fullBleed />
+
+## Installation
+
+<VueRegistryInstallation name="backgrounds-bubble" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import BubbleBackground from '@/components/animate-ui/backgrounds/bubble/BubbleBackground.vue';
+</script>
+
+<template>
+  <section class="relative h-[480px] overflow-hidden">
+    <BubbleBackground class="absolute inset-0" />
+  </section>
+</template>
+```
+
+## Animation
+
+- Five blurred, color-blended bubbles move on slow loops: two drift 100px back and forth (30s and 40s, eased in and out), three orbit around points off to the side (full turns in 20s, 40s and 20s, linear).
+- With `interactive`, a sixth bubble follows the mouse on a spring (`transition`), relative to the center of the container. On touch screens, a tap moves it too.
+- The loops pause off screen and while the tab is hidden.
+- Under reduced motion, the bubbles hold a still frame and the follower stays put.
+
+## API Reference
+
+### BubbleBackground
+
+<TypeTable
+  type={{
+    interactive: {
+      description: 'Add a bubble that follows the mouse.',
+      type: 'boolean',
+      default: 'false',
+    },
+    transition: {
+      description: 'Spring of the bubble that follows the mouse.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 100, damping: 20 }',
+    },
+    colors: {
+      description:
+        'Colors of the six bubbles, as r,g,b strings. sixth is the bubble that follows the mouse.',
+      type: '{ first: string; second: string; third: string; fourth: string; fifth: string; sixth: string }',
+      default:
+        "{ first: '18,113,255', second: '221,74,255', third: '0,220,255', fourth: '200,50,50', fifth: '180,180,50', sixth: '140,100,255' }",
+    },
+    '...attrs': {
+      description:
+        'Attributes of the container div. The default slot renders above the bubbles.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [GlitchWorker](https://codepen.io/glitchworker/pen/jENZGOV) for the inspiration

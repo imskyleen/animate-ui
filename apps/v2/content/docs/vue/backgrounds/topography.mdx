@@ -1,0 +1,83 @@
+---
+title: Topography Background
+description: Living contour lines, like a map of a terrain that slowly breathes. A hill rises under the cursor and a click sends a wave across.
+---
+
+<VueComponentPreview name="backgrounds/topography" fullBleed />
+
+## Installation
+
+<VueRegistryInstallation name="backgrounds-topography" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import TopographyBackground from '@/components/animate-ui/backgrounds/topography/TopographyBackground.vue';
+</script>
+
+<template>
+  <section class="relative h-[480px] overflow-hidden">
+    <TopographyBackground class="absolute inset-0 text-neutral-500" />
+  </section>
+</template>
+```
+
+## Animation
+
+- The terrain is a field of gradient noise drawn as contour lines, like a topographic map: every fifth line is an index contour, thicker and brighter. The noise drifts slowly through time (`speed`), so the relief keeps reshaping itself.
+- On mount, the relief rises from flat ground in 1.8s on an ease-out: the lines bloom out from the middle level.
+- Under the cursor, a peak rises on a spring and follows it (`transition`), its rings tightening towards the summit (`peak`). Leaving the container lets it sink back.
+- A click (or a tap) drops a wave: a crest and a trough travel out from the point in 2.6s, bunching the lines as they pass, and fade away.
+- The lines take the container's text color, or `lineColor`. They're drawn with WebGL, pixel by pixel on the GPU (at most twice the device pixel ratio): no grid, so they glide without stepping and redraw on every frame, even at 120Hz and more. Where WebGL is missing, a canvas draws them as smooth curves instead.
+- The loop pauses off screen and while the tab is hidden.
+- Under reduced motion, the terrain is a still map: no drift, no peak, no wave.
+
+## API Reference
+
+### TopographyBackground
+
+<TypeTable
+  type={{
+    lineColor: {
+      description:
+        "Color of the lines. Defaults to the container's text color.",
+      type: 'string',
+    },
+    levels: {
+      description: 'How many contour lines span the relief. More is denser.',
+      type: 'number',
+      default: '16',
+    },
+    speed: {
+      description: 'How fast the terrain reshapes itself.',
+      type: 'number',
+      default: '1',
+    },
+    scale: {
+      description: 'Size of the hills and valleys. Higher is wider.',
+      type: 'number',
+      default: '1',
+    },
+    peak: {
+      description: 'Height of the peak under the cursor. 0 turns it off.',
+      type: 'number',
+      default: '1',
+    },
+    interactive: {
+      description: 'Let the cursor raise a peak and clicks send waves.',
+      type: 'boolean',
+      default: 'true',
+    },
+    transition: {
+      description: 'Spring the peak follows the cursor with.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 120, damping: 20 }',
+    },
+    '...attrs': {
+      description:
+        'Attributes of the container div. The default slot renders above the lines.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>

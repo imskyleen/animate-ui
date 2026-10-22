@@ -1,0 +1,109 @@
+---
+title: Gravity Stars Background
+description: A background component featuring an interactive gravity stars effect.
+---
+
+<VueComponentPreview name="backgrounds/gravity-stars" fullBleed />
+
+## Installation
+
+<VueRegistryInstallation name="backgrounds-gravity-stars" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import GravityStarsBackground from '@/components/animate-ui/backgrounds/gravity-stars/GravityStarsBackground.vue';
+</script>
+
+<template>
+  <section class="relative h-[480px] overflow-hidden">
+    <GravityStarsBackground class="absolute inset-0" />
+  </section>
+</template>
+```
+
+## Animation
+
+- Stars drift across a canvas at `movementSpeed`, slow down little by little, wrap around its edges and glow.
+- Near the pointer (`mouseInfluence`), they are pulled in or pushed away (`mouseGravity`) and glow brighter. The pointer's last position keeps acting after it leaves (before the first move, it is the top-left corner).
+- The stars take the text color (`currentColor`), so they follow light and dark mode.
+- The canvas is sized to its container at the device pixel ratio. A resize scatters the stars again.
+- The simulation advances one step per displayed frame, so it runs faster on 120Hz screens.
+- It pauses off screen and while the tab is hidden.
+- Under reduced motion, the stars hold still.
+
+## API Reference
+
+### GravityStarsBackground
+
+<TypeTable
+  type={{
+    starsCount: {
+      description: 'Number of stars.',
+      type: 'number',
+      default: '75',
+    },
+    starsSize: {
+      description: 'Radius of the stars: between 1 and 1 + starsSize pixels.',
+      type: 'number',
+      default: '2',
+    },
+    starsOpacity: {
+      description: 'Resting opacity of the stars.',
+      type: 'number',
+      default: '0.75',
+    },
+    glowIntensity: {
+      description: 'Blur of the glow around the stars.',
+      type: 'number',
+      default: '15',
+    },
+    glowAnimation: {
+      description: 'How the glow grows and fades near the pointer.',
+      type: "'instant' | 'ease' | 'spring'",
+      default: "'ease'",
+    },
+    movementSpeed: {
+      description: 'Starting drift speed of the stars, in pixels per frame.',
+      type: 'number',
+      default: '0.3',
+    },
+    mouseInfluence: {
+      description:
+        'Radius around the pointer that affects the stars, in pixels.',
+      type: 'number',
+      default: '100',
+    },
+    mouseGravity: {
+      description:
+        'Whether the pointer pulls the stars in or pushes them away.',
+      type: "'attract' | 'repel'",
+      default: "'attract'",
+    },
+    gravityStrength: {
+      description: 'Strength of the pull or push.',
+      type: 'number',
+      default: '75',
+    },
+    starsInteraction: {
+      description: 'Make the stars interact with each other.',
+      type: 'boolean',
+      default: 'false',
+    },
+    starsInteractionType: {
+      description:
+        'How stars that meet interact: they bounce off each other or attract and glow.',
+      type: "'bounce' | 'merge'",
+      default: "'bounce'",
+    },
+    '...attrs': {
+      description: 'Attributes of the container div.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+## Credits
+
+- Credits to [Brett Jackson](https://www.framer.com/marketplace/components/gravity-particles/) for the initial Framer component.

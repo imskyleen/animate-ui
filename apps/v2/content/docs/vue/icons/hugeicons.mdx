@@ -1,0 +1,26 @@
+---
+title: Hugeicons
+description: Hugeicons' free icons, animated. Preview each animation, then add the icons you need.
+---
+
+<IconsGallery library="hugeicons" framework="vue" />
+
+## Installation
+
+Add icons one by one, here Notification 01. Each icon is a .vue file in your project, drawn from Hugeicons' free set (stroke rounded, at a stroke of 2); the core that animates them comes from `@animate-ui/vue/icons`, which the CLI installs with the first icon.
+
+<VueRegistryInstallation name="icons-hugeicons-notification-01" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import Notification01 from '@/components/animate-ui/icons/hugeicons/Notification01.vue';
+</script>
+
+<template>
+  <Notification01 animate-on-hover />
+</template>
+```
+
+Triggers, animations, timing and every prop are the same for all icon libraries: see [Get Started](/docs/vue/icons/get-started).

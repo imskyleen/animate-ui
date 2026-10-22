@@ -1,5 +1,6 @@
 'use client';
 
+import { VueDemo } from './vue-demo';
 import { AnimateIcon } from '@animate-ui/react/icons';
 import { Button } from '@animate-ui/react/primitives/buttons/button';
 import {
@@ -194,28 +195,43 @@ export function IconLibraryCard({
   title,
   logo,
   icons,
+  vueIcons,
 }: {
   href: string;
   title: string;
   logo: ReactNode;
   icons: React.ComponentType<{ size?: number }>[];
+  /** Vue icons (`icons/<library>/<name>`) shown instead, on a Vue page. */
+  vueIcons?: string[];
 }) {
   return (
     <PreviewCard href={href} title={title} logo={logo}>
       {(hovered) => (
         <div className="absolute inset-0 grid grid-cols-4 place-items-center p-6 text-foreground">
-          {icons.map((Icon) => (
-            <AnimateIcon
-              key={Icon.displayName ?? Icon.name}
-              animate={hovered}
-              loop
-              loopDelay={400}
-            >
-              <span className="inline-flex">
-                <Icon size={30} />
-              </span>
-            </AnimateIcon>
+          {vueIcons?.map((name) => (
+            <span key={name} className="inline-flex">
+              <VueDemo
+                name={name}
+                size={30}
+                animate={hovered}
+                loop
+                loopDelay={400}
+              />
+            </span>
           ))}
+          {!vueIcons &&
+            icons.map((Icon) => (
+              <AnimateIcon
+                key={Icon.displayName ?? Icon.name}
+                animate={hovered}
+                loop
+                loopDelay={400}
+              >
+                <span className="inline-flex">
+                  <Icon size={30} />
+                </span>
+              </AnimateIcon>
+            ))}
         </div>
       )}
     </PreviewCard>

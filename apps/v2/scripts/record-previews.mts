@@ -102,7 +102,8 @@ async function fitZoom(
   preview: Preview,
   browser: Awaited<ReturnType<typeof chromium.launch>>,
 ) {
-  if (preview.zoom === false || preview.id.startsWith('backgrounds/')) return 1;
+  if (preview.zoom === false || /^(vue\/)?backgrounds\//.test(preview.id))
+    return 1;
   if (POPUPS.has(preview.id.split('/').pop()!)) return 1;
   const viewport = preview.viewport ?? VIEWPORT;
   const base = await measure(preview, browser, viewport);
@@ -834,24 +835,28 @@ function previews(): Preview[] {
       },
       tail: 0,
     });
-  for (const file of readdirSync(path.join(docs, 'backgrounds')))
-    if (file.endsWith('.mdx') && file !== 'index.mdx') {
-      const slug = file.slice(0, -4);
-      list.push({
-        id: `backgrounds/${slug}`,
-        demo: `/tests/demos/backgrounds/${slug}`,
-        play: async (page) => {
-          await glide(page, size.width * 0.3, size.height * 0.4, 600);
-          await glide(page, size.width * 0.7, size.height * 0.6, 900);
-          if (slug === 'glyph') {
-            await page.mouse.click(size.width * 0.5, size.height * 0.5);
-            await page.waitForTimeout(1800);
-          }
-          await away(page);
-        },
-        tail: 1200,
-      });
-    }
+  for (const [prefix, demos] of [
+    ['', '/tests/demos'],
+    ['vue/', '/tests/vue-demos'],
+  ])
+    for (const file of readdirSync(path.join(docs, prefix, 'backgrounds')))
+      if (file.endsWith('.mdx') && file !== 'index.mdx') {
+        const slug = file.slice(0, -4);
+        list.push({
+          id: `${prefix}backgrounds/${slug}`,
+          demo: `${demos}/backgrounds/${slug}`,
+          play: async (page) => {
+            await glide(page, size.width * 0.3, size.height * 0.4, 600);
+            await glide(page, size.width * 0.7, size.height * 0.6, 900);
+            if (slug === 'glyph') {
+              await page.mouse.click(size.width * 0.5, size.height * 0.5);
+              await page.waitForTimeout(1800);
+            }
+            await away(page);
+          },
+          tail: 1200,
+        });
+      }
   return list;
 }
 

@@ -38,6 +38,14 @@ export const siteIcons = (vue = false): Metadata['icons'] => {
 export const frameworkOf = (pathname: string) =>
   pathname === VUE_HOME || isVuePath(pathname) ? 'vue' : 'react';
 
+const BACKGROUND_COLORS = {
+  blue: '#3b9eff',
+  violet: '#a78bfa',
+  emerald: '#34d399',
+  amber: '#fbbf24',
+  rose: '#fb7185',
+};
+
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
   'animate-ui/effect': {
@@ -523,6 +531,47 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
     },
     AnimateUIProvider: {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
+    },
+  },
+  'backgrounds/bubble': {
+    BubbleBackground: { interactive: { value: true } },
+  },
+  'backgrounds/fireworks': {
+    FireworksBackground: {
+      population: { value: 1, min: 0.1, max: 10, step: 0.1 },
+    },
+  },
+  'backgrounds/fireworks-circle': {
+    FireworksBackground: {
+      population: { value: 1, min: 0.1, max: 10, step: 0.1 },
+      fireworkSize: { value: 7, min: 1, max: 20, step: 1 },
+      fireworkSpeed: { value: 7, min: 1, max: 20, step: 1 },
+      particleSize: { value: 7, min: 1, max: 20, step: 1 },
+      particleSpeed: { value: 7, min: 1, max: 20, step: 1 },
+    },
+  },
+  'backgrounds/glyph': {
+    GlyphBackground: {
+      glowColor: {
+        value: '',
+        options: { text: '', white: '#ffffff', ...BACKGROUND_COLORS },
+      },
+      shapeColor: {
+        value: '',
+        options: { text: '', white: '#ffffff', ...BACKGROUND_COLORS },
+      },
+      fontSize: { value: 10, min: 6, max: 16, step: 1 },
+      interactive: { value: true },
+    },
+  },
+  'backgrounds/topography': {
+    TopographyBackground: {
+      lineColor: { value: '', options: { text: '', ...BACKGROUND_COLORS } },
+      levels: { value: 16, min: 4, max: 40, step: 1 },
+      speed: { value: 1, min: 0, max: 5, step: 0.1 },
+      scale: { value: 1, min: 0.3, max: 3, step: 0.1 },
+      peak: { value: 1, min: 0, max: 3, step: 0.1 },
+      interactive: { value: true },
     },
   },
 };
