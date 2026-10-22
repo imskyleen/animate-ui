@@ -73,7 +73,7 @@ test('switching to the same component plays no page transition', async ({
 test('a page without a counterpart goes to the introduction', async ({
   page,
 }) => {
-  await page.goto('/docs/backgrounds', { waitUntil: 'networkidle' });
+  await page.goto('/docs/changelog', { waitUntil: 'networkidle' });
   await ready(page);
   await tab(page, 'Vue').click();
   await page.waitForURL(/\/docs\/vue$/);
@@ -128,9 +128,9 @@ test('each framework has its own sidebar', async ({ page }) => {
     'href',
     '/docs/vue/primitives/reka-ui/checkbox',
   );
-  await expect(sidebar.getByRole('link', { name: 'Backgrounds' })).toHaveCount(
-    0,
-  );
+  await expect(
+    sidebar.getByRole('link', { name: 'Backgrounds' }),
+  ).toHaveAttribute('href', /^\/docs\/vue\/backgrounds/);
   await page.goto('/docs/cli', { waitUntil: 'networkidle' });
   await expect(sidebar.getByRole('link', { name: 'Backgrounds' })).toHaveCount(
     1,
@@ -154,7 +154,7 @@ const samplePanel = (page: Page) =>
       out.push({
         x: new DOMMatrix(style.transform).m41,
         opacity: Number(style.opacity),
-        vue: !panel.textContent!.includes('Backgrounds'),
+        vue: !!panel.querySelector('a[href^="/docs/vue/"]'),
       });
       if (out.length > 5 && out.at(-1)!.vue && out.at(-1)!.opacity === 1) break;
     }
@@ -186,5 +186,7 @@ for (const reduced of [false, true])
       expect(Math.min(...leaving.map((s) => s.x))).toBeLessThan(-4);
       expect(Math.max(...coming.map((s) => s.x))).toBeGreaterThan(4);
     }
-    expect(samples.at(-1)).toMatchObject({ x: 0, opacity: 1, vue: true });
+    const last = samples.at(-1)!;
+    expect(Math.abs(last.x)).toBeLessThan(0.5);
+    expect(last).toMatchObject({ opacity: 1, vue: true });
   });

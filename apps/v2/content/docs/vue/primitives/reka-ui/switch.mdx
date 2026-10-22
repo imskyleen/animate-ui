@@ -30,11 +30,11 @@ The motion of Animate UI's React switch:
 
 - **Thumb**, pressed: stretches toward the middle of the track, its other edge in place. Its width grows by 3/16 (a 16px thumb becomes 19px) on a spring (stiffness 300, damping 25). It's the thumb's real width, so its round ends stay round.
 - **Thumb**, on a change: springs to its new side while its width springs back, on the same spring. The thumb's `translate` classes still decide where it rests (`data-[state=checked]:translate-x-…`): Animate UI puts it back where it was with a `transform` and springs it to its new place.
-- **Root** doesn't move, and its track changes colour at once.
+- **Root** doesn't move, and its track changes colour at once: shadcn-vue's `transition-all` on the track would fade it, so the CLI removes it.
 - The press is the pointer, or Enter on the keyboard. Space toggles without the stretch, and the thumb glides the same way.
 - Toggling again mid-glide turns back from where the thumb is, without a jump.
 - Under reduced motion, the thumb jumps to its side, without the stretch.
-- A leftover `transition-transform` on the thumb doesn't break the glide: Animate UI skips it while measuring.
+- shadcn-vue's `transition-transform` on the thumb would tween its `translate`; the CLI removes it too (Animate UI also skips it while measuring, so a leftover class doesn't break the glide).
 
 ## API Reference
 

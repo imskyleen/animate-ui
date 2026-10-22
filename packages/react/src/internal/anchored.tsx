@@ -12,6 +12,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
+import { useStaggeredEnter } from './stagger';
 
 const POPOVER_TRANSITION = motionTokens.spring.pop;
 const MENU_TRANSITION = motionTokens.transition.menu;
@@ -128,6 +129,7 @@ function useAnchoredMotion({
   const leave = useTempoTransition(
     exitTransition ?? transition ?? DEFAULT_TRANSITION[kind],
   );
+  const quick = useStaggeredEnter(enter);
   const hidden = { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE[kind] };
   const shown = { opacity: 1, scale: 1 };
   const none = { duration: 0 };
@@ -144,7 +146,7 @@ function useAnchoredMotion({
     animate: open
       ? {
           ...shown,
-          transition: appearAtOnce ? none : enter,
+          transition: appearAtOnce ? none : kind === 'menu' ? quick : enter,
           ...(keepMounted && { visibility: 'visible' }),
         }
       : {

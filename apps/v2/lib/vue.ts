@@ -522,6 +522,31 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       spacing: { value: 0, min: 0, max: 4, step: 1 },
     },
   },
+  'reka-ui/dialog': {
+    DialogContent: {
+      from: {
+        value: 'top',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      showCloseButton: { value: true },
+    },
+  },
+  'reka-ui/alert-dialog': {
+    AlertDialogContent: {
+      from: {
+        value: 'top',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+    },
+  },
+  'reka-ui/toggle': {
+    Toggle: {
+      size: {
+        value: 'default',
+        options: { default: 'default', sm: 'sm', lg: 'lg' },
+      },
+    },
+  },
   'reka-ui/checkbox': {
     Checkbox: {
       checked: {

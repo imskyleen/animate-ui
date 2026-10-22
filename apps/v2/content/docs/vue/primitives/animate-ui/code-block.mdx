@@ -78,50 +78,6 @@ It takes every prop of the primitive, plus:
   }}
 />
 
-
-## Ready-made block
-
-A styled block around the primitive, with a cursor while it types and a copy button, is a file you add to your project and own:
-
-<RegistryInstallation name="components-code-block" />
-
-```tsx
-import { CodeBlock } from '@/components/animate-ui/components/code-block';
-
-export function Snippet() {
-  return (
-    <CodeBlock
-      code="console.log('Hello, world!');"
-      lang="javascript"
-      writing
-      duration={2000}
-    />
-  );
-}
-```
-
-It takes every prop of the primitive, plus:
-
-<TypeTable
-  type={{
-    cursor: {
-      description: 'Show a cursor at the end of the code while it types.',
-      type: 'boolean',
-      default: 'true',
-    },
-    'copy-button': {
-      description: 'Show a button copying the code, in the top right corner.',
-      type: 'boolean',
-      default: 'true',
-    },
-    'scroll-class-name': {
-      description:
-        'Classes of the scrolling surface around the code (its size, background, padding).',
-      type: 'string',
-    },
-  }}
-/>
-
 ## Animation
 
 - With `writing`, the code appears one character at a time, evenly over `duration` (after `delay`), and the block and `scroll-container` (its parent element by default) scroll smoothly to follow the last line.

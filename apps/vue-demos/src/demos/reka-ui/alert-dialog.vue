@@ -11,6 +11,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+
+withDefaults(defineProps<{ from?: 'top' | 'bottom' | 'left' | 'right' }>(), { from: 'top' })
 </script>
 
 <template>
@@ -20,7 +22,7 @@ import { Button } from '@/components/ui/button'
         Show Dialog
       </Button>
     </AlertDialogTrigger>
-    <AlertDialogContent>
+    <AlertDialogContent :from="from">
       <AlertDialogHeader>
         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
         <AlertDialogDescription>

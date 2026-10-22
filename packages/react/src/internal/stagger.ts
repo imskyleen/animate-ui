@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { Transition } from 'motion/react';
 
 import {
   motionTokens,
@@ -18,6 +19,7 @@ const ROWS = [
 
 const STAGGER = { duration: 0.3, ease: motionTokens.ease.soft, delay: 0.033 };
 const SHIFT = 8;
+const ARRIVE = { duration: 0.1, ease: motionTokens.ease.out };
 const CALM = 10;
 const STAGGER_ID = 'animate-ui-stagger';
 
@@ -54,7 +56,8 @@ function animateRows(rows: HTMLElement[], timing: StaggerTiming) {
           filter: motionTokens.blur.surface,
           translate: `${shift}px 0`,
         },
-        { opacity: 1, filter: 'blur(0px)', translate: '0 0' },
+        // No opacity here: it ends on the row's own, a disabled one's 50% or one the library shows late.
+        { filter: 'blur(0px)', translate: '0 0' },
       ],
       {
         duration: timing.duration,
@@ -82,25 +85,57 @@ function staggerLeft(row: Element | null) {
  * rows a library renders a commit later (React Aria's) as they come, before
  * they're painted. `stop` shows them all.
  */
+/**
+ * Rows slid aside widen what their list can scroll: a library scrolling the
+ * chosen one into view (Base UI's combobox) would scroll sideways too, then
+ * back as they land. The lists keep their horizontal scroll meanwhile.
+ */
+function holdScrollX(root: HTMLElement) {
+  const lefts = new Map<Element, number>();
+  for (const el of [root, ...root.querySelectorAll('*')])
+    lefts.set(el, el.scrollLeft);
+  const hold = (event: Event) => {
+    const target = event.target as Element;
+    const left = lefts.get(target);
+    if (left !== undefined && target.scrollLeft !== left)
+      target.scrollLeft = left;
+  };
+  root.addEventListener('scroll', hold, true);
+  return () => root.removeEventListener('scroll', hold, true);
+}
+
 function staggerRows(root: HTMLElement, timing: StaggerTiming) {
   let animations: Animation[] = [];
   let observer: MutationObserver | null = null;
+  const release = holdScrollX(root);
+  const start = (rows: HTMLElement[]) => {
+    animations = animateRows(rows, timing);
+    void Promise.all(animations.map((animation) => animation.finished)).then(
+      release,
+      release,
+    );
+  };
   const rows = rowsOf(root);
-  if (rows.length) animations = animateRows(rows, timing);
+  if (rows.length) start(rows);
   else {
     observer = new MutationObserver(() => {
       const late = rowsOf(root);
       if (!late.length) return;
       observer?.disconnect();
       observer = null;
-      animations = animateRows(late, timing);
+      start(late);
     });
     observer.observe(root, { childList: true, subtree: true });
-    setTimeout(() => observer?.disconnect(), 300);
+    setTimeout(() => {
+      if (!observer) return;
+      observer.disconnect();
+      release();
+    }, 300);
   }
   return () => {
     observer?.disconnect();
     for (const animation of animations) animation.finish();
+    release();
   };
 }
 
@@ -161,8 +196,41 @@ function useSubmenuStagger(
   });
 }
 
+/** A list whose rows stagger: its box is there at once (opacity), its rows bring the fade; under reduced motion, nothing staggers and it fades. */
+function useStaggeredEnter(enter: Transition): Transition {
+  const reduce = useShouldReduceMotion();
+  const arrive = useTempoTransition(ARRIVE);
+  return reduce ? enter : { ...enter, opacity: arrive };
+}
+
+/**
+ * A sidebar submenu's panel is there at once (opacity, blur) while it unfolds,
+ * so its sub-items bring the fade: added over the panel's own animation, after it starts.
+ */
+function quickSubmenuPanel(el: HTMLElement | null) {
+  if (!el?.querySelector('[data-slot="sidebar-menu-sub"]')) return;
+  queueMicrotask(() => {
+    const ends = el
+      .getAnimations()
+      .map((animation) =>
+        Number(animation.effect?.getComputedTiming().endTime ?? 0),
+      );
+    const total = Math.max(300, ...ends);
+    const settled = { opacity: 1, filter: 'blur(0px)' };
+    el.animate(
+      [
+        { ...settled, offset: Math.min(1, 100 / total) },
+        { ...settled, offset: 1 },
+      ],
+      { duration: total, easing: 'ease-out' },
+    );
+  });
+}
+
 export {
+  quickSubmenuPanel,
   staggerFromClosed,
+  useStaggeredEnter,
   staggerLeft,
   useSubmenuStagger,
   staggerRows,

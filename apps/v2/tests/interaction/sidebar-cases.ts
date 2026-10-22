@@ -888,14 +888,16 @@ export function describeSidebar(
             __mount: { gap: number | null; surfaces: number }[];
           };
           w.__mount = [];
-          const t0 = performance.now();
+          let shownAt: number | null = null;
           const tick = () => {
             const el = document.querySelector(gap);
+            if (el && shownAt === null) shownAt = performance.now();
             w.__mount.push({
               gap: el ? el.getBoundingClientRect().width : null,
               surfaces: document.querySelectorAll(surface).length,
             });
-            if (performance.now() - t0 < 1500) requestAnimationFrame(tick);
+            if (shownAt === null || performance.now() - shownAt < 1500)
+              requestAnimationFrame(tick);
           };
           requestAnimationFrame(tick);
         },

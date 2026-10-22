@@ -706,6 +706,8 @@ const SurfaceCopy = defineComponent({
         return;
       }
 
+      // An item still coming in with its list's stagger: its highlight shows once it has landed.
+      const landing = staggerLeft(el.parentElement);
       if (props.fadeOut) {
         const { duration, easing } = toCssTiming(fade.value);
         const fading = el.animate(
@@ -719,17 +721,15 @@ const SurfaceCopy = defineComponent({
         );
       } else if (start.cross && timing) {
         animations.push(el.animate([{ opacity: 0 }, { opacity: 1 }], timing));
-      } else if (start.opacity < 1) {
+      } else if (start.opacity < 1 || landing > 0) {
         const { duration, easing } = toCssTiming(
-          start.fresh ? fade.value : resume.value,
+          start.fresh || landing > 0 ? fade.value : resume.value,
         );
         animations.push(
-          el.animate([{ opacity: start.opacity }, { opacity: 1 }], {
-            duration,
-            easing,
-            delay: start.fresh ? staggerLeft(el.parentElement) : 0,
-            fill: 'backwards',
-          }),
+          el.animate(
+            [{ opacity: landing > 0 ? 0 : start.opacity }, { opacity: 1 }],
+            { duration, easing, delay: landing, fill: 'backwards' },
+          ),
         );
       }
 

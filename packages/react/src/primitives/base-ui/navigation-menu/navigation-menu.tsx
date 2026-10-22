@@ -15,7 +15,7 @@ import {
   MENU_TRANSITION,
   MORPH_TRANSITION,
 } from '../../../internal/anchored';
-import { useStaggerOnOpen } from '../../../internal/stagger';
+import { useStaggeredEnter, useStaggerOnOpen } from '../../../internal/stagger';
 import {
   ContentSwapper,
   useContentSwapper,
@@ -358,7 +358,9 @@ function PopupMotion({
     return () => cancelAnimationFrame(id);
   });
 
-  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const enter = useStaggeredEnter(
+    useTempoTransition(transition ?? MENU_TRANSITION),
+  );
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );

@@ -20,6 +20,7 @@ import {
 } from '../../../internal/item-highlight';
 import {
   staggerFromClosed,
+  useStaggeredEnter,
   useStaggerTiming,
 } from '../../../internal/stagger';
 import {
@@ -109,7 +110,9 @@ function usePopupRender(
   { transition, exitTransition }: PopupAnimationProps,
 ) {
   const reduce = useShouldReduceMotion();
-  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const enter = useStaggeredEnter(
+    useTempoTransition(transition ?? MENU_TRANSITION),
+  );
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
@@ -154,9 +157,8 @@ function usePopupRender(
           }
           shownRef.current = true;
           const node = nodeRef.current;
-          if (node && !reduce)
-            staggerRef.current =
-              staggerFromClosed(node, stagger.current) ?? staggerRef.current;
+          if (node && !reduce && !staggerRef.current)
+            staggerRef.current = staggerFromClosed(node, stagger.current);
         }}
         onAnimationComplete={() => {
           if (open || !shownRef.current) return;

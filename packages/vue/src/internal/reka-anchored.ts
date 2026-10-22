@@ -10,7 +10,7 @@ import {
   type PropType,
   type Ref,
 } from 'vue';
-import { motion, type Transition } from 'motion-v';
+import { Motion, motion, type Transition } from 'motion-v';
 
 import { ReducedMotionConfig } from '../utils/motion';
 import { useAnchoredMotion, type AnchoredKind } from './anchored';
@@ -41,6 +41,7 @@ const AnchoredMotion = defineComponent({
     keepMounted: Boolean,
     kind: String as PropType<AnchoredKind>,
     as: { type: String, default: 'div' },
+    asChild: Boolean,
   },
   emits: ['exited'],
   setup(props, { emit, slots }) {
@@ -49,8 +50,11 @@ const AnchoredMotion = defineComponent({
     return () => {
       const { initial, animate, style } = motionProps.value;
       return h(
-        (motion as unknown as Record<string, Component>)[props.as]!,
+        props.asChild
+          ? (Motion as Component)
+          : (motion as unknown as Record<string, Component>)[props.as]!,
         {
+          ...(props.asChild && { asChild: true }),
           initial,
           animate,
           style: { ...style, ...follow() },
@@ -134,12 +138,7 @@ export function createRekaAnchored(
           if (!root.open.value && !keepMounted()) present.value = false;
         });
       return () => {
-        if (isOn(attrs.asChild) || isOn(attrs['as-child']))
-          return h(
-            parts.Content,
-            { ...attrs, forceMount: props.forceMount },
-            slots,
-          );
+        const asChild = isOn(attrs.asChild) || isOn(attrs['as-child']);
         if (!present.value && !keepMounted()) return null;
         return h(ReducedMotionConfig, null, () =>
           h(
@@ -159,6 +158,7 @@ export function createRekaAnchored(
                     keepMounted: keepMounted(),
                     kind,
                     as: typeof attrs.as === 'string' ? attrs.as : 'div',
+                    asChild,
                     transition: props.transition,
                     exitTransition: props.exitTransition,
                     onExited: exited,

@@ -12,6 +12,11 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+
+withDefaults(
+  defineProps<{ from?: 'top' | 'bottom' | 'left' | 'right'; showCloseButton?: boolean }>(),
+  { from: 'top', showCloseButton: true },
+)
 </script>
 
 <template>
@@ -22,7 +27,11 @@ import { Label } from '@/components/ui/label'
           Open Dialog
         </Button>
       </DialogTrigger>
-      <DialogContent class="sm:max-w-[425px]">
+      <DialogContent
+        class="sm:max-w-[425px]"
+        :from="from"
+        :show-close-button="showCloseButton"
+      >
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>

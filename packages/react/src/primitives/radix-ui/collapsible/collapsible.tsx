@@ -15,7 +15,10 @@ import {
   releasePanel,
   useDisclosureTransitions,
 } from '../../../internal/disclosure-panel';
-import { useSubmenuStagger } from '../../../internal/stagger';
+import {
+  quickSubmenuPanel,
+  useSubmenuStagger,
+} from '../../../internal/stagger';
 import { MotionSlot, slotChild } from '../../../internal/modal-motion';
 
 const [OpenProvider, useOpen] = getStrictContext<{ open: boolean }>(
@@ -85,7 +88,10 @@ function Content({
                 : { ...collapsed, transition: exit }
             }
             exit={{ ...collapsed, transition: exit }}
-            onAnimationStart={() => measurePanel(ref.current)}
+            onAnimationStart={() => {
+              measurePanel(ref.current);
+              if (open) quickSubmenuPanel(ref.current);
+            }}
             onAnimationComplete={() => {
               if (open) releasePanel(ref.current);
             }}

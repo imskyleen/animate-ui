@@ -15,7 +15,7 @@ import {
   type PropType,
   type VNode,
 } from 'vue';
-import { motion, type Transition } from 'motion-v';
+import { Motion, motion, type Transition } from 'motion-v';
 
 import {
   ReducedMotionConfig,
@@ -23,7 +23,7 @@ import {
   useTempoTransition,
 } from '../utils/motion';
 import { HIDDEN_SCALE, MENU_TRANSITION, MORPH_TRANSITION } from './anchored';
-import { useStaggerOnOpen } from './stagger';
+import { useStaggeredEnter, useStaggerOnOpen } from './stagger';
 import {
   HandoffNestedKey,
   MenuHandoffKey,
@@ -152,12 +152,14 @@ const ContentMotion = defineComponent({
       required: true,
     },
     onReturned: Function as PropType<() => void>,
+    asChild: Boolean,
   },
   emits: ['exited'],
   setup(props, { attrs, emit, slots }) {
     const state = inject(MenuStateKey)!;
     const reduce = useShouldReduceMotion();
     const enter = useTempoTransition(() => props.transition ?? MENU_TRANSITION);
+    const quick = useStaggeredEnter(() => enter.value);
     const leave = useTempoTransition(
       () => props.exitTransition ?? props.transition ?? MENU_TRANSITION,
     );
@@ -236,9 +238,10 @@ const ContentMotion = defineComponent({
             }
           : leave.value;
       return h(
-        motion.div as Component,
+        props.asChild ? (Motion as Component) : (motion.div as Component),
         {
           ...attrs,
+          ...(props.asChild && { asChild: true }),
           ref: (node: unknown) => {
             element.value = elementOf(node);
           },
@@ -246,7 +249,7 @@ const ContentMotion = defineComponent({
           animate: props.open
             ? from
               ? takeOver(from, enter.value)
-              : { opacity: 1, scale: 1, transition: enter.value }
+              : { opacity: 1, scale: 1, transition: quick.value }
             : { ...hidden, transition: exit },
           style: [
             attrs.style,
@@ -316,7 +319,7 @@ export function createMenuContent(
       };
 
       return () => {
-        if (!state || isOn(attrs.asChild) || isOn(attrs['as-child']))
+        if (!state)
           return h(Content, { ...attrs, forceMount: props.forceMount }, slots);
         if (!present.value && !keepMounted()) return null;
         const open = state.open();
@@ -348,11 +351,14 @@ export function createMenuContent(
                     origin: options.origin,
                     sub: Boolean(options.sub),
                     handoff: Boolean(options.handoff),
-                    returnFocus: options.returnFocus,
+                    returnFocus: attrs.onCloseAutoFocus
+                      ? 'none'
+                      : options.returnFocus,
                     transition: props.transition,
                     exitTransition: props.exitTransition,
                     onReturned: () => (returned = true),
                     onExited: exited,
+                    asChild: isOn(attrs.asChild) || isOn(attrs['as-child']),
                   },
                   () => slots.default?.(slotProps),
                 ),
@@ -500,7 +506,7 @@ export function createMenuItemIndicator(
       const item = inject(IndicatorItemKey, null);
       const group = inject(RadioGroupKey, null);
       return () => {
-        if (!item || isOn(attrs.asChild) || isOn(attrs['as-child']))
+        if (!item)
           return h(
             ItemIndicator,
             { ...attrs, forceMount: props.forceMount },

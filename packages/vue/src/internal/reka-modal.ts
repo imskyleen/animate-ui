@@ -8,8 +8,8 @@ import {
   type PropType,
   type Ref,
 } from 'vue';
-import { injectDialogRootContext } from 'reka-ui';
-import { motion, type Transition } from 'motion-v';
+import { injectDialogRootContext, Primitive } from 'reka-ui';
+import { Motion, motion, type Transition } from 'motion-v';
 
 import { ReducedMotionConfig, useShouldReduceMotion } from '../utils/motion';
 import {
@@ -43,7 +43,7 @@ function closingProps(open: boolean) {
 
 const OverlayMotion = defineComponent({
   name: 'AnimatedOverlay',
-  props: { ...animationProps, open: Boolean },
+  props: { ...animationProps, open: Boolean, asChild: Boolean },
   emits: ['exited'],
   setup(props, { emit, slots }) {
     const element = ref<HTMLElement | null>(null);
@@ -60,9 +60,16 @@ const OverlayMotion = defineComponent({
     );
     return () =>
       h(
-        'div',
-        { ref: element, ...closingProps(props.open) },
-        slots.default?.(),
+        Primitive,
+        {
+          asChild: props.asChild,
+          ref: (node: unknown) => {
+            const el = (node as { $el?: unknown } | null)?.$el ?? node;
+            element.value = el instanceof HTMLElement ? el : null;
+          },
+          ...closingProps(props.open),
+        },
+        slots,
       );
   },
 });
@@ -73,6 +80,7 @@ const ContentMotion = defineComponent({
     ...animationProps,
     open: Boolean,
     from: String as PropType<FlipDirection>,
+    asChild: Boolean,
   },
   emits: ['exited'],
   setup(props, { attrs, emit, slots }) {
@@ -90,8 +98,9 @@ const ContentMotion = defineComponent({
         exit: exit(),
       });
       return h(
-        motion.div as Component,
+        props.asChild ? (Motion as Component) : (motion.div as Component),
         {
+          ...(props.asChild && { asChild: true }),
           initial: targets.initial,
           animate: !props.open
             ? targets.exit
@@ -167,12 +176,7 @@ export function createRekaModal(
       const root = injectDialogRootContext();
       const { present, exited } = usePresent(root);
       return () => {
-        if (isOn(attrs.asChild) || isOn(attrs['as-child']))
-          return h(
-            parts.Overlay,
-            { ...attrs, forceMount: props.forceMount },
-            slots,
-          );
+        const asChild = isOn(attrs.asChild) || isOn(attrs['as-child']);
         if (!present.value) return null;
         return h(ReducedMotionConfig, null, () =>
           h(parts.Overlay, { ...attrs, forceMount: true, asChild: true }, () =>
@@ -183,6 +187,7 @@ export function createRekaModal(
                 transition: props.transition,
                 exitTransition: props.exitTransition,
                 onExited: exited,
+                asChild,
               },
               slots,
             ),
@@ -239,12 +244,7 @@ export function createRekaModal(
         );
       };
       return () => {
-        if (isOn(attrs.asChild) || isOn(attrs['as-child']))
-          return h(
-            parts.Content,
-            { ...attrs, forceMount: props.forceMount },
-            slots,
-          );
+        const asChild = isOn(attrs.asChild) || isOn(attrs['as-child']);
         if (!present.value) return null;
         return h(ReducedMotionConfig, null, () =>
           h(
@@ -270,6 +270,7 @@ export function createRekaModal(
                     transition: props.transition,
                     exitTransition: props.exitTransition,
                     onExited: exited,
+                    asChild,
                   },
                   () => slots.default?.(slotProps),
                 ),

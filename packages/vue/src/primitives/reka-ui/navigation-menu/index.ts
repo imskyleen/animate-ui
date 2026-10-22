@@ -47,7 +47,7 @@ import {
   MENU_TRANSITION,
   MORPH_TRANSITION,
 } from '../../../internal/anchored';
-import { useStaggerOnOpen } from '../../../internal/stagger';
+import { useStaggeredEnter, useStaggerOnOpen } from '../../../internal/stagger';
 import {
   ContentSwapper,
   MoveFollower,
@@ -396,7 +396,10 @@ const InlineContentMotion = defineComponent({
   setup(props, { attrs, emit, slots }) {
     const reduce = useShouldReduceMotion();
     const menu = inject(MenuStateKey, null);
-    const enter = useTempoTransition(() => props.transition ?? MENU_TRANSITION);
+    const tempoEnter = useTempoTransition(
+      () => props.transition ?? MENU_TRANSITION,
+    );
+    const enter = useStaggeredEnter(() => tempoEnter.value);
     const leave = useTempoTransition(
       () => props.exitTransition ?? props.transition ?? MENU_TRANSITION,
     );
@@ -597,7 +600,10 @@ const NavigationMenuViewport = defineComponent({
     const menu = inject(MenuStateKey, null);
     if (menu) onBeforeUnmount(menu.registerViewport());
     const reduce = useShouldReduceMotion();
-    const enter = useTempoTransition(() => props.transition ?? MENU_TRANSITION);
+    const tempoEnter = useTempoTransition(
+      () => props.transition ?? MENU_TRANSITION,
+    );
+    const enter = useStaggeredEnter(() => tempoEnter.value);
     const leave = useTempoTransition(
       () => props.exitTransition ?? props.transition ?? MENU_TRANSITION,
     );

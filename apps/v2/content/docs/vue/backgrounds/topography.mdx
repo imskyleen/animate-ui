@@ -30,7 +30,7 @@ import TopographyBackground from '@/components/animate-ui/backgrounds/topography
 - On mount, the relief rises from flat ground in 1.8s on an ease-out: the lines bloom out from the middle level.
 - Under the cursor, a peak rises on a spring and follows it (`transition`), its rings tightening towards the summit (`peak`). Leaving the container lets it sink back.
 - A click (or a tap) drops a wave: a crest and a trough travel out from the point in 2.6s, bunching the lines as they pass, and fade away.
-- The lines take the container's text color, or `lineColor`. They're drawn with WebGL, pixel by pixel on the GPU (at most twice the device pixel ratio): no grid, so they glide without stepping and redraw on every frame, even at 120Hz and more. Where WebGL is missing, a canvas draws them as smooth curves instead.
+- The lines take the container's text color, or `line-color`. They're drawn with WebGL, pixel by pixel on the GPU (at most twice the device pixel ratio): no grid, so they glide without stepping and redraw on every frame, even at 120Hz and more. Where WebGL is missing, a canvas draws them as smooth curves instead.
 - The loop pauses off screen and while the tab is hidden.
 - Under reduced motion, the terrain is a still map: no drift, no peak, no wave.
 
@@ -40,7 +40,7 @@ import TopographyBackground from '@/components/animate-ui/backgrounds/topography
 
 <TypeTable
   type={{
-    lineColor: {
+    'line-color': {
       description:
         "Color of the lines. Defaults to the container's text color.",
       type: 'string',

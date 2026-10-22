@@ -38,6 +38,7 @@ import {
   createMenuRadioGroup,
   createMenuRoot,
   MenuStateKey,
+  withHighlight,
 } from '../../../internal/reka-menu';
 import {
   provideTriggerHighlightScope,
@@ -144,10 +145,12 @@ const MenubarTrigger = defineComponent({
           ref: (node: unknown) => highlight.setElement(elementOf(node)),
         },
         {
-          default: (slotProps: Record<string, unknown>) => [
-            slots.default?.(slotProps),
-            ...highlight.render(),
-          ],
+          default: (slotProps: Record<string, unknown>) =>
+            withHighlight(
+              slots.default?.(slotProps),
+              highlight.render(),
+              isOn(attrs.asChild) || isOn(attrs['as-child']),
+            ),
         },
       );
   },

@@ -22,7 +22,7 @@ import {
   MORPH_TRANSITION,
   mergeRefs,
 } from '../../../internal/anchored';
-import { useStaggerOnOpen } from '../../../internal/stagger';
+import { useStaggeredEnter, useStaggerOnOpen } from '../../../internal/stagger';
 import {
   SwapContext,
   useContentSwapper,
@@ -372,7 +372,9 @@ function InlineContentMotion({
   PresenceAnimationProps & { open: boolean; keepMounted: boolean }) {
   const reduce = useShouldReduceMotion();
   const menu = React.use(MenuStateContext);
-  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const enter = useStaggeredEnter(
+    useTempoTransition(transition ?? MENU_TRANSITION),
+  );
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
@@ -460,7 +462,9 @@ function ViewportMotion({
   const reduce = useShouldReduceMotion();
   const menu = React.use(MenuStateContext);
   const ref = React.useRef<HTMLDivElement>(null);
-  const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const enter = useStaggeredEnter(
+    useTempoTransition(transition ?? MENU_TRANSITION),
+  );
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );

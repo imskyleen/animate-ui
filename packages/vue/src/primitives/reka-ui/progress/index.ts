@@ -1,9 +1,15 @@
-import { defineComponent, h, normalizeStyle, type PropType } from 'vue';
+import {
+  defineComponent,
+  h,
+  normalizeStyle,
+  type Component,
+  type PropType,
+} from 'vue';
 import {
   ProgressIndicator as RekaProgressIndicator,
   type ProgressIndicatorProps as RekaProgressIndicatorProps,
 } from 'reka-ui';
-import { motion, type Transition } from 'motion-v';
+import { Motion, motion, type Transition } from 'motion-v';
 
 import {
   ReducedMotionConfig,
@@ -49,13 +55,18 @@ const IndicatorMotion = defineComponent({
         typeof transform === 'string'
           ? TRANSLATE_X.exec(transform)?.[1]
           : undefined;
-      const target =
-        x !== undefined ? { x } : transform ? { transform } : null;
+      const target = x !== undefined ? { x } : transform ? { transform } : null;
       const move = reduce.value ? { duration: 0 } : spring.value;
+      const asChild =
+        rest.asChild === '' ||
+        rest.asChild === true ||
+        rest['as-child'] === '' ||
+        rest['as-child'] === true;
       return h(RekaProgressIndicator, { ...rest, asChild: true }, () =>
         h(
-          motion.div,
+          asChild ? (Motion as Component) : motion.div,
           {
+            ...(asChild && { asChild: true }),
             style: others,
             initial: false,
             animate: target ? { ...target, transition: move } : undefined,

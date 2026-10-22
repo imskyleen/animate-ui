@@ -42,8 +42,8 @@ test('the version menu links v2 and v1 (local servers in development)', async ({
   page,
 }) => {
   await page.goto('/docs');
-  await page.getByRole('button', { name: /v2\.0/ }).click();
-  await expect(page.getByRole('menuitem', { name: /v2\.0/ })).toHaveAttribute(
+  await page.getByRole('button', { name: /v2\.\d/ }).click();
+  await expect(page.getByRole('menuitem', { name: /v2\.\d/ })).toHaveAttribute(
     'href',
     'http://localhost:3300',
   );

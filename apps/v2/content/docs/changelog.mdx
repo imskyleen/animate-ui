@@ -34,12 +34,12 @@ version: '2.2.0'
 
 <ChangelogItemDescription>
 
-- The Sidebar's trigger shows Animate UI's animated Panel Left: its panel narrows while the sidebar is closed, instead of swapping two icons.
-- Menus and lists stagger their rows as they open: Dropdown Menu, Context Menu, Menubar, Select, Combobox and Navigation Menu, in Radix, Base UI, React Aria and reka-ui, and the Sidebar's collapsible submenus. Each row slides in from the right out of a blur, 33ms after the one before (closer in a long list), and an item already highlighted shows its highlight once its row has landed; moving between menus, reopening while closing and filtering don't stagger again.
+- The Sidebar's trigger shows Animate UI's animated Panel Left: its panel narrows while the sidebar is closed, instead of swapping two icons, in React and Vue.
+- Menus and lists stagger their rows as they open: Dropdown Menu, Context Menu, Menubar, Select, Combobox and Navigation Menu, in Radix, Base UI, React Aria and reka-ui, and the Sidebar's collapsible submenus. Each row slides in from the right out of a blur, 33ms after the one before (closer in a long list), an item already highlighted shows its highlight once its row has landed, and the box itself (a submenu's panel too) is there at once; moving between menus, reopening while closing and filtering don't stagger again.
 - Select and Combobox swap their chosen text instead of changing it in one frame: the old text rises into a blur as the new one rises into place out of it, in 400ms, in Radix, Base UI, React Aria and reka-ui. A list laid over its trigger is let go first. A combobox's input does it when an item is picked, not while typing; in Vue, `ComboboxValue` wraps the label a combobox's trigger shows.
-- Morphing Text morphs more smoothly: the letters both texts share slide in their order without crossing, the others blur out and the new ones rise in, and each letter keeps the font's kerning at rest.
-- Sliding Text inside a link or a button slides when the whole control is hovered or clicked, not just its text.
-- Animated icons take `initial={false}`: mounted while `animate` is on, they show its end state at once instead of playing it.
+- Morphing Text morphs more smoothly: the letters both texts share slide in their order without crossing, the others blur out and the new ones rise in, and each letter keeps the font's kerning at rest, in React and Vue.
+- Sliding Text inside a link or a button slides when the whole control is hovered or clicked, not just its text, in React and Vue.
+- Animated icons take `initial={false}` (`:initial="false"` in Vue): mounted while `animate` is on, they show its end state at once instead of playing it.
 
 </ChangelogItemDescription>
 
@@ -54,8 +54,8 @@ version: '2.2.0'
 - In Vue, the Highlight effect and the Tabs highlight glide from item to item without blinking, on click and on hover.
 - In Vue, the Tooltip's arrow stays under its popup as it glides from trigger to trigger.
 - In Vue, the Theme Toggler keeps the new theme's icon while the wipe crosses the page, instead of showing the previous one until it ends.
-- Pagination: the page left no longer fades its own border out beside the sliding indicator when its link changes look (outline to ghost).
-- The Hexagon background's borders are as thick on the slanted sides as on the upright ones.
+- Pagination: the page left no longer fades its own border out beside the sliding indicator when its link changes look (outline to ghost), in React and Vue.
+- The Hexagon background's borders are as thick on the slanted sides as on the upright ones, in React and Vue.
 - In Vue, a fast sweep over the Sidebar leaves one highlight, instead of earlier ones staying lit where they were.
 
 </ChangelogItemDescription>

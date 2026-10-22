@@ -36,6 +36,26 @@ import {
 </template>
 ```
 
+### Check animation
+
+The check draws itself by default. With `animation="pop"` on the CheckboxIndicator, it pops in from half its size instead, and shrinks back out:
+
+```vue
+<CheckboxRoot :default-value="true">
+  <CheckboxIndicator animation="pop">✓</CheckboxIndicator>
+</CheckboxRoot>
+```
+
+The same demo with `check-animation="pop"` (its Controls switch it back to `draw`):
+
+<VueComponentPreview
+  name="reka-ui/checkbox"
+  values={{ checkAnimation: 'pop' }}
+  code={false}
+/>
+
+To pop every check of your app at once (checkboxes, menus, selects, comboboxes), set `check-animation="pop"` on an [`AnimateUIProvider`](/docs/vue/installation) instead.
+
 ## Animation
 
 The motion of Animate UI's React checkbox:
@@ -50,6 +70,7 @@ The motion of Animate UI's React checkbox:
 - `indeterminate` shows the indicator like `checked`. An icon swapped for the indeterminate state draws without the delay.
 - Under reduced motion, the check only fades, drawn or popped (its stroke stays whole, nothing scales).
 - With `force-mount`, the unchecked indicator stays in the DOM with its check hidden.
+- The box's own colours are the component's CSS: shadcn-vue's `transition-colors` fades them.
 
 ## API Reference
 
@@ -69,7 +90,7 @@ Every part takes exactly the props of [reka-ui's Checkbox](https://reka-ui.com/d
       description:
         'How the check shows and hides: `draw` (it draws itself and erases itself) or `pop` (it pops in from half its size and shrinks back out).',
       type: "'draw' | 'pop'",
-      default: "the closest AnimateUIProvider's checkAnimation, else 'draw'",
+      default: "the closest AnimateUIProvider's check-animation, else 'draw'",
     },
     transition: {
       description: 'Transition of the check drawing itself (or popping in).',
@@ -77,7 +98,7 @@ Every part takes exactly the props of [reka-ui's Checkbox](https://reka-ui.com/d
       default:
         "draw: { duration: 0.3, delay: 0.2, ease: [0, 0, 0.58, 1] }; pop: { type: 'spring', stiffness: 500, damping: 24, delay: 0.2 }",
     },
-    exitTransition: {
+    'exit-transition': {
       description: 'Transition of the check erasing itself (or popping out).',
       type: 'Transition',
       default:

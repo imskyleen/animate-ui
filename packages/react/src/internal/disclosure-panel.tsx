@@ -9,7 +9,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
-import { useSubmenuStagger } from './stagger';
+import { quickSubmenuPanel, useSubmenuStagger } from './stagger';
 
 const collapsed = {
   height: 0,
@@ -140,7 +140,10 @@ function useDisclosurePanel(
       });
   }, [hiddenMode]);
 
-  const onAnimationStart = () => measurePanel(ref.current);
+  const onAnimationStart = () => {
+    measurePanel(ref.current);
+    if (open) quickSubmenuPanel(ref.current);
+  };
 
   const onAnimationComplete = () => {
     if (!open) return setSettled(true);

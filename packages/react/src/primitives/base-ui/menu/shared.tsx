@@ -21,7 +21,10 @@ import {
   useMenuHandoff,
   type HandoffGroup,
 } from '../../../internal/menu-handoff';
-import { useStaggerOnOpen } from '../../../internal/stagger';
+import {
+  useStaggeredEnter,
+  useStaggerOnOpen,
+} from '../../../internal/stagger';
 import {
   CheckRegistryContext,
   ItemCheck,
@@ -206,6 +209,7 @@ function PopupMotion({
   }, [state.open, state.nested, movedOn]);
 
   const enter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const quick = useStaggeredEnter(enter);
   const leave = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
@@ -255,7 +259,7 @@ function PopupMotion({
         state.open
           ? handoff.from
             ? takeOver(handoff.from, enter)
-            : { opacity: 1, scale: 1, transition: enter }
+            : { opacity: 1, scale: 1, transition: quick }
           : { ...hidden, transition: exit }
       }
       onAnimationComplete={() => {

@@ -24,7 +24,7 @@ import {
   type CheckAnimation,
 } from '../utils/motion';
 import { HIDDEN_SCALE, MENU_TRANSITION } from './anchored';
-import { staggerRows, useStaggerTiming } from './stagger';
+import { staggerRows, useStaggeredEnter, useStaggerTiming } from './stagger';
 import { provideHighlightScope, useItemHighlight } from './item-highlight';
 import {
   createCheckGroup,
@@ -116,9 +116,10 @@ export function createListContent(
     setup(props, { attrs, slots }) {
       const state = inject(ListStateKey, null);
       const reduce = useShouldReduceMotion();
-      const enter = useTempoTransition(
+      const tempoEnter = useTempoTransition(
         () => props.transition ?? MENU_TRANSITION,
       );
+      const enter = useStaggeredEnter(() => tempoEnter.value);
       const leave = useTempoTransition(
         () => props.exitTransition ?? props.transition ?? MENU_TRANSITION,
       );
@@ -213,9 +214,7 @@ export function createListContent(
       );
 
       return () => {
-        if (!state || isOn(attrs.asChild) || isOn(attrs['as-child']))
-          return h(Content, attrs, slots);
-        if (!present.value) return h(Content, attrs, slots);
+        if (!state || !present.value) return h(Content, attrs, slots);
         const open = state.open();
         return h(
           Content,

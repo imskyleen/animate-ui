@@ -37,9 +37,12 @@ const SIDEBARS = [
 const recordStaggers = (page: Page) =>
   page.evaluate(() => {
     const seen = new Map<Element, { text: string; delay: number; from: string }>();
-    (window as unknown as { __staggers: typeof seen }).__staggers = seen;
+    const runs = new Set<Animation>();
+    (window as unknown as { __staggers: typeof seen; __runs: typeof runs }).__staggers = seen;
+    (window as unknown as { __runs: typeof runs }).__runs = runs;
     const tick = () => {
       for (const animation of document.getAnimations()) {
+        if (animation.id === 'animate-ui-stagger') runs.add(animation);
         const effect = animation.effect as KeyframeEffect | null;
         const target = effect?.target;
         if (!target || seen.has(target)) continue;
@@ -85,6 +88,8 @@ test.describe('menus stagger their rows as they open', () => {
       await expect.poll(async () => (await staggers(page)).length, { timeout: 3000 }).toBeGreaterThan(2);
       await page.waitForTimeout(600);
       const delays = (await staggers(page)).map((s) => s.delay);
+      // Bug: Base UI's select restarted its opening while still transparent, staggering every row twice.
+      expect(await page.evaluate(() => (window as unknown as { __runs: Set<Animation> }).__runs.size)).toBe(delays.length);
       // Bug: rows past the 10th all came in together; past 10, they're closer instead.
       const step = delays.length > 10 ? 33 * Math.sqrt(10 / delays.length) : 33;
       delays.forEach((delay, index) => expect(delay).toBeCloseTo(index * step, 0));
@@ -103,6 +108,34 @@ test.describe('menus stagger their rows as they open', () => {
       await expect.poll(async () => (await staggers(page)).length, { timeout: 3000 }).toBeGreaterThan(1);
       await page.waitForTimeout(300);
       expect((await staggers(page)).map((s) => s.delay).slice(0, 3)).toEqual([0, 33, 66]);
+    });
+  }
+
+  // Bug: the submenu's panel faded in out of a blur as it unfolded, hiding its sub-items' stagger.
+  for (const demo of SIDEBARS) {
+    test(`${demo}: a reopened submenu's panel is there at once, its sub-items come in`, async ({ page }) => {
+      await page.goto(demo, { waitUntil: 'networkidle' });
+      const playground = page.locator('[data-slot="sidebar"] button', { hasText: 'Playground' }).first();
+      await playground.click();
+      await page.waitForTimeout(800);
+      const frames = page.evaluate(async () => {
+        const out: { panel: number; last: number }[] = [];
+        const start = performance.now();
+        while (performance.now() - start < 500) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const sub = document.querySelector('[data-slot="sidebar-menu-sub"]');
+          const panel = sub?.parentElement;
+          const last = sub && [...sub.querySelectorAll('[data-slot="sidebar-menu-sub-item"]')].at(-1);
+          if (!panel || !last) continue;
+          out.push({ panel: Number(getComputedStyle(panel).opacity), last: Number(getComputedStyle(last).opacity) });
+        }
+        return out;
+      });
+      await playground.click();
+      const all = await frames;
+      const lateRows = all.filter((f) => f.last > 0.05 && f.last < 0.5);
+      expect(lateRows.length).toBeGreaterThan(0);
+      for (const f of lateRows) expect(f.panel).toBeGreaterThan(0.85);
     });
   }
 
@@ -157,6 +190,7 @@ test.describe('menus stagger their rows as they open', () => {
   for (const { demo, trigger, pick } of [
     { demo: '/tests/demos/base-ui/combobox', trigger: '[data-slot="input-group-button"]', pick: 'SvelteKit' },
     { demo: '/tests/demos/radix-ui/select', trigger: '[role="combobox"]', pick: 'Banana' },
+    { demo: '/tests/demos/base-ui/select', trigger: '[data-slot="select-trigger"]', pick: 'Banana' },
     { demo: '/tests/vue-demos/reka-ui/select', trigger: '[role="combobox"]', pick: 'Banana' },
   ]) {
     test(`${demo}: the chosen item's highlight waits for its row to land`, async ({ page }) => {
@@ -186,6 +220,112 @@ test.describe('menus stagger their rows as they open', () => {
       expect(highlight).toBeGreaterThan(row - 40);
     });
   }
+
+  // Bug: disabled rows came in at full opacity, then dropped to their own.
+  for (const demo of ['/tests/demos/radix-ui/dropdown-menu', '/tests/demos/react-aria/dropdown-menu', '/tests/vue-demos/reka-ui/dropdown-menu']) {
+    test(`${demo}: a disabled row comes in at its own opacity`, async ({ page }) => {
+      await page.goto(demo, { waitUntil: 'networkidle' });
+      const peak = page.evaluate(async () => {
+        let most = 0;
+        let rest = 1;
+        const start = performance.now();
+        while (performance.now() - start < 900) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const row = [...document.querySelectorAll('[role^="menuitem"]')].find((el) =>
+            el.matches('[aria-disabled="true"], [data-disabled]'),
+          );
+          if (!row) continue;
+          const opacity = Number(getComputedStyle(row).opacity);
+          most = Math.max(most, opacity);
+          rest = opacity;
+        }
+        return { most, rest };
+      });
+      await page.locator('[data-slot="dropdown-menu-trigger"], button[aria-haspopup]').first().click();
+      const { most, rest } = await peak;
+      expect(rest).toBeLessThan(0.9);
+      expect(most).toBeLessThanOrEqual(rest + 0.02);
+    });
+  }
+
+  // Bug: the box faded in slowly with its rows, a pale empty box first; the rows bring the fade.
+  for (const { demo, box, trigger } of [
+    { demo: '/tests/demos/base-ui/combobox', box: '[data-slot="combobox-content"]', trigger: '[data-slot="input-group-button"]' },
+    { demo: '/tests/demos/radix-ui/dropdown-menu', box: '[data-slot="dropdown-menu-content"]', trigger: 'button[aria-haspopup]' },
+    { demo: '/tests/vue-demos/reka-ui/dropdown-menu', box: '[data-slot="dropdown-menu-content"]', trigger: 'button[aria-haspopup]' },
+  ]) {
+    test(`${demo}: the box is there at once, its rows come in`, async ({ page }) => {
+      await page.goto(demo, { waitUntil: 'networkidle' });
+      await page.locator(trigger).first().click();
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(800);
+      const frames = page.evaluate(async (box) => {
+        const out: { t: number; box: number; row: number }[] = [];
+        const start = performance.now();
+        let seen: number | null = null;
+        while (performance.now() - start < 1200) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const el = document.querySelector(box);
+          if (!el) continue;
+          const opacity = Number(getComputedStyle(el).opacity);
+          if (seen === null && opacity > 0) seen = performance.now();
+          if (seen === null) continue;
+          const last = [...el.querySelectorAll('[role^="menuitem"], [role="option"]')].at(-1);
+          out.push({ t: performance.now() - seen, box: opacity, row: last ? Number(getComputedStyle(last).opacity) : 0 });
+          if (performance.now() - seen > 200) break;
+        }
+        return out;
+      }, box);
+      await page.locator(trigger).first().click();
+      const early = (await frames).filter((f) => f.t > 60 && f.t < 140);
+      expect(early.length).toBeGreaterThan(0);
+      for (const f of early) {
+        expect(f.box).toBeGreaterThan(0.85);
+        expect(f.row).toBeLessThan(0.5);
+      }
+    });
+  }
+
+  // Bug: with a selection, Base UI scrolled the list sideways toward the slid rows, which bounced left then back.
+  test('base-ui combobox with a selection: rows land without going past their place', async ({ page }) => {
+    await page.goto('/tests/demos/base-ui/combobox', { waitUntil: 'networkidle' });
+    const chevron = page.locator('[data-slot="input-group-button"]').first();
+    await chevron.click();
+    await page.getByRole('option', { name: 'SvelteKit', exact: true }).click();
+    await page.waitForTimeout(1000);
+    const frames = page.evaluate(async () => {
+      const out: number[][] = [];
+      const start = performance.now();
+      while (performance.now() - start < 700) {
+        await new Promise((r) => requestAnimationFrame(r));
+        const box = document.querySelector('[data-slot="combobox-content"]');
+        const rows = [...document.querySelectorAll('[role="option"]')];
+        if (!box || !rows.length) continue;
+        const left = box.getBoundingClientRect().left;
+        out.push(rows.map((row) => row.getBoundingClientRect().left - left));
+      }
+      return out;
+    });
+    await chevron.click();
+    const all = await frames;
+    const rest = all.at(-1)!;
+    for (const frame of all)
+      frame.forEach((left, i) => expect(left).toBeGreaterThan(rest[i]! - 0.5));
+  });
+
+  test('base-ui select with a selection: each row staggers once', async ({ page }) => {
+    await page.goto('/tests/demos/base-ui/select', { waitUntil: 'networkidle' });
+    const trigger = page.locator('[data-slot="select-trigger"]').first();
+    await trigger.click();
+    await page.getByRole('option', { name: 'Banana', exact: true }).click();
+    await page.waitForTimeout(1000);
+    await recordStaggers(page);
+    await trigger.click();
+    await page.waitForTimeout(700);
+    const rows = (await staggers(page)).length;
+    expect(rows).toBeGreaterThan(3);
+    expect(await page.evaluate(() => (window as unknown as { __runs: Set<Animation> }).__runs.size)).toBe(rows);
+  });
 
   test('a combobox filtering as the user types does not stagger again', async ({ page }) => {
     await page.goto('/tests/demos/base-ui/combobox', { waitUntil: 'networkidle' });

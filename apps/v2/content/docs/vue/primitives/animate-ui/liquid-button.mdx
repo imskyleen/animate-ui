@@ -25,7 +25,7 @@ import LiquidButton from '@/components/animate-ui/buttons/liquid/LiquidButton.vu
 ## Animation
 
 - On hover, a `fillHeight` line of `--liquid-button-color` slides in along the bottom, then rises to fill the button, each step taking `delay` (a CSS transition). Leaving, the fill variables ease back over 0.3s, then the text color and the liquid drain in reverse.
-- Pressing scales the button to `tapScale` (0.97), and releasing springs it back (Animate UI's press spring, `stiffness: 550, damping: 30`). Hovering fills it without scaling it, unless you set `hoverScale` (then a 0.3s ease-out).
+- Pressing scales the button to `tap-scale` (0.97), and releasing springs it back (Animate UI's press spring, `stiffness: 550, damping: 30`). Hovering fills it without scaling it, unless you set `hover-scale` (then a 0.3s ease-out).
 - `transition` replaces the press, release and leave transitions.
 - `<AnimateUIProvider :tempo>` paces the Motion transitions (not the CSS `delay`).
 - Under reduced motion, the button fills without scaling when pressed.

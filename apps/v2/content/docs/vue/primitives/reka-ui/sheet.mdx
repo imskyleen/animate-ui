@@ -52,6 +52,14 @@ import {
 
 Use the `side` prop on `SheetContent` to set the edge of the screen where the sheet appears: `top`, `right`, `bottom` or `left`.
 
+<VueComponentPreview name="reka-ui/sheet-side" />
+
+### No Close Button
+
+Use `:show-close-button="false"` on `SheetContent` to hide the close button.
+
+<VueComponentPreview name="reka-ui/sheet-no-close-button" />
+
 ## Animation
 
 Animate UI's React Sheet, sliding in on a soft ease-out, with a smoother overlay and a quicker exit.
@@ -81,7 +89,7 @@ The Sheet takes exactly the props of [reka-ui's Dialog](https://reka-ui.com/docs
       type: 'Transition',
       default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
     },
-    exitTransition: {
+    'exit-transition': {
       description: 'Transition of the fade out.',
       type: 'Transition',
       default: 'transition',
@@ -105,7 +113,7 @@ The Sheet takes exactly the props of [reka-ui's Dialog](https://reka-ui.com/docs
       type: 'Transition',
       default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
     },
-    exitTransition: {
+    'exit-transition': {
       description: 'Transition of the closing.',
       type: 'Transition',
       default: '{ duration: 0.2, ease: [0.33, 0.17, 0.67, 0.5] }',

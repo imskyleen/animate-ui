@@ -7,14 +7,16 @@ import {
   type ComputedRef,
   type PropType,
 } from 'vue';
-import { AnimatePresence, motion, type Transition } from 'motion-v';
+import { AnimatePresence, Motion, motion, type Transition } from 'motion-v';
 
 import {
   motionTokens,
   useShouldReduceMotion,
   useTempoTransition,
 } from '../utils/motion';
-import { useSubmenuStagger } from './stagger';
+import { quickSubmenuPanel, useSubmenuStagger } from './stagger';
+
+const isOn = (value: unknown) => value === '' || value === true;
 
 const collapsed = {
   height: 0,
@@ -138,19 +140,24 @@ function createDisclosureContent(
 
       return () => {
         const isOpen = open.value;
+        const asChild = isOn(attrs.asChild) || isOn(attrs['as-child']);
         return h(AnimatePresence, null, () =>
           isOpen || props.forceMount
             ? h(Content, { ...attrs, forceMount: true, asChild: true }, () =>
                 h(
-                  motion.div,
+                  asChild ? (Motion as Component) : motion.div,
                   {
+                    ...(asChild && { asChild: true }),
                     ref: setElement,
                     initial: collapsed,
                     animate: isOpen
                       ? { ...expanded, transition: enter.value }
                       : { ...collapsed, transition: exit.value },
                     exit: { ...collapsed, transition: exit.value },
-                    onAnimationStart: () => measurePanel(element),
+                    onAnimationStart: () => {
+                      measurePanel(element);
+                      if (open.value) quickSubmenuPanel(element);
+                    },
                     onAnimationComplete: () => {
                       if (open.value) releasePanel(element);
                     },

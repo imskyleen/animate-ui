@@ -87,6 +87,9 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/dialog': () => import('./demos/reka-ui/dialog.vue'),
   'reka-ui/alert-dialog': () => import('./demos/reka-ui/alert-dialog.vue'),
   'reka-ui/sheet': () => import('./demos/reka-ui/sheet.vue'),
+  'reka-ui/sheet-side': () => import('./demos/reka-ui/sheet-side.vue'),
+  'reka-ui/sheet-no-close-button': () =>
+    import('./demos/reka-ui/sheet-no-close-button.vue'),
   'reka-ui/drawer': () => import('./demos/reka-ui/drawer.vue'),
   'reka-ui/dropdown-menu': () => import('./demos/reka-ui/dropdown-menu.vue'),
   'reka-ui/combobox': () => import('./demos/reka-ui/combobox.vue'),
@@ -113,6 +116,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/animate-ui-questionnaire': () =>
     import('./fixtures/animate-ui-questionnaire.vue'),
   'fixtures/reka-ui-drawer': () => import('./fixtures/reka-ui-drawer.vue'),
+  'fixtures/as-child-render': () => import('./fixtures/as-child-render.vue'),
   'fixtures/animate-ui-github-stars-button': () =>
     import('./fixtures/animate-ui-github-stars-button.vue'),
   'fixtures/animate-ui-github-stars-in-view': () =>
