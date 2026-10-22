@@ -60,6 +60,7 @@ type HighlightContextType = {
   enabled: () => boolean;
   exitDelay: () => number;
   forceUpdateBounds: () => boolean | undefined;
+  items: Set<HTMLElement>;
 };
 
 const HighlightKey: InjectionKey<HighlightContextType> =
@@ -278,6 +279,7 @@ const Highlight = defineComponent({
       enabled: () => props.enabled,
       exitDelay,
       forceUpdateBounds: () => props.forceUpdateBounds,
+      items: new Set<HTMLElement>(),
     });
 
     watch(
@@ -389,6 +391,9 @@ const HighlightItem = defineComponent({
     const ownTransition = useTempoTransition(() => props.transition);
     const canHover = useCanHover();
     const element = shallowRef<HTMLElement | null>(null);
+    onBeforeUnmount(() => {
+      if (element.value) context.items.delete(element.value);
+    });
     const surfaceKey = ref('rest');
     const childValue = ref<string>(itemId);
 
@@ -517,6 +522,14 @@ const HighlightItem = defineComponent({
             ([key]) => childProps[key] === undefined,
           ),
         );
+      // Vue would render the null between leave and enter, so the highlight would fade in instead of gliding.
+      const headsToItem = (event: Event) => {
+        const to = (event as MouseEvent).relatedTarget;
+        if (!(to instanceof Node)) return false;
+        for (const item of context.items)
+          if (item !== element.value && item.contains(to)) return true;
+        return false;
+      };
       const handler =
         (
           name: 'onClick' | 'onMouseenter' | 'onMouseleave',
@@ -524,7 +537,8 @@ const HighlightItem = defineComponent({
           on: boolean,
         ) =>
         (event: Event) => {
-          if (on) context.setActiveValue(next);
+          if (on && !(next === null && headsToItem(event)))
+            context.setActiveValue(next);
           if (props.asChild) call(childProps[name], event);
           call(attrs[name], event);
         };
@@ -552,7 +566,7 @@ const HighlightItem = defineComponent({
                   ],
                   class: [context.className(), props.activeClassName],
                   transition: itemTransition,
-                  layoutCrossfade: false,
+                  crossfade: false,
                   custom: handOff,
                   variants: fade,
                   initial: handedTo ? false : 'hidden',
@@ -563,7 +577,11 @@ const HighlightItem = defineComponent({
               : null,
         );
       const ref = (node: unknown) => {
-        element.value = elementOf(node);
+        const el = elementOf(node);
+        if (element.value && element.value !== el)
+          context.items.delete(element.value);
+        if (el) context.items.add(el);
+        element.value = el;
       };
 
       if (props.asChild) {

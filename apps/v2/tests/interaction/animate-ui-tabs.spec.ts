@@ -435,4 +435,35 @@ for (const framework of FRAMEWORKS) {
     );
     expect(Math.max(...samples)).toBe(1);
   });
+
+  test(`${framework.name} switching tabs never blinks the highlight`, async ({
+    page,
+  }) => {
+    await page.goto(framework.demo('tabs'), { waitUntil: 'networkidle' });
+    await page.getByRole('tab', { name: 'Overview' }).click();
+    await page.waitForTimeout(600);
+    await page.evaluate(() => {
+      const samples: number[] = [];
+      (window as unknown as { samples: number[] }).samples = samples;
+      const start = performance.now();
+      const tick = () => {
+        samples.push(
+          Math.max(
+            0,
+            ...[
+              ...document.querySelectorAll('[data-slot="motion-highlight"]'),
+            ].map((element) => Number(getComputedStyle(element).opacity)),
+          ),
+        );
+        if (performance.now() - start < 700) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await page.getByRole('tab', { name: 'Reports' }).click();
+    await page.waitForTimeout(900);
+    const samples = await page.evaluate(
+      () => (window as unknown as { samples: number[] }).samples,
+    );
+    expect(Math.min(...samples)).toBeGreaterThan(0.95);
+  });
 }
