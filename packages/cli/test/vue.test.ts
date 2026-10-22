@@ -11,7 +11,12 @@ import path from 'node:path';
 import { beforeEach, describe, expect, test } from 'vitest';
 
 import { animate } from '../src/commands/animate';
-import { transformVue, VUE_MODULE, VUE_PRIMITIVES } from '../src/lib/vue';
+import {
+  transformVue,
+  VUE_MODULE,
+  VUE_PACKAGES,
+  VUE_PRIMITIVES,
+} from '../src/lib/vue';
 
 const FIXTURES = path.join(import.meta.dirname, 'fixtures-vue');
 
@@ -37,9 +42,14 @@ describe('transformVue, on shadcn-vue’s own files', () => {
         const result = transformVue(code, name)!;
         expect(result.code).not.toMatch(/from\s+["']reka-ui["']/);
         for (const [before, after] of changedLines(code, result.code)) {
+          const swap = VUE_PACKAGES[name];
           if (/from\s+["']reka-ui["']/.test(before))
             expect(after, file).toBe(
               before.replace(/(["'])reka-ui\1/, `$1${VUE_MODULE}$1`),
+            );
+          else if (swap && before.includes(`"${swap.from}"`))
+            expect(after, file).toBe(
+              before.replace(`"${swap.from}"`, `"${swap.to}"`),
             );
           else
             for (const token of before.split(/[\s'"`]+/))
@@ -66,6 +76,7 @@ describe('transformVue, on shadcn-vue’s own files', () => {
     for (const name of [
       'checkbox',
       'collapsible',
+      'input-otp',
       'radio-group',
       'slider',
       'toggle',
@@ -90,6 +101,21 @@ describe('transformVue, on shadcn-vue’s own files', () => {
     expect(removed('sheet')).toEqual(
       expect.arrayContaining(['transition', 'ease-in-out']),
     );
+  });
+
+  test('input-otp: vue-input-otp imports point at Animate UI’s animated OTPInput', () => {
+    const swapped = files('input-otp').map(({ code }) =>
+      transformVue(code, 'input-otp')!,
+    );
+    const code = swapped.map((result) => result.code).join('\n');
+    expect(code).not.toMatch(/from\s+["']vue-input-otp["']/);
+    expect(code).toContain(
+      'import { OTPInput } from "@animate-ui/vue/primitives/input-otp"',
+    );
+    expect(code).toContain(
+      'import { useVueOTPContext } from "@animate-ui/vue/primitives/input-otp"',
+    );
+    expect(swapped.reduce((n, r) => n + r.packageImports, 0)).toBe(3);
   });
 
   test('the sheet passes its side to the content, which slides from it', () => {

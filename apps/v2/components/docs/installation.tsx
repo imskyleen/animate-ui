@@ -148,8 +148,14 @@ const VUE_FIXTURES = path.join(
 );
 const VUE_MODULE = '@animate-ui/vue/primitives/reka-ui';
 
+/** The package each shadcn-vue component imports that Animate UI replaces: reka-ui unless listed. */
+const VUE_SWAPS: Record<string, [string, string]> = {
+  'input-otp': ['vue-input-otp', '@animate-ui/vue/primitives/input-otp'],
+};
+
 /** shadcn-vue's own files import reka-ui in each part: one statement per kind, values and types. */
 async function VueImportDiff({ name }: { name: string }) {
+  const [from, to] = VUE_SWAPS[name] ?? ['reka-ui', VUE_MODULE];
   const dir = path.join(VUE_FIXTURES, name);
   const files = await readdir(dir).catch(() => [] as string[]);
   const values = new Set<string>();
@@ -157,7 +163,10 @@ async function VueImportDiff({ name }: { name: string }) {
   for (const file of files.filter((f) => f.endsWith('.vue')).sort()) {
     const code = await readFile(path.join(dir, file), 'utf8');
     for (const [, type, names] of code.matchAll(
-      /^import\s+(type\s+)?\{([^}]*)\}\s+from\s+["']reka-ui["']/gm,
+      new RegExp(
+        `^import\\s+(type\\s+)?\\{([^}]*)\\}\\s+from\\s+["']${from}["']`,
+        'gm',
+      ),
     ))
       for (const specifier of names!.split(','))
         if (specifier.trim()) (type ? types : values).add(specifier.trim());
@@ -170,16 +179,16 @@ async function VueImportDiff({ name }: { name: string }) {
   ] as const) {
     if (!names.size) continue;
     const clause = `${kind} { ${[...names].sort().join(', ')} }`;
-    if (`${clause} from 'reka-ui'`.length <= PRINT_WIDTH) {
-      lines.push(`${clause} from 'reka-ui'`, `${clause} from '${VUE_MODULE}'`);
+    if (`${clause} from '${from}'`.length <= PRINT_WIDTH) {
+      lines.push(`${clause} from '${from}'`, `${clause} from '${to}'`);
       diff += '-+';
       continue;
     }
     lines.push(
       `${kind} {`,
       ...[...names].sort().map((specifier) => `  ${specifier},`),
-      `} from 'reka-ui'`,
-      `} from '${VUE_MODULE}'`,
+      `} from '${from}'`,
+      `} from '${to}'`,
     );
     diff += ' '.repeat(names.size + 1) + '-+';
   }

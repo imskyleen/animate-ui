@@ -39,6 +39,7 @@ const OWN_PAGES = [
   ['image-zoom', 'Black porcelain mug, zoomable'],
   ['magnetic', "onlyOnHover === 'true'"],
   ['particles', 'ParticlesLabel'],
+  ['input-otp', "from './input-otp'"],
   ['tabs', 'Bounce rate'],
   ['tooltip', 'Strikethrough'],
   ['avatar-group', 'Guillermo Rauch'],
@@ -89,7 +90,7 @@ for (const [library, pages] of [
         .first()
         .waitFor();
       await expect(
-        page.locator('[data-slot="vue-demo"] > *').first(),
+        page.locator('[data-slot="vue-demo"] > :not(noscript)').first(),
       ).toBeVisible();
       await expect(
         page
@@ -182,7 +183,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(62);
+  await expect(cards).toHaveCount(63);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

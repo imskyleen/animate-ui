@@ -16,6 +16,7 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   dialog: DIALOG_STRIP,
   'dropdown-menu': [/^duration-100$/],
   'hover-card': [/^duration-100$/],
+  'input-otp': [],
   menubar: [/^duration-100$/],
   'navigation-menu': [
     /^group-data-\[viewport=false\]\/navigation-menu:duration-200$/,
@@ -34,6 +35,14 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
 };
 
 const REKA_IMPORT = /(\bfrom\s+)(["'])reka-ui\2/g;
+
+/** Other packages a shadcn-vue component imports that Animate UI replaces. */
+export const VUE_PACKAGES: Record<string, { from: string; to: string }> = {
+  'input-otp': {
+    from: 'vue-input-otp',
+    to: `${VUE_PACKAGE}/primitives/input-otp`,
+  },
+};
 
 const TOKEN = /[^\s'"`]+/g;
 
@@ -85,6 +94,7 @@ function withSheetSide(code: string) {
 export type VueTransformResult = {
   code: string;
   imports: number;
+  packageImports: number;
   removedClasses: string[];
   centering: string[];
   sheetSide: boolean;
@@ -106,7 +116,19 @@ export function transformVue(
       return `${from}${quote}${VUE_MODULE}${quote}`;
     },
   );
-  const sided = component === 'sheet' ? withSheetSide(swapped) : swapped;
+  const swap = VUE_PACKAGES[component];
+  let packageImports = 0;
+  const repackaged = swap
+    ? swapped.replace(
+        new RegExp(`(\\bfrom\\s+)(["'])${swap.from}\\2`, 'g'),
+        (_, from: string, quote: string) => {
+          packageImports++;
+          return `${from}${quote}${swap.to}${quote}`;
+        },
+      )
+    : swapped;
+  const sided =
+    component === 'sheet' ? withSheetSide(repackaged) : repackaged;
   const { code: stripped, removed } = stripAnimationClasses(sided, extra);
   const { code: centered, centering } =
     options.tailwind === 3
@@ -115,8 +137,9 @@ export function transformVue(
   return {
     code: centered,
     imports,
+    packageImports,
     removedClasses: removed,
     centering,
-    sheetSide: sided !== swapped,
+    sheetSide: sided !== repackaged,
   };
 }

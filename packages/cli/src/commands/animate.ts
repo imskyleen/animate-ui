@@ -5,7 +5,12 @@ import { styleText } from 'node:util';
 import { PACKAGE } from '../lib/primitives';
 import { loadProject } from '../lib/project';
 import { transform } from '../lib/transform';
-import { transformVue, VUE_PACKAGE, VUE_PRIMITIVES } from '../lib/vue';
+import {
+  transformVue,
+  VUE_PACKAGE,
+  VUE_PACKAGES,
+  VUE_PRIMITIVES,
+} from '../lib/vue';
 
 type AnimateOptions = {
   cwd: string;
@@ -245,6 +250,8 @@ function animateVue(
       log(`${styleText('green', '✔')} ${relative(file)}`);
       if (result.imports > 0)
         log(`    reka-ui → ${VUE_PACKAGE}/primitives/reka-ui`);
+      if (result.packageImports > 0)
+        log(`    ${VUE_PACKAGES[name]!.from} → ${VUE_PACKAGES[name]!.to}`);
       if (result.removedClasses.length > 0)
         log(`    removed CSS animations: ${result.removedClasses.join(' ')}`);
       if (result.sheetSide)

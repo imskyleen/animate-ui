@@ -43,6 +43,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'animate-ui/input-otp': () => import('./demos/animate-ui/input-otp.vue'),
   'animate-ui/tabs': () => import('./demos/animate-ui/tabs.vue'),
   'animate-ui/avatar-group': () => import('./demos/animate-ui/avatar-group.vue'),
   'animate-ui/tooltip': () => import('./demos/animate-ui/tooltip.vue'),
@@ -99,6 +100,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/animate-ui-tabs': () => import('./fixtures/animate-ui-tabs.vue'),
   'fixtures/animate-ui-tabs-hidden': () =>
     import('./fixtures/animate-ui-tabs-hidden.vue'),
+  'fixtures/animate-ui-input-otp': () =>
+    import('./fixtures/animate-ui-input-otp.vue'),
   'fixtures/animate-ui-scroll-fade': () =>
     import('./fixtures/animate-ui-scroll-fade.vue'),
   'fixtures/animate-ui-image-zoom-props': () =>
