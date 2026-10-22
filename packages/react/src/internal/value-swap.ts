@@ -95,7 +95,7 @@ function crossfade(
   return stop;
 }
 
-/** A list laid over its trigger (item-aligned) hides the value until it starts fading out. */
+/** A list laid over its trigger (item-aligned) hides the value until it is half faded out. */
 function covered(el: HTMLElement) {
   const rect = el.getBoundingClientRect();
   const x = rect.left + rect.width / 2;
@@ -108,7 +108,7 @@ function covered(el: HTMLElement) {
     let opacity = 1;
     for (let node: Element | null = list; node; node = node.parentElement)
       opacity *= Number(getComputedStyle(node).opacity);
-    if (opacity > 0.9) return true;
+    if (opacity > 0.5) return true;
   }
   return false;
 }

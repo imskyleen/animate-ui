@@ -251,7 +251,7 @@ for (const { name, demo, over } of [
   { name: 'vue reka-ui', demo: '/tests/vue-demos/reka-ui/select', over: true },
   { name: 'react-aria', demo: '/tests/demos/react-aria/select', over: false },
 ]) {
-  test(`${name} select: the swap ${over ? 'waits for the list over the trigger to start leaving' : 'starts at once under a list below'}`, async ({ page }) => {
+  test(`${name} select: the swap ${over ? 'waits for the list over the trigger to be half gone' : 'starts at once under a list below'}`, async ({ page }) => {
     await page.goto(demo, { waitUntil: 'networkidle' });
     const trigger = page.locator('[role="combobox"], button[aria-haspopup]').first();
     await trigger.click();
@@ -277,7 +277,7 @@ for (const { name, demo, over } of [
     const { after, list } = await started;
     if (over) {
       expect(after).toBeGreaterThan(200);
-      expect(list).toBeLessThan(0.95);
+      expect(list).toBeLessThan(0.6);
     } else expect(after).toBeLessThan(150);
   });
 }
