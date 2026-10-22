@@ -694,7 +694,13 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   },
   'theme-toggler': { play: toggle((page) => buttons(page).first(), 1100) },
   tilt: {
-    play: sweep((page) => page.locator('main > *').first()),
+    play: sweep((page) =>
+      page
+        .locator(
+          'main > *:not([data-slot="vue-demo"]), main [data-slot="vue-demo"] > *',
+        )
+        .first(),
+    ),
     viewport: { width: 560, height: 420 },
   },
   'typing-text': {

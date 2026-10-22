@@ -1,0 +1,118 @@
+---
+title: Slide
+description: An entrance that slides elements into place on load or when they scroll into view.
+---
+
+<VueComponentPreview name="animate-ui/slide" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Slide, Slides } from '@animate-ui/vue/primitives/effects/slide';
+import Card from './Card.vue';
+</script>
+
+<template>
+  <Slide direction="up">
+    <h1>Animated primitives for Vue</h1>
+  </Slide>
+  <!-- Staggered: each child starts 100ms after the previous one. -->
+  <Slides :hold-delay="100" direction="up">
+    <Card />
+    <Card />
+    <Card />
+  </Slides>
+</template>
+```
+
+With `as-child`, the animation is applied to your element instead of a wrapping `div`.
+
+## Animation
+
+- The element travels `offset` pixels (100 by default) into place on a spring (stiffness 200, damping 20), overshooting by about 4% before it settles. It moves with `x` / `y`, a hardware-accelerated transform.
+- `direction` is the direction it moves in: `up` starts below its place.
+- Under reduced motion, it doesn't travel: it fades in instead.
+- `in-view` waits for the element to scroll into view, once by default.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+
+## API Reference
+
+### Slide
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    direction: {
+      description: 'Direction the element moves in.',
+      type: "'up' | 'down' | 'left' | 'right'",
+      default: "'up'",
+    },
+    offset: {
+      description: 'Distance travelled, in pixels.',
+      type: 'number',
+      default: '100',
+    },
+    delay: {
+      description: 'Delay before the animation starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
+    },
+    'in-view': {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-once': {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the animated element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Slides
+
+Wraps each child in a `Slide`, delaying each one a little more than the previous.
+
+<TypeTable
+  type={{
+    '#default': {
+      description: 'The elements to animate, each wrapped in a Slide.',
+      type: 'slot',
+      required: true,
+    },
+    'hold-delay': {
+      description: 'Delay added between each slide, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props passed to every Slide.',
+      type: 'SlideProps',
+    },
+  }}
+/>

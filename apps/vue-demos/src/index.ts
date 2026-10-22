@@ -3,6 +3,19 @@ import { createApp, h, reactive, type Component } from 'vue';
 type Props = Record<string, unknown>;
 
 const demos: Record<string, () => Promise<{ default: Component }>> = {
+  'animate-ui/auto-height': () => import('./demos/animate-ui/auto-height.vue'),
+  'animate-ui/image-zoom': () => import('./demos/animate-ui/image-zoom.vue'),
+  'animate-ui/scroll-fade': () =>
+    import('./demos/animate-ui/scroll-fade.vue'),
+  'animate-ui/shine': () => import('./demos/animate-ui/shine.vue'),
+  'animate-ui/magnetic': () => import('./demos/animate-ui/magnetic.vue'),
+  'animate-ui/tilt': () => import('./demos/animate-ui/tilt.vue'),
+  'animate-ui/blur': () => import('./demos/animate-ui/blur.vue'),
+  'animate-ui/effect': () => import('./demos/animate-ui/effect.vue'),
+  'animate-ui/fade': () => import('./demos/animate-ui/fade.vue'),
+  'animate-ui/slide': () => import('./demos/animate-ui/slide.vue'),
+  'animate-ui/zoom': () => import('./demos/animate-ui/zoom.vue'),
+  'animate-ui/click': () => import('./demos/animate-ui/click.vue'),
   'animate-ui/counting-number': () =>
     import('./demos/animate-ui/counting-number.vue'),
   'animate-ui/morphing-text': () =>
@@ -21,12 +34,16 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./demos/animate-ui/sliding-text.vue'),
   'animate-ui/gradient-text': () =>
     import('./demos/animate-ui/gradient-text.vue'),
+  'animate-ui/highlight': () =>
+    import('./demos/animate-ui/highlight.vue'),
   'animate-ui/highlight-text': () =>
     import('./demos/animate-ui/highlight-text.vue'),
   'animate-ui/swapping-text': () =>
     import('./demos/animate-ui/swapping-text.vue'),
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
+  'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'animate-ui/theme-toggler': () => import('./demos/animate-ui/theme-toggler.vue'),
   'animate-ui/rolling-text': () =>
     import('./demos/animate-ui/rolling-text.vue'),
   'reka-ui/accordion': () => import('./demos/reka-ui/accordion.vue'),
@@ -52,6 +69,12 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/preview-link-card': () =>
     import('./demos/reka-ui/preview-link-card.vue'),
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
+  'fixtures/animate-ui-highlight-cases': () =>
+    import('./fixtures/animate-ui-highlight-cases.vue'),
+  'fixtures/animate-ui-scroll-fade': () =>
+    import('./fixtures/animate-ui-scroll-fade.vue'),
+  'fixtures/animate-ui-image-zoom-props': () =>
+    import('./fixtures/animate-ui-image-zoom-props.vue'),
   'fixtures/reka-ui-toggle': () => import('./fixtures/reka-ui-toggle.vue'),
   'fixtures/reka-ui-dialog': () => import('./fixtures/reka-ui-dialog.vue'),
   'fixtures/reka-ui-menubar': () => import('./fixtures/reka-ui-menubar.vue'),

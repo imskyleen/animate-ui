@@ -40,6 +40,123 @@ export const frameworkOf = (pathname: string) =>
 
 /** The tweakpane of each Vue demo in apps/vue-demos, by demo name. */
 export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
+  'animate-ui/effect': {
+    Effect: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      blur: { value: true },
+      slide: { value: true },
+      fade: { value: true },
+      zoom: { value: true },
+    },
+  },
+  'animate-ui/blur': {
+    Blur: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      initialBlur: { value: 10, min: 0, max: 50, step: 1 },
+      blur: { value: 0, min: 0, max: 50, step: 1 },
+    },
+  },
+  'animate-ui/fade': {
+    Fade: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      initialOpacity: { value: 0, min: 0, max: 1, step: 0.1 },
+      opacity: { value: 1, min: 0, max: 1, step: 0.1 },
+    },
+  },
+  'animate-ui/slide': {
+    Slide: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      direction: {
+        value: 'up',
+        options: { up: 'up', down: 'down', left: 'left', right: 'right' },
+      },
+      offset: { value: 100, min: 0, max: 1000, step: 10 },
+    },
+  },
+  'animate-ui/zoom': {
+    Zoom: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      initialScale: { value: 0.5, min: 0, max: 1, step: 0.1 },
+      scale: { value: 1, min: 0, max: 1, step: 0.1 },
+    },
+  },
+  'animate-ui/tilt': {
+    Tilt: {
+      maxTilt: { value: 10, min: 0, max: 50, step: 1 },
+      perspective: { value: 800, min: 200, max: 5000, step: 10 },
+    },
+  },
+  'animate-ui/magnetic': {
+    Magnetic: {
+      onlyOnHover: { value: false },
+      strength: { value: 0.5, min: 0, max: 1, step: 0.05 },
+      range: { value: 120 },
+    },
+  },
+  'animate-ui/particles': {
+    ParticlesEffect: {
+      side: {
+        value: 'top',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 0, min: 0, max: 50, step: 1 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0, min: -50, max: 50, step: 1 },
+      count: { value: 6, min: 1, max: 30, step: 1 },
+      radius: { value: 30, min: 10, max: 100, step: 1 },
+      spread: { value: 360, min: 0, max: 1000, step: 1 },
+      duration: { value: 0.8, min: 0.1, max: 2, step: 0.1 },
+      holdDelay: { value: 0.05, min: 0, max: 0.2, step: 0.01 },
+      delay: { value: 0, min: 0, max: 3, step: 0.1 },
+    },
+  },
+  'animate-ui/theme-toggler': {
+    ThemeToggler: {
+      direction: {
+        value: 'ltr',
+        options: { btt: 'btt', ttb: 'ttb', ltr: 'ltr', rtl: 'rtl' },
+      },
+    },
+  },
+  'animate-ui/shine': {
+    Shine: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      duration: { value: 1200, min: 0, max: 3000, step: 100 },
+      loop: { value: true },
+      loopDelay: { value: 500, min: 0, max: 3000, step: 100 },
+      deg: { value: -15, min: -50, max: 50, step: 5 },
+      enable: { value: true },
+      enableOnHover: { value: false },
+      enableOnTap: { value: false },
+    },
+  },
+  'animate-ui/scroll-fade': {
+    ScrollFade: {
+      size: { value: 40, min: 0, max: 120, step: 4 },
+      shrink: { value: 0.03, min: 0, max: 0.2, step: 0.005 },
+      blur: { value: 4, min: 0, max: 8, step: 0.5 },
+    },
+  },
+  'animate-ui/click': {
+    Click: {
+      global: { value: false },
+      duration: { value: 400, min: 0, max: 3000, step: 100 },
+      size: { value: 100, min: 0, max: 300, step: 10 },
+    },
+  },
+  'animate-ui/highlight': {
+    Highlight: {
+      mode: {
+        value: 'children',
+        options: { children: 'children', parent: 'parent' },
+      },
+      exitDelay: { value: 200, min: 0, max: 3000, step: 100 },
+      hover: { value: false },
+    },
+  },
   'animate-ui/counting-number': {
     CountingNumber: {
       number: { value: 2025 },

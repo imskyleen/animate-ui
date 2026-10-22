@@ -1,0 +1,232 @@
+---
+title: Highlight
+description: A background that glides between items on click, on hover or with a controlled value.
+---
+
+<VueComponentPreview name="animate-ui/highlight" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Highlight } from '@animate-ui/vue/primitives/effects/highlight';
+</script>
+
+<template>
+  <Highlight default-value="overview" class="rounded-full bg-accent">
+    <button data-value="overview">Overview</button>
+    <button data-value="activity">Activity</button>
+    <button data-value="settings">Settings</button>
+  </Highlight>
+</template>
+```
+
+Each child is wrapped in a `HighlightItem`. Its value comes from `id`, `value`, `data-value` or the child's `id`, in that order. Items receive `data-active="true"` when highlighted, for styling.
+
+### Controlled items
+
+With `controlled-items`, place `HighlightItem`s anywhere inside `Highlight` instead of as direct children.
+
+```vue
+<Highlight controlled-items hover class="rounded-md bg-accent">
+  <nav>
+    <HighlightItem value="docs">
+      <a href="/docs">Docs</a>
+    </HighlightItem>
+    <HighlightItem value="blog">
+      <a href="/blog">Blog</a>
+    </HighlightItem>
+  </nav>
+</Highlight>
+```
+
+### Modes
+
+- `children` (default): the highlight is rendered inside the active item and moves with a shared layout animation. Prefer it in most cases.
+- `parent`: the highlight is rendered once in a container, and its position and size spring to the active item. Use it when the items clip or stack in a way that hides the `children` highlight.
+
+```vue
+<Highlight mode="parent" container-class-name="flex" class="bg-accent">
+  <div data-value="a">A</div>
+  <div data-value="b">B</div>
+</Highlight>
+```
+
+## Animation
+
+- In `children` mode, the highlight slides to the new item on a spring (stiffness 500, damping 40) with a shared layout animation: the previous item hands its surface over in the same frame, so one surface slides at full opacity. It fades in when nothing was highlighted, and fades out after `exit-delay` (200ms) when no item takes it.
+- In `parent` mode, a single highlight springs its top, left, width and height to the active item, fades in when it appears, and fades out `exit-delay` after the last item is left.
+- Leaving with `hover` fades it out after `exit-delay`, so moving between items doesn't flicker.
+- `hover` only applies to pointers that can hover (mouse, trackpad): touch taps never leave a highlight stuck.
+- In `parent` mode, `force-update-bounds` measures the active item on every frame, so the highlight follows it whatever moves it (scrolling, resizing, an animated container).
+- `<AnimateUIProvider :tempo>` paces the transition and `exit-delay`.
+- Under reduced motion, the highlight jumps to the new item and only fades.
+
+## API Reference
+
+### Highlight
+
+<TypeTable
+  type={{
+    as: {
+      description: 'Element of the container in `parent` mode.',
+      type: 'string | Component',
+      default: "'div'",
+    },
+    mode: {
+      description: 'Where the highlight is rendered.',
+      type: "'children' | 'parent'",
+      default: "'children'",
+    },
+    'v-model': {
+      description: 'The highlighted value (controlled).',
+      type: 'string | null',
+    },
+    'default-value': {
+      description: 'The value highlighted at first (uncontrolled).',
+      type: 'string | null',
+    },
+    '@update:model-value': {
+      description: 'Called when the highlighted value changes.',
+      type: '(value: string | null) => void',
+    },
+    class: {
+      description: 'Class names of the highlight.',
+      type: 'string',
+    },
+    style: {
+      description: 'Style of the highlight.',
+      type: 'StyleValue',
+    },
+    transition: {
+      description: 'Transition of the highlight.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 500, damping: 40 }",
+    },
+    hover: {
+      description: 'Highlight on hover instead of on click.',
+      type: 'boolean',
+      default: 'false',
+    },
+    click: {
+      description: 'Highlight on click.',
+      type: 'boolean',
+      default: 'true',
+    },
+    disabled: {
+      description: 'Hide the highlight.',
+      type: 'boolean',
+      default: 'false',
+    },
+    enabled: {
+      description: 'When `false`, children render as is, without items.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'exit-delay': {
+      description: 'Delay before the highlight fades out, in milliseconds.',
+      type: 'number',
+      default: '200',
+    },
+    'controlled-items': {
+      description:
+        'Place `HighlightItem`s yourself instead of wrapping each child.',
+      type: 'boolean',
+    },
+    'items-class-name': {
+      description:
+        'Class names of the wrapping items (without `controlled-items`).',
+      type: 'string',
+    },
+  }}
+/>
+
+#### Parent mode
+
+<TypeTable
+  type={{
+    'bounds-offset': {
+      description: 'Offset added to the highlight bounds.',
+      type: 'Partial<{ top: number; left: number; width: number; height: number }>',
+    },
+    'container-class-name': {
+      description: 'Class names of the container.',
+      type: 'string',
+    },
+    'force-update-bounds': {
+      description:
+        'Measure the active item on every frame, to follow it when it moves or resizes (scroll, resize, animations).',
+      type: 'boolean',
+    },
+  }}
+/>
+
+### HighlightItem
+
+<TypeTable
+  type={{
+    as: {
+      description: 'Element of the item.',
+      type: 'string | Component',
+      default: "'div'",
+    },
+    '#default': {
+      description: 'The item content.',
+      type: 'slot',
+      required: true,
+    },
+    id: {
+      description: 'Value of the item. Takes precedence over value.',
+      type: 'string',
+    },
+    value: {
+      description: 'Value of the item, when there is no id.',
+      type: 'string',
+    },
+    class: {
+      description: 'Class names of the item.',
+      type: 'string',
+    },
+    'active-class-name': {
+      description:
+        'Class names added to the highlight while this item is active.',
+      type: 'string',
+    },
+    style: {
+      description: 'Style of the highlight in this item.',
+      type: 'StyleValue',
+    },
+    transition: {
+      description:
+        'Transition of the highlight in this item. Defaults to the Highlight one.',
+      type: 'Transition',
+    },
+    disabled: {
+      description: 'Never highlight this item. Defaults to the Highlight one.',
+      type: 'boolean',
+    },
+    'exit-delay': {
+      description:
+        'Delay before the highlight fades out, in milliseconds. Defaults to the Highlight one.',
+      type: 'number',
+    },
+    'as-child': {
+      description: 'Render the child element as the item, merging their props.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'force-update-bounds': {
+      description:
+        'In `parent` mode, follow this item when it moves or resizes.',
+      type: 'boolean',
+    },
+  }}
+/>
+
+### useHighlight
+
+Returns the state of the closest `Highlight`: `activeValue`, `setActiveValue`, `mode`, and its options.

@@ -1,0 +1,128 @@
+---
+title: Effect
+description: An entrance that combines fade, blur, slide and zoom on load or when elements scroll into view.
+---
+
+<VueComponentPreview name="animate-ui/effect" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Effect, Effects } from '@animate-ui/vue/primitives/effects/effect';
+import Card from './Card.vue';
+</script>
+
+<template>
+  <Effect fade blur slide zoom>
+    <h1>Animated primitives for Vue</h1>
+  </Effect>
+  <!-- Staggered: each child starts 100ms after the previous one. -->
+  <Effects :hold-delay="100" fade blur slide zoom>
+    <Card />
+    <Card />
+    <Card />
+  </Effects>
+</template>
+```
+
+With `as-child`, the animation is applied to your element instead of a wrapping `div`.
+
+## Animation
+
+- Pick any combination of `fade`, `blur`, `slide` and `zoom`. `true` uses each effect's defaults; an object customizes it.
+- Everything animates together on one spring (stiffness 200, damping 20). Slide (`x` / `y`) and zoom (`scale`) are hardware-accelerated transforms.
+- Under reduced motion, there is no travel or scale: the fade and the blur still play.
+- `in-view` waits for the element to scroll into view, once by default.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+
+## API Reference
+
+### Effect
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    fade: {
+      description: 'Fade in. `true` goes from opacity 0 to 1.',
+      type: 'boolean | { initialOpacity?: number; opacity?: number }',
+      default: 'false',
+    },
+    blur: {
+      description: 'Come into focus. `true` goes from 10px to 0px.',
+      type: 'boolean | { initialBlur?: number; blur?: number }',
+      default: 'false',
+    },
+    slide: {
+      description: 'Slide into place. `true` moves up by 100px.',
+      type: "boolean | { direction?: 'up' | 'down' | 'left' | 'right'; offset?: number }",
+      default: 'false',
+    },
+    zoom: {
+      description: 'Scale into place. `true` goes from 0.5 to 1.',
+      type: 'boolean | { initialScale?: number; scale?: number }',
+      default: 'false',
+    },
+    delay: {
+      description: 'Delay before the animation starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
+    },
+    'in-view': {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-once': {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the animated element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Effects
+
+Wraps each child in an `Effect`, delaying each one a little more than the previous.
+
+<TypeTable
+  type={{
+    '#default': {
+      description: 'The elements to animate, each wrapped in an Effect.',
+      type: 'slot',
+      required: true,
+    },
+    'hold-delay': {
+      description: 'Delay added between each effect, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props passed to every Effect.',
+      type: 'EffectProps',
+    },
+  }}
+/>

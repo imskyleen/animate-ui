@@ -1,0 +1,93 @@
+---
+title: Theme Toggler
+description: A theme switch that wipes the new theme across the page with the View Transitions API.
+---
+
+<VueComponentPreview name="animate-ui/theme-toggler" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { useColorMode } from '@vueuse/core';
+import {
+  ThemeToggler,
+  type ThemeSelection,
+} from '@animate-ui/vue/primitives/effects/theme-toggler';
+
+const { store, system } = useColorMode();
+</script>
+
+<template>
+  <ThemeToggler
+    :theme="store as ThemeSelection"
+    :resolved-theme="system === 'dark' || store === 'dark' ? 'dark' : 'light'"
+    :set-theme="(theme) => (store = theme === 'system' ? 'auto' : theme)"
+  >
+    <template #default="{ effective, toggleTheme }">
+      <button @click="toggleTheme(effective === 'dark' ? 'light' : 'dark')">
+        {{ effective === 'dark' ? 'Light mode' : 'Dark mode' }}
+      </button>
+    </template>
+  </ThemeToggler>
+</template>
+```
+
+During the wipe, the `dark` class is toggled on `<html>`: this matches class-based dark mode (Tailwind's default, VueUse's `useColorMode`).
+
+## Animation
+
+- The new theme is revealed with a clip-path wipe over 700ms with an `ease-in-out`, in `direction` (left to right by default). The old and new pages are snapshots, so nothing re-renders mid-wipe.
+- `set-theme` is called once the wipe finishes; `@immediate-change` fires right away.
+- Switching to `system` when it resolves to the current theme changes nothing on screen, so there is no wipe.
+- Browsers without the View Transitions API swap the theme at once.
+- `<AnimateUIProvider :tempo>` paces the wipe.
+- Under reduced motion, the theme swaps at once, without the wipe.
+- On the server and while hydrating, the render function receives `effective: 'system'` and `resolved: 'light'`, since the theme is only known on the client.
+
+## API Reference
+
+### ThemeToggler
+
+<TypeTable
+  type={{
+    theme: {
+      description: 'The selected theme.',
+      type: "'light' | 'dark' | 'system'",
+      required: true,
+    },
+    'resolved-theme': {
+      description: 'The theme actually shown.',
+      type: "'light' | 'dark'",
+      required: true,
+    },
+    'set-theme': {
+      description: 'Applies a theme, called when the wipe ends.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: true,
+    },
+    direction: {
+      description:
+        'Direction of the wipe: bottom to top, top to bottom, left to right, right to left.',
+      type: "'btt' | 'ttb' | 'ltr' | 'rtl'",
+      default: "'ltr'",
+    },
+    'on-immediate-change': {
+      description: 'Called as soon as a theme is chosen, before the wipe.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+    },
+    '#default': {
+      description:
+        'Content, or a function of the current state that returns it.',
+      type: "slot, with { resolved: 'light' | 'dark'; effective: 'light' | 'dark' | 'system'; toggleTheme: (theme: 'light' | 'dark' | 'system') => void }",
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Magic UI](https://magicui.design/docs/components/animated-theme-toggler)'s animated theme toggler.

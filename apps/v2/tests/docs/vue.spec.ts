@@ -30,6 +30,21 @@ const PAGES = [
 
 /** Animate UI's own primitives in Vue, with a text from their demo's source. */
 const OWN_PAGES = [
+  ['auto-height', 'Show more'],
+  ['blur', ':initial-blur='],
+  ['click', 'Click anywhere in this area'],
+  ['effect', "zoom === 'true'"],
+  ['fade', ':initial-opacity='],
+  ['highlight', "{ value: 'activity', title: 'Activity' }"],
+  ['image-zoom', 'Black porcelain mug, zoomable'],
+  ['magnetic', "onlyOnHover === 'true'"],
+  ['particles', 'ParticlesLabel'],
+  ['scroll-fade', 'Ripple on keyboard press'],
+  ['shine', 'on(enableOnTap)'],
+  ['slide', 'Number(offset)'],
+  ['theme-toggler', 'StorageEvent'],
+  ['tilt', 'Dark Grey'],
+  ['zoom', ':initial-scale='],
   ['counting-number', 'tabular-nums'],
   ['gradient-text', "neon === 'true'"],
   ['highlight-text', 'dark:from-blue-500'],
@@ -61,7 +76,7 @@ for (const [library, pages] of [
         .first()
         .waitFor();
       await expect(
-        page.locator('[data-slot="vue-demo"] [data-slot]').first(),
+        page.locator('[data-slot="vue-demo"] > *').first(),
       ).toBeVisible();
       await expect(
         page
@@ -154,7 +169,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(36);
+  await expect(cards).toHaveCount(51);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

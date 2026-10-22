@@ -1,0 +1,102 @@
+---
+title: Shine
+description: A light that sweeps across an element, once, in a loop, on hover or on tap.
+---
+
+<VueComponentPreview name="animate-ui/shine" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Shine } from '@animate-ui/vue/primitives/effects/shine';
+</script>
+
+<template>
+  <Shine as-child loop :loop-delay="500">
+    <button>Get started</button>
+  </Shine>
+</template>
+```
+
+`enable-on-hover` and `enable-on-tap` play the shine on interaction instead of right away.
+
+## Animation
+
+- A skewed gradient of `color` (the text color by default) sweeps from left to right over `duration` (1.2s, `cubic-bezier(0.4, 0, 0.2, 1)`), clipped to the element. It never catches the pointer.
+- With `loop`, it sweeps again after `loop-delay`. With `enable-on-hover` and `loop`, it keeps sweeping while hovered.
+- It moves with a hardware-accelerated `transform`.
+- Under reduced motion, there is no shine: it's decorative.
+
+## API Reference
+
+### Shine
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Add the shine to the child element instead of a wrapping div.',
+      type: 'boolean',
+      default: 'false',
+    },
+    color: {
+      description: 'Color of the light.',
+      type: 'string',
+      default: "'currentColor'",
+    },
+    opacity: {
+      description: 'Opacity of the light.',
+      type: 'number',
+      default: '0.3',
+    },
+    duration: {
+      description: 'Duration of a sweep, in milliseconds.',
+      type: 'number',
+      default: '1200',
+    },
+    delay: {
+      description: 'Delay before the first sweep, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    loop: {
+      description: 'Sweep again and again.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'loop-delay': {
+      description: 'Pause between sweeps, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    deg: {
+      description: 'Skew angle of the light, in degrees.',
+      type: 'number',
+      default: '-15',
+    },
+    enable: {
+      description: 'Render the shine.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'enable-on-hover': {
+      description: 'Sweep when the pointer enters.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'enable-on-tap': {
+      description: 'Sweep when the element is pressed.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>

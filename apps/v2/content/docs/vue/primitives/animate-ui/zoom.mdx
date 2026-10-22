@@ -1,0 +1,117 @@
+---
+title: Zoom
+description: An entrance that scales elements up into place on load or when they scroll into view.
+---
+
+<VueComponentPreview name="animate-ui/zoom" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Zoom, Zooms } from '@animate-ui/vue/primitives/effects/zoom';
+import Card from './Card.vue';
+</script>
+
+<template>
+  <Zoom>
+    <h1>Animated primitives for Vue</h1>
+  </Zoom>
+  <!-- Staggered: each child starts 100ms after the previous one. -->
+  <Zooms :hold-delay="100">
+    <Card />
+    <Card />
+    <Card />
+  </Zooms>
+</template>
+```
+
+With `as-child`, the animation is applied to your element instead of a wrapping `div`.
+
+## Animation
+
+- The element scales from `initial-scale` (0.5 by default) to `scale` on a spring (stiffness 200, damping 20), overshooting by about 2% before it settles.
+- Under reduced motion, it doesn't scale: it fades in instead.
+- `in-view` waits for the element to scroll into view, once by default.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+
+## API Reference
+
+### Zoom
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'initial-scale': {
+      description: 'Scale the element starts from.',
+      type: 'number',
+      default: '0.5',
+    },
+    scale: {
+      description: 'Scale the element ends at.',
+      type: 'number',
+      default: '1',
+    },
+    delay: {
+      description: 'Delay before the animation starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
+    },
+    'in-view': {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-once': {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the animated element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Zooms
+
+Wraps each child in a `Zoom`, delaying each one a little more than the previous.
+
+<TypeTable
+  type={{
+    '#default': {
+      description: 'The elements to animate, each wrapped in a Zoom.',
+      type: 'slot',
+      required: true,
+    },
+    'hold-delay': {
+      description: 'Delay added between each zoom, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props passed to every Zoom.',
+      type: 'ZoomProps',
+    },
+  }}
+/>

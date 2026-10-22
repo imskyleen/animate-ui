@@ -1,5 +1,7 @@
 import type { Page } from '../test';
 
+import { FRAMEWORKS, type Framework } from './animate-ui-frameworks';
+
 export type EntranceSample = {
   opacity: number;
   y: number;
@@ -7,8 +9,11 @@ export type EntranceSample = {
   blur: number;
 };
 
-export const open = (page: Page, slug: string) =>
-  page.goto(`/tests/demos/animate-ui/${slug}`, { waitUntil: 'networkidle' });
+export const open = (
+  page: Page,
+  slug: string,
+  framework: Framework = FRAMEWORKS[0],
+) => page.goto(framework.demo(slug), { waitUntil: 'networkidle' });
 
 function read(el: Element): EntranceSample {
   const cs = getComputedStyle(el);

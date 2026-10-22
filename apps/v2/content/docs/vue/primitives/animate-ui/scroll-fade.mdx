@@ -1,0 +1,111 @@
+---
+title: Scroll Fade
+description: A scroll container whose edges fade only where there is more to scroll, animated as you scroll.
+---
+
+<VueComponentPreview name="animate-ui/scroll-fade" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { ScrollFade } from '@animate-ui/vue/primitives/effects/scroll-fade';
+</script>
+
+<template>
+  <ScrollFade class="h-64">
+    <ul><!-- … --></ul>
+  </ScrollFade>
+</template>
+```
+
+`orientation="horizontal"` fades the left and right edges, `"both"` all four. With `as-child`, the child element becomes the scroll container.
+
+To fade a scroll element you don't render yourself (a library's viewport), pass its ref to `useScrollFade`:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { ScrollAreaViewport } from 'reka-ui';
+import { useScrollFade } from '@animate-ui/vue/primitives/effects/scroll-fade';
+
+const viewport = ref<HTMLElement | null>(null);
+useScrollFade(viewport, () => ({ size: 32 }));
+</script>
+
+<template>
+  <ScrollAreaViewport ref="viewport"><!-- … --></ScrollAreaViewport>
+</template>
+```
+
+## Animation
+
+- An edge fades only when there is content past it: none at the edge you're at, none at all when nothing overflows. The fade follows the scroll position directly, with no lag: over the first half of `size` scrolled away from an edge (20px by default), that edge goes from sharp to faded, and back as you return. The fade keeps its depth (`size`); only how much the edge clears changes.
+- On page load, the fade is already in place: nothing animates in.
+- The items shrink and blur into the fade with it: from 1.75 times `size` away from a faded edge, each one eases toward 97% (`shrink`, 0.03) and a 4px blur (`blur`) as its center nears the edge, following the scroll the same way. Their places are measured when the content changes and once as a scroll starts, never every frame, and they're written once per frame. An item with its own `filter` keeps it and isn't blurred. The items are the children of the first element holding several (a list's items, through its `ul`), and a group among them is opened up: a `ul`, `ol`, `role="list"` or `role="group"`, or an element holding one (a section with its title and list), shrinks line by line, never as a whole. They're shrunk with the `scale` property so their own `transform` stays.
+- It's a `mask-image`, so the content itself dissolves: it works on any background, in light and dark.
+- Scrolling never re-renders Vue: the amounts are motion values written to CSS variables (`--scroll-fade-top`, `--scroll-fade-bottom`, `--scroll-fade-left`, `--scroll-fade-right`, from 0 to 1).
+- When the content changes size without a scroll (items added or removed), the edges ease to their new amount (200ms, `transition`).
+- Under reduced motion, the fade and the blur follow the scroll position the same way, and jump when the content changes size; nothing shrinks.
+
+## API Reference
+
+### ScrollFade
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Make the child element the scroll container instead of a wrapping div, merging their props and refs.',
+      type: 'boolean',
+      default: 'false',
+    },
+    orientation: {
+      description:
+        'Which edges fade. Also sets the overflow of that axis to `auto`.',
+      type: "'vertical' | 'horizontal' | 'both'",
+      default: "'vertical'",
+    },
+    size: {
+      description:
+        'Depth of the fade, in pixels, once an edge is fully faded. An edge fades in over the first half of `size` scrolled away from it.',
+      type: 'number',
+      default: '40',
+    },
+    shrink: {
+      description:
+        'How much the items shrink at the deepest of the fade (0 turns it off).',
+      type: 'number',
+      default: '0.03',
+    },
+    blur: {
+      description:
+        'Blur of the items at the deepest of the fade, in pixels (0 turns it off).',
+      type: 'number',
+      default: '4',
+    },
+    transition: {
+      description:
+        'How the edges ease when the content changes size without a scroll (a Motion transition, `duration` in seconds). Scrolling itself is followed directly.',
+      type: 'Transition',
+      default: '{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }',
+    },
+    enabled: {
+      description: 'Apply the fade.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the scroll container.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### useScrollFade
+
+`useScrollFade(ref, options)` applies the fade to the element of `ref`. It takes the options of `ScrollFade` (`orientation`, `size`, `shrink`, `blur`, `transition`, `enabled`) and returns the motion values of each edge (`top`, `bottom`, `left`, `right`). It doesn't set the overflow: the element must already scroll.

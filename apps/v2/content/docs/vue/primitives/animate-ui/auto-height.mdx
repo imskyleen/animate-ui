@@ -1,0 +1,76 @@
+---
+title: Auto Height
+description: A container that animates its height to fit its content whenever it changes.
+---
+
+<VueComponentPreview name="animate-ui/auto-height" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { AutoHeight } from '@animate-ui/vue/primitives/effects/auto-height';
+
+defineProps<{ expanded: boolean }>();
+</script>
+
+<template>
+  <AutoHeight :deps="[expanded]">
+    <LongContent v-if="expanded" />
+    <ShortContent v-else />
+  </AutoHeight>
+</template>
+```
+
+The content is measured with a `ResizeObserver`, so the height also follows changes `deps` doesn't know about (fonts loading, images, a resized window). `deps` re-measures right away when your state changes.
+
+## Animation
+
+- The height springs to the content's height (stiffness 300, damping 30, no bounce), clipping the content while it moves.
+- With `box-sizing: border-box` (Tailwind's default), the container's padding and border are included in the measured height.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+- Under reduced motion, the height changes at once.
+
+## API Reference
+
+### AutoHeight
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    deps: {
+      description:
+        'Values that change the content: the height is measured again when they change.',
+      type: 'unknown[]',
+      default: '[]',
+    },
+    transition: {
+      description: 'Transition of the height.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 300, damping: 30, bounce: 0, restDelta: 0.01 }",
+    },
+    animate: {
+      description: 'Extra values to animate along with the height.',
+      type: 'TargetAndTransition | LegacyAnimationControls',
+    },
+    '#default': {
+      description: 'The content.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "Omit<HTMLMotionProps<'div'>, 'animate'>",
+    },
+  }}
+/>

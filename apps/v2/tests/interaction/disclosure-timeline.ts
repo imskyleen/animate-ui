@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from '../test';
 
 export async function gotoHydrated(page: Page, url: string) {
+  if (url.includes('/vue-demos/')) return gotoVueMounted(page, url);
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => {
     const buttons = [...document.querySelectorAll('button')];

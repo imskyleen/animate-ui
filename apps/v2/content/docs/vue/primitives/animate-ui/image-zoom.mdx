@@ -1,0 +1,110 @@
+---
+title: Image Zoom
+description: An image that zooms in where the pointer is, on hover or on click.
+---
+
+<VueComponentPreview name="animate-ui/image-zoom" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Image, ImageZoom } from '@animate-ui/vue/primitives/effects/image-zoom';
+</script>
+
+<template>
+  <ImageZoom width="320px" height="320px" aria-label="Product photo, zoomable">
+    <Image src="/product.webp" alt="The product" />
+  </ImageZoom>
+</template>
+```
+
+`Image` renders an `img` by default; pass `as` to use your framework's image component (`:as="NuxtImg"`).
+
+## Animation
+
+- Hovering zooms in to `zoom-scale` on a spring, from the point under the pointer; moving the pointer pans the zoom.
+- Clicking (or tapping on touch screens) toggles the zoom. The cursor shows whether a click zooms in or out.
+- Under reduced motion, the zoom jumps instead of scaling.
+
+## API Reference
+
+### ImageZoom
+
+<TypeTable
+  type={{
+    'zoom-scale': {
+      description: 'Scale when zoomed in.',
+      type: 'number',
+      default: '3',
+    },
+    transition: {
+      description: 'Transition of the zoom.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 200, damping: 28 }",
+    },
+    'zoom-on-hover': {
+      description: 'Zoom in while hovered.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'zoom-on-click': {
+      description: 'Toggle the zoom on click or tap.',
+      type: 'boolean',
+      default: 'true',
+    },
+    disabled: {
+      description: 'Disable the zoom.',
+      type: 'boolean',
+      default: 'false',
+    },
+    width: {
+      description: 'Width of the container.',
+      type: 'string',
+      default: "'100%'",
+    },
+    height: {
+      description: 'Height of the container.',
+      type: 'string',
+      default: "'100%'",
+    },
+    '#default': {
+      description: 'The image.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the container (`role="img"`).',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### Image
+
+<TypeTable
+  type={{
+    'object-fit': {
+      description: 'How the image fills the container.',
+      type: 'string',
+      default: "'cover'",
+    },
+    as: {
+      description: 'Component rendering the image.',
+      type: 'string | Component',
+      default: "'img'",
+    },
+    '...props': {
+      description: 'Props of the image.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Jurre](https://www.framer.com/marketplace/components/hover-image-zoom/)'s Hover Zoom Framer component.

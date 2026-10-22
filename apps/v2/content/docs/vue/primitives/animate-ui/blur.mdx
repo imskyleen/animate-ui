@@ -1,0 +1,117 @@
+---
+title: Blur
+description: An entrance that brings elements into focus on load or when they scroll into view.
+---
+
+<VueComponentPreview name="animate-ui/blur" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Blur, Blurs } from '@animate-ui/vue/primitives/effects/blur';
+import Card from './Card.vue';
+</script>
+
+<template>
+  <Blur>
+    <h1>Animated primitives for Vue</h1>
+  </Blur>
+  <!-- Staggered: each child starts 100ms after the previous one. -->
+  <Blurs :hold-delay="100">
+    <Card />
+    <Card />
+    <Card />
+  </Blurs>
+</template>
+```
+
+With `as-child`, the animation is applied to your element instead of a wrapping `div`.
+
+## Animation
+
+- The element sharpens from `initial-blur` to `blur` on a spring (stiffness 200, damping 20): about 250ms from 10px to sharp.
+- Under reduced motion, it still comes into focus: a blur doesn't move anything.
+- `in-view` waits for the element to scroll into view, once by default.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+
+## API Reference
+
+### Blur
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'initial-blur': {
+      description: 'Blur the element starts from, in pixels.',
+      type: 'number',
+      default: '10',
+    },
+    blur: {
+      description: 'Blur the element ends at, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    delay: {
+      description: 'Delay before the animation starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Transition of the entrance.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 200, damping: 20 }",
+    },
+    'in-view': {
+      description: 'Wait for the element to be in view before animating.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-once': {
+      description: 'Only animate the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    '...props': {
+      description: 'Props of the animated element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Blurs
+
+Wraps each child in a `Blur`, delaying each one a little more than the previous.
+
+<TypeTable
+  type={{
+    '#default': {
+      description: 'The elements to animate, each wrapped in a Blur.',
+      type: 'slot',
+      required: true,
+    },
+    'hold-delay': {
+      description: 'Delay added between each blur, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props passed to every Blur.',
+      type: 'BlurProps',
+    },
+  }}
+/>

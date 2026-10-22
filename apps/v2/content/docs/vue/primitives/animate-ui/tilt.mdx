@@ -1,0 +1,86 @@
+---
+title: Tilt
+description: A card that tilts in 3D toward the pointer.
+---
+
+<VueComponentPreview name="animate-ui/tilt" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Tilt, TiltContent } from '@animate-ui/vue/primitives/effects/tilt';
+</script>
+
+<template>
+  <Tilt :max-tilt="10">
+    <TiltContent class="rounded-2xl border p-4">
+      <img src="/mug.webp" alt="Mug" />
+      <h3>Matt Mug</h3>
+    </TiltContent>
+  </Tilt>
+</template>
+```
+
+`Tilt` tracks the pointer and sets the perspective; `TiltContent` is the part that rotates.
+
+## Animation
+
+- The content rotates up to `max-tilt` degrees toward the pointer on a spring, and flattens back when it leaves.
+- The rotation is driven by motion values: moving the pointer never re-renders Vue.
+- Under reduced motion, the content stays flat.
+
+## API Reference
+
+### Tilt
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'max-tilt': {
+      description: 'Maximum rotation, in degrees.',
+      type: 'number',
+      default: '10',
+    },
+    perspective: {
+      description: 'CSS perspective, in pixels.',
+      type: 'number',
+      default: '800',
+    },
+    transition: {
+      description: 'Spring of the rotation.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 300, damping: 25, mass: 0.5 }',
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### TiltContent
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the rotating element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>

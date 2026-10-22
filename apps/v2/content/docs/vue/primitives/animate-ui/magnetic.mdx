@@ -1,0 +1,78 @@
+---
+title: Magnetic
+description: An element pulled toward the pointer when it comes close.
+---
+
+<VueComponentPreview name="animate-ui/magnetic" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Magnetic } from '@animate-ui/vue/primitives/effects/magnetic';
+</script>
+
+<template>
+  <Magnetic :strength="0.4" :range="160">
+    <button>Come closer</button>
+  </Magnetic>
+</template>
+```
+
+## Animation
+
+- Within `range` pixels of its center, the element moves toward the pointer: the closer, the stronger the pull (`strength`). The distance is measured from where the element currently is, pull included. It springs back when the pointer leaves the range.
+- The pull follows the pointer on a light, bouncy spring (stiffness 100, damping 10, mass 0.5), so it's interruptible and never jumps. It moves with `x` / `y`, a hardware-accelerated transform.
+- The pointer is only tracked while the element is on screen. With `only-on-hover`, only while it's hovered.
+- Off on touch screens (`disable-on-touch`), where there is no pointer to follow.
+- `<AnimateUIProvider :tempo>` paces the default spring.
+- Under reduced motion, the element stays in place.
+
+## API Reference
+
+### Magnetic
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    strength: {
+      description: 'How strongly the element is pulled, from 0 to 1.',
+      type: 'number',
+      default: '0.5',
+    },
+    range: {
+      description:
+        'Distance from the center within which the pointer pulls, in pixels.',
+      type: 'number',
+      default: '120',
+    },
+    'spring-options': {
+      description: 'Spring of the pull (useSpring options).',
+      type: 'SpringOptions',
+      default: '{ stiffness: 100, damping: 10, mass: 0.5 }',
+    },
+    'only-on-hover': {
+      description: 'Only pull while the element is hovered.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'disable-on-touch': {
+      description: 'Disable on devices without a precise hovering pointer.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
