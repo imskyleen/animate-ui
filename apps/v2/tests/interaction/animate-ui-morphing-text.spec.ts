@@ -22,16 +22,20 @@ for (const framework of FRAMEWORKS) {
       document.dispatchEvent(new Event('visibilitychange'));
     });
 
+  const LETTERS = '[aria-hidden="true"] > span:not([style*="hidden"])';
+
   const letters = (page: Page) =>
     root(page)
-      .locator('[aria-hidden="true"] > span')
+      .locator(LETTERS)
       .evaluateAll((els) =>
         els.map((el) => {
           const cs = getComputedStyle(el);
           const m = cs.transform.match(/matrix\(([^,]+)/);
+          const shift = new DOMMatrix(cs.transform).f;
           const blur = cs.filter.match(/blur\(([\d.]+)px\)/);
           return {
             scale: m ? Number(m[1]) : 1,
+            shift,
             blur: blur ? Number(blur[1]) : 0,
             opacity: Number(cs.opacity),
           };
@@ -116,27 +120,95 @@ for (const framework of FRAMEWORKS) {
       expect(third![0] - second![0]).toBeLessThan(3500);
     });
 
-    test('letters blur and shrink in and out', async ({ page }) => {
+    test('new letters rise in from a blur, then settle', async ({ page }) => {
       await open(page);
-      await nextText(page);
-      await expect
-        .poll(
-          async () =>
-            (await letters(page)).some(
-              (l) => l.blur > 0.5 && l.scale > 0.8 && l.scale < 0.99,
-            ),
-          { timeout: 1000, intervals: [30] },
-        )
-        .toBe(true);
+      const rising = root(page).evaluate(async (el, selector) => {
+        const first = el.querySelector('.sr-only')!.textContent;
+        while (el.querySelector('.sr-only')!.textContent === first)
+          await new Promise((r) => requestAnimationFrame(r));
+        let seen = false;
+        const start = performance.now();
+        while (performance.now() - start < 600) {
+          await new Promise((r) => requestAnimationFrame(r));
+          for (const span of el.querySelectorAll<HTMLElement>(selector)) {
+            const cs = getComputedStyle(span);
+            const blur = Number(
+              cs.filter.match(/blur\(([\d.e-]+)px\)/)?.[1] ?? 0,
+            );
+            if (blur > 0.5 && new DOMMatrix(cs.transform).f > 0.5) seen = true;
+          }
+        }
+        return seen;
+      }, LETTERS);
+      expect(await rising).toBe(true);
       await expect
         .poll(
           async () =>
             (await letters(page)).every(
-              (l) => l.blur === 0 && l.scale === 1 && l.opacity === 1,
+              (l) =>
+                l.blur === 0 &&
+                l.scale === 1 &&
+                l.shift === 0 &&
+                l.opacity === 1,
             ),
           { timeout: 2400 },
         )
         .toBe(true);
+    });
+
+    // Bug: letters were matched by character alone, so they crossed the whole text as it changed.
+    test('the letters both texts share slide in their order, never crossing', async ({
+      page,
+    }) => {
+      await open(page);
+      const crossings = root(page).evaluate(async (el, selector) => {
+        let crossed = 0;
+        const start = performance.now();
+        while (performance.now() - start < 3600) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const lefts = [...el.querySelectorAll<HTMLElement>(selector)]
+            .filter((span) => {
+              const cs = getComputedStyle(span);
+              return (
+                cs.position !== 'absolute' &&
+                Number(cs.opacity) > 0.99 &&
+                !/blur\((?!0px)/.test(cs.filter)
+              );
+            })
+            .map((span) => span.getBoundingClientRect().left);
+          if (lefts.some((left, i) => i > 0 && left < lefts[i - 1]! - 1))
+            crossed++;
+        }
+        return crossed;
+      }, LETTERS);
+      await nextText(page);
+      expect(await crossings).toBe(0);
+    });
+
+    // Bug: each letter in its own box lost the font's kerning, leaving gaps.
+    test('at rest, the letters sit where the font sets them', async ({
+      page,
+    }) => {
+      await open(page);
+      await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(300);
+      const { drawn, natural } = await root(page).evaluate((el, selector) => {
+        const spans = [...el.querySelectorAll<HTMLElement>(selector)];
+        const first = spans[0]!.getBoundingClientRect();
+        const last = spans.at(-1)!.getBoundingClientRect();
+        const probe = document.createElement('span');
+        const cs = getComputedStyle(spans[0]!);
+        probe.style.font = cs.font;
+        probe.style.letterSpacing = cs.letterSpacing;
+        probe.style.whiteSpace = 'pre';
+        probe.style.position = 'absolute';
+        probe.textContent = spans.map((span) => span.textContent).join('');
+        document.body.append(probe);
+        const natural = probe.getBoundingClientRect().width;
+        probe.remove();
+        return { drawn: last.right - first.left, natural };
+      }, LETTERS);
+      expect(Math.abs(drawn - natural)).toBeLessThan(0.75);
     });
 
     test('pauses while the tab is hidden', async ({ page }) => {

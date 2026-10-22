@@ -29,7 +29,8 @@ import { MorphingText } from '@animate-ui/vue/primitives/texts/morphing';
 
 ## Animation
 
-- Each text holds for `hold-delay`, then morphs into the next: letters both texts share glide to their new place (a shared layout animation), the others fade, blur (10px) and scale (0.8) in and out. Everything moves on a soft spring (`stiffness: 125, damping: 25, mass: 0.4`) without overshoot.
+- Each text holds for `hold-delay`, then morphs into the next. The letters both texts share, in the same order, slide to their new place on `spring.selection` (stiffness 300, damping 30): they never cross each other. The others fade out into a blur (6px) in 150ms, and the new ones rise in from it (0.12em, 300ms on the ease-out curve), 80ms later and 12ms apart.
+- Each letter takes exactly its width in the whole text, so the font's kerning holds: at rest, the text reads as if it were set in one piece.
 - Emoji and accented letters stay whole.
 - The cycle pauses off screen and in a hidden tab.
 - `<AnimateUIProvider :tempo>` paces the default spring.
@@ -68,17 +69,17 @@ import { MorphingText } from '@animate-ui/vue/primitives/texts/morphing';
     initial: {
       description: 'Entering state of each letter.',
       type: 'TargetAndTransition | VariantLabels | boolean',
-      default: "{ opacity: 0, scale: 0.8, filter: 'blur(10px)' }",
+      default: "{ opacity: 0, y: '0.12em', filter: 'blur(6px)' }",
     },
     animate: {
       description: 'Resting state of each letter.',
       type: 'TargetAndTransition | VariantLabels | boolean',
-      default: "{ opacity: 1, scale: 1, filter: 'blur(0px)' }",
+      default: "{ opacity: 1, y: 0, filter: 'blur(0px)' }",
     },
     exit: {
       description: 'Exiting state of each letter.',
       type: 'TargetAndTransition | VariantLabels',
-      default: "{ opacity: 0, scale: 0.8, filter: 'blur(10px)' }",
+      default: "{ opacity: 0, filter: 'blur(6px)' }, in 150ms",
     },
     variants: {
       description: 'Variants of each letter, for variant labels.',
@@ -87,7 +88,7 @@ import { MorphingText } from '@animate-ui/vue/primitives/texts/morphing';
     transition: {
       description: 'Transition of each letter.',
       type: 'Transition',
-      default: "{ type: 'spring', stiffness: 125, damping: 25, mass: 0.4 }",
+      default: "{ type: 'spring', stiffness: 300, damping: 30, opacity and filter: { duration: 0.3, ease: [0.23, 1, 0.32, 1] } }",
     },
     'in-view': {
       description: 'Wait for the text to be in view before cycling.',
