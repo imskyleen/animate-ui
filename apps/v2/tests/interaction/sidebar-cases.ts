@@ -281,10 +281,10 @@ function seekToggle(page: Page) {
         )!;
         const label = models.querySelector('span')!;
         const sub = document.querySelector<HTMLElement>(
-          '[data-sidebar="menu-sub"]',
+          ':is([data-sidebar="menu-sub"],[data-slot="sidebar-menu-sub"])',
         )!;
         const projects = button('Design Engineering').closest<HTMLElement>(
-          '[data-sidebar="group"]',
+          ':is([data-sidebar="group"],[data-slot="sidebar-group"])',
         )!;
         const ellipses = [
           ...wrapper.querySelectorAll<HTMLElement>('[data-sidebar] span'),
@@ -339,13 +339,13 @@ function seekToggle(page: Page) {
 function heightsBefore(page: Page) {
   return page.evaluate(() => ({
     sub: document
-      .querySelector('[data-sidebar="menu-sub"]')!
+      .querySelector(':is([data-sidebar="menu-sub"],[data-slot="sidebar-menu-sub"])')!
       .getBoundingClientRect().height,
     projects: [
       ...document.querySelectorAll<HTMLElement>('[data-sidebar="menu-button"]'),
     ]
       .find((el) => el.textContent?.includes('Design Engineering'))!
-      .closest('[data-sidebar="group"]')!
+      .closest(':is([data-sidebar="group"],[data-slot="sidebar-group"])')!
       .getBoundingClientRect().height,
   }));
 }
@@ -425,8 +425,11 @@ function expectToggle(
   }
 }
 
-export function describeSidebar(library: string) {
-  const path = `/examples/${library}/sidebar`;
+export function describeSidebar(
+  library: string,
+  path = `/examples/${library}/sidebar`,
+  docs = `/docs/primitives/${library}/sidebar`,
+) {
   const title = `${library} sidebar demo`;
   const trigger = (page: Page) =>
     page.locator('[data-sidebar="trigger"]').first();
@@ -900,7 +903,7 @@ export function describeSidebar(library: string) {
     test('the preview shows it in an iframe of its page, at a desktop width', async ({
       page,
     }) => {
-      await page.goto(`/docs/primitives/${library}/sidebar`, {
+      await page.goto(docs, {
         waitUntil: 'networkidle',
       });
       const iframe = page.locator('[data-slot="preview-iframe"]');

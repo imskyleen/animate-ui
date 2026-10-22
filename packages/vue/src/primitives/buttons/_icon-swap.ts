@@ -1,4 +1,12 @@
-import { defineComponent, h, type Component, type PropType } from 'vue';
+import {
+  defineComponent,
+  h,
+  onBeforeUnmount,
+  ref,
+  watch,
+  type Component,
+  type PropType,
+} from 'vue';
 import { AnimatePresence, motion, type Transition } from 'motion-v';
 
 import {
@@ -34,6 +42,21 @@ const IconSwap = defineComponent({
   },
   setup(props, { attrs, slots }) {
     const reduce = useShouldReduceMotion();
+    // The new icon is painted once as it enters, then animates, even after a long frame.
+    const painted = ref(true);
+    let frame = 0;
+    watch(
+      () => props.swapKey,
+      () => {
+        painted.value = false;
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          frame = requestAnimationFrame(() => (painted.value = true));
+        });
+      },
+      { flush: 'sync' },
+    );
+    onBeforeUnmount(() => cancelAnimationFrame(frame));
     const defaultTransition = useTempoTransition(() =>
       props.rotate ? motionTokens.transition.spin : SWAP_TRANSITION,
     );
@@ -79,7 +102,7 @@ const IconSwap = defineComponent({
                 'data-icon': props.swapKey,
                 'aria-hidden': 'true',
                 initial: props.instant ? false : entering,
-                animate: shown,
+                animate: painted.value || props.instant ? shown : entering,
                 exit: props.instant ? undefined : leaving,
                 transition: props.transition ?? defaultTransition.value,
                 style: { display: 'inline-flex' },

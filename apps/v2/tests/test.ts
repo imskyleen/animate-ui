@@ -54,7 +54,7 @@ export const test = base.extend<{
       page.on('pageerror', (error) => problems.push(`page: ${error.message}`));
       // A Vue demo mounts after the page loads: wait for it, wherever a suite navigates.
       const mounted = async () => {
-        if (page.url().includes('/vue-demos/'))
+        if (/\/vue-demos\/|\/examples\/vue\//.test(page.url()))
           await page
             .locator('[data-slot="vue-demo"][data-mounted]')
             .first()

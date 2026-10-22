@@ -14,16 +14,19 @@ export async function VueComponentPreview({
   name,
   values,
   code: showCode = true,
+  iframe = false,
 }: {
   name: string;
   values?: Record<string, string | number | boolean>;
   code?: boolean;
+  iframe?: boolean;
 }) {
   const source = await readFile(path.join(DEMOS, `${name}.vue`), 'utf8');
 
   return (
     <PreviewFrame
       vueDemo={name}
+      {...(iframe && { iframe: `/examples/vue/${name}` })}
       controls={VUE_DEMO_CONTROLS[name]}
       values={values}
       code={
