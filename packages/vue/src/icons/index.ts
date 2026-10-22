@@ -74,6 +74,7 @@ type AnimateIconContextValue = {
   persistOnAnimateEnd?: boolean;
   delay?: number;
   speed?: number;
+  startsAnimated?: boolean;
 };
 
 type IconProps<T = string> = {
@@ -142,6 +143,7 @@ const triggerProps = {
   persistOnAnimateEnd: { type: Boolean, default: undefined },
   delay: { type: Number, default: undefined },
   speed: { type: Number, default: undefined },
+  initial: { type: Boolean, default: undefined },
 } as const;
 
 /** An icon's own props, with every option left unset until it's given. */
@@ -186,9 +188,7 @@ const AnimateIconRoot = defineComponent({
     const reduceMotion = useShouldReduceMotion();
 
     const initialAnimate = o.animate();
-    const localAnimate = ref(
-      initialAnimate === false ? false : o.delay() <= 0,
-    );
+    const localAnimate = ref(initialAnimate === false ? false : o.delay() <= 0);
     const currentAnimation = ref<string>(
       typeof initialAnimate === 'string' ? initialAnimate : o.animation(),
     );
@@ -272,10 +272,11 @@ const AnimateIconRoot = defineComponent({
 
     const startAnim = async (
       anim: 'initial' | 'animate',
-      method: 'start' | 'set' = 'start',
+      method: 'start' | 'set' | 'jump' = 'start',
     ) => {
       try {
-        await controls[method](anim);
+        if (method === 'jump') await controls.start(anim, { duration: 0 });
+        else await controls[method](anim);
         status = anim;
       } catch {
         return;
@@ -292,6 +293,8 @@ const AnimateIconRoot = defineComponent({
     );
 
     let mounted = false;
+    let instant = props.initial === false;
+    const startsAnimated = ref(instant && playing.value);
     const run = async (gen: number): Promise<void> => {
       const stale = () => cancelled || gen !== runGen;
       if (stale()) {
@@ -336,7 +339,8 @@ const AnimateIconRoot = defineComponent({
         await startAnim('initial');
         return;
       }
-      await startAnim('animate');
+      await startAnim('animate', instant ? 'jump' : 'start');
+      startsAnimated.value = false;
       if (stale()) {
         finish();
         await startAnim('initial');
@@ -381,6 +385,7 @@ const AnimateIconRoot = defineComponent({
       runGen++;
       cancelled = false;
       void run(runGen);
+      instant = false;
     };
     // The controls need the icon's elements: the first run waits for the mount.
     onMounted(() => {
@@ -415,6 +420,7 @@ const AnimateIconRoot = defineComponent({
       persistOnAnimateEnd: o.persistOnAnimateEnd(),
       delay: o.delay(),
       speed: props.speed,
+      startsAnimated: startsAnimated.value,
     }));
 
     const handlers = {
@@ -600,9 +606,25 @@ const IconContent = defineComponent({
   setup(props, { attrs, slots }) {
     const context = useAnimateIconContext();
     const variants = useIconVariants(props.animations);
+    // Mounted animated (`initial` false): each part starts where `animate` takes it.
+    const shown = computed(() =>
+      context().startsAnimated
+        ? Object.fromEntries(
+            Object.entries(variants.value).map(([part, v]) => {
+              const target = (v as Record<string, unknown>).animate;
+              if (!target || typeof target !== 'object') return [part, v];
+              const { transition: _, ...at } = target as Record<
+                string,
+                unknown
+              >;
+              return [part, { ...v, initial: at }];
+            }),
+          )
+        : variants.value,
+    );
     return () =>
       slots.default?.({
-        variants: variants.value as IconSlotProps['variants'],
+        variants: shown.value as IconSlotProps['variants'],
         controls: context().controls,
         size: props.size,
         attrs: {
@@ -696,6 +718,7 @@ const IconWrapper = defineComponent({
               delay: props.delay,
               speed: props.speed ?? parent.speed,
               completeOnStop: props.completeOnStop ?? parent.completeOnStop,
+              initial: props.initial,
               asChild: true,
             },
             () => content(drawsPaths(animation)),
@@ -732,6 +755,7 @@ const IconWrapper = defineComponent({
             completeOnStop: props.completeOnStop,
             persistOnAnimateEnd: props.persistOnAnimateEnd,
             initialOnAnimateEnd: props.initialOnAnimateEnd,
+            initial: props.initial,
             asChild: true,
           },
           () => content(drawsPaths(props.animation)),

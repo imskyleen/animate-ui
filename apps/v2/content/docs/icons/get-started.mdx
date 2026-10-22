@@ -60,6 +60,7 @@ Every icon has a `default` animation, often a few named ones, plus `path` (draws
 - `persistOnAnimateEnd`: stay in the animated state when it ends.
 - `initialOnAnimateEnd`: jump back to the initial state, without transition, when it ends.
 - `completeOnStop`: finish the current animation before returning to rest.
+- `initial={false}`: mounted while `animate` is on, show its end state at once instead of playing it (a sidebar's trigger icon, closed from the start).
 
 Under reduced motion, icons don't animate.
 
@@ -142,6 +143,12 @@ Under reduced motion, icons don't animate.
       description: 'Finish the current animation before stopping.',
       type: 'boolean',
       default: 'false',
+    },
+    initial: {
+      description:
+        'False: mounted while `animate` is on, show its end state at once instead of playing it.',
+      type: 'boolean',
+      default: 'true',
     },
   }}
 />

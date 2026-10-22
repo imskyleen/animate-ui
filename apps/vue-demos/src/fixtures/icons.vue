@@ -4,12 +4,14 @@ import { ref } from 'vue'
 import Bell from '../../../v2/registry/vue/icons/bell/Bell.vue'
 import CirclePlus from '../../../v2/registry/vue/icons/circle-plus/CirclePlus.vue'
 import Fingerprint from '../../../v2/registry/vue/icons/fingerprint/Fingerprint.vue'
+import PanelLeft from '../../../v2/registry/vue/icons/panel-left/PanelLeft.vue'
 import RefreshCw from '../../../v2/registry/vue/icons/refresh-cw/RefreshCw.vue'
 import NoRef from './icons-no-ref.vue'
 
 const play = ref(false)
 const delayed = ref(false)
 const drawn = ref(false)
+const panel = ref(true)
 const viewRef = ref(null)
 </script>
 
@@ -26,6 +28,12 @@ const viewRef = ref(null)
           <RefreshCw :size="48" />
         </NoRef>
       </AnimateIcon>
+    </section>
+    <section data-testid="mounted-animated">
+      <PanelLeft :animate="panel" :initial="false" :size="48" />
+      <button type="button" @click="panel = !panel">
+        Toggle panel
+      </button>
     </section>
     <section data-testid="hover">
       <Bell animate-on-hover :size="48" />

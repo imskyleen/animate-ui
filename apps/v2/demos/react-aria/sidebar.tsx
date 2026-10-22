@@ -11,6 +11,7 @@ import {
 } from "@animate-ui/react/primitives/react-aria"
 
 import * as SidebarPrimitive from "@animate-ui/react/primitives/sidebar"
+import { PanelLeft } from "@/registry/hugeicons/panel-left"
 import { Button } from "@/components/ui/react-aria/button"
 import { Input } from "@/components/ui/react-aria/input"
 import { Separator } from "@/components/ui/react-aria/separator"
@@ -57,8 +58,6 @@ import {
   MapsIcon,
   MoreHorizontalIcon,
   Notification01Icon,
-  PanelLeftCloseIcon,
-  PanelLeftOpenIcon,
   PieChartIcon,
   PlusSignIcon,
   RoboticIcon,
@@ -211,7 +210,7 @@ function SidebarTrigger({
   onPress,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, open, openMobile, isMobile } = useSidebar()
 
   return (
     <Button
@@ -226,10 +225,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <SidebarPrimitive.TriggerIcon
-        open={<HugeiconsIcon icon={PanelLeftCloseIcon} strokeWidth={2} />}
-        closed={<HugeiconsIcon icon={PanelLeftOpenIcon} strokeWidth={2} />}
-      />
+      <PanelLeft animate={!(isMobile ? openMobile : open)} initial={false} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

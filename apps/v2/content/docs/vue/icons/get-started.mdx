@@ -67,6 +67,7 @@ Every icon has a `default` animation, often a few named ones, plus `path` (draws
 - `persist-on-animate-end`: stay in the animated state when it ends.
 - `initial-on-animate-end`: jump back to the initial state, without transition, when it ends.
 - `complete-on-stop`: finish the current animation before returning to rest.
+- `:initial="false"`: mounted while `animate` is on, show its end state at once instead of playing it (a sidebar's trigger icon, closed from the start).
 
 Under reduced motion, icons don't animate.
 
@@ -153,6 +154,12 @@ Each icon is a single-file component: its `animations` (the same as the React ic
       description: 'Finish the current animation before stopping.',
       type: 'boolean',
       default: 'false',
+    },
+    initial: {
+      description:
+        'False: mounted while `animate` is on, show its end state at once instead of playing it.',
+      type: 'boolean',
+      default: 'true',
     },
   }}
 />

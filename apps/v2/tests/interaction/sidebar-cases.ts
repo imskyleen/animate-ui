@@ -339,7 +339,9 @@ function seekToggle(page: Page) {
 function heightsBefore(page: Page) {
   return page.evaluate(() => ({
     sub: document
-      .querySelector(':is([data-sidebar="menu-sub"],[data-slot="sidebar-menu-sub"])')!
+      .querySelector(
+        ':is([data-sidebar="menu-sub"],[data-slot="sidebar-menu-sub"])',
+      )!
       .getBoundingClientRect().height,
     projects: [
       ...document.querySelectorAll<HTMLElement>('[data-sidebar="menu-button"]'),
@@ -768,53 +770,38 @@ export function describeSidebar(
       await expect(tooltip).toBeHidden();
     });
 
-    test("the trigger's icon swaps as the sidebar opens and closes", async ({
+    test("the trigger's panel icon narrows as the sidebar closes, and widens back", async ({
       page,
     }) => {
-      const icons = trigger(page).locator('[data-icon]');
-      await expect(icons).toHaveCount(1);
-      await expect(icons).toHaveAttribute('data-icon', 'open');
-      const frames = page.evaluate(
-        () =>
-          new Promise<{ key: string; opacity: number; scale: number }[][]>(
-            (resolve) => {
-              const out: { key: string; opacity: number; scale: number }[][] =
-                [];
+      const shifts = () =>
+        page.evaluate(
+          () =>
+            new Promise<number[]>((resolve) => {
+              const out: number[] = [];
               const t0 = performance.now();
               const tick = () => {
-                out.push(
-                  [
-                    ...document.querySelectorAll<HTMLElement>(
-                      '[data-sidebar="trigger"] [data-icon]',
-                    ),
-                  ].map((el) => {
-                    const style = getComputedStyle(el);
-                    const scale = style.transform.match(/matrix\(([^,]+)/);
-                    return {
-                      key: el.dataset.icon!,
-                      opacity: Number(style.opacity),
-                      scale: scale ? Number(scale[1]) : 1,
-                    };
-                  }),
+                const part = document.querySelector(
+                  '[data-sidebar="trigger"] svg > :last-child',
                 );
-                if (performance.now() - t0 < 400) requestAnimationFrame(tick);
+                if (part)
+                  out.push(new DOMMatrix(getComputedStyle(part).transform).e);
+                if (performance.now() - t0 < 700) requestAnimationFrame(tick);
                 else resolve(out);
               };
               requestAnimationFrame(tick);
-            },
-          ),
-      );
+            }),
+        );
+      let frames = shifts();
       await page.keyboard.press('ControlOrMeta+b');
-      const shown = await frames;
-      const entering = shown.flatMap((icons) =>
-        icons.filter((icon) => icon.key === 'closed'),
-      );
-      expect(entering.length).toBeGreaterThan(3);
-      expect(
-        entering.some((icon) => icon.scale < 0.9 && icon.opacity < 0.9),
-      ).toBe(true);
-      expect(shown.some((icons) => icons.length === 2)).toBe(true);
-      expect(shown.at(-1)!).toEqual([{ key: 'closed', opacity: 1, scale: 1 }]);
+      let seen = await frames;
+      expect(seen[0]).toBeCloseTo(0, 1);
+      expect(seen.some((x) => x < -0.3 && x > -1.7)).toBe(true);
+      expect(seen.at(-1)).toBeCloseTo(-2, 1);
+      frames = shifts();
+      await page.keyboard.press('ControlOrMeta+b');
+      seen = await frames;
+      expect(seen.some((x) => x < -0.3 && x > -1.7)).toBe(true);
+      expect(seen.at(-1)).toBeCloseTo(0, 1);
     });
 
     test("the rail's hover line fades on the color's curve", async ({
@@ -857,6 +844,41 @@ export function describeSidebar(
       await expect.poll(() => angle('Models')).toBe(90);
       await button(page, 'Models').click();
       await expect.poll(() => angle('Models')).toBe(0);
+    });
+
+    // Bug: in Vue, during a fast sweep, highlights handed off from earlier buttons stayed lit where they were.
+    test('a fast sweep leaves one highlight, never several apart', async ({
+      page,
+    }) => {
+      const boxes = await page
+        .locator(BUTTONS)
+        .filter({ visible: true })
+        .evaluateAll((els) =>
+          els.map((el) => {
+            const r = el.getBoundingClientRect();
+            return { x: r.x, y: r.y, h: r.height };
+          }),
+        );
+      const x = boxes[2]!.x + 60;
+      const top = Math.min(...boxes.map((b) => b.y)) - 20;
+      const bottom = Math.max(...boxes.map((b) => b.y + b.h)) + 20;
+      await page.mouse.move(x, top);
+      const spread = page.evaluate(async (surface) => {
+        const apart: number[] = [];
+        const start = performance.now();
+        while (performance.now() - start < 1800) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const ys = [...document.querySelectorAll(surface)]
+            .filter((el) => Number(getComputedStyle(el).opacity) > 0.6)
+            .map((el) => el.getBoundingClientRect().y);
+          if (ys.length > 1) apart.push(Math.max(...ys) - Math.min(...ys));
+        }
+        return apart.filter((d) => d > 24).length;
+      }, SURFACE);
+      await page.mouse.move(x, bottom, { steps: 12 });
+      await page.waitForTimeout(80);
+      await page.mouse.move(x, top + 40, { steps: 9 });
+      expect(await spread).toBe(0);
     });
 
     test('nothing animates on mount', async ({ page }) => {

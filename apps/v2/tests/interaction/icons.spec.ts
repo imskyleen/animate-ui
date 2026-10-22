@@ -986,3 +986,44 @@ test('a looping icon whose element is out of reach keeps looping instead of wait
   );
   expect(new Set(angles).size).toBeGreaterThan(5);
 });
+
+for (const framework of ICON_FRAMEWORKS)
+  // Bug: a sidebar collapsed from the start played its trigger icon's animation on load.
+  test(`${framework.name}an icon mounted animated with initial false shows its end state at once, and still animates after`, async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const w = window as unknown as { __x1: number[] };
+      w.__x1 = [];
+      const tick = () => {
+        const line = document.querySelector(
+          '[data-testid="mounted-animated"] line',
+        );
+        if (line) w.__x1.push(Number(line.getAttribute('x1')));
+        if (w.__x1.length < 90) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await open(page, framework.path);
+    await page.waitForTimeout(400);
+    const mounted = await page.evaluate(
+      () => (window as unknown as { __x1: number[] }).__x1,
+    );
+    expect(mounted.length).toBeGreaterThan(5);
+    expect(mounted.filter((x) => Math.abs(x - 7) > 0.05)).toEqual([]);
+
+    const line = page.locator('[data-testid="mounted-animated"] line');
+    const back = line.evaluate(async (el) => {
+      const seen: number[] = [];
+      const start = performance.now();
+      while (performance.now() - start < 700) {
+        await new Promise((r) => requestAnimationFrame(r));
+        seen.push(Number(el.getAttribute('x1')));
+      }
+      return seen;
+    });
+    await page.getByRole('button', { name: 'Toggle panel' }).click();
+    const seen = await back;
+    expect(seen.some((x) => x > 7.2 && x < 8.8)).toBe(true);
+    expect(seen.at(-1)).toBeCloseTo(9, 1);
+  });

@@ -149,14 +149,17 @@ In `Sidebar.vue`, five elements become the primitive's parts (their classes and 
 
 Import the primitive in its script: `import * as SidebarPrimitive from "@animate-ui/vue/primitives/sidebar"`.
 
-In `SidebarTrigger.vue`, let the icon answer the toggle (any two icons: a panel closing, a panel opening):
+In `SidebarTrigger.vue`, let the icon answer the toggle with Animate UI's animated Panel Left ([Hugeicons](/docs/vue/icons/hugeicons), `icons-hugeicons-panel-left`): its panel narrows while the sidebar is closed. `:initial="false"` shows it narrowed at once when the sidebar starts closed.
 
 ```diff title="components/ui/sidebar/SidebarTrigger.vue"
+-import { PanelLeft } from "@lucide/vue"
++import PanelLeft from "@/components/animate-ui/icons/hugeicons/PanelLeft.vue"
+ ...
+-const { toggleSidebar } = useSidebar()
++const { toggleSidebar, open, openMobile, isMobile } = useSidebar()
+ ...
 -    <PanelLeft />
-+    <SidebarPrimitive.TriggerIcon>
-+      <template #open><PanelLeftClose /></template>
-+      <template #closed><PanelLeftOpen /></template>
-+    </SidebarPrimitive.TriggerIcon>
++    <PanelLeft :animate="!(isMobile ? openMobile : open)" :initial="false" />
 ```
 
 That's all: `SidebarRail` and the menu parts stay as they are (the primitive retimes their transitions). The menu buttons take part in the highlight through the `data-sidebar="menu-button"` and `data-sidebar="menu-sub-button"` attributes shadcn-vue already gives them.
@@ -192,14 +195,14 @@ Animate UI's React sidebar, in Vue.
 - **Everything inside follows it**, collapsing to icons and back: the menu buttons resize on the sidebar's timing (their `transition-[width,height,padding]`, retimed from Tailwind's 150ms), so the icons stay put (the team switcher's and the user's avatars, whose padding goes, move on the same curve), and the group labels (`Platform`) slide up on it (their `transition-[margin,opacity]`: the margin retimed from 200ms linear, the opacity left to the fade below).
 - **Labels** (a menu button's text, chevron, a team's name and plan, a user's name and email) fade out into a light blur (2px) in the first half of the collapse (140ms, ease-out), before the buttons get narrow, and fade back in from it in the last half of the expand, once they're nearly wide again. Their ellipsis is held off meanwhile: a label cut by its narrowing button never flickers through `Mo…`, `Model…`. Group labels fade with them.
 - **Parts the collapse hides** (`group-data-[collapsible=icon]:hidden`: a sub-menu, a menu action or badge, a whole group like the demo's Projects) fold on the sidebar's curve and fade with the labels, instead of vanishing: the items below them move with the sidebar instead of jumping. Expanding, they unfold the same way and fade in at the end.
-- **The trigger's icon** swaps as the sidebar opens or closes (`TriggerIcon`): a panel closing while it's open, a panel opening while it's closed, so the icon says what a click does. The old icon shrinks to half its size into a light blur as it fades while the new one grows out of it (150ms, ease-out), Animate UI's swap. A rotating icon would read as a direction, not an action.
+- **The trigger's icon** is Animate UI's animated Panel Left: its panel narrows (its line slides 2px, on the icon's spring) while the sidebar is closed (the mobile sheet's, on a phone) and widens back as it opens, so the icon shows the sidebar's state.
 - **The rail's** hover line fades on the color's curve (200ms, CSS's `ease`).
 - Content beside the sidebar can follow its timing too: the Provider sets `--animate-ui-sidebar-duration` and `--animate-ui-sidebar-easing` (the demo's header shrinks with `duration-(--animate-ui-sidebar-duration) ease-(--animate-ui-sidebar-easing)`).
 - **Mobile**: the sidebar is shadcn-vue's Sheet, which Animate UI's Dialog slides in from its side (400ms on a soft ease-out) and dismisses quicker, speeding away.
 - **Collapsed to icons**, the buttons' tooltips are Animate UI's Tooltip: they grow from the button, from 0.7, on a spring.
 - Collapsibles inside unfold like Animate UI's Collapsible. Their chevrons turn as they do, over 350ms on the same soft ease-out (`transition-transform duration-350 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-data-[state=open]/collapsible:rotate-90`).
 - Nothing animates on mount: a sidebar collapsed from the start (its cookie) shows collapsed at once, and the trigger shows its icon at once.
-- Under reduced motion, the sidebar and all inside it collapse and expand at once (hidden parts too), and the highlight moves to the next button at once. The highlight and the trigger's icon still fade, without scale, and the labels fade through their blur.
+- Under reduced motion, the sidebar and all inside it collapse and expand at once (hidden parts too), and the highlight moves to the next button at once. The highlight still fades, without scale, the trigger's icon stays at rest (icons don't move under reduced motion), and the labels fade through their blur.
 - `AnimateUIProvider`'s `tempo` scales every duration and spring.
 
 ## API Reference

@@ -6,6 +6,7 @@ import { AnimateIcon } from '@animate-ui/react/icons';
 import { Bell } from '@/registry/icons/bell';
 import { CirclePlus } from '@/registry/icons/circle-plus';
 import { Fingerprint } from '@/registry/icons/fingerprint';
+import { PanelLeft } from '@/registry/icons/panel-left';
 import { RefreshCw } from '@/registry/icons/refresh-cw';
 
 function NoRef({ children }: { children?: React.ReactNode }) {
@@ -16,6 +17,7 @@ export default function IconsFixture() {
   const [play, setPlay] = React.useState(false);
   const [delayed, setDelayed] = React.useState(false);
   const [drawn, setDrawn] = React.useState(false);
+  const [panel, setPanel] = React.useState(true);
   const viewRef = React.useRef<HTMLSpanElement>(null);
 
   return (
@@ -31,6 +33,12 @@ export default function IconsFixture() {
             <RefreshCw size={48} />
           </NoRef>
         </AnimateIcon>
+      </section>
+      <section data-testid="mounted-animated">
+        <PanelLeft animate={panel} initial={false} size={48} />
+        <button type="button" onClick={() => setPanel((on) => !on)}>
+          Toggle panel
+        </button>
       </section>
       <section data-testid="hover">
         <Bell animateOnHover size={48} />

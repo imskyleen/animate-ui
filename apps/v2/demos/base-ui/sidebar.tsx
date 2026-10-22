@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 import * as SidebarPrimitive from "@animate-ui/react/primitives/sidebar"
+import { PanelLeft } from "@/registry/hugeicons/panel-left"
 import { Button } from "@/components/ui/base-ui/button"
 import { Input } from "@/components/ui/base-ui/input"
 import { Separator } from "@/components/ui/base-ui/separator"
@@ -58,8 +59,6 @@ import {
   MapsIcon,
   MoreHorizontalIcon,
   Notification01Icon,
-  PanelLeftCloseIcon,
-  PanelLeftOpenIcon,
   PieChartIcon,
   PlusSignIcon,
   RoboticIcon,
@@ -207,7 +206,7 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, open, openMobile, isMobile } = useSidebar()
 
   return (
     <Button
@@ -222,10 +221,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <SidebarPrimitive.TriggerIcon
-        open={<HugeiconsIcon icon={PanelLeftCloseIcon} strokeWidth={2} />}
-        closed={<HugeiconsIcon icon={PanelLeftOpenIcon} strokeWidth={2} />}
-      />
+      <PanelLeft animate={!(isMobile ? openMobile : open)} initial={false} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

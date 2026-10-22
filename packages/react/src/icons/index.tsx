@@ -68,6 +68,7 @@ type AnimateIconContextValue = {
   persistOnAnimateEnd?: boolean;
   delay?: number;
   speed?: number;
+  startsAnimated?: boolean;
 };
 
 type DefaultIconProps<T = string> = {
@@ -123,6 +124,7 @@ function useAnimateIconContext() {
       persistOnAnimateEnd: undefined,
       delay: undefined,
       speed: undefined,
+      startsAnimated: undefined,
     };
   return context;
 }
@@ -154,6 +156,7 @@ function AnimateIconRoot({
   persistOnAnimateEnd = false,
   delay = 0,
   speed,
+  initial,
   children,
   ref,
   onMouseEnter,
@@ -178,6 +181,9 @@ function AnimateIconRoot({
   const [status, setStatus] = React.useState<'initial' | 'animate'>('initial');
 
   const playing = localAnimate && !reduceMotion;
+  const [startsAnimated, setStartsAnimated] = React.useState(
+    () => initial === false && playing,
+  );
 
   const delayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const loopDelayRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -188,6 +194,7 @@ function AnimateIconRoot({
 
   const runGenRef = React.useRef(0);
   const cancelledRef = React.useRef(false);
+  const mountedRef = React.useRef(false);
 
   const bumpGeneration = React.useCallback(() => {
     runGenRef.current++;
@@ -267,9 +274,13 @@ function AnimateIconRoot({
   }, [onScreen]);
 
   const startAnim = React.useCallback(
-    async (anim: 'initial' | 'animate', method: 'start' | 'set' = 'start') => {
+    async (
+      anim: 'initial' | 'animate',
+      method: 'start' | 'set' | 'jump' = 'start',
+    ) => {
       try {
-        await controls[method](anim);
+        if (method === 'jump') await controls.start(anim, { duration: 0 });
+        else await controls[method](anim);
         setStatus(anim);
       } catch {
         return;
@@ -287,6 +298,8 @@ function AnimateIconRoot({
   React.useEffect(() => {
     const gen = ++runGenRef.current;
     cancelledRef.current = false;
+    const instant = initial === false && !mountedRef.current;
+    mountedRef.current = true;
 
     async function run() {
       if (cancelledRef.current || gen !== runGenRef.current) {
@@ -341,7 +354,8 @@ function AnimateIconRoot({
         return;
       }
 
-      await startAnim('animate');
+      await startAnim('animate', instant ? 'jump' : 'start');
+      if (instant) setStartsAnimated(false);
 
       if (cancelledRef.current || gen !== runGenRef.current) {
         isAnimateInProgressRef.current = false;
@@ -508,6 +522,7 @@ function AnimateIconRoot({
         persistOnAnimateEnd,
         delay,
         speed,
+        startsAnimated,
       }}
     >
       {content}
@@ -557,6 +572,7 @@ function IconWrapperContent<T extends string>({
   delay,
   speed,
   completeOnStop,
+  initial,
   className,
   ...props
 }: IconWrapperProps<T>) {
@@ -613,6 +629,7 @@ function IconWrapperContent<T extends string>({
           delay={delay}
           speed={speed ?? parentSpeed}
           completeOnStop={completeOnStop ?? parentCompleteOnStop}
+          initial={initial}
           asChild
         >
           <IconComponent
@@ -647,6 +664,7 @@ function IconWrapperContent<T extends string>({
           delay: parentDelay,
           speed: parentSpeed,
           completeOnStop: parentCompleteOnStop,
+          startsAnimated: context.startsAnimated,
         }}
       >
         <IconComponent
@@ -685,6 +703,7 @@ function IconWrapperContent<T extends string>({
         completeOnStop={completeOnStop}
         persistOnAnimateEnd={persistOnAnimateEnd}
         initialOnAnimateEnd={initialOnAnimateEnd}
+        initial={initial}
         asChild
       >
         <IconComponent
@@ -789,13 +808,26 @@ function useIconVariants<
   V extends { default: T; [key: string]: T },
   T extends Record<string, Variants>,
 >(animations: V): T {
-  const { animation, speed = 1 } = useAnimateIconContext();
+  const { animation, speed = 1, startsAnimated } = useAnimateIconContext();
   const { tempo } = useMotionTokens();
   const factor = tempo / speed;
   return React.useMemo(() => {
-    const variants = resolveVariants<V, T>(animations, animation);
-    return factor === 1 ? variants : scaleVariants(variants, factor);
-  }, [animations, animation, factor]);
+    const resolved = resolveVariants<V, T>(animations, animation);
+    const variants = factor === 1 ? resolved : scaleVariants(resolved, factor);
+    if (!startsAnimated) return variants;
+    // Mounted animated (`initial` false): each part starts where `animate` takes it.
+    const result = {} as AnyProps;
+    for (const part in variants) {
+      const own = variants[part] as AnyProps;
+      const target = own.animate;
+      if (!isPlainObject(target)) result[part] = own;
+      else {
+        const { transition: _, ...at } = target;
+        result[part] = { ...own, initial: at };
+      }
+    }
+    return result as T;
+  }, [animations, animation, factor, startsAnimated]);
 }
 
 const getVariants = useIconVariants;

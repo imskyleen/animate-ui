@@ -30,6 +30,15 @@ version: '2.2.0'
 
 </ChangelogItemDescription>
 
+<ChangelogItemTitle>Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- The Sidebar's trigger shows Animate UI's animated Panel Left: its panel narrows while the sidebar is closed, instead of swapping two icons.
+- Animated icons take `initial={false}`: mounted while `animate` is on, they show its end state at once instead of playing it.
+
+</ChangelogItemDescription>
+
 <ChangelogItemTitle>Fixes</ChangelogItemTitle>
 
 <ChangelogItemDescription>
@@ -40,6 +49,7 @@ version: '2.2.0'
 - In Vue, the Pinned List slides its All label and items down when its Pinned label comes back, instead of jumping.
 - In Vue, the Tooltip's arrow stays under its popup as it glides from trigger to trigger.
 - Pagination: the page left no longer fades its own border out beside the sliding indicator when its link changes look (outline to ghost).
+- In Vue, a fast sweep over the Sidebar leaves one highlight, instead of earlier ones staying lit where they were.
 
 </ChangelogItemDescription>
 

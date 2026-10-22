@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue"
-import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "@hugeicons/core-free-icons"
-import * as SidebarPrimitive from "@animate-ui/vue/primitives/sidebar"
-import { HugeiconsIcon } from "@hugeicons/vue"
 import { cn } from "cn"
 import { Button } from "@/components/ui/button"
+import PanelLeft from "../../../../../v2/registry/vue/hugeicons/panel-left/PanelLeft.vue"
 import { useSidebar } from "./utils"
 
 const props = defineProps<{
   class?: HTMLAttributes["class"]
 }>()
 
-const { toggleSidebar } = useSidebar()
+const { toggleSidebar, open, openMobile, isMobile } = useSidebar()
 </script>
 
 <template>
@@ -23,14 +21,7 @@ const { toggleSidebar } = useSidebar()
     :class="cn('h-7 w-7', props.class)"
     @click="toggleSidebar"
   >
-    <SidebarPrimitive.TriggerIcon>
-      <template #open>
-        <HugeiconsIcon :icon="PanelLeftCloseIcon" :stroke-width="2" />
-      </template>
-      <template #closed>
-        <HugeiconsIcon :icon="PanelLeftOpenIcon" :stroke-width="2" />
-      </template>
-    </SidebarPrimitive.TriggerIcon>
+    <PanelLeft :animate="!(isMobile ? openMobile : open)" :initial="false" />
     <span class="sr-only">Toggle Sidebar</span>
   </Button>
 </template>
