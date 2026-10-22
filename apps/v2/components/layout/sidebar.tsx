@@ -305,7 +305,7 @@ function FolderSections({
       });
     if (node.type === 'folder' && node.index)
       guide.push({
-        name: node.name,
+        name: node.index.name,
         url: node.index.url,
         active: pathname === node.index.url,
       });

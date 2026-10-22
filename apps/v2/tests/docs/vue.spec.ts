@@ -346,3 +346,26 @@ test('the Vue sidebar lists its sections in the React order', () => {
   const react = pages('meta.json').filter((page) => vue.includes(page));
   expect(vue.filter((page) => react.includes(page))).toEqual(react);
 });
+
+test('every Vue sidebar page is marked new, but the introduction, installation and accessibility', async ({
+  page,
+}) => {
+  await page.goto('/docs/vue/primitives/reka-ui/accordion');
+  const rows = await page
+    .locator('#nd-sidebar a[href^="/docs/vue"]:not([role="tab"])')
+    .evaluateAll((links) =>
+      links.map((link) => [
+        link.getAttribute('href'),
+        link.querySelector('[data-slot="badge"]')?.textContent ?? null,
+      ]),
+    );
+  const plain = [
+    '/docs/vue',
+    '/docs/vue/installation',
+    '/docs/vue/accessibility',
+  ];
+  expect(rows.length).toBeGreaterThan(20);
+  for (const [href, badge] of rows)
+    expect([href, badge]).toEqual([href, plain.includes(href!) ? null : 'new']);
+  for (const href of plain) expect(rows.map(([h]) => h)).toContain(href);
+});
