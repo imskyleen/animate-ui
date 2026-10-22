@@ -686,6 +686,37 @@ export function describePagination(
       expectAtRest(await drawnNow(page, NAV), to);
     });
 
+    // Bug: in Vue the page left faded its own outline border out beside the sliding surface.
+    for (const look of ['demo', 'links gaining and losing a border'])
+      test(`the page left shows no border of its own while the surface slides away (${look})`, async ({
+        page,
+      }) => {
+        if (look !== 'demo')
+          await page.addStyleTag({
+            content: `${LINK} { border-color: red; transition: all 150ms; } ${LINK}:not([aria-current="page"]) { border-width: 0; }`,
+          });
+        const left = link(page, '2');
+        const sampling = left.evaluate(async (el) => {
+          const borders: string[] = [];
+          const start = performance.now();
+          while (performance.now() - start < 700) {
+            await new Promise((r) => requestAnimationFrame(r));
+            const style = getComputedStyle(el);
+            const alpha = style.borderTopColor.match(
+              /\/\s*([\d.e-]+)\)$|rgba\(.*,\s*([\d.e-]+)\)$/,
+            );
+            const visible =
+              style.borderTopWidth !== '0px' &&
+              (alpha ? Number(alpha[1] ?? alpha[2]) > 0.01 : true);
+            if (visible && el.getAttribute('aria-current') !== 'page')
+              borders.push(`${style.borderTopWidth} ${style.borderTopColor}`);
+          }
+          return borders;
+        });
+        await link(page, '3').click();
+        expect(await sampling).toEqual([]);
+      });
+
     test('Next and Previous slide it one page', async ({ page }) => {
       const [two, three] = [await box(page, '2'), await box(page, '3')];
       expectSlide(

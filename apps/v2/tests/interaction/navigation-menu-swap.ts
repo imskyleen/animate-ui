@@ -613,3 +613,54 @@ export function describeNavigationMenuTriggers(
     describeBarTriggers(title, path, setup);
   });
 }
+
+export function describeNavigationMenuBackdrop(title: string, path: string) {
+  test.describe(`${title} backdrop`, () => {
+    test.use({ viewport: { width: 1280, height: 800 } });
+
+    // Bug: in Vue the last content stayed, without its viewport, over the trigger once the pointer left.
+    test('a content leaves with its viewport when the pointer goes away', async ({
+      page,
+    }) => {
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await hover(page, 'Getting started');
+      const text = page.getByText(
+        'Re-usable components built with Tailwind CSS.',
+      );
+      await expect(text).toBeVisible();
+      await page.waitForTimeout(800);
+      await page.mouse.move(5, 790, { steps: 4 });
+      await page.waitForTimeout(500);
+      const shown: boolean[] = [];
+      for (let i = 0; i < 5; i++) {
+        shown.push(await text.isVisible());
+        await page.waitForTimeout(100);
+      }
+      expect(shown).toEqual([false, false, false, false, false]);
+    });
+
+    // Bug: a trigger painted like the page (shadcn-vue's bg-background) hid the highlight gliding under it.
+    test('a trigger painted like the page lets the highlight glide over it', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const style = document.createElement('style');
+        style.textContent =
+          '[data-slot="navigation-menu-trigger"] { background-color: var(--background); }';
+        const observer = new MutationObserver(() => {
+          if (!document.head) return;
+          document.head.append(style);
+          observer.disconnect();
+        });
+        observer.observe(document, { childList: true, subtree: true });
+      });
+      await page.goto(path, { waitUntil: 'networkidle' });
+      await hover(page, 'Components');
+      const resting = page.getByRole('button', {
+        name: 'Getting started',
+        exact: true,
+      });
+      await expect(resting).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    });
+  });
+}

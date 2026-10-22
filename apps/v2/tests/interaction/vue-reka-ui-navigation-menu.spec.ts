@@ -8,6 +8,7 @@ import {
 } from './navigation-menu-clicks';
 import { probeFirstFrame, sample } from './motion-probe';
 import {
+  describeNavigationMenuBackdrop,
   describeNavigationMenuSwap,
   describeNavigationMenuTriggerColors,
   describeNavigationMenuTriggers,
@@ -228,4 +229,9 @@ describeNavigationMenuClicks(
   'vue-reka-ui navigation-menu clicks',
   '/tests/vue-demos/reka-ui/navigation-menu',
   'vue-reka-ui',
+);
+
+describeNavigationMenuBackdrop(
+  'vue-reka-ui navigation-menu',
+  '/tests/vue-demos/reka-ui/navigation-menu',
 );

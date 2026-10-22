@@ -8,6 +8,7 @@ import {
 } from './navigation-menu-clicks';
 import { probeFirstFrame, sample } from './motion-probe';
 import {
+  describeNavigationMenuBackdrop,
   describeNavigationMenuSwap,
   describeNavigationMenuTriggerColors,
   describeNavigationMenuTriggers,
@@ -244,4 +245,9 @@ describeNavigationMenuClicks(
   'base-ui navigation-menu clicks',
   '/tests/demos/base-ui/navigation-menu',
   'base-ui',
+);
+
+describeNavigationMenuBackdrop(
+  'base-ui navigation-menu',
+  '/tests/demos/base-ui/navigation-menu',
 );

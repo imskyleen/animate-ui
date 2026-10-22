@@ -79,6 +79,8 @@ type MenuState = {
   dir: () => 'ltr' | 'rtl';
   hasViewport: () => boolean;
   registerViewport: () => () => void;
+  viewportShown: () => boolean;
+  showViewport: (shown: boolean) => void;
   swapper: ContentSwapper;
   clicked: (item: string) => void;
   pointerEntered: () => void;
@@ -121,6 +123,7 @@ function useMenuState(
   const value = () =>
     props.modelValue === undefined ? own.value : props.modelValue;
   const viewports = ref(0);
+  const viewportShown = ref(false);
   let opened = { item: '', at: -Infinity, byClick: false };
   let clicked: string | null = null;
 
@@ -134,6 +137,10 @@ function useMenuState(
       return () => {
         viewports.value -= 1;
       };
+    },
+    viewportShown: () => viewportShown.value,
+    showViewport: (shown) => {
+      viewportShown.value = shown;
     },
     swapper: new ContentSwapper(),
     clicked: (item) => {
@@ -243,8 +250,7 @@ const NavigationMenuItem = defineComponent({
     const fallback = useId();
     const value = () => props.value || fallback;
     provide(ItemValueKey, value);
-    return () =>
-      h(RekaNavigationMenuItem, { ...attrs, value: value() }, slots);
+    return () => h(RekaNavigationMenuItem, { ...attrs, value: value() }, slots);
   },
 }) as unknown as typeof RekaNavigationMenuItem;
 
@@ -398,7 +404,10 @@ const InlineContentMotion = defineComponent({
     );
     provideTriggerHighlightScope();
     return () => {
-      const hidden = { opacity: 0, scale: reduce.value ? 1 : HIDDEN_SCALE.menu };
+      const hidden = {
+        opacity: 0,
+        scale: reduce.value ? 1 : HIDDEN_SCALE.menu,
+      };
       return h(
         motion.div as Component,
         {
@@ -457,12 +466,15 @@ const NavigationMenuContent = defineComponent({
           { ...attrs, forceMount: props.forceMount },
           slots,
         );
-      if (menu.hasViewport())
+      // Once the viewport is gone, reka-ui would render the last content in place.
+      if (menu.hasViewport()) {
+        if (!open() && !menu.viewportShown()) return null;
         return h(
           RekaNavigationMenuContent,
           { ...attrs, forceMount: props.forceMount, asChild: true },
           { default: () => h(ViewportContentMotion, null, slots) },
         );
+      }
       if (!open() && !present.value && !props.forceMount) return null;
       return h(ReducedMotionConfig, null, () =>
         h(
@@ -508,7 +520,10 @@ function useActiveContentSize(
       let heading: { width: number; height: number } | null = null;
       const measure = () => {
         if (!content) return;
-        const next = { width: content.offsetWidth, height: content.offsetHeight };
+        const next = {
+          width: content.offsetWidth,
+          height: content.offsetHeight,
+        };
         if (
           heading &&
           next.width === heading.width &&
@@ -590,6 +605,12 @@ const NavigationMenuViewport = defineComponent({
       },
       { flush: 'sync' },
     );
+    if (menu)
+      watch(
+        () => present.value || props.forceMount,
+        (shown) => menu.showViewport(shown),
+        { immediate: true, flush: 'sync' },
+      );
     const element = shallowRef<HTMLElement | null>(null);
     useActiveContentSize(
       () => element.value,
@@ -748,11 +769,7 @@ const NavigationMenuIndicator = defineComponent({
         shown = el;
         controls?.stop();
         if (isVisible) {
-          controls = animate(
-            el,
-            { opacity: fresh ? [0, 1] : 1 },
-            spring.value,
-          );
+          controls = animate(el, { opacity: fresh ? [0, 1] : 1 }, spring.value);
           return;
         }
         if (fresh) return;

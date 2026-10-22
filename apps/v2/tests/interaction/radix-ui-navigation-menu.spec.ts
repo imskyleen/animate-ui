@@ -8,6 +8,7 @@ import {
 } from './navigation-menu-clicks';
 import { probeFirstFrame, sample } from './motion-probe';
 import {
+  describeNavigationMenuBackdrop,
   describeNavigationMenuSwap,
   describeNavigationMenuTriggerColors,
   describeNavigationMenuTriggers,
@@ -223,4 +224,9 @@ describeNavigationMenuClicks(
   'radix-ui navigation-menu clicks',
   '/tests/demos/radix-ui/navigation-menu',
   'radix-ui',
+);
+
+describeNavigationMenuBackdrop(
+  'radix-ui navigation-menu',
+  '/tests/demos/radix-ui/navigation-menu',
 );

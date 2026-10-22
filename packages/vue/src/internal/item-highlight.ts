@@ -265,6 +265,19 @@ const isBare = ({ backgroundColor, backgroundImage }: Surface) =>
   (backgroundColor === 'transparent' ||
     /^rgba\(.*,\s*0\)$/.test(backgroundColor));
 
+/** A surface painted in the color behind it shows nothing: a highlight may glide over it. */
+function blendsIn(node: HTMLElement, surface: Surface) {
+  if (surface.backgroundImage !== 'none' || isBare(surface)) return false;
+  for (let el = node.parentElement; el; el = el.parentElement) {
+    const style = getComputedStyle(el);
+    if (style.backgroundImage !== 'none') return false;
+    const backdrop = { ...surface, backgroundColor: style.backgroundColor };
+    if (!isBare(backdrop))
+      return style.backgroundColor === surface.backgroundColor;
+  }
+  return false;
+}
+
 function readSurface(node: HTMLElement): Surface {
   const cleared = savedStyles.get(node);
   const transition = save(node, ['transition']);
@@ -362,7 +375,10 @@ function useHighlightIn(
           const now = read !== null && !isBare(read);
           if (read && now && !samePaint(surface.value, read))
             surface.value = read;
-          clearOwnSurface(el, now);
+          clearOwnSurface(
+            el,
+            now || (!interactive && blendsIn(el, readSurface(el))),
+          );
           if (now === lit) return;
           lit = now;
           if (now) scope.light(id, el);
