@@ -1,0 +1,150 @@
+---
+title: Theme Toggler Button
+description: A button that cycles the theme, its icon turning into the next one.
+---
+
+<VueComponentPreview name="animate-ui/theme-toggler-button" />
+
+## Installation
+
+<VueRegistryInstallation name="buttons-theme-toggler" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { useColorMode } from '@vueuse/core';
+import {
+  ThemeTogglerButton,
+  ThemeTogglerButtonIcon,
+  type Resolved,
+  type ThemeSelection,
+} from '@/components/animate-ui/buttons/theme-toggler';
+
+const { store, state } = useColorMode();
+</script>
+
+<template>
+  <ThemeTogglerButton
+    :theme="store === 'auto' ? 'system' : (store as ThemeSelection)"
+    :resolved-theme="state as Resolved"
+    :set-theme="(theme) => (store = theme === 'system' ? 'auto' : theme)"
+    :modes="['light', 'dark']"
+    aria-label="Toggle theme"
+  >
+    <ThemeTogglerButtonIcon>
+      <template #light><SunIcon /></template>
+      <template #dark><MoonIcon /></template>
+    </ThemeTogglerButtonIcon>
+  </ThemeTogglerButton>
+</template>
+```
+
+Each click applies the next theme of `modes` at once, through `setTheme`. For a wipe across the page, use [Theme Toggler](/docs/vue/primitives/animate-ui/theme-toggler). When `modes` leave out `system`, the button shows the theme actually displayed, and a system theme counts as the one it resolves to. Read the state in your own parts with `useThemeTogglerButton()`.
+
+
+## Animation
+
+- The icon swaps as the theme changes: the old one turns 90° on as it shrinks to half its size into a light blur (`blur(2px)`) and fades out, while the new one turns in from 90° back and grows out of it, so both keep turning the same way. Over 0.3s with an ease-out (`cubic-bezier(0.23, 1, 0.32, 1)`), twice the Copy Button's swap, so the turn reads. Icons only swap once the button is used: on mount, and when the theme becomes known after hydrating, the icon shows at rest.
+- Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
+- `<AnimateUIProvider :tempo>` paces the swap and the press spring.
+- Under reduced motion, the icons crossfade through their blur without turning or scaling, and the button doesn't scale.
+
+## API Reference
+
+### ThemeTogglerButton
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'Look of the button.',
+      type: "'default' | 'accent' | 'outline' | 'ghost' | null",
+      default: "'default'",
+    },
+    size: {
+      description: 'Size of the square button.',
+      type: "'default' | 'sm' | 'lg' | null",
+      default: "'default'",
+    },
+    theme: {
+      description: 'The selected theme.',
+      type: "'light' | 'dark' | 'system'",
+      required: true,
+    },
+    'resolved-theme': {
+      description: 'The theme actually shown.',
+      type: "'light' | 'dark'",
+      required: true,
+    },
+    'set-theme': {
+      description:
+        'Applies a theme, called on click with the next one of `modes`.',
+      type: "(theme: 'light' | 'dark' | 'system') => void",
+      required: true,
+    },
+    modes: {
+      description: 'The themes a click cycles through, in order.',
+      type: "('light' | 'dark' | 'system')[]",
+      default: "['light', 'dark', 'system']",
+    },
+    'hover-scale': {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    'tap-scale': {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    transition: {
+      description: 'Transition of the tap (and hover) scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+    'as-child': {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### ThemeTogglerButtonIcon
+
+Its slots `#light` and `#dark` hold the icons of each theme; `#system`, the icon of the system theme (without it, system shows the icon of the theme it resolves to).
+
+<TypeTable
+  type={{
+    rotate: {
+      description: 'Degrees the icons turn as they swap.',
+      type: 'number',
+      default: '90',
+    },
+    transition: {
+      description: 'Transition of the swap.',
+      type: 'Transition',
+      default: '{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }',
+    },
+    '...props': {
+      description: 'Props of the span holding the icons.',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### Data attributes
+
+<TypeTable
+  type={{
+    'data-theme': {
+      description: 'On the button: the theme it shows.',
+      type: "'light' | 'dark' | 'system'",
+    },
+  }}
+/>

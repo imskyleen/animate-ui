@@ -577,6 +577,24 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       },
     },
   },
+  'animate-ui/theme-toggler-button': {
+    ThemeTogglerButton: {
+      variant: {
+        value: 'default',
+        options: {
+          default: 'default',
+          accent: 'accent',
+          outline: 'outline',
+          ghost: 'ghost',
+        },
+      },
+      size: {
+        value: 'default',
+        options: { default: 'default', sm: 'sm', lg: 'lg' },
+      },
+      system: { value: false },
+    },
+  },
   'backgrounds/bubble': {
     BubbleBackground: { interactive: { value: true } },
   },

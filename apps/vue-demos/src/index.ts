@@ -11,6 +11,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/shine': () => import('./demos/animate-ui/shine.vue'),
   'animate-ui/liquid-button': () => import('./demos/animate-ui/liquid-button.vue'),
   'animate-ui/magnetic': () => import('./demos/animate-ui/magnetic.vue'),
+  'animate-ui/theme-toggler-button': () =>
+    import('./demos/animate-ui/theme-toggler-button.vue'),
   'animate-ui/tilt': () => import('./demos/animate-ui/tilt.vue'),
   'animate-ui/blur': () => import('./demos/animate-ui/blur.vue'),
   'animate-ui/effect': () => import('./demos/animate-ui/effect.vue'),
