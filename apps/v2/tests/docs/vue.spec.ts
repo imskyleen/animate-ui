@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
 import { expect, test } from '../test';
 
 const PAGE = '/docs/vue/primitives/reka-ui/accordion';
@@ -310,4 +313,16 @@ test('the Vue backgrounds grid links to the Vue pages, with their own recordings
       (await card.getAttribute('href')) ??
         (await card.locator('a').first().getAttribute('href')),
     ).toMatch(/^\/docs\/vue\/backgrounds\/[a-z-]+$/);
+});
+
+test('the Vue sidebar lists its sections in the React order', () => {
+  const pages = (file: string) =>
+    (
+      JSON.parse(
+        readFileSync(path.join(process.cwd(), 'content/docs', file), 'utf8'),
+      ) as { pages: string[] }
+    ).pages;
+  const vue = pages('vue/meta.json');
+  const react = pages('meta.json').filter((page) => vue.includes(page));
+  expect(vue.filter((page) => react.includes(page))).toEqual(react);
 });
