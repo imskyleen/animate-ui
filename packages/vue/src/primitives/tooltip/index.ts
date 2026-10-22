@@ -601,7 +601,7 @@ const TooltipArrowImpl = defineComponent({
   },
   setup(props, { attrs }) {
     const rendered = inject(RenderedTooltipKey)!;
-    const { transition, globalId } = useGlobalTooltip();
+    const { transition } = useGlobalTooltip();
     return () => {
       const [side, alignment] = rendered.placement().split('-') as [
         Side,
@@ -629,10 +629,6 @@ const TooltipArrowImpl = defineComponent({
           'data-side': rendered.side(),
           'data-align': rendered.align(),
           'data-slot': 'tooltip-arrow',
-          layoutId:
-            props.withTransition && rendered.positioned()
-              ? `tooltip-arrow-${globalId()}`
-              : undefined,
           transition: props.withTransition ? transition.value : undefined,
           ...attrs,
           ref: (node: unknown) => {

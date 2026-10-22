@@ -224,6 +224,38 @@ for (const framework of FRAMEWORKS) {
       }
     });
 
+    // Bug: in Vue the arrow glided on its own and was left behind, off the popup, as it moved to another trigger.
+    test('the arrow stays under the popup while it glides along the toolbar', async ({
+      page,
+    }) => {
+      await open(page);
+      await trigger(page, 'Bold').hover();
+      await expect(page.locator(CONTENT)).toHaveCSS('opacity', '1');
+      const frames = page.evaluate(async () => {
+        const off: string[] = [];
+        const start = performance.now();
+        while (performance.now() - start < 1600) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const content = document.querySelector(
+            '[data-slot="tooltip-content"]',
+          );
+          const arrow = document.querySelector('[data-slot="tooltip-arrow"]');
+          if (!content || !arrow) continue;
+          const c = content.getBoundingClientRect();
+          const a = arrow.getBoundingClientRect();
+          const middle = a.left + a.width / 2;
+          if (middle < c.left || middle > c.right)
+            off.push(`${Math.round(performance.now() - start)}ms`);
+        }
+        return off;
+      });
+      for (const name of ['Insert link', 'Italic', 'Strikethrough', 'Bold']) {
+        await trigger(page, name).hover();
+        await page.waitForTimeout(120);
+      }
+      expect(await frames).toEqual([]);
+    });
+
     test('grows from the point facing its trigger', async ({ page }) => {
       await open(page);
       await trigger(page, 'Bold').hover();
