@@ -1,69 +1,75 @@
 import { expect, test, type Page } from '../test';
 
-const open = (page: Page) =>
-  page.goto('/tests/demos/animate-ui/motion-grid', {
-    waitUntil: 'networkidle',
-  });
+import { FRAMEWORKS, ready } from './animate-ui-frameworks';
 
-const cells = (page: Page) => page.locator('div[data-active][data-animate]');
+for (const framework of FRAMEWORKS) {
+  const open = (page: Page) =>
+    page.goto(framework.demo('motion-grid'), {
+      waitUntil: 'networkidle',
+    });
 
-const pattern = (page: Page) =>
-  cells(page).evaluateAll((els) =>
-    els
-      .map((el) => (el.getAttribute('data-active') === 'true' ? 1 : 0))
-      .join(''),
-  );
+  const cells = (page: Page) => page.locator('div[data-active][data-animate]');
 
-test.describe('animate-ui motion grid', () => {
-  test('renders a 5×5 grid that steps through its frames', async ({ page }) => {
-    await open(page);
-    await expect(cells(page)).toHaveCount(25);
-    const seen = new Set<string>();
-    for (let i = 0; i < 6; i++) {
-      seen.add(await pattern(page));
-      await page.waitForTimeout(120);
-    }
-    expect(seen.size).toBeGreaterThan(2);
-  });
+  const pattern = (page: Page) =>
+    cells(page).evaluateAll((els) =>
+      els
+        .map((el) => (el.getAttribute('data-active') === 'true' ? 1 : 0))
+        .join(''),
+    );
 
-  test('pauses while the tab is hidden', async ({ page }) => {
-    await open(page);
-    await page.evaluate(() => {
-      Object.defineProperty(document, 'visibilityState', {
-        configurable: true,
-        get: () => 'hidden',
+  test.describe(`${framework.name} motion grid`, () => {
+    test('renders a 5×5 grid that steps through its frames', async ({
+      page,
+    }) => {
+      await open(page);
+      await expect(cells(page)).toHaveCount(25);
+      const seen = new Set<string>();
+      for (let i = 0; i < 6; i++) {
+        seen.add(await pattern(page));
+        await page.waitForTimeout(120);
+      }
+      expect(seen.size).toBeGreaterThan(2);
+    });
+
+    test('pauses while the tab is hidden', async ({ page }) => {
+      await open(page);
+      await page.evaluate(() => {
+        Object.defineProperty(document, 'visibilityState', {
+          configurable: true,
+          get: () => 'hidden',
+        });
+        document.dispatchEvent(new Event('visibilitychange'));
       });
-      document.dispatchEvent(new Event('visibilitychange'));
+      await page.waitForTimeout(100);
+      const frozen = await pattern(page);
+      await page.waitForTimeout(700);
+      expect(await pattern(page)).toBe(frozen);
     });
-    await page.waitForTimeout(100);
-    const frozen = await pattern(page);
-    await page.waitForTimeout(700);
-    expect(await pattern(page)).toBe(frozen);
+
+    test('pauses off screen', async ({ page }) => {
+      await page.setViewportSize({ width: 800, height: 400 });
+      await open(page);
+      await page.evaluate(() => {
+        document.body.style.paddingBottom = '3000px';
+        window.scrollTo(0, 2500);
+      });
+      await page.waitForTimeout(200);
+      const frozen = await pattern(page);
+      await page.waitForTimeout(700);
+      expect(await pattern(page)).toBe(frozen);
+    });
   });
 
-  test('pauses off screen', async ({ page }) => {
-    await page.setViewportSize({ width: 800, height: 400 });
-    await open(page);
-    await page.evaluate(() => {
-      document.body.style.paddingBottom = '3000px';
-      window.scrollTo(0, 2500);
+  test(`${framework.name} cells change in the given duration, in milliseconds`, async ({
+    page,
+  }) => {
+    await page.goto(framework.fixture('motion-grid-duration'), {
+      waitUntil: 'networkidle',
     });
-    await page.waitForTimeout(200);
-    const frozen = await pattern(page);
-    await page.waitForTimeout(700);
-    expect(await pattern(page)).toBe(frozen);
+    await page.waitForTimeout(600);
+    const opacity = await page
+      .locator('div[data-active="false"]')
+      .evaluate((el) => Number(getComputedStyle(el).opacity));
+    expect(opacity).toBeCloseTo(0.2, 2);
   });
-});
-
-test('cells change in the given duration, in milliseconds', async ({
-  page,
-}) => {
-  await page.goto('/tests/fixtures/animate-ui-motion-grid-duration', {
-    waitUntil: 'networkidle',
-  });
-  await page.waitForTimeout(600);
-  const opacity = await page
-    .locator('div[data-active="false"]')
-    .evaluate((el) => Number(getComputedStyle(el).opacity));
-  expect(opacity).toBeCloseTo(0.2, 2);
-});
+}

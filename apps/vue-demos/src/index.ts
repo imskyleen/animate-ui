@@ -43,6 +43,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'animate-ui/motion-grid': () => import('./demos/animate-ui/motion-grid.vue'),
+  'animate-ui/scroll-progress': () => import('./demos/animate-ui/scroll-progress.vue'),
   'animate-ui/button': () => import('./demos/animate-ui/button.vue'),
   'animate-ui/copy-button': () => import('./demos/animate-ui/copy-button.vue'),
   'animate-ui/icon-button': () => import('./demos/animate-ui/icon-button.vue'),
@@ -75,6 +77,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
   'fixtures/animate-ui-highlight-cases': () =>
     import('./fixtures/animate-ui-highlight-cases.vue'),
+  'fixtures/animate-ui-motion-grid-duration': () =>
+    import('./fixtures/animate-ui-motion-grid-duration.vue'),
   'fixtures/animate-ui-scroll-fade': () =>
     import('./fixtures/animate-ui-scroll-fade.vue'),
   'fixtures/animate-ui-image-zoom-props': () =>

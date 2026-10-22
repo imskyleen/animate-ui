@@ -140,6 +140,15 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       },
     },
   },
+  'animate-ui/scroll-progress': {
+    ScrollProgressProvider: {
+      global: { value: false },
+      direction: {
+        value: 'vertical',
+        options: { horizontal: 'horizontal', vertical: 'vertical' },
+      },
+    },
+  },
   'animate-ui/particles': {
     ParticlesEffect: {
       side: {

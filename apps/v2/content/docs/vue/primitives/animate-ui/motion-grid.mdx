@@ -1,0 +1,106 @@
+---
+title: Motion Grid
+description: A grid of dots that plays frame-by-frame animations, for loading and status indicators.
+---
+
+<VueComponentPreview name="animate-ui/motion-grid" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import type { Frames } from '@animate-ui/vue/primitives/motion-grid';
+import { MotionGrid, MotionGridCells } from '@animate-ui/vue/primitives/motion-grid';
+
+// Each frame lists the active cells as [column, row].
+const frames: Frames = [
+  [[1, 1]],
+  [[0, 1], [1, 0], [1, 2], [2, 1]],
+  [[0, 0], [0, 2], [2, 0], [2, 2]],
+  [],
+];
+</script>
+
+<template>
+  <MotionGrid :grid-size="[3, 3]" :frames="frames" class="gap-0.5">
+    <MotionGridCells class="size-1 rounded-full bg-foreground/20 data-[active=true]:bg-foreground" />
+  </MotionGrid>
+</template>
+```
+
+Active cells have `data-active="true"`: style them with it, or pass `active-props` and `inactive-props`.
+
+## Animation
+
+- The grid shows one frame every `duration` milliseconds, looping.
+- Cells change with your own CSS transitions or Motion props (`active-props`). Motion props take `duration` with an ease-in-out; CSS transitions keep their own timing.
+- The loop pauses while the grid is off screen or the tab is hidden.
+
+## API Reference
+
+### MotionGrid
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'grid-size': {
+      description: 'Size of the grid, as [columns, rows].',
+      type: '[number, number]',
+      required: true,
+    },
+    frames: {
+      description:
+        'The frames: each one lists its active cells as [column, row].',
+      type: '[number, number][][]',
+      required: true,
+    },
+    duration: {
+      description: 'Duration of each frame, in milliseconds.',
+      type: 'number',
+      default: '200',
+    },
+    animate: {
+      description: 'Play the frames.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Props of the grid.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### MotionGridCells
+
+Renders every cell of the grid.
+
+<TypeTable
+  type={{
+    'active-props': {
+      description: 'Props of the active cells.',
+      type: "HTMLMotionProps<'div'>",
+    },
+    'inactive-props': {
+      description: 'Props of the inactive cells.',
+      type: "HTMLMotionProps<'div'>",
+    },
+    '...props': {
+      description: 'Props of every cell.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+## Credits
+
+- Inspired by [Adrien Griveau](https://x.com/Griveau)'s [post](https://x.com/Griveau/status/1932832554354163804).

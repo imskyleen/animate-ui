@@ -1,0 +1,119 @@
+---
+title: Scroll Progress
+description: A progress bar that follows the scroll position of the page or of a container.
+---
+
+<VueComponentPreview name="animate-ui/scroll-progress" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  ScrollProgress,
+  ScrollProgressContainer,
+  ScrollProgressProvider,
+} from '@animate-ui/vue/primitives/scroll-progress';
+</script>
+
+<template>
+  <!-- A scrollable container. -->
+  <ScrollProgressProvider>
+    <ScrollProgress class="h-1 bg-foreground" />
+    <ScrollProgressContainer class="h-96 overflow-y-auto">
+      …
+    </ScrollProgressContainer>
+  </ScrollProgressProvider>
+
+  <!-- The whole page. -->
+  <ScrollProgressProvider global>
+    <ScrollProgress class="fixed inset-x-0 top-0 h-1 bg-foreground" />
+  </ScrollProgressProvider>
+</template>
+```
+
+## Animation
+
+- The bar follows the scroll position on a spring without overshoot (stiffness 250, damping 40), so it glides instead of jumping on wheel steps.
+- By default it grows in width (`mode="width"`, from 0 to 100%), so rounded ends keep their shape; `height` does the same vertically. `scaleX` and `scaleY` scale it with a transform instead, from its `transform-origin` (the center unless you set one, e.g. `origin-left`).
+- Scrolling never re-renders Vue: the bar is driven by motion values.
+- Under reduced motion, the bar tracks the scroll position without easing.
+
+## API Reference
+
+### ScrollProgressProvider
+
+<TypeTable
+  type={{
+    global: {
+      description:
+        'Follow the page scroll instead of a `ScrollProgressContainer`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    direction: {
+      description: 'Scroll axis to follow.',
+      type: "'vertical' | 'horizontal'",
+      default: "'vertical'",
+    },
+    transition: {
+      description: 'Spring smoothing the progress.',
+      type: 'SpringOptions',
+      default: '{ stiffness: 250, damping: 40, bounce: 0 }',
+    },
+    '#default': {
+      description: 'The bar and the container.',
+      type: 'slot',
+      required: true,
+    },
+  }}
+/>
+
+### ScrollProgress
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    mode: {
+      description: 'How the bar shows the progress.',
+      type: "'width' | 'height' | 'scaleX' | 'scaleY'",
+      default: "'width'",
+    },
+    '...props': {
+      description: 'Props of the bar.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### ScrollProgressContainer
+
+The scrollable element (without `global`). Make it scroll with `overflow-y-auto`.
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### useScrollProgress
+
+Returns getters for the `progress` (raw, 0 to 1) and `scale` (smoothed) motion values, `direction` and `global`, with the `container` ref.
