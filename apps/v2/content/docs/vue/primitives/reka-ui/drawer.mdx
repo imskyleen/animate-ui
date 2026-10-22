@@ -1,0 +1,109 @@
+---
+title: Drawer
+description: A panel that slides in from the edge of the screen and can be swiped away.
+---
+
+<VueComponentPreview name="reka-ui/drawer" />
+
+## Installation
+
+<Installation name="drawer" />
+
+## Usage
+
+Import the parts from Animate UI instead of reka-ui. Everything else stays the same.
+
+```vue
+<script setup lang="ts">
+import {
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerRoot,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@animate-ui/vue/primitives/reka-ui';
+</script>
+
+<template>
+  <DrawerRoot>
+    <DrawerTrigger>Daily goals</DrawerTrigger>
+    <DrawerPortal>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerTitle>Daily goals</DrawerTitle>
+        <DrawerDescription>Swipe down to dismiss.</DrawerDescription>
+        <DrawerClose>Done</DrawerClose>
+      </DrawerContent>
+    </DrawerPortal>
+  </DrawerRoot>
+</template>
+```
+
+shadcn-vue's Drawer is built on reka-ui's: `animate-ui animate drawer` swaps its reka-ui imports and removes the CSS slide, fade and transform transition it would run on top.
+
+## Animation
+
+The motion of Animate UI's React drawer (Base UI's), with reka-ui's swipe.
+
+- **The content** slides in from its edge (`swipeDirection`, a full size of its own), opaque, a sheet sliding in rather than a fade, in 0.4s of `cubic-bezier(0.34, 1.2, 0.64, 1)`: it answers at once, goes a hair past its rest (about 1% of its size), then settles back. A hint of bounce, where Vaul's curve zips in, then stops.
+- Closed (Escape, a click outside, a Close), it leaves quickly, seen speeding off its edge (0.16s on an ease-in, `cubic-bezier(0.4, 0, 1, 1)`), so it never reads as a constant slide and its last pixels don't crawl out.
+- Its shadow, if it has one, lifts off the page with it: its starting and ending styles drop it, so it grows from none as it slides in, on the same transition, and fades as it leaves.
+- While you drag it, it follows the finger on the same frame: no transition runs during a swipe. It's dismissed like Base UI's: dragged past half its size, or flicked at 0.5px/ms or more (reka-ui alone would dismiss it 40px away). Let go short of that and it eases back; flick it and it's thrown: it keeps the finger's speed to its edge, linear, over reka-ui's `--drawer-swipe-strength` share of 360ms (the time the rest of the way takes at that speed).
+- **The overlay** comes in and clears exactly like a dialog's: its tint deepens while its backdrop blur grows from 0, in 400ms on a soft ease-out both ways, so the page behind blurs progressively (fading its opacity would cross-fade the sharp page with an already blurred one). It follows the swipe in between: reka-ui leaves its `--drawer-swipe-progress` at 0, Animate UI sets it from the content's swipe. The content waits for it as it leaves, so the overlay is never cut short. Its classes' color and blur are read once it mounts; over a background image (a gradient), it fades its opacity instead.
+- Both stay mounted until their transitions end: reka-ui's own presence only waits for CSS animations, so the content and the overlay get Base UI's `data-starting-style` on the frame they mount and `data-ending-style` while they leave (`data-swipe-dismiss` too, when a swipe dismissed it).
+- Snap points, nested drawers and `swipeDirection` work as in reka-ui.
+- CSS-driven, not Motion: reka-ui drives the swipe through CSS variables, so a JavaScript animation would fight the finger. The primitive brings its own small stylesheet (zero specificity) and the timing as inline variables: a spring becomes the `linear()` curve Motion itself would use, a tween keeps its cubic-bezier, and `AnimateUIProvider tempo` reaches it.
+- Under reduced motion, the drawer fades in place; a swipe dismissal still leaves along the swipe.
+
+## API Reference
+
+Every part takes exactly the props of [reka-ui's Drawer](https://reka-ui.com/docs/components/drawer#api-reference). Animate UI adds the animation props below.
+
+### DrawerRoot, DrawerProvider, DrawerTrigger, DrawerPortal, DrawerViewport, DrawerSwipeArea, DrawerHandle, DrawerTitle, DrawerDescription, DrawerClose, DrawerIndent, DrawerIndentBackground, DrawerVirtualKeyboardProvider
+
+[reka-ui props](https://reka-ui.com/docs/components/drawer#root) only. They are not animated.
+
+### DrawerContent
+
+[reka-ui props](https://reka-ui.com/docs/components/drawer#content), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        'Opening (slide in), snapping and easing back after a swipe that does not dismiss. CSS-driven: a spring becomes a `linear()` curve, a tween keeps its `duration` and cubic-bezier or named `ease`.',
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.34, 1.2, 0.64, 1] }',
+    },
+    exitTransition: {
+      description:
+        "Closing (slide out) by Escape, a click outside or a Close. A swipe dismissal is thrown instead, at the finger's speed.",
+      type: 'Transition',
+      default: '{ duration: 0.16, ease: [0.4, 0, 1, 1] }',
+    },
+  }}
+/>
+
+### DrawerOverlay
+
+[reka-ui props](https://reka-ui.com/docs/components/drawer#overlay), plus:
+
+<TypeTable
+  type={{
+    transition: {
+      description:
+        "Its tint and backdrop blur coming in, like a dialog's overlay. CSS-driven, like the content.",
+      type: 'Transition',
+      default: '{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }',
+    },
+    exitTransition: {
+      description:
+        "Its tint and backdrop blur clearing, like a dialog's overlay.",
+      type: 'Transition',
+      default: 'transition',
+    },
+  }}
+/>

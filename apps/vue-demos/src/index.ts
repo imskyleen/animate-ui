@@ -78,6 +78,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/dialog': () => import('./demos/reka-ui/dialog.vue'),
   'reka-ui/alert-dialog': () => import('./demos/reka-ui/alert-dialog.vue'),
   'reka-ui/sheet': () => import('./demos/reka-ui/sheet.vue'),
+  'reka-ui/drawer': () => import('./demos/reka-ui/drawer.vue'),
   'reka-ui/dropdown-menu': () => import('./demos/reka-ui/dropdown-menu.vue'),
   'reka-ui/combobox': () => import('./demos/reka-ui/combobox.vue'),
   'reka-ui/context-menu': () => import('./demos/reka-ui/context-menu.vue'),
@@ -102,6 +103,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
   'fixtures/animate-ui-questionnaire': () =>
     import('./fixtures/animate-ui-questionnaire.vue'),
+  'fixtures/reka-ui-drawer': () => import('./fixtures/reka-ui-drawer.vue'),
   'fixtures/reka-ui-toast': () => import('./fixtures/reka-ui-toast.vue'),
   'fixtures/reka-ui-toast-update': () => import('./fixtures/reka-ui-toast-update.vue'),
   'fixtures/animate-ui-highlight-cases': () =>

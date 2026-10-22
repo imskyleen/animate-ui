@@ -28,6 +28,7 @@ const PAGES = [
   ['pagination', "ui/pagination' </script>"],
   ['tooltip', 'variant="outline"'],
   ['toast', 'Show Toast'],
+  ['drawer', 'Pick a delivery time'],
   ['questionnaire', 'What should the agent build next?'],
 ] as const;
 
@@ -186,7 +187,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(67);
+  await expect(cards).toHaveCount(68);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

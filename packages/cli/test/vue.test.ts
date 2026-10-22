@@ -104,6 +104,31 @@ describe('transformVue, on shadcn-vue’s own files', () => {
     );
   });
 
+  test('the drawer loses its CSS slide, fade and transform transition, like the React CLI', () => {
+    const removed = [
+      ...new Set(
+        files('drawer').flatMap(
+          ({ code }) => transformVue(code, 'drawer')!.removedClasses,
+        ),
+      ),
+    ];
+    expect(removed).toEqual(
+      expect.arrayContaining([
+        'data-[state=open]:animate-in',
+        'data-[state=closed]:animate-out',
+        'data-[state=open]:fade-in-0',
+        'transition-transform',
+        'duration-500',
+        'ease-[cubic-bezier(0.32,0.72,0,1)]',
+        'data-swiping:duration-0',
+        'transform-[translate3d(var(--drawer-swipe-movement-x,0px),var(--drawer-swipe-movement-y,0px),0)]',
+        'data-[swipe-direction=down]:data-[state=open]:slide-in-from-bottom',
+      ]),
+    );
+    expect(removed).not.toContain('will-change-transform');
+    expect(removed).not.toContain('data-swiping:select-none');
+  });
+
   test('input-otp: vue-input-otp imports point at Animate UI’s animated OTPInput', () => {
     const swapped = files('input-otp').map(({ code }) =>
       transformVue(code, 'input-otp')!,

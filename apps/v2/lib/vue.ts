@@ -533,6 +533,14 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       checkAnimation: { value: 'draw', options: { draw: 'draw', pop: 'pop' } },
     },
   },
+  'reka-ui/drawer': {
+    Drawer: {
+      direction: {
+        value: 'right',
+        options: { bottom: 'bottom', top: 'top', left: 'left', right: 'right' },
+      },
+    },
+  },
   'reka-ui/toast': {
     Toaster: { progressBar: { value: true } },
   },

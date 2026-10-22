@@ -15,6 +15,13 @@ export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   'context-menu': [/^duration-100$/],
   dialog: DIALOG_STRIP,
   'dropdown-menu': [/^duration-100$/],
+  drawer: [
+    /^transform-\[translate3d\(var\(--drawer-swipe-movement-x/,
+    /^transition-transform$/,
+    /^duration-500$/,
+    /^ease-\[cubic-bezier\(0\.32,0\.72,0,1\)\]$/,
+    /^data-swiping:duration-0$/,
+  ],
   'hover-card': [/^duration-100$/],
   'input-otp': [],
   menubar: [/^duration-100$/],
@@ -128,8 +135,7 @@ export function transformVue(
         },
       )
     : swapped;
-  const sided =
-    component === 'sheet' ? withSheetSide(repackaged) : repackaged;
+  const sided = component === 'sheet' ? withSheetSide(repackaged) : repackaged;
   const { code: stripped, removed } = stripAnimationClasses(sided, extra);
   const { code: centered, centering } =
     options.tailwind === 3

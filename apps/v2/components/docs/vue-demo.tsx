@@ -10,12 +10,21 @@ type VueDemos = {
 
 // Built by apps/vue-demos with Vite, outside the Next bundle.
 const BUNDLE = '/vue-demos/index.js';
+// The CSS the demos import (vue-sonner's), which Vite puts beside the bundle.
+const STYLESHEET = '/vue-demos/index.css';
 
 let bundle: Promise<VueDemos> | undefined;
-const loadBundle = () =>
-  (bundle ??= import(
+const loadBundle = () => {
+  if (!bundle && !document.querySelector(`link[href="${STYLESHEET}"]`)) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = STYLESHEET;
+    document.head.append(link);
+  }
+  return (bundle ??= import(
     /* webpackIgnore: true */ /* turbopackIgnore: true */ BUNDLE
   ) as Promise<VueDemos>);
+};
 
 /** A demo from apps/vue-demos, mounted by Vue inside this element. */
 export function VueDemo({ name, ...props }: { name: string } & Props) {
