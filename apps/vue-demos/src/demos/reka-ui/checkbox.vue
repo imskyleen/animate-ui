@@ -41,7 +41,7 @@ watch(() => props.checked, (value) => (checked.value = value))
         <Checkbox
           id="toggle-2"
           :default-value="true"
-          class="bg-background dark:bg-background before:bg-blue-600 data-[state=checked]:text-white dark:before:bg-blue-700"
+          class="bg-background dark:bg-background before:bg-blue-600 before:[transition:scale_300ms_var(--tw-ease,ease),opacity_120ms_ease-out] data-[state=checked]:text-white dark:before:bg-blue-700"
         />
         <div class="grid gap-1.5 font-normal">
           <p class="text-sm leading-none font-medium">

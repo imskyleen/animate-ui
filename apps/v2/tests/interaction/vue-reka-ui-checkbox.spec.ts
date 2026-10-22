@@ -144,7 +144,36 @@ test('vue reka-ui checkbox demo: every box keeps its border color as it checks, 
         (el, pseudo) => getComputedStyle(el, pseudo).transitionDuration,
         pseudo,
       );
-  expect(await timing('label:has(#toggle-2)')).toBe(
-    await timing('#toggle-2', '::before'),
+  const longest = (durations: string) =>
+    Math.max(...durations.split(',').map((d) => parseFloat(d)));
+  expect(longest(await timing('label:has(#toggle-2)'))).toBe(
+    longest(await timing('#toggle-2', '::before')),
+  );
+});
+
+// Bug: the dark blue fill faded in as it grew, so it was invisible until it had nearly grown: no scale to see.
+test('vue reka-ui checkbox demo: the blue fill shows while it is still growing', async ({
+  page,
+}) => {
+  await gotoVueMounted(page, '/tests/vue-demos/reka-ui/checkbox');
+  const box = page.locator('#toggle-2');
+  if ((await box.getAttribute('data-state')) === 'checked') {
+    await box.click();
+    await page.waitForTimeout(500);
+  }
+  const frames = box.evaluate(async (el) => {
+    const seen: [number, number][] = [];
+    const start = performance.now();
+    while (performance.now() - start < 400) {
+      await new Promise((r) => requestAnimationFrame(r));
+      const before = getComputedStyle(el, '::before');
+      seen.push([Number(before.scale), Number(before.opacity)]);
+    }
+    return seen;
+  });
+  await box.click();
+  const seen = await frames;
+  expect(seen.some(([scale, opacity]) => opacity > 0.8 && scale < 0.9)).toBe(
+    true,
   );
 });
