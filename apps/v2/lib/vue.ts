@@ -595,6 +595,14 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       system: { value: false },
     },
   },
+  'animate-ui/code-block': {
+    CodeBlock: {
+      delay: { value: 0, min: 0, max: 3000, step: 100 },
+      duration: { value: 10000, min: 0, max: 30000, step: 1000 },
+      writing: { value: true },
+      cursor: { value: true },
+    },
+  },
   'backgrounds/bubble': {
     BubbleBackground: { interactive: { value: true } },
   },

@@ -27,6 +27,9 @@
       "motion-v": [
         "./node_modules/motion-v"
       ],
+      "@hugeicons/vue": [
+        "./node_modules/@hugeicons/vue"
+      ],
       "@animate-ui/vue/*": [
         "../../packages/vue/src/*"
       ],

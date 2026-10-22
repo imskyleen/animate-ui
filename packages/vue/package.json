@@ -53,7 +53,8 @@
     "motion-v": "^2.8.0",
     "reka-ui": "^2.11.0",
     "vue": "^3.5.0",
-    "vue-input-otp": "^0.4.0"
+    "vue-input-otp": "^0.4.0",
+    "shiki": "^4.5.0"
   },
   "peerDependenciesMeta": {
     "@floating-ui/vue": {
@@ -63,6 +64,9 @@
       "optional": true
     },
     "vue-input-otp": {
+      "optional": true
+    },
+    "shiki": {
       "optional": true
     }
   },
@@ -76,6 +80,7 @@
     "typescript": "~6.0.3",
     "vitest": "^5.0.3",
     "vue": "^3.5.44",
-    "vue-input-otp": "^0.4.0"
+    "vue-input-otp": "^0.4.0",
+    "shiki": "^4.5.0"
   }
 }

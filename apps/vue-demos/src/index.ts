@@ -71,6 +71,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/motion-grid': () => import('./demos/animate-ui/motion-grid.vue'),
   'animate-ui/scroll-progress': () => import('./demos/animate-ui/scroll-progress.vue'),
   'animate-ui/button': () => import('./demos/animate-ui/button.vue'),
+  'animate-ui/code-block': () => import('./demos/animate-ui/code-block.vue'),
   'animate-ui/copy-button': () => import('./demos/animate-ui/copy-button.vue'),
   'animate-ui/icon-button': () => import('./demos/animate-ui/icon-button.vue'),
   'animate-ui/ripple-button': () => import('./demos/animate-ui/ripple-button.vue'),
@@ -114,6 +115,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./fixtures/animate-ui-github-stars-button.vue'),
   'fixtures/animate-ui-github-stars-in-view': () =>
     import('./fixtures/animate-ui-github-stars-in-view.vue'),
+  'fixtures/code-block-done': () => import('./fixtures/code-block-done.vue'),
   'fixtures/reka-ui-toast': () => import('./fixtures/reka-ui-toast.vue'),
   'fixtures/reka-ui-toast-update': () => import('./fixtures/reka-ui-toast-update.vue'),
   'fixtures/animate-ui-highlight-cases': () =>

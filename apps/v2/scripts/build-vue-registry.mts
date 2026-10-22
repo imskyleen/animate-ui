@@ -73,6 +73,12 @@ for (const [library, prefix, target] of [
 const toRegistry = (source: string) =>
   source.replace(/from 'cn'/g, "from '@/lib/utils'");
 
+const OPTIONAL_PEERS = [
+  ['@animate-ui/vue/primitives/code-block', 'shiki'],
+  ['@animate-ui/vue/primitives/tooltip', '@floating-ui/vue'],
+  ['@animate-ui/vue/primitives/input-otp', 'vue-input-otp'],
+] as const;
+
 /** The npm packages the files import: each bare import's but Vue and `cn`. */
 function dependenciesOf(sources: string[]) {
   const packages = new Set<string>();
@@ -85,8 +91,11 @@ function dependenciesOf(sources: string[]) {
         : from!.split('/')[0]!;
       if (name !== 'vue' && name !== 'cn') packages.add(name);
     }
-  // @animate-ui/vue animates with motion-v, its peer.
+  // @animate-ui/vue animates with motion-v, its peer, and some primitives need one more.
   if (packages.has('@animate-ui/vue')) packages.add('motion-v');
+  for (const [primitive, peer] of OPTIONAL_PEERS)
+    if (sources.some((source) => source.includes(primitive)))
+      packages.add(peer);
   return [...packages].sort();
 }
 

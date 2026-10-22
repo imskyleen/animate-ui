@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     // The icons live in the docs' registry: their imports resolve from here.
-    dedupe: ['vue', 'motion-v', '@animate-ui/vue'],
+    dedupe: ['vue', 'motion-v', '@animate-ui/vue', '@hugeicons/vue'],
   },
   define: { 'process.env.NODE_ENV': JSON.stringify('production') },
   build: {

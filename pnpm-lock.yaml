@@ -361,6 +361,9 @@ importers:
       reka-ui:
         specifier: ^2.11.0
         version: 2.11.0(vue@3.5.44(typescript@6.0.3))
+      shiki:
+        specifier: ^4.5.0
+        version: 4.5.0
       tsdown:
         specifier: ^0.23.0
         version: 0.23.0(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(tsx@4.23.15)(typescript@6.0.3)(vue-tsc@3.3.13(typescript@6.0.3))
