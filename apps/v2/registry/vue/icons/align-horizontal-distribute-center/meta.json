@@ -1,0 +1,16 @@
+{
+  "title": "Align Horizontal Distribute Center Icon",
+  "description": "Align Horizontal Distribute Center icon component.",
+  "keywords": [
+    "items",
+    "flex",
+    "justify",
+    "space",
+    "evenly",
+    "around"
+  ],
+  "categories": [
+    "layout"
+  ],
+  "added": "2026-10-18"
+}

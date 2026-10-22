@@ -1,0 +1,109 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type CloudDrizzleProps = IconProps<keyof typeof animations>;
+
+const drizzleAnimation: Variants = {
+  initial: { y: 0, opacity: 1 },
+  animate: (i: number = 0) => ({
+    y: [0, 0.75, -0.75, 0],
+    opacity: [1, 0, 0, 1],
+    transition: {
+      duration: 1.6,
+      times: [0, 0.45, 0.45, 1],
+      ease: ['easeIn', 'linear', 'easeOut'],
+      repeat: Infinity,
+      delay: i * 0.25,
+    },
+  }),
+};
+
+export const animations = {
+  default: {
+    group: {
+      initial: {},
+      animate: {},
+    },
+    path1: {},
+    path2: drizzleAnimation,
+    path3: drizzleAnimation,
+    path4: drizzleAnimation,
+    path5: drizzleAnimation,
+    path6: drizzleAnimation,
+    path7: drizzleAnimation,
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'CloudDrizzle', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      initial="initial"
+      :animate="controls"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.g
+        :variants="variants.group"
+        initial="initial"
+        :animate="controls"
+      >
+        <motion.path
+          d="M8 14v1"
+          :variants="variants.path2"
+          :custom="0"
+        />
+        <motion.path
+          d="M12 21v1"
+          :variants="variants.path3"
+          :custom="1"
+        />
+        <motion.path
+          d="M16 14v1"
+          :variants="variants.path4"
+          :custom="2"
+        />
+        <motion.path
+          d="M12 16v1"
+          :variants="variants.path7"
+          :custom="3"
+        />
+        <motion.path
+          d="M16 19v1"
+          :variants="variants.path6"
+          :custom="4"
+        />
+        <motion.path
+          d="M8 19v1"
+          :variants="variants.path5"
+          :custom="5"
+        />
+      </motion.g>
+    </motion.svg>
+  </IconWrapper>
+</template>

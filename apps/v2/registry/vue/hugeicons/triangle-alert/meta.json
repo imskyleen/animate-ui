@@ -1,0 +1,15 @@
+{
+  "title": "Triangle Alert Icon",
+  "description": "Triangle Alert icon component.",
+  "keywords": [
+    "warning",
+    "alert",
+    "danger",
+    "caution",
+    "exclamation"
+  ],
+  "categories": [
+    "notifications"
+  ],
+  "added": "2026-10-18"
+}

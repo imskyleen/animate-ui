@@ -1,0 +1,15 @@
+{
+  "title": "Check Icon",
+  "description": "Check icon component.",
+  "keywords": [
+    "done",
+    "todo",
+    "tick",
+    "complete",
+    "task"
+  ],
+  "categories": [
+    "notifications"
+  ],
+  "added": "2025-09-13"
+}

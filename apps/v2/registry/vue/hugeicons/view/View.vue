@@ -1,0 +1,75 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type ViewProps = IconProps<keyof typeof animations>;
+
+export const animations = {
+  default: {
+    group: {
+      initial: { scaleY: 1 },
+      animate: {
+        scaleY: [1, 0.1, 1],
+        transition: { duration: 0.4, ease: 'easeInOut' },
+      },
+    },
+    path1: {},
+    path2: {},
+  } satisfies Record<string, Variants>,
+  look: {
+    group: {},
+    path1: {},
+    path2: {
+      initial: { x: 0 },
+      animate: {
+        x: [0, -2.5, 2.5, 0],
+        transition: { duration: 1, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'View', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      v-bind="attrs"
+    >
+      <motion.g
+        :variants="variants.group"
+        initial="initial"
+        :animate="controls"
+      >
+        <motion.path
+          d="M21.544 11.045C21.848 11.4713 22 11.6845 22 12C22 12.3155 21.848 12.5287 21.544 12.955C20.1779 14.8706 16.6892 19 12 19C7.31078 19 3.8221 14.8706 2.45604 12.955C2.15201 12.5287 2 12.3155 2 12C2 11.6845 2.15201 11.4713 2.45604 11.045C3.8221 9.12944 7.31078 5 12 5C16.6892 5 20.1779 9.12944 21.544 11.045Z"
+          :variants="variants.path1"
+          initial="initial"
+          :animate="controls"
+        />
+        <motion.path
+          d="M15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12Z"
+          :variants="variants.path2"
+          initial="initial"
+          :animate="controls"
+        />
+      </motion.g>
+    </motion.svg>
+  </IconWrapper>
+</template>

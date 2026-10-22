@@ -1,0 +1,17 @@
+{
+  "title": "Map Pin Icon",
+  "description": "Map pin icon component.",
+  "keywords": [
+    "map",
+    "pin",
+    "location",
+    "waypoint",
+    "marker",
+    "drop"
+  ],
+  "categories": [
+    "navigation",
+    "travel",
+    "account"
+  ]
+}

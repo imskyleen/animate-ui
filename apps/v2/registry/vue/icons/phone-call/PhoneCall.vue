@@ -1,0 +1,126 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type PhoneCallProps = IconProps<keyof typeof animations>;
+
+export const animations = {
+  default: (() => {
+    const animation: Record<string, Variants> = {
+      phone: {
+        initial: { rotate: 0, scale: 1 },
+        animate: {
+          rotate: [0, -10, 10, -10, 10, 0],
+          scale: [1, 0.88, 0.88, 0.88, 0.88, 1],
+          transition: { duration: 0.7, ease: 'easeInOut' },
+        },
+      },
+    };
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`wave${i}`] = {
+        initial: { opacity: 1, scale: 1 },
+        animate: {
+          opacity: [1, 0.25, 1],
+          scale: [1, 0.85, 1],
+          transition: {
+            duration: 0.5,
+            ease: 'easeInOut',
+            delay: 0.15 * (i - 1),
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+  blink: (() => {
+    const animation: Record<string, Variants> = {
+      phone: {
+        initial: { rotate: 0, scale: 1 },
+        animate: {
+          rotate: [0, -10, 10, -10, 10, 0],
+          scale: [1, 0.88, 0.88, 0.88, 0.88, 1],
+          transition: { duration: 0.7, ease: 'easeInOut' },
+        },
+      },
+    };
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`wave${i}`] = {
+        initial: { opacity: 1, scale: 1 },
+        animate: {
+          opacity: 0,
+          scale: 0,
+          transition: {
+            opacity: {
+              duration: 0.2,
+              ease: 'easeInOut',
+              repeat: 1,
+              repeatType: 'reverse',
+              repeatDelay: 0.2,
+              delay: 0.2 * (i - 1),
+            },
+            scale: {
+              duration: 0.2,
+              ease: 'easeInOut',
+              repeat: 1,
+              repeatType: 'reverse',
+              repeatDelay: 0.2,
+              delay: 0.2 * (i - 1),
+            },
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'PhoneCall', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M13 6a5 5 0 0 1 5 5"
+        :variants="variants.wave1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M13 2a9 9 0 0 1 9 9"
+        :variants="variants.wave2"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+        :variants="variants.phone"
+        initial="initial"
+        :animate="controls"
+      />
+    </motion.svg>
+  </IconWrapper>
+</template>

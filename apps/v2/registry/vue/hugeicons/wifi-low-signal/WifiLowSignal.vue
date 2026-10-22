@@ -1,0 +1,84 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type WifiLowSignalProps = IconProps<keyof typeof animations>;
+
+export const animations = {
+  default: {
+    still1: {},
+    wave1: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.25, 1],
+        scale: [1, 0.85, 1],
+        transition: { duration: 0.5, ease: 'easeInOut' },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  blink: {
+    still1: {},
+    wave1: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: 0,
+        scale: 0,
+        transition: {
+          opacity: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+          scale: {
+            duration: 0.2,
+            ease: 'easeInOut',
+            repeat: 1,
+            repeatType: 'reverse',
+            repeatDelay: 0.2,
+          },
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'WifiLowSignal', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M20.5126 10.7306L15.1758 18.009C13.7137 20.003 12.9827 21 12 21C11.0173 21 10.2863 20.003 8.82421 18.009L3.48742 10.7306C2.40801 9.25847 1.86831 8.52241 2.02741 7.57659C2.18651 6.63078 2.81754 6.2161 4.07962 5.38675C6.38289 3.87318 9.0958 3 12 3C14.9042 3 17.6171 3.87318 19.9204 5.38675C21.1825 6.2161 21.8135 6.63078 21.9726 7.57659C22.1317 8.52241 21.592 9.25847 20.5126 10.7306Z"
+        :variants="variants.still1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M16 17C13.465 15.6667 10.535 15.6667 8 17"
+        :variants="variants.wave1"
+        initial="initial"
+        :animate="controls"
+      />
+    </motion.svg>
+  </IconWrapper>
+</template>

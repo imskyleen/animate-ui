@@ -1,0 +1,123 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type MoonStarProps = IconProps<keyof typeof animations>;
+
+export const animations = {
+  default: {
+    path1: {
+      initial: { rotate: 0, transition: { duration: 0.5, ease: 'easeInOut' } },
+      animate: {
+        rotate: [0, -15, 8, -3, 0],
+        transition: { duration: 0.9, ease: 'easeInOut' },
+      },
+    },
+    group: {
+      initial: { scale: 1, opacity: 1 },
+      animate: {
+        scale: [1, 0.6, 1.2, 1],
+        opacity: [1, 0.5, 1, 1],
+        transition: {
+          duration: 0.9,
+          ease: 'easeInOut',
+          times: [0, 0.35, 0.7, 1],
+        },
+      },
+    },
+    path2: {},
+    path3: {},
+  } satisfies Record<string, Variants>,
+  spin: {
+    path1: {
+      initial: {
+        rotate: 0,
+        transition: { duration: 0 },
+      },
+      animate: {
+        rotate: [0, -30, 400, 360],
+        transition: {
+          duration: 1.2,
+          times: [0, 0.25, 0.75, 1],
+          ease: ['easeInOut', 'easeInOut', 'easeInOut'],
+        },
+      },
+    },
+    group: {
+      initial: {
+        scale: 1,
+        rotate: 0,
+        y: 0,
+        x: 0,
+      },
+      animate: {
+        scale: [1, 0, 0, 1],
+        rotate: [0, 90, 90, 0],
+        y: [0, 6, 10, 0],
+        x: [0, -10, -6, 0],
+        transition: {
+          duration: 1.2,
+          ease: 'easeInOut',
+          times: [0, 0.25, 0.65, 1],
+        },
+      },
+    },
+    path2: {},
+    path3: {},
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'MoonStar', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      initial="initial"
+      :animate="controls"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.g
+        :variants="variants.group"
+        initial="initial"
+        :animate="controls"
+      >
+        <motion.path
+          d="M18 5h4"
+          :variants="variants.path2"
+          initial="initial"
+          :animate="controls"
+        />
+        <motion.path
+          d="M20 3v4"
+          :variants="variants.path3"
+          initial="initial"
+          :animate="controls"
+        />
+      </motion.g>
+    </motion.svg>
+  </IconWrapper>
+</template>

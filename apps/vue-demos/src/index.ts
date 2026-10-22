@@ -1,3 +1,4 @@
+import { icons } from './icons';
 import { createApp, h, reactive, type Component } from 'vue';
 
 type Props = Record<string, unknown>;
@@ -104,6 +105,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./fixtures/animate-ui-tabs-hidden.vue'),
   'fixtures/animate-ui-input-otp': () =>
     import('./fixtures/animate-ui-input-otp.vue'),
+  'fixtures/icons-sweep': () => import('./fixtures/icons-sweep.vue'),
+  'fixtures/icons': () => import('./fixtures/icons.vue'),
   'fixtures/animate-ui-scroll-fade': () =>
     import('./fixtures/animate-ui-scroll-fade.vue'),
   'fixtures/animate-ui-image-zoom-props': () =>
@@ -155,6 +158,9 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
 };
 
 export const names = Object.keys(demos);
+
+for (const [name, load] of Object.entries(icons))
+  demos[`icons/${name}`] = load as (typeof demos)[string];
 
 /** Mounts a demo into `element`; the handle updates its props and unmounts it. */
 export async function mount(name: string, element: Element, props: Props = {}) {

@@ -1,0 +1,134 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type RadioTowerProps = IconProps<keyof typeof animations>;
+
+export const animations = {
+  default: (() => {
+    const animation: Record<string, Variants> = {};
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`path${i}`] = {
+        initial: { opacity: 1, scale: 1 },
+        animate: {
+          opacity: [1, 0.25, 1],
+          scale: [1, 0.85, 1],
+          transition: {
+            duration: 0.5,
+            ease: 'easeInOut',
+            delay: 0.15 * (i - 1),
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+  blink: (() => {
+    const animation: Record<string, Variants> = {};
+
+    for (let i = 1; i <= 2; i++) {
+      animation[`path${i}`] = {
+        initial: { opacity: 1, scale: 1 },
+        animate: {
+          opacity: 0,
+          scale: 0,
+          transition: {
+            opacity: {
+              duration: 0.2,
+              ease: 'easeInOut',
+              repeat: 1,
+              repeatType: 'reverse',
+              repeatDelay: 0.2,
+              delay: 0.2 * (i - 1),
+            },
+            scale: {
+              duration: 0.2,
+              ease: 'easeInOut',
+              repeat: 1,
+              repeatType: 'reverse',
+              repeatDelay: 0.2,
+              delay: 0.2 * (i - 1),
+            },
+          },
+        },
+      };
+    }
+
+    return animation;
+  })() satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'RadioTower', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M7.8 4.7a6.14 6.14 0 0 0-.8 7.5"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M4.9 1.9 C1 5.8 1 12.2 4.9 16.1"
+        :variants="variants.path2"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.circle
+        cx="12"
+        cy="9"
+        r="2"
+        :variants="variants.circle"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M16.2 4.8c2 2 2.26 5.11.8 7.47"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M19.1 1.9a9.96 9.96 0 0 1 0 14.1"
+        :variants="variants.path2"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M9.5 18h5"
+        :variants="variants.path3"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="m8 22 4-11 4 11"
+        :variants="variants.path4"
+        initial="initial"
+        :animate="controls"
+      />
+    </motion.svg>
+  </IconWrapper>
+</template>

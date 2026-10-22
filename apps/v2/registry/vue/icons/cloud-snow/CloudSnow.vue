@@ -1,0 +1,115 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type CloudSnowProps = IconProps<keyof typeof animations>;
+
+const snowAnimation: Variants = {
+  initial: { x: 0, y: 0, opacity: 1 },
+  animate: (i: number = 0) => ({
+    x: [0, 0.5, 0, -0.5, 0],
+    y: [0, 1.5, -1, 0],
+    opacity: [1, 0, 0, 1],
+    transition: {
+      duration: 2,
+      times: [0, 0.5, 0.5, 1],
+      ease: ['linear', 'linear', 'easeOut'],
+      repeat: Infinity,
+      delay: i * 0.3,
+      x: {
+        inherit: true,
+        times: [0, 0.25, 0.5, 0.75, 1],
+        ease: 'easeInOut',
+      },
+    },
+  }),
+};
+
+export const animations = {
+  default: {
+    group: {
+      initial: {},
+      animate: {},
+    },
+    path1: {},
+    path2: snowAnimation,
+    path3: snowAnimation,
+    path4: snowAnimation,
+    path5: snowAnimation,
+    path6: snowAnimation,
+    path7: snowAnimation,
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'CloudSnow', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      initial="initial"
+      :animate="controls"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.g
+        :variants="variants.group"
+        initial="initial"
+        :animate="controls"
+      >
+        <motion.path
+          d="M8 15h.01"
+          :variants="variants.path2"
+          :custom="0"
+        />
+        <motion.path
+          d="M12 21h.01"
+          :variants="variants.path3"
+          :custom="1"
+        />
+        <motion.path
+          d="M16 15h.01"
+          :variants="variants.path4"
+          :custom="2"
+        />
+        <motion.path
+          d="M12 17h.01"
+          :variants="variants.path7"
+          :custom="3"
+        />
+        <motion.path
+          d="M16 19h.01"
+          :variants="variants.path6"
+          :custom="4"
+        />
+        <motion.path
+          d="M8 19h.01"
+          :variants="variants.path5"
+          :custom="5"
+        />
+      </motion.g>
+    </motion.svg>
+  </IconWrapper>
+</template>

@@ -1,0 +1,15 @@
+{
+  "title": "Expand Icon",
+  "description": "Expand icon component.",
+  "keywords": [
+    "scale",
+    "fullscreen",
+    "maximize",
+    "minimize",
+    "contract"
+  ],
+  "categories": [
+    "text",
+    "arrows"
+  ]
+}

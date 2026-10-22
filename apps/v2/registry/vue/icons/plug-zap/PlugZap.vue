@@ -1,0 +1,110 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type PlugZapProps = IconProps<keyof typeof animations>;
+
+const PLUG: Variants = {
+  initial: { x: 0, y: 0 },
+  animate: {
+    x: [0, 1.2, 1.2, 0],
+    y: [0, -1.2, -1.2, 0],
+    transition: { duration: 0.8, ease: 'easeInOut', times: [0, 0.3, 0.55, 1] },
+  },
+};
+
+export const animations = {
+  default: {
+    path1: PLUG,
+    path2: PLUG,
+    path3: PLUG,
+    path4: PLUG,
+    path5: {
+      initial: { opacity: 1, scale: 1 },
+      animate: {
+        opacity: [1, 0.5, 1, 0.7, 1],
+        scale: [1, 1.2, 0.95, 1.08, 1],
+        transition: { duration: 0.5, ease: 'easeInOut', delay: 0.2 },
+      },
+    },
+  } satisfies Record<string, Variants>,
+  flicker: {
+    path1: {},
+    path2: {},
+    path3: {},
+    path4: {},
+    path5: {
+      initial: {
+        opacity: 1,
+        scale: 1,
+      },
+      animate: {
+        opacity: [1, 0.5, 1, 0.5, 1],
+        scale: [1, 0.9, 1, 0.9, 1],
+        transition: {
+          duration: 1.8,
+          ease: 'easeInOut',
+        },
+      },
+    },
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'PlugZap', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="m2 22 3-3"
+        :variants="variants.path2"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M7.5 13.5 10 11"
+        :variants="variants.path3"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="M10.5 16.5 13 14"
+        :variants="variants.path4"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.path
+        d="m18 3-4 4h6l-4 4"
+        :variants="variants.path5"
+        initial="initial"
+        :animate="controls"
+      />
+    </motion.svg>
+  </IconWrapper>
+</template>

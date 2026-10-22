@@ -1,0 +1,18 @@
+{
+  "title": "Move Left Icon",
+  "description": "Move left icon component.",
+  "keywords": [
+    "move",
+    "arrow",
+    "left",
+    "back",
+    "previous",
+    "direction",
+    "east",
+    "<-"
+  ],
+  "categories": [
+    "arrows"
+  ],
+  "added": "2026-10-18"
+}

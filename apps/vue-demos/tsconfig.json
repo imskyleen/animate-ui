@@ -9,9 +9,32 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["vite/client"],
-    "paths": { "@/*": ["./src/*"] }
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "vue": [
+        "./node_modules/vue"
+      ],
+      "motion-v": [
+        "./node_modules/motion-v"
+      ],
+      "@animate-ui/vue/*": [
+        "../../packages/vue/src/*"
+      ]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "vite.config.ts"
+  ]
 }

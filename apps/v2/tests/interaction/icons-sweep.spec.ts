@@ -59,37 +59,63 @@ const snapshot = (page: Page) =>
     return result;
   });
 
-test('every icon animation moves, and returns to rest when stopped midway', async ({
-  page,
-}) => {
-  test.setTimeout(180_000);
+const SWEEPS = [
+  { name: 'react', path: '/tests/fixtures/icons-sweep' },
+  { name: 'vue', path: '/tests/vue-demos/fixtures/icons-sweep' },
+  {
+    name: 'vue hugeicons',
+    path: '/tests/vue-demos/fixtures/icons-sweep?lib=hugeicons',
+  },
+];
+
+const open = async (page: Page, path: string) => {
   await page.setViewportSize({ width: 1600, height: 4000 });
-  await page.goto('/tests/fixtures/icons-sweep', { waitUntil: 'networkidle' });
+  await page.goto(path, { waitUntil: 'networkidle' });
   await page.getByTestId('ready').waitFor({ timeout: 120_000 });
   await page.waitForTimeout(500);
-  const play = page.getByRole('button', { name: 'Play' });
+};
 
-  const rest = await snapshot(page);
-  const names = Object.keys(rest);
-  expect(names.length).toBeGreaterThan(400);
+for (const sweep of SWEEPS)
+  test(`${sweep.name}: every icon animation moves, and returns to rest when stopped midway`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000);
+    await open(page, sweep.path);
+    const play = page.getByRole('button', { name: 'Play' });
 
-  await play.click();
-  const moved = new Set<string>();
-  for (let i = 0; i < 8; i++) {
-    await page.waitForTimeout(100);
-    const frame = await snapshot(page);
-    for (const name of names) if (frame[name] !== rest[name]) moved.add(name);
-  }
-  expect(names.filter((name) => !moved.has(name))).toEqual([]);
+    const rest = await snapshot(page);
+    const names = Object.keys(rest);
+    expect(names.length).toBeGreaterThan(400);
 
-  for (const playFor of [0, 250]) {
-    if (playFor) {
-      await play.click();
-      await page.waitForTimeout(playFor);
-    }
     await play.click();
-    await page.waitForTimeout(3500);
-    const back = await snapshot(page);
-    expect(names.filter((name) => back[name] !== rest[name])).toEqual([]);
-  }
+    const moved = new Set<string>();
+    for (let i = 0; i < 8; i++) {
+      await page.waitForTimeout(100);
+      const frame = await snapshot(page);
+      for (const name of names) if (frame[name] !== rest[name]) moved.add(name);
+    }
+    expect(names.filter((name) => !moved.has(name))).toEqual([]);
+
+    for (const playFor of [0, 250]) {
+      if (playFor) {
+        await play.click();
+        await page.waitForTimeout(playFor);
+      }
+      await play.click();
+      await page.waitForTimeout(3500);
+      const back = await snapshot(page);
+      expect(names.filter((name) => back[name] !== rest[name])).toEqual([]);
+    }
+  });
+
+test('the Vue icons rest exactly like the React ones', async ({ page }) => {
+  test.setTimeout(180_000);
+  await open(page, '/tests/fixtures/icons-sweep');
+  const react = await snapshot(page);
+  await open(page, '/tests/vue-demos/fixtures/icons-sweep');
+  const vue = await snapshot(page);
+  expect(Object.keys(vue).sort()).toEqual(Object.keys(react).sort());
+  expect(
+    Object.keys(react).filter((name) => vue[name] !== react[name]),
+  ).toEqual([]);
 });

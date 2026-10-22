@@ -1,0 +1,109 @@
+<script lang="ts">
+import type { Variants } from 'motion-v'
+import type { IconProps } from '@animate-ui/vue/icons'
+
+export type CloudHailProps = IconProps<keyof typeof animations>;
+
+const hailAnimation: Variants = {
+  initial: { y: 0, opacity: 1 },
+  animate: (i: number = 0) => ({
+    y: [0, 1, -1, 0, -0.4, 0],
+    opacity: [1, 0, 0, 1, 1, 1],
+    transition: {
+      duration: 0.9,
+      times: [0, 0.25, 0.25, 0.6, 0.8, 1],
+      ease: ['easeIn', 'linear', 'easeIn', 'easeOut', 'easeIn'],
+      repeat: Infinity,
+      delay: i * 0.15,
+    },
+  }),
+};
+
+export const animations = {
+  default: {
+    group: {
+      initial: {},
+      animate: {},
+    },
+    path1: {},
+    path2: hailAnimation,
+    path3: hailAnimation,
+    path4: hailAnimation,
+    path5: hailAnimation,
+    path6: hailAnimation,
+    path7: hailAnimation,
+  } satisfies Record<string, Variants>,
+} as const;
+</script>
+
+<script setup lang="ts">
+import { IconWrapper } from '@animate-ui/vue/icons'
+import { motion } from 'motion-v'
+
+defineOptions({ name: 'CloudHail', inheritAttrs: false })
+</script>
+
+<template>
+  <IconWrapper
+    v-slot="{ variants, controls, size, attrs }"
+    :animations="animations"
+    v-bind="$attrs"
+  >
+    <motion.svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      :stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      initial="initial"
+      :animate="controls"
+      v-bind="attrs"
+    >
+      <motion.path
+        d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"
+        :variants="variants.path1"
+        initial="initial"
+        :animate="controls"
+      />
+      <motion.g
+        :variants="variants.group"
+        initial="initial"
+        :animate="controls"
+      >
+        <motion.path
+          d="M8 14v2"
+          :variants="variants.path2"
+          :custom="0"
+        />
+        <motion.path
+          d="M12 22h.01"
+          :variants="variants.path3"
+          :custom="1"
+        />
+        <motion.path
+          d="M16 14v2"
+          :variants="variants.path4"
+          :custom="2"
+        />
+        <motion.path
+          d="M12 16v2"
+          :variants="variants.path7"
+          :custom="3"
+        />
+        <motion.path
+          d="M16 20h.01"
+          :variants="variants.path6"
+          :custom="4"
+        />
+        <motion.path
+          d="M8 20h.01"
+          :variants="variants.path5"
+          :custom="5"
+        />
+      </motion.g>
+    </motion.svg>
+  </IconWrapper>
+</template>

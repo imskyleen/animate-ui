@@ -1,0 +1,16 @@
+{
+  "title": "Pin Icon",
+  "description": "Pin icon component.",
+  "keywords": [
+    "pin",
+    "map",
+    "location",
+    "lock",
+    "fixed",
+    "anchor"
+  ],
+  "categories": [
+    "navigation",
+    "account"
+  ]
+}

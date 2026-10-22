@@ -1,0 +1,17 @@
+{
+  "title": "Fingerprint Icon",
+  "description": "Fingerprint icon component.",
+  "keywords": [
+    "2fa",
+    "authentication",
+    "biometric",
+    "identity",
+    "security"
+  ],
+  "categories": [
+    "account",
+    "security",
+    "medical",
+    "devices"
+  ]
+}

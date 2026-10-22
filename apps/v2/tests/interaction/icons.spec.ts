@@ -5,8 +5,13 @@ import { playWaves, track, wavesOf } from './icon-waves';
 type Sample = [time: number, degrees: number];
 type Recorder = { samples: Sample[]; reachedAt: number };
 
-async function open(page: Page) {
-  await page.goto('/tests/fixtures/icons', { waitUntil: 'networkidle' });
+const ICON_FRAMEWORKS = [
+  { name: '', vue: false, path: '/tests/fixtures/icons' },
+  { name: 'vue ', vue: true, path: '/tests/vue-demos/fixtures/icons' },
+];
+
+async function open(page: Page, path = ICON_FRAMEWORKS[0]!.path) {
+  await page.goto(path, { waitUntil: 'networkidle' });
 }
 
 function record(svg: Locator, threshold: number) {
@@ -52,239 +57,252 @@ const rotation = (svg: Locator) =>
 
 const maxAbs = (values: number[]) => Math.max(...values.map(Math.abs));
 
-test.describe('icons', () => {
-  test('hover plays the animation, leaving returns to rest on a spring', async ({
-    page,
-  }) => {
-    await open(page);
-    const svg = page.getByTestId('hover').locator('svg');
-    await record(svg, 15);
-    await svg.hover();
-    await waitForThreshold(page);
-    await page.mouse.move(600, 600);
-    const left = await now(page);
-    await page.waitForTimeout(900);
-    const after = await between(page, left);
-    expect(Math.max(...after)).toBeGreaterThan(0.3);
-    expect(Math.min(...after)).toBeLessThan(-0.3);
-    expect(maxAbs(await between(page, left + 300))).toBeLessThan(3);
-    await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
-  });
-
-  test('tap: animates while pressed, returns to rest on release', async ({
-    page,
-  }) => {
-    await open(page);
-    const svg = page.getByTestId('tap').locator('svg');
-    await record(svg, 5);
-    await svg.hover();
-    await page.mouse.down();
-    await waitForThreshold(page);
-    await page.mouse.up();
-    const released = await now(page);
-    await page.waitForTimeout(900);
-    expect(maxAbs(await between(page, released + 300))).toBeLessThan(3);
-    await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
-  });
-
-  test('tap with completeOnStop: the animation finishes after release', async ({
-    page,
-  }) => {
-    await open(page);
-    const svg = page.getByTestId('tap-complete').locator('svg');
-    await record(svg, 5);
-    await svg.hover();
-    await page.mouse.down();
-    await waitForThreshold(page);
-    await page.mouse.up();
-    const released = await now(page);
-    await page.waitForTimeout(900);
-    expect(
-      maxAbs(await between(page, released + 200, released + 450)),
-    ).toBeGreaterThan(5);
-  });
-
-  test('speed 2 plays twice as fast, speed 1 as authored', async ({ page }) => {
-    await open(page);
-    const section = page.getByTestId('speed');
-    const done = section.evaluate((root) => {
-      const bells = [...root.querySelectorAll('svg')];
-      return new Promise<number[]>((resolve) => {
-        const last = bells.map(() => 0);
-        let start = 0;
-        const tick = (now: number) => {
-          bells.forEach((bell, i) => {
-            if (getComputedStyle(bell).transform !== 'none') {
-              if (!start) start = now;
-              last[i] = now;
-            }
-          });
-          if (start && now - start > 1600)
-            resolve(last.map((time) => time - start));
-          else requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      });
-    });
-    await section.getByRole('button', { name: 'Play' }).click();
-    const [normal, fast] = await done;
-    expect(normal).toBeGreaterThan(800);
-    expect(normal).toBeLessThan(1000);
-    expect(fast! / normal!).toBeGreaterThan(0.4);
-    expect(fast! / normal!).toBeLessThan(0.6);
-  });
-
-  test('a grouped icon with a prop of its own follows its group', async ({
-    page,
-  }) => {
-    await open(page);
-    const group = page.getByTestId('group-override');
-    const svg = group.locator('svg');
-    await record(svg, 5);
-    await group.hover();
-    await waitForThreshold(page);
-    await page.mouse.move(600, 10);
-    await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
-  });
-
-  test("a grouped icon with a prop of its own waits the group's delay once", async ({
-    page,
-  }) => {
-    await open(page);
-    const section = page.getByTestId('group-delay');
-    const svg = section.locator('svg');
-    await record(svg, 1);
-    const clicked = await now(page);
-    await section.getByRole('button', { name: 'Play delayed' }).click();
-    await waitForThreshold(page);
-    const started = await page.evaluate(
-      () =>
-        (window as unknown as { __recorder: Recorder }).__recorder.reachedAt,
-    );
-    expect(started - clicked).toBeGreaterThan(350);
-    expect(started - clicked).toBeLessThan(650);
-  });
-
-  test('tap: a cancelled touch stops the animation', async ({ page }) => {
-    await open(page);
-    const svg = page.getByTestId('tap-loop').locator('svg');
-    await svg.dispatchEvent('pointerdown', { pointerType: 'touch' });
-    await page.waitForTimeout(200);
-    await svg.dispatchEvent('pointercancel', { pointerType: 'touch' });
-    await page.waitForTimeout(1200);
-    await record(svg, 1);
-    await page.waitForTimeout(1200);
-    expect(maxAbs(await between(page, 0))).toBeLessThan(1);
-  });
-
-  test('animateOnView plays even when the AnimateIcon is given a ref', async ({
-    page,
-  }) => {
-    await open(page);
-    const view = page.getByTestId('view-ref');
-    const svg = view.locator('svg');
-    await record(svg, 5);
-    await view.scrollIntoViewIfNeeded();
-    await waitForThreshold(page);
-  });
-
-  test('fully drawn paths rest solid, without Tailwind generating any class', async ({
-    page,
-  }) => {
-    await open(page);
-    const section = page.getByTestId('path');
-    await section.getByRole('button', { name: 'Draw' }).click();
-    await page.waitForTimeout(1200);
-    const dashes = await section.evaluate((root) => {
-      for (const sheet of document.styleSheets)
-        if (!sheet.ownerNode?.textContent?.includes('animate-ui-icon-path'))
-          sheet.disabled = true;
-      return [...root.querySelectorAll('svg [stroke-dasharray]')].map((el) => [
-        el.getAttribute('stroke-dasharray'),
-        getComputedStyle(el).strokeDasharray,
-      ]);
-    });
-    expect(dashes.length).toBeGreaterThanOrEqual(12);
-    for (const [attribute, computed] of dashes) {
-      expect(attribute).toBe('1 1');
-      expect(computed).toBe('1px, 0px');
-    }
-  });
-
-  test('the rule behind pathClassName is server-rendered once, in the head', async ({
-    page,
-  }) => {
-    const html = await (await page.request.get('/tests/fixtures/icons')).text();
-    const head = html.slice(0, html.indexOf('</head>'));
-    expect(
-      head.match(/<style[^>]*>[^<]*\.animate-ui-icon-path /g),
-    ).toHaveLength(1);
-    await open(page);
-    expect(
-      await page.evaluate(
-        () =>
-          [...document.querySelectorAll('style')].filter((el) =>
-            el.textContent?.includes('animate-ui-icon-path'),
-          ).length,
-      ),
-    ).toBe(1);
-  });
-
-  test('a static icon renders its svg alone; a drawing one adds the rule', async ({
-    page,
-  }) => {
-    await page.goto('/tests/fixtures/icons-markup', {
-      waitUntil: 'networkidle',
-    });
-    for (const i of [0, 1]) {
-      const html = await page.getByTestId(`markup-${i}`).textContent();
-      expect(html).toMatch(/^<svg[^]*<\/svg>$/);
-    }
-    expect(await page.getByTestId('markup-2').textContent()).toContain(
-      '.animate-ui-icon-path [stroke-dasharray',
-    );
-  });
-
-  test.describe('reduced motion', () => {
-    test.use({ reducedMotion: 'reduce' });
-
-    test('icons stay at rest', async ({ page }) => {
-      await open(page);
-      const svg = page.getByTestId('hover').locator('svg');
-      await svg.hover();
-      await page.waitForTimeout(500);
-      expect(await svg.evaluate((el) => getComputedStyle(el).transform)).toBe(
-        'none',
-      );
-    });
-  });
-});
-
-test.describe('icons on touch', () => {
-  test.use({ hasTouch: true, isMobile: true });
-
-  for (const id of ['hover', 'group-override']) {
-    test(`a tap doesn't play a hover animation, nor leave it stuck (${id})`, async ({
+for (const framework of ICON_FRAMEWORKS) {
+  test.describe(`${framework.name}icons`, () => {
+    test('hover plays the animation, leaving returns to rest on a spring', async ({
       page,
     }) => {
-      await open(page);
-      const svg = page.getByTestId(id).locator('svg');
-      await record(svg, 1);
-      await svg.tap();
-      const tapped = await now(page);
-      await page.waitForTimeout(1200);
-      expect(maxAbs(await between(page, tapped))).toBeLessThan(1);
+      await open(page, framework.path);
+      const svg = page.getByTestId('hover').locator('svg');
+      await record(svg, 15);
+      await svg.hover();
+      await waitForThreshold(page);
+      await page.mouse.move(600, 600);
+      const left = await now(page);
+      await page.waitForTimeout(900);
+      const after = await between(page, left);
+      expect(Math.max(...after)).toBeGreaterThan(0.3);
+      expect(Math.min(...after)).toBeLessThan(-0.3);
+      expect(maxAbs(await between(page, left + 300))).toBeLessThan(3);
+      await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
     });
-  }
 
-  test('a tap still plays a tap animation', async ({ page }) => {
-    await open(page);
-    const svg = page.getByTestId('tap-complete').locator('svg');
-    await record(svg, 5);
-    await svg.tap();
-    await waitForThreshold(page);
+    test('tap: animates while pressed, returns to rest on release', async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const svg = page.getByTestId('tap').locator('svg');
+      await record(svg, 5);
+      await svg.hover();
+      await page.mouse.down();
+      await waitForThreshold(page);
+      await page.mouse.up();
+      const released = await now(page);
+      await page.waitForTimeout(900);
+      expect(maxAbs(await between(page, released + 300))).toBeLessThan(3);
+      await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
+    });
+
+    test('tap with completeOnStop: the animation finishes after release', async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const svg = page.getByTestId('tap-complete').locator('svg');
+      await record(svg, 5);
+      await svg.hover();
+      await page.mouse.down();
+      await waitForThreshold(page);
+      await page.mouse.up();
+      const released = await now(page);
+      await page.waitForTimeout(900);
+      expect(
+        maxAbs(await between(page, released + 200, released + 450)),
+      ).toBeGreaterThan(5);
+    });
+
+    test('speed 2 plays twice as fast, speed 1 as authored', async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const section = page.getByTestId('speed');
+      const done = section.evaluate((root) => {
+        const bells = [...root.querySelectorAll('svg')];
+        return new Promise<number[]>((resolve) => {
+          const last = bells.map(() => 0);
+          let start = 0;
+          const tick = (now: number) => {
+            bells.forEach((bell, i) => {
+              if (getComputedStyle(bell).transform !== 'none') {
+                if (!start) start = now;
+                last[i] = now;
+              }
+            });
+            if (start && now - start > 1600)
+              resolve(last.map((time) => time - start));
+            else requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+      });
+      await section.getByRole('button', { name: 'Play' }).click();
+      const [normal, fast] = await done;
+      expect(normal).toBeGreaterThan(800);
+      expect(normal).toBeLessThan(1000);
+      expect(fast! / normal!).toBeGreaterThan(0.4);
+      expect(fast! / normal!).toBeLessThan(0.6);
+    });
+
+    test('a grouped icon with a prop of its own follows its group', async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const group = page.getByTestId('group-override');
+      const svg = group.locator('svg');
+      await record(svg, 5);
+      await group.hover();
+      await waitForThreshold(page);
+      await page.mouse.move(600, 10);
+      await expect.poll(() => rotation(svg)).toBeCloseTo(0, 1);
+    });
+
+    test("a grouped icon with a prop of its own waits the group's delay once", async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const section = page.getByTestId('group-delay');
+      const svg = section.locator('svg');
+      await record(svg, 1);
+      const clicked = await now(page);
+      await section.getByRole('button', { name: 'Play delayed' }).click();
+      await waitForThreshold(page);
+      const started = await page.evaluate(
+        () =>
+          (window as unknown as { __recorder: Recorder }).__recorder.reachedAt,
+      );
+      expect(started - clicked).toBeGreaterThan(350);
+      expect(started - clicked).toBeLessThan(650);
+    });
+
+    test('tap: a cancelled touch stops the animation', async ({ page }) => {
+      await open(page, framework.path);
+      const svg = page.getByTestId('tap-loop').locator('svg');
+      await svg.dispatchEvent('pointerdown', { pointerType: 'touch' });
+      await page.waitForTimeout(200);
+      await svg.dispatchEvent('pointercancel', { pointerType: 'touch' });
+      await page.waitForTimeout(1200);
+      await record(svg, 1);
+      await page.waitForTimeout(1200);
+      expect(maxAbs(await between(page, 0))).toBeLessThan(1);
+    });
+
+    test('animateOnView plays even when the AnimateIcon is given a ref', async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const view = page.getByTestId('view-ref');
+      const svg = view.locator('svg');
+      await record(svg, 5);
+      await view.scrollIntoViewIfNeeded();
+      await waitForThreshold(page);
+    });
+
+    test('fully drawn paths rest solid, without Tailwind generating any class', async ({
+      page,
+    }) => {
+      await open(page, framework.path);
+      const section = page.getByTestId('path');
+      await section.getByRole('button', { name: 'Draw' }).click();
+      await page.waitForTimeout(1200);
+      const dashes = await section.evaluate((root) => {
+        for (const sheet of document.styleSheets)
+          if (!sheet.ownerNode?.textContent?.includes('animate-ui-icon-path'))
+            sheet.disabled = true;
+        return [...root.querySelectorAll('svg [stroke-dasharray]')].map(
+          (el) => [
+            el.getAttribute('stroke-dasharray'),
+            getComputedStyle(el).strokeDasharray,
+          ],
+        );
+      });
+      expect(dashes.length).toBeGreaterThanOrEqual(12);
+      for (const [attribute, computed] of dashes) {
+        expect(attribute).toBe('1 1');
+        expect(computed).toBe('1px, 0px');
+      }
+    });
+
+    test('the rule behind pathClassName is server-rendered once, in the head', async ({
+      page,
+    }) => {
+      test.skip(
+        framework.vue,
+        'Vue demos mount in the browser: no server render',
+      );
+      const html = await (
+        await page.request.get('/tests/fixtures/icons')
+      ).text();
+      const head = html.slice(0, html.indexOf('</head>'));
+      expect(
+        head.match(/<style[^>]*>[^<]*\.animate-ui-icon-path /g),
+      ).toHaveLength(1);
+      await open(page, framework.path);
+      expect(
+        await page.evaluate(
+          () =>
+            [...document.querySelectorAll('style')].filter((el) =>
+              el.textContent?.includes('animate-ui-icon-path'),
+            ).length,
+        ),
+      ).toBe(1);
+    });
+
+    test('a static icon renders its svg alone; a drawing one adds the rule', async ({
+      page,
+    }) => {
+      test.skip(framework.vue, 'renders React markup to a string');
+      await page.goto('/tests/fixtures/icons-markup', {
+        waitUntil: 'networkidle',
+      });
+      for (const i of [0, 1]) {
+        const html = await page.getByTestId(`markup-${i}`).textContent();
+        expect(html).toMatch(/^<svg[^]*<\/svg>$/);
+      }
+      expect(await page.getByTestId('markup-2').textContent()).toContain(
+        '.animate-ui-icon-path [stroke-dasharray',
+      );
+    });
+
+    test.describe('reduced motion', () => {
+      test.use({ reducedMotion: 'reduce' });
+
+      test('icons stay at rest', async ({ page }) => {
+        await open(page, framework.path);
+        const svg = page.getByTestId('hover').locator('svg');
+        await svg.hover();
+        await page.waitForTimeout(500);
+        expect(await svg.evaluate((el) => getComputedStyle(el).transform)).toBe(
+          'none',
+        );
+      });
+    });
   });
-});
+
+  test.describe(`${framework.name}icons on touch`, () => {
+    test.use({ hasTouch: true, isMobile: true });
+
+    for (const id of ['hover', 'group-override']) {
+      test(`a tap doesn't play a hover animation, nor leave it stuck (${id})`, async ({
+        page,
+      }) => {
+        await open(page, framework.path);
+        const svg = page.getByTestId(id).locator('svg');
+        await record(svg, 1);
+        await svg.tap();
+        const tapped = await now(page);
+        await page.waitForTimeout(1200);
+        expect(maxAbs(await between(page, tapped))).toBeLessThan(1);
+      });
+    }
+
+    test('a tap still plays a tap animation', async ({ page }) => {
+      await open(page, framework.path);
+      const svg = page.getByTestId('tap-complete').locator('svg');
+      await record(svg, 5);
+      await svg.tap();
+      await waitForThreshold(page);
+    });
+  });
+}
 
 test.describe('icons gallery', () => {
   test('no New filter when every icon of the library is new', async ({

@@ -1,0 +1,14 @@
+{
+  "title": "Cast Icon",
+  "description": "Cast icon component.",
+  "keywords": [
+    "chromecast",
+    "airplay",
+    "screen"
+  ],
+  "categories": [
+    "devices",
+    "connectivity"
+  ],
+  "added": "2026-10-18"
+}
