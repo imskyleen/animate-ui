@@ -49,6 +49,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./demos/animate-ui/swapping-text.vue'),
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
+  'animate-ui/page-transition': () =>
+    import('./demos/animate-ui/page-transition.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
   'backgrounds/bubble': () => import('./demos/backgrounds/bubble.vue'),
   'backgrounds/fireworks-circle': () => import('./demos/backgrounds/fireworks-circle.vue'),
@@ -116,6 +118,9 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/animate-ui-github-stars-in-view': () =>
     import('./fixtures/animate-ui-github-stars-in-view.vue'),
   'fixtures/code-block-done': () => import('./fixtures/code-block-done.vue'),
+  'fixtures/page-transition': () => import('./fixtures/page-transition.vue'),
+  'fixtures/page-transition-router': () =>
+    import('./fixtures/page-transition-router.vue'),
   'fixtures/reka-ui-toast': () => import('./fixtures/reka-ui-toast.vue'),
   'fixtures/reka-ui-toast-update': () => import('./fixtures/reka-ui-toast-update.vue'),
   'fixtures/animate-ui-highlight-cases': () =>

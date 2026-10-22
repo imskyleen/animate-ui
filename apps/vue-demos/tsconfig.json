@@ -30,6 +30,9 @@
       "@hugeicons/vue": [
         "./node_modules/@hugeicons/vue"
       ],
+      "vue-router": [
+        "./node_modules/vue-router"
+      ],
       "@animate-ui/vue/*": [
         "../../packages/vue/src/*"
       ],

@@ -603,6 +603,28 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       cursor: { value: true },
     },
   },
+  'animate-ui/page-transition': {
+    PageTransition: {
+      effect: {
+        value: 'slide',
+        options: {
+          fade: 'fade',
+          slide: 'slide',
+          push: 'push',
+          zoom: 'zoom',
+          iris: 'iris',
+          wipe: 'wipe',
+          bands: 'bands',
+          stack: 'stack',
+          flow: 'flow',
+          chop: 'chop',
+          random: 'random',
+        },
+      },
+      shared: { value: true },
+      picker: { value: true },
+    },
+  },
   'backgrounds/bubble': {
     BubbleBackground: { interactive: { value: true } },
   },

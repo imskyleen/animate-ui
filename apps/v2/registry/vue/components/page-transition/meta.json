@@ -1,0 +1,4 @@
+{
+  "title": "Page Transition",
+  "description": "Animated transitions between the pages of a Vue app (vue-router or Nuxt), built on view transitions."
+}

@@ -81,6 +81,7 @@ const OWN_PAGES = [
   ['github-stars-button', 'starVariants'],
   ['theme-toggler-button', 'Moon02Icon'],
   ['code-block', 'scroll-class='],
+  ['page-transition', 'startTransition'],
 ] as const;
 
 for (const [library, pages] of [
@@ -192,7 +193,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(73);
+  await expect(cards).toHaveCount(74);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

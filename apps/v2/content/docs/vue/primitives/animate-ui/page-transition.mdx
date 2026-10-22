@@ -1,0 +1,113 @@
+---
+title: Page Transition
+description: Animated transitions between pages, built on view transitions, for Vue Router and Nuxt.
+---
+
+<VueComponentPreview name="animate-ui/page-transition" />
+
+## Effects
+
+<PageTransitionEffects />
+
+`random` picks another of these effects at each navigation, the same for the page that leaves and the one that arrives.
+
+## Installation
+
+<VueRegistryInstallation name="components-page-transition" />
+
+It plays in browsers with view transitions (Chromium 125+, recent Safari and Firefox), through Motion for Vue's `AnimateView`. Elsewhere, pages change without animation.
+
+## Usage
+
+Run the router's navigations in view transitions with `routeTransitions`, once:
+
+```ts title="src/main.ts"
+import { routeTransitions } from '@/components/animate-ui/components/page-transition';
+
+const router = createRouter({ history: createWebHistory(), routes });
+routeTransitions(router);
+```
+
+Then wrap the content that changes from one page to the next, in the layout, so the header and navigation around it stay still:
+
+```vue title="src/App.vue"
+<script setup lang="ts">
+import { PageTransition } from '@/components/animate-ui/components/page-transition';
+</script>
+
+<template>
+  <Header />
+  <RouterView v-slot="{ Component }">
+    <PageTransition effect="slide">
+      <component :is="Component" />
+    </PageTransition>
+  </RouterView>
+</template>
+```
+
+With Nuxt, call it in a plugin (`routeTransitions(useRouter())` in `plugins/page-transition.client.ts`), leave Nuxt's own `experimental.viewTransition` off, and wrap `<NuxtPage />` the same way.
+
+Navigations play forward; going back in the history (the browser's back button, `router.back()`) plays back. The page is the route's path; pass `page-key` to identify it otherwise.
+
+### One effect per navigation
+
+A transition type named after an effect plays it for that navigation, whatever `effect` says. Navigate in your own transition to set it, for tabs that push sideways while the rest of the site stacks:
+
+```ts
+import { startTransition } from 'motion-v';
+
+startTransition(() => router.push('/pricing/yearly'), {
+  types: ['push', 'nav-forward'],
+});
+```
+
+### Shared elements
+
+An element on both pages, like a card that becomes a page header, morphs from one to the other with `PageTransitionShared`. Give it the same `name` on both pages, unique on each page:
+
+```vue
+<PageTransitionShared :name="`cover-${post.id}`" class="h-20 rounded-lg bg-primary" />
+```
+
+## Animation
+
+- Each page is a snapshot the browser animates: the old page plays its exit and the new one its entrance, on Animate UI's curves (`ease.out` to arrive, a quicker `ease.leave` to go). Both stay inside the page's box.
+- Direction comes from the `nav-back` and `nav-forward` transition types: `routeTransitions` sets `nav-back` when the history goes back to the entry before, `nav-forward` otherwise.
+- View transitions aren't interruptible: a click during one waits for it to end, so the effects stay short (0.3s to 0.7s).
+- Under reduced motion, every effect becomes the crossfade, blur included.
+
+## API Reference
+
+### PageTransition
+
+<TypeTable
+  type={{
+    effect: {
+      description: 'The transition between pages.',
+      type: "'fade' | 'slide' | 'push' | 'zoom' | 'iris' | 'wipe' | 'bands' | 'stack' | 'flow' | 'chop' | 'random'",
+      default: "'fade'",
+    },
+    'page-key': {
+      description: 'What identifies the page, when it is not the route.',
+      type: 'string | number',
+      default: "the route's path",
+    },
+  }}
+/>
+
+### PageTransitionShared
+
+<TypeTable
+  type={{
+    name: {
+      description:
+        'Matches the element on the old page with the one on the new page.',
+      type: 'string',
+      required: true,
+    },
+  }}
+/>
+
+### routeTransitions
+
+`routeTransitions(router: Router)`: runs each route change of `router` in a view transition typed `nav-forward` or `nav-back`. It returns a function that stops it.

@@ -35,6 +35,8 @@ const VUE_TALL: Record<string, Omit<Preview, 'id' | 'demo' | 'play'>> = {
   combobox: { viewport: LARGE, zoom: false, shift: 220 },
   // shadcn-vue's questionnaire is roomier than shadcn/ui's.
   questionnaire: { viewport: { width: 640, height: 560 } },
+  // Its effect picker shows above the pages.
+  'page-transition': { viewport: { width: 640, height: 560 } },
 };
 
 const zoomed = (size: { width: number; height: number }, zoom: number) => ({
