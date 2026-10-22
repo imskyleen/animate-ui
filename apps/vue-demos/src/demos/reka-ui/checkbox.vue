@@ -37,7 +37,7 @@ watch(() => props.checked, (value) => (checked.value = value))
         <Checkbox id="toggle" disabled />
         <Label for="toggle">Enable notifications</Label>
       </div>
-      <Label class="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
+      <Label class="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 transition-colors duration-300 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
         <Checkbox
           id="toggle-2"
           :default-value="true"

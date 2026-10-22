@@ -123,4 +123,15 @@ test('vue reka-ui checkbox demo: every box keeps its border color as it checks, 
     await page.waitForTimeout(400);
     expect(await border(), id).toBe(unchecked);
   }
+  // The card around the blue box changes color on the box's timing, so it doesn't flash over the fill.
+  const timing = (selector: string, pseudo?: string) =>
+    page
+      .locator(selector)
+      .evaluate(
+        (el, pseudo) => getComputedStyle(el, pseudo).transitionDuration,
+        pseudo,
+      );
+  expect(await timing('label:has(#toggle-2)')).toBe(
+    await timing('#toggle-2', '::before'),
+  );
 });
