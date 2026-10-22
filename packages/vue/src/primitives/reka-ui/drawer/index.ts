@@ -130,7 +130,7 @@ type DrawerState = {
   /** The overlay, which the popup waits for as it leaves, like Base UI's. */
   overlay: Ref<HTMLElement | null>;
   popup: Ref<HTMLElement | null>;
-  /** When and where the current press on the popup started. */
+  /** When the current press on the popup started. */
   press: { time: number } | null;
 };
 
