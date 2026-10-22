@@ -81,6 +81,42 @@ for (const framework of FRAMEWORKS) {
       });
     });
 
+    test('the icon keeps the chosen theme through the wipe', async ({
+      page,
+    }) => {
+      await open(page);
+      for (const [from, to] of [
+        ['system', 'dark'],
+        ['dark', 'light'],
+      ]) {
+        await expect(toggler(page)).toHaveAccessibleName(
+          new RegExp(`^Theme: ${from}\\.`),
+        );
+        await page.evaluate(() => {
+          const w = window as unknown as { __labels: string[] };
+          w.__labels = [];
+          const start = performance.now();
+          const sample = () => {
+            const label = document
+              .querySelector('button[aria-label^="Theme:"]')
+              ?.getAttribute('aria-label');
+            if (label && label !== w.__labels.at(-1)) w.__labels.push(label);
+            if (performance.now() - start < 1200) requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        });
+        await toggler(page).click();
+        await page.waitForTimeout(1300);
+        const labels = await page.evaluate(
+          () => (window as unknown as { __labels: string[] }).__labels,
+        );
+        expect(labels.map((label) => label.split(/[ .]/)[1])).toEqual([
+          from,
+          to,
+        ]);
+      }
+    });
+
     test('reduced motion: swaps at once, no wipe', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await open(page);

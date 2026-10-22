@@ -81,9 +81,12 @@ const ThemeTogglerInner = defineComponent({
       effective: props.theme,
       resolved: props.resolvedTheme,
     });
+    let switching = 0;
+    let switches = 0;
     watch(
       () => [props.theme, props.resolvedTheme] as const,
       ([theme, resolvedTheme]) => {
+        if (switching) return;
         current.value = { effective: theme, resolved: resolvedTheme };
         const shown = preview.value;
         if (
@@ -95,6 +98,11 @@ const ThemeTogglerInner = defineComponent({
       },
     );
 
+    const commit = (theme: ThemeSelection, id: number) => {
+      if (switching === id) switching = 0;
+      props.setTheme(theme);
+    };
+
     const toggleTheme = async (theme: ThemeSelection) => {
       const resolved = theme === 'system' ? getSystemEffective() : theme;
       current.value = { effective: theme, resolved };
@@ -103,18 +111,27 @@ const ThemeTogglerInner = defineComponent({
         props.setTheme(theme);
         return;
       }
+      const id = (switching = ++switches);
       if (reduce.value || !document.startViewTransition) {
         preview.value = { effective: theme, resolved };
         await nextTick();
-        props.setTheme(theme);
+        commit(theme, id);
         return;
       }
       const [fromClip, toClip] = getClipKeyframes(props.direction);
-      await document.startViewTransition(async () => {
-        preview.value = { effective: theme, resolved };
-        document.documentElement.classList.toggle('dark', resolved === 'dark');
-        await nextTick();
-      }).ready;
+      try {
+        await document.startViewTransition(async () => {
+          preview.value = { effective: theme, resolved };
+          document.documentElement.classList.toggle(
+            'dark',
+            resolved === 'dark',
+          );
+          await nextTick();
+        }).ready;
+      } catch {
+        commit(theme, id);
+        return;
+      }
       document.documentElement
         .animate(
           { clipPath: [fromClip, toClip] },
@@ -124,7 +141,7 @@ const ThemeTogglerInner = defineComponent({
             pseudoElement: '::view-transition-new(root)',
           },
         )
-        .finished.finally(() => props.setTheme(theme));
+        .finished.finally(() => commit(theme, id));
     };
 
     return () => {
