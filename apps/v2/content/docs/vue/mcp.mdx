@@ -1,0 +1,79 @@
+---
+title: MCP
+description: Browse and add Animate UI's Vue icons, backgrounds and styled components from your AI assistant with the shadcn-vue MCP server.
+---
+
+The shadcn-vue MCP server lets your AI assistant search Animate UI's Vue registry and add its icons, backgrounds and styled components (the Liquid, Flip, GitHub Stars and Theme Toggler buttons, the Code Block, the Page Transition) to your project as `.vue` files.
+
+## Add the registry
+
+The MCP server searches the registries listed in your `components.json`. Add Animate UI's Vue registry:
+
+```json title="components.json"
+{
+  "registries": {
+    "@animate-ui": "https://animate-ui.com/r/vue/{name}.json"
+  }
+}
+```
+
+The same entry lets the shadcn-vue CLI add them by name: `shadcn-vue add @animate-ui/icons-lucide-bell`.
+
+## Configure the MCP server
+
+Run the command for your MCP client:
+
+<Tabs items={['Claude Code', 'Cursor', 'VS Code', 'Codex']}>
+  <Tab value="Claude Code">
+
+```npm
+npx shadcn-vue@latest mcp init --client claude
+```
+
+  </Tab>
+  <Tab value="Cursor">
+
+```npm
+npx shadcn-vue@latest mcp init --client cursor
+```
+
+  </Tab>
+  <Tab value="VS Code">
+
+```npm
+npx shadcn-vue@latest mcp init --client vscode
+```
+
+  </Tab>
+  <Tab value="Codex">
+
+```npm
+npx shadcn-vue@latest mcp init --client codex
+```
+
+  </Tab>
+</Tabs>
+
+Or add the server to your client's MCP configuration yourself (`.mcp.json` for Claude Code, `.cursor/mcp.json` for Cursor, `.vscode/mcp.json` for VS Code):
+
+```json
+{
+  "mcpServers": {
+    "shadcnVue": {
+      "command": "npx",
+      "args": ["shadcn-vue@latest", "mcp"]
+    }
+  }
+}
+```
+
+## Use it
+
+Ask your assistant things like:
+
+- _"Show me the animated icons in the Animate UI registry."_
+- _"Add the Lucide bell icon from Animate UI."_
+- _"Add Animate UI's stars background to the hero."_
+- _"Add Animate UI's liquid button."_
+
+To animate your shadcn-vue components, use the [CLI](/docs/vue/cli) or the [skill](/docs/vue/skills).

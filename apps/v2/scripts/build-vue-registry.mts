@@ -40,9 +40,21 @@ function write(
       2,
     )}\n`,
   );
+  index.push({
+    name,
+    type: 'registry:component',
+    title: meta.title,
+    description: meta.description,
+  });
 }
 
 let count = 0;
+const index: {
+  name: string;
+  type: string;
+  title: string;
+  description: string;
+}[] = [];
 for (const [library, prefix, target] of [
   ['icons', 'icons-lucide', 'components/animate-ui/icons'],
   ['hugeicons', 'icons-hugeicons', 'components/animate-ui/icons/hugeicons'],
@@ -119,5 +131,20 @@ for (const group of ['backgrounds', 'buttons', 'components']) {
     count++;
   }
 }
+
+// The index shadcn-vue's search and MCP server read.
+writeFileSync(
+  path.join(outDir, 'registry.json'),
+  `${JSON.stringify(
+    {
+      $schema: 'https://shadcn-vue.com/schema/registry.json',
+      name: 'animate-ui',
+      homepage: 'https://animate-ui.com/docs/vue',
+      items: index.sort((a, b) => a.name.localeCompare(b.name)),
+    },
+    null,
+    2,
+  )}\n`,
+);
 
 console.log(`Vue registry: ${count}`);

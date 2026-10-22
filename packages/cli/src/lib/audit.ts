@@ -39,7 +39,7 @@ export type AuditReport = {
   unreadable: string[];
 };
 
-const SOURCE = ['.tsx', '.jsx', '.ts', '.js', '.mts', '.mjs'];
+const SOURCE = ['.tsx', '.jsx', '.ts', '.js', '.mts', '.mjs', '.vue'];
 const STYLES = ['.css', '.scss'];
 const SKIP = new Set([
   'node_modules',
@@ -147,9 +147,6 @@ const PAINT = new Set([
   'visibility',
 ]);
 
-const camel = (name: string) =>
-  name.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
-
 const SHORTHANDS =
   /^(x|y|z|scale|scaleX|scaleY|rotate|rotateX|rotateY|rotateZ|skew|skewX|skewY)$/;
 
@@ -171,6 +168,7 @@ const MOTION_TARGETS = new Set([
   'exit',
   'whileHover',
   'whileTap',
+  'whilePress',
   'whileFocus',
   'whileInView',
   'whileDrag',
@@ -930,6 +928,79 @@ function auditScript(file: string, text: string, facts: Fact[]): boolean {
   return true;
 }
 
+/** The text with only the ranges kept, the rest blanked out line for line. */
+function keepOnly(text: string, ranges: [number, number][]) {
+  let out = '';
+  let last = 0;
+  for (const [start, end] of ranges) {
+    out += text.slice(last, start).replace(/[^\n]/g, ' ');
+    out += text.slice(start, end);
+    last = end;
+  }
+  return out + text.slice(last).replace(/[^\n]/g, ' ');
+}
+
+const camel = (name: string) =>
+  name.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+
+const TAG =
+  /<([A-Za-z][\w.-]*)((?:\s+[^\s=>/]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)\s*\/?>/g;
+const ATTRIBUTE = /([^\s=>/]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'))?/g;
+
+/** A Vue template's opening tags as JSX, each on its own line, so the script audit reads them. */
+function templateAsJsx(template: string, offset: number, text: string) {
+  const lines = text.split('\n').map(() => '');
+  for (const tag of template.matchAll(TAG)) {
+    const props: string[] = [];
+    for (const [, raw, double, single] of tag[2]!.matchAll(ATTRIBUTE)) {
+      const value = (double ?? single)?.replace(/\s+/g, ' ');
+      const bound = /^(:|v-bind:)/.test(raw!);
+      if (!bound && /^(@|v-|#)/.test(raw!)) continue;
+      const name = camel(raw!.replace(/^(:|v-bind:)/, ''));
+      const prop = name === 'class' ? 'className' : name;
+      if (value === undefined) props.push(prop);
+      else if (bound) props.push(`${prop}={${value}}`);
+      else props.push(`${prop}=${JSON.stringify(value)}`);
+    }
+    const line = text.slice(0, offset + tag.index).split('\n').length - 1;
+    lines[line] += `;<${tag[1]} ${props.join(' ')} />`;
+  }
+  return lines.join('\n');
+}
+
+function auditVue(file: string, text: string, facts: Fact[]): boolean {
+  const block = (name: string) =>
+    [
+      ...text.matchAll(
+        new RegExp(`^<${name}(\\s[^>]*)?>([\\s\\S]*?)^<\\/${name}>`, 'gm'),
+      ),
+    ].map((match) => {
+      const start = match.index + match[0].indexOf('>') + 1;
+      return {
+        attributes: match[1] ?? '',
+        range: [start, start + match[2]!.length] as [number, number],
+      };
+    });
+  const template = text.match(/^<template(\s[^>]*)?>/m);
+  const templateEnd = text.lastIndexOf('\n</template>');
+  let code = keepOnly(
+    text,
+    block('script').map((script) => script.range),
+  );
+  if (template?.index !== undefined && templateEnd > template.index) {
+    const start = template.index + template[0].length;
+    const jsx = templateAsJsx(text.slice(start, templateEnd), start, text);
+    code = code
+      .split('\n')
+      .map((line, i) => line + (jsx.split('\n')[i] ?? ''))
+      .join('\n');
+  }
+  for (const style of block('style'))
+    if (!/lang=["'](?!s?css)/.test(style.attributes))
+      auditCss(file, keepOnly(text, [style.range]), facts);
+  return auditScript(file, code, facts);
+}
+
 export function auditFile(
   file: string,
   text: string,
@@ -940,6 +1011,8 @@ export function auditFile(
     auditCss(file, text, facts);
     return { facts, readable: true };
   }
+  if (extension === '.vue')
+    return { facts, readable: auditVue(file, text, facts) };
   return { facts, readable: auditScript(file, text, facts) };
 }
 
@@ -970,7 +1043,17 @@ export function audit(root: string, targets: string[] = []): AuditReport {
     if (reduced) reducedFiles.push(name);
     if (PROJECT_REDUCED.some((pattern) => pattern.test(text)))
       project.push(name);
-    if (found.some((fact) => MOTION_KINDS.includes(fact.kind))) {
+    // A color changing over time moves nothing: it needs no reduced-motion path.
+    const moves = (fact: Fact) =>
+      MOTION_KINDS.includes(fact.kind) &&
+      !(
+        fact.kind === 'animated-properties' &&
+        fact.properties?.length &&
+        fact.properties.every((property) =>
+          /colou?rs?$|^fill$|^stroke$/i.test(property.name),
+        )
+      );
+    if (found.some(moves)) {
       filesWithMotion.push(name);
       if (!reduced)
         found.push({

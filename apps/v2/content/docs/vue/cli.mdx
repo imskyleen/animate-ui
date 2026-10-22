@@ -81,9 +81,30 @@ The rest of each file stays as it is: your styles, parts, props and markup.
 
 ### Supported primitives
 
-| Library | Primitives                                                 |
-| ------- | ---------------------------------------------------------- |
-| Reka UI | Accordion, Checkbox, Collapsible, Progress, Switch, Toggle |
+| Library       | Primitives                                                                                                                                                                                                                                                  |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Reka UI       | Accordion, Alert Dialog, Checkbox, Collapsible, Combobox, Context Menu, Dialog, Drawer, Dropdown Menu, Hover Card, Menubar, Navigation Menu, Pagination, Popover, Progress, Radio Group, Select, Sheet, Slider, Switch, Tabs, Toggle, Toggle Group, Tooltip |
+| vue-input-otp | Input OTP                                                                                                                                                                                                                                                   |
+
+The Questionnaire and the Sidebar have no import to swap: their pages list the edits.
+
+## audit
+
+Use the `audit` command to list what moves in your project and how: the properties each animation changes and what they cost the browser, the transitions on `all`, ease-in curves, long durations, hover scales, scales from 0, popups scaling without an origin, CSS transitions fighting Motion on the same element, hovers that move on touch screens, endless loops, layout animations, and the files that move without a reduced-motion path.
+
+```npm
+npx @animate-ui/cli@latest audit
+```
+
+Or only some folders or files:
+
+```npm
+npx @animate-ui/cli@latest audit src/components src/App.vue
+```
+
+It reads `.vue` files whole: the `motion.*` bindings of their template (`:initial`, `:animate`, `:exit`, `:while-hover`, `:while-press`, `:variants`, `:transition`, `layout`), their `<script>` blocks (`animate()` calls, the objects bound in the template) and their `<style>` blocks, plus Tailwind's transition, duration, ease and animation classes. It changes nothing. Each animated property is sorted by what it costs: **compositor** (`transform`, `opacity`, `filter`), **main-thread** (Motion's `x`, `y`, `scale`, `rotate` shorthands), **paint** (colors, shadows, SVG strokes) and **layout** (`width`, `height`, `top`, margins). A file that only transitions colors needs no reduced-motion path.
+
+The report states facts, it doesn't grade them: a 800ms entrance can be right on a page and wrong on a menu opened all day. Read it yourself, or hand it to your AI assistant with the [Animate UI skill](/docs/vue/skills), which judges each fact in context. `--json` prints the same report for scripts.
 
 ## Options
 
@@ -92,6 +113,7 @@ The rest of each file stays as it is: your styles, parts, props and markup.
 | `--cwd <path>`              | The project directory, with its `components.json`.                                            |
 | `--dry-run`                 | Show the changes without writing them.                                                        |
 | `--exclude <components...>` | Leave these components out of `all`: comma-separated (`--exclude toggle,switch`) or repeated. |
+| `--json`                    | Print the `audit` report as JSON.                                                             |
 | `-h, --help`                | Show the help.                                                                                |
 | `-v, --version`             | Show the CLI's version.                                                                       |
 

@@ -1,0 +1,82 @@
+---
+title: Skills
+description: Give your AI assistant the knowledge to animate Vue components the Animate UI way.
+---
+
+Skills give AI assistants like Claude Code, Cursor or Codex project-aware knowledge of Animate UI. The same skill covers React and Vue: in a Vue or Nuxt project, your assistant knows when to run the CLI on your shadcn-vue components, when to swap a reka-ui import, and how to animate a custom component with Motion for Vue and the same motion as every Animate UI primitive.
+
+For example, you can ask your AI assistant to:
+
+- _"Animate my shadcn-vue dialog and dropdown menu."_
+- _"Make my save button show it's loading, then a quick Saved."_
+- _"Animate my todo list when I add or remove a task."_
+- _"Add page transitions to my Nuxt app."_
+- _"Turn this Phosphor bell into an animated icon that rings on hover."_
+- _"Make the menu feel snappier."_ or _"Rends les toasts plus doux."_
+- _"Review the animations in my app: what feels slow or janky?"_
+- _"Give me this spring as CSS for my stylesheet."_
+- _"Slow every animation down a little."_
+
+The skill reads your project (`components.json`, `package.json` and the component's imports) to find what the component is built on: shadcn-vue, reka-ui or plain markup.
+
+## Install
+
+```npm
+npx skills add imskyleen/animate-ui
+```
+
+This installs the Animate UI skill in your project. Your AI assistant loads it automatically when you ask it to animate something. Add `-g` to install it for every project. Learn more about skills at [skills.sh](https://skills.sh).
+
+## What's Included
+
+The skill gives your AI assistant the following knowledge:
+
+### The Right Path
+
+Every component takes the shortest path to its animation:
+
+- **shadcn-vue components**: runs `@animate-ui/cli animate`, which swaps their reka-ui imports for `@animate-ui/vue` and removes the CSS animations Motion replaces. For the Questionnaire and the Sidebar, which have no import to swap, it makes the edits their pages list.
+- **Built on reka-ui**: swaps the import to `@animate-ui/vue/primitives/reka-ui`, keeping every part, prop and data attribute.
+- **Anything else**: animates it with Motion for Vue, following Animate UI's recipes and tokens, or adds a component from the Vue registry (icons, backgrounds, buttons, the Code Block, the Page Transition) when one already does it.
+
+### Motion Tokens
+
+The values every Animate UI primitive moves with: springs, tweens and curves by role, scales, blur, shifts, rotations and staggers, plus the `tempo` of `AnimateUIProvider` to change the pace of every animation at once.
+
+### Recipes and Interactions
+
+How each kind of component animates (overlays, menus, modals, sheets and drawers, disclosures, moving indicators, presses and swaps, page transitions with Vue Router or Nuxt), and ready patterns for what people ask for by name: a button showing loading then success, a list adding and removing items, a drag to reorder, a card opening into a larger view, a skeleton, a counting badge, a field shaking on an error, a row swiped away, a filtered grid, the steps of a form, a banner. Each one is written with Motion for Vue in your templates, on your markup and styles.
+
+### Animated Icons
+
+How to turn any icon, from Lucide, Hugeicons, Tabler, Phosphor, Heroicons or your own SVG, into an animated `.vue` icon that works with `AnimateIcon` and every trigger (hover, tap, in view, loop).
+
+### Feel, Levels and Reproduce
+
+Words like _snappy_, _calm_, _bouncy_ or _plus doux_ turn into the same values every time; when you don't say how much motion you want, it asks: **subtle** (the default), **more**, or **expressive**. Show it a link, a video or a GIF and it copies only the motion onto your component.
+
+### Review
+
+It reviews the motion you already have from facts: `npx @animate-ui/cli audit` reads your `.vue` files (their templates' `motion.*` bindings, their scripts and styles) and lists what moves, what each property costs the browser and the patterns worth a look. The skill then ranks what to fix first and says which facts are fine.
+
+### Motion Rules
+
+Quality rules that must pass (reduced motion, keyboard, hover-capable pointers, trigger-anchored origins, performance, interruptions, nothing stretching as it resizes) and style defaults it can tune on purpose.
+
+## How It Works
+
+1. **Gate and level**: when you ask for an animation, you get one. How often the component is used decides its form, and the level you pick sets how much it moves.
+2. **Path detection**: it finds what the component is built on and picks the CLI, an import swap, a recipe or an interaction pattern, after checking whether an Animate UI component already does the job.
+3. **Token use**: every value comes from `@animate-ui/vue/utils/motion`, never a hand-typed spring, so your animations stay coherent and follow your `tempo`.
+4. **Verification**: it runs `vue-tsc` before and after, checks reduced motion, the keyboard path, interruptions and origins, then tells you the path, the recipe and any default it changed.
+
+## Learn More
+
+- [Installation](/docs/vue/installation): set up `@animate-ui/vue` and the CLI.
+- [Accessibility](/docs/vue/accessibility): reduced motion in Animate UI.
+- [Source](https://github.com/imskyleen/animate-ui/tree/main/skills/animate-ui): the skill's instructions and references.
+- [skills.sh](https://skills.sh): discover and install skills for AI assistants.
+
+## Credits
+
+The motion rules build on [Emil Kowalski's](https://emilkowal.ski) practical animation tips, with Animate UI's own springs and timing.

@@ -184,11 +184,31 @@ test('the Vue guide has the same pages as React, adapted to Vue', async ({
     ['/docs/vue/installation', 'Installation'],
     ['/docs/vue/vue', '@animate-ui/vue'],
     ['/docs/vue/cli', 'CLI'],
+    ['/docs/vue/skills', 'Skills'],
+    ['/docs/vue/mcp', 'MCP'],
     ['/docs/vue/accessibility', 'Accessibility'],
   ]) {
     await page.goto(url!);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading!);
   }
+});
+
+test('the Vue MCP page points at the Vue registry and its index answers', async ({
+  page,
+}) => {
+  await page.goto('/docs/vue/mcp');
+  await expect(page.locator('main')).toContainText(
+    'https://animate-ui.com/r/vue/{name}.json',
+  );
+  await expect(page.locator('main')).toContainText('shadcn-vue@latest mcp');
+  const index = await (await page.request.get('/r/vue/registry.json')).json();
+  const names = index.items.map((item: { name: string }) => item.name);
+  expect(names).toContain('icons-lucide-bell');
+  expect(names).toContain('components-page-transition');
+  const item = await (
+    await page.request.get('/r/vue/icons-lucide-bell.json')
+  ).json();
+  expect(item.files[0].path).toBe('components/animate-ui/icons/Bell.vue');
 });
 
 test('the Vue primitives grid shows the Vue components with their own recordings', async ({

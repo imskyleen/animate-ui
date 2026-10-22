@@ -9,7 +9,7 @@ const usage = `Usage: node css-timing.mjs <token | spring or tween JSON> [--temp
   node css-timing.mjs '{"type":"spring","visualDuration":0.4,"bounce":0.3}'
 
 Prints the CSS timing (a spring becomes the linear() curve it plays) and a transition line.
-Run it from the project: it uses the project's @animate-ui/react.`;
+Run it from the project: it uses the project's @animate-ui/react (or @animate-ui/vue).`;
 
 const args = process.argv.slice(2);
 const input = args.find(
@@ -25,23 +25,24 @@ if (!input || args.includes('--help')) {
 }
 
 const require = createRequire(pathToFileURL(`${process.cwd()}/`));
+const PACKAGES = ['@animate-ui/react', '@animate-ui/vue'];
+const resolve = (name) => {
+  try {
+    return require.resolve(`${name}/utils/motion`);
+  } catch {
+    return null;
+  }
+};
+const found = PACKAGES.map(resolve).find(Boolean);
 let motion;
 try {
-  motion = await import(
-    pathToFileURL(require.resolve('@animate-ui/react/utils/motion')).href
-  );
+  if (!found) throw new Error('not found');
+  motion = await import(pathToFileURL(found).href);
 } catch (error) {
-  const found = (() => {
-    try {
-      return require.resolve('@animate-ui/react/utils/motion');
-    } catch {
-      return null;
-    }
-  })();
   console.error(
     found
       ? `Found ${found} but couldn't load it: ${error instanceof Error ? error.message : error}`
-      : "Couldn't find @animate-ui/react from this folder: install it (and motion), then run this from the project's folder. Without it, use the tween tokens' values from references/tokens.md.",
+      : "Couldn't find @animate-ui/react or @animate-ui/vue from this folder: install it (with motion, or motion-v for Vue), then run this from the project's folder. Without it, use the tween tokens' values from references/tokens.md.",
   );
   process.exit(1);
 }

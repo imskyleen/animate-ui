@@ -317,3 +317,95 @@ test('only an app-wide reduced-motion setting is listed as project-wide', () => 
     'src/providers.tsx',
   ]);
 });
+
+test('reads a Vue component: its template, script and style', () => {
+  write(
+    'src/Panel.vue',
+    `<script setup lang="ts">
+import { motion } from 'motion-v'
+
+const variants = {
+  hidden: { opacity: 0, height: 0 },
+  shown: { opacity: 1, height: 'auto' },
+}
+</script>
+
+<template>
+  <div>
+    <motion.div
+      :initial="{ scale: 0, opacity: 0 }"
+      :animate="{ scale: 1, opacity: 1 }"
+      :while-hover="{ scale: 1.05 }"
+      :transition="{ duration: 0.8, ease: 'easeIn' }"
+      class="absolute transition-all"
+      @click="open = !open"
+    >
+      <motion.span :variants="variants" />
+    </motion.div>
+    <template v-if="open">
+      <p class="transition-all">Hello</p>
+    </template>
+  </div>
+</template>
+
+<style scoped>
+.panel { transition: all 1s ease-in; }
+</style>
+`,
+  );
+  const report = runAudit(root, ['src']);
+  expect(report.unreadable).toEqual([]);
+  const kinds = report.facts.map((fact) => `${fact.kind}:${fact.line}`);
+  expect(kinds).toEqual(
+    expect.arrayContaining([
+      'animated-properties:12',
+      'scale-from-zero:12',
+      'hover-scale:12',
+      'long-duration:12',
+      'ease-in:12',
+      'no-origin:12',
+      'css-transition-conflict:12',
+      'animated-properties:5',
+      'no-reduced-motion:0',
+    ]),
+  );
+  expect(report.facts.some((fact) => fact.line === 29)).toBe(true);
+  expect(report.filesWithMotion).toContain('src/Panel.vue');
+});
+
+test('a Vue component with a reduced-motion path and whilePress is clean of those facts', () => {
+  write(
+    'src/Press.vue',
+    `<script setup lang="ts">
+import { motion } from 'motion-v'
+import { useShouldReduceMotion } from '@animate-ui/vue/utils/motion'
+const reduce = useShouldReduceMotion()
+</script>
+
+<template>
+  <motion.button :while-press="{ scale: 0.97 }">Save</motion.button>
+</template>
+`,
+  );
+  const report = runAudit(root, ['src/Press.vue']);
+  const kinds = report.facts.map((fact) => fact.kind);
+  expect(kinds).toContain('animated-properties');
+  expect(kinds).not.toContain('no-reduced-motion');
+  expect(kinds).not.toContain('hover-scale');
+});
+
+test('a file that only transitions colors needs no reduced-motion path', () => {
+  write(
+    'src/Link.tsx',
+    `export const Link = () => <a className="transition-colors hover:text-black">Docs</a>;\n`,
+  );
+  write(
+    'src/Link.vue',
+    `<template>\n  <a class="transition-colors hover:text-black">Docs</a>\n</template>\n`,
+  );
+  const report = runAudit(root, ['src/Link.tsx', 'src/Link.vue']);
+  expect(report.facts.map((fact) => fact.kind)).not.toContain(
+    'no-reduced-motion',
+  );
+  expect(report.filesWithMotion).toEqual([]);
+});
