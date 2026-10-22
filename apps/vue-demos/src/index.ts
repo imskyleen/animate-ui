@@ -43,6 +43,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/typing-text': () =>
     import('./demos/animate-ui/typing-text.vue'),
   'animate-ui/particles': () => import('./demos/animate-ui/particles.vue'),
+  'animate-ui/cursor': () => import('./demos/animate-ui/cursor.vue'),
   'animate-ui/github-stars': () => import('./demos/animate-ui/github-stars.vue'),
   'animate-ui/pinned-list': () => import('./demos/animate-ui/pinned-list.vue'),
   'animate-ui/spring': () => import('./demos/animate-ui/spring.vue'),

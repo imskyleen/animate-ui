@@ -149,6 +149,25 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       },
     },
   },
+  'animate-ui/cursor': {
+    CursorProvider: {
+      global: { value: false },
+      enableCursor: { value: true },
+      enableCursorFollow: { value: true },
+    },
+    CursorFollow: {
+      side: {
+        value: 'bottom',
+        options: { top: 'top', right: 'right', bottom: 'bottom', left: 'left' },
+      },
+      sideOffset: { value: 15 },
+      align: {
+        value: 'end',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 5 },
+    },
+  },
   'animate-ui/particles': {
     ParticlesEffect: {
       side: {

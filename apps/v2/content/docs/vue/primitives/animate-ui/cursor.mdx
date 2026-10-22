@@ -1,0 +1,163 @@
+---
+title: Cursor
+description: A custom cursor, and a label that follows it, inside an area or across the page.
+---
+
+<VueComponentPreview name="animate-ui/cursor" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  Cursor,
+  CursorContainer,
+  CursorFollow,
+  CursorProvider,
+} from '@animate-ui/vue/primitives/cursor';
+</script>
+
+<template>
+  <div class="relative h-72">
+    <CursorProvider>
+      <CursorContainer>
+        <Cursor>
+          <ArrowIcon />
+        </Cursor>
+        <CursorFollow side="bottom" align="end">
+          <span>Designer</span>
+        </CursorFollow>
+      </CursorContainer>
+    </CursorProvider>
+  </div>
+</template>
+```
+
+By default, the cursor lives in the parent of `CursorContainer`. With `global`, it replaces the pointer on the whole page.
+
+## Animation
+
+- Entering the area hides the native pointer and pops the cursor and the follower in: they scale up from 0 on a spring with a little overshoot (stiffness 550, damping 30) while fading in (300ms). Leaving scales them back to 0 without overshoot and fades them out, then restores the pointer.
+- `Cursor` sticks to the pointer, its top-left corner on it (where an arrow's tip goes). `CursorFollow` trails it on a spring without bounce (stiffness 500, damping 50), so it feels attached without being rigid. It springs from where it last was: the first time, it flies in from near the area's top-left corner.
+- The position is driven by motion values with a hardware-accelerated transform (`x` / `y`): moving the pointer never re-renders Vue.
+- Touch pointers are ignored: a custom cursor only makes sense for pointers that hover.
+- `<AnimateUIProvider :tempo>` paces the pop and the follow spring.
+- Under reduced motion, the cursors only fade in and out, and `CursorFollow` sticks to the pointer too.
+
+## API Reference
+
+### CursorProvider
+
+<TypeTable
+  type={{
+    global: {
+      description:
+        'Replace the pointer on the whole page instead of the parent of `CursorContainer`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '#default': {
+      description: 'The container and cursors.',
+      type: 'slot',
+      required: true,
+    },
+  }}
+/>
+
+### CursorContainer
+
+Marks the area: the cursor shows inside its parent element.
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the container.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### Cursor
+
+Its top-left corner sits on the pointer.
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '#default': {
+      description: 'The cursor, an icon for instance.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the cursor.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### CursorFollow
+
+<TypeTable
+  type={{
+    'as-child': {
+      description:
+        'Render the child element instead of a div, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    side: {
+      description: 'Side of the pointer it sits on.',
+      type: "'top' | 'right' | 'bottom' | 'left'",
+      default: "'bottom'",
+    },
+    'side-offset': {
+      description: 'Distance from the pointer, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    align: {
+      description: 'Alignment along that side.',
+      type: "'start' | 'center' | 'end'",
+      default: "'end'",
+    },
+    'align-offset': {
+      description: 'Offset along that side, in pixels.',
+      type: 'number',
+      default: '0',
+    },
+    transition: {
+      description: 'Spring of the follow (useSpring options).',
+      type: 'SpringOptions',
+      default: '{ stiffness: 500, damping: 50, bounce: 0 }',
+    },
+    '#default': {
+      description: 'The label.',
+      type: 'slot',
+      required: true,
+    },
+    '...props': {
+      description: 'Props of the element.',
+      type: "Omit<HTMLMotionProps<'div'>, 'transition'>",
+    },
+  }}
+/>
+
+### useCursor
+
+Returns the cursor state: `cursorX` and `cursorY` motion values, the `active` ref, a `global()` getter, and the `container` and `cursor` element refs.

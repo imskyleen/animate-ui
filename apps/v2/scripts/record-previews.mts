@@ -367,6 +367,14 @@ const sweep =
 const role = (name: Parameters<Page['getByRole']>[0]) => (page: Page) =>
   page.locator('main').getByRole(name);
 
+// The demo's own root, inside the wrapper a Vue demo mounts in.
+const demoRoot = (page: Page) =>
+  page
+    .locator(
+      'main > *:not([data-slot="vue-demo"]), main [data-slot="vue-demo"] > *',
+    )
+    .first();
+
 const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   accordion: { play: clickThrough(role('button')) },
   'alert-dialog': { play: openClose() },
@@ -589,7 +597,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   },
   'counting-number': { play: replay(2000) },
   cursor: {
-    play: sweep((page) => page.locator('main > *').first()),
+    play: sweep(demoRoot),
     cursor: false,
   },
   effect: { play: replay() },
@@ -694,13 +702,7 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   },
   'theme-toggler': { play: toggle((page) => buttons(page).first(), 1100) },
   tilt: {
-    play: sweep((page) =>
-      page
-        .locator(
-          'main > *:not([data-slot="vue-demo"]), main [data-slot="vue-demo"] > *',
-        )
-        .first(),
-    ),
+    play: sweep(demoRoot),
     viewport: { width: 560, height: 420 },
   },
   'typing-text': {
