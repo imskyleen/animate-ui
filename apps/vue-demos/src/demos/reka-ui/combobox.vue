@@ -15,6 +15,7 @@ import {
   ComboboxItemIndicator,
   ComboboxList,
   ComboboxTrigger,
+  ComboboxValue,
 } from '@/components/ui/combobox'
 
 withDefaults(defineProps<{ checkAnimation?: CheckAnimation }>(), {
@@ -38,7 +39,7 @@ const selectedFramework = ref<(typeof frameworks)[number]>()
       <ComboboxAnchor as-child>
         <ComboboxTrigger as-child>
           <Button variant="outline" class="w-[200px] justify-between">
-            {{ selectedFramework?.label ?? 'Select framework...' }}
+            <ComboboxValue>{{ selectedFramework?.label ?? 'Select framework...' }}</ComboboxValue>
             <HugeiconsIcon :icon="UnfoldMoreIcon" :stroke-width="2" class="opacity-50" />
           </Button>
         </ComboboxTrigger>

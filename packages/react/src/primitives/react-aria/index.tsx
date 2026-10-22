@@ -2,6 +2,8 @@
 export * from 'react-aria-components';
 export { Checkbox } from './checkbox';
 export type { CheckboxProps } from './checkbox';
+export { ComboBox } from './combo-box';
+export type { ComboBoxProps } from './combo-box';
 export { DisclosurePanel } from './disclosure';
 export type { DisclosurePanelProps } from './disclosure';
 export { ListBox, ListBoxItem, SelectionIndicator } from './list-box';
@@ -16,6 +18,8 @@ export { ProgressBar } from './progress-bar';
 export type { ProgressBarProps } from './progress-bar';
 export { Radio, RadioGroup } from './radio-group';
 export type { RadioGroupProps, RadioProps } from './radio-group';
+export { SelectValue } from './select';
+export type { SelectValueProps } from './select';
 export { Slider, SliderFill, SliderThumb } from './slider';
 export type { SliderFillProps, SliderThumbProps } from './slider';
 export { Switch } from './switch';

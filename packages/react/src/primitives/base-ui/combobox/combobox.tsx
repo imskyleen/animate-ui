@@ -10,6 +10,7 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import { mergeRefs } from '../../../internal/anchored';
+import { useInputSwap } from '../../../internal/value-swap';
 import {
   CHIP_EXIT_TRANSITION,
   CHIP_SCALE,
@@ -40,6 +41,11 @@ type ChipsMotion = {
 
 const ChipsContext = React.createContext<ChipsMotion | null>(null);
 
+// The root tells its input when an option is picked, so the input's text swaps.
+const PickedContext = React.createContext<React.RefObject<
+  (() => void) | null
+> | null>(null);
+
 function Root<
   Value,
   Multiple extends boolean | undefined = false,
@@ -47,6 +53,7 @@ function Root<
 >({
   actionsRef,
   onOpenChange,
+  onValueChange,
   ...props
 }: ComboboxPrimitive.Root.Props<Value, Multiple, Item>) {
   const [internalRef, context, handleOpenChange] = useRootMotion(
@@ -54,14 +61,23 @@ function Root<
     Boolean(props.multiple),
     onOpenChange,
   );
+  const picked = React.useRef<(() => void) | null>(null);
 
   return (
     <RootContext value={context}>
-      <ComboboxPrimitive.Root
-        {...props}
-        actionsRef={internalRef}
-        onOpenChange={handleOpenChange}
-      />
+      <PickedContext value={picked}>
+        <ComboboxPrimitive.Root
+          {...props}
+          actionsRef={internalRef}
+          onOpenChange={handleOpenChange}
+          onValueChange={(
+            ...args: Parameters<NonNullable<typeof onValueChange>>
+          ) => {
+            onValueChange?.(...args);
+            picked.current?.();
+          }}
+        />
+      </PickedContext>
     </RootContext>
   );
 }
@@ -261,7 +277,6 @@ declare namespace Chip {
 
 export import Label = ComboboxPrimitive.Label;
 export import Value = ComboboxPrimitive.Value;
-export import Input = ComboboxPrimitive.Input;
 export import InputGroup = ComboboxPrimitive.InputGroup;
 export import Trigger = ComboboxPrimitive.Trigger;
 export import List = ComboboxPrimitive.List;
@@ -283,4 +298,21 @@ export import useFilter = ComboboxPrimitive.useFilter;
 export import useFilteredItems = ComboboxPrimitive.useFilteredItems;
 export import createItems = ComboboxPrimitive.createItems;
 
-export { Root, Popup, Item, ItemIndicator, Chips, Chip };
+function Input({ ref, ...props }: Input.Props) {
+  const picked = React.use(PickedContext);
+  const swap = useInputSwap();
+  React.useEffect(() => {
+    if (!picked) return;
+    picked.current = swap.changed;
+    return () => {
+      if (picked.current === swap.changed) picked.current = null;
+    };
+  });
+  return <ComboboxPrimitive.Input ref={mergeRefs(ref, swap.ref)} {...props} />;
+}
+
+declare namespace Input {
+  type Props = React.ComponentProps<typeof ComboboxPrimitive.Input>;
+}
+
+export { Root, Input, Popup, Item, ItemIndicator, Chips, Chip };

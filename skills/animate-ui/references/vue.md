@@ -14,10 +14,11 @@ A Vue project (`vue` in `package.json`, Nuxt, or a `components.json` whose `$sch
 
 The same commands: `animate <component>`, `animate all`, `--exclude`, `--dry-run`. The CLI reads `components.json`, sees shadcn-vue, and in every file of `components/ui/<name>/` swaps `reka-ui` imports for `@animate-ui/vue/primitives/reka-ui` (`vue-input-otp` for `@animate-ui/vue/primitives/input-otp`), removes the CSS animation classes Motion replaces, and gives a sheet's side to its content. It animates accordion, alert-dialog, checkbox, collapsible, combobox, context-menu, dialog, drawer, dropdown-menu, hover-card, input-otp, menubar, navigation-menu, pagination, popover, progress, radio-group, select, sheet, slider, switch, tabs, toggle, toggle-group and tooltip; it names the others it leaves.
 
-Three shadcn-vue components have no import to swap: their docs pages give the steps (`animate-ui.com/docs/vue/primitives/reka-ui/<name>`).
+Three shadcn-vue components have no import to swap, and one has a part to add: their docs pages give the steps (`animate-ui.com/docs/vue/primitives/reka-ui/<name>`).
 
 - **Questionnaire**: its logic lives in its own files. Three edits: `useQuestionnaireMotion(rootElement)` in `Questionnaire.vue`; in `QuestionnaireChoice.vue`, `const press = useChoicePress(() => disabled.value)` and the root `<label>` becomes `<motion.label v-bind="press">`; in `QuestionnaireProgress.vue`, the default label becomes `Question <QuestionnaireCount :value="root.current.value" /> of <QuestionnaireCount :value="root.total.value" />`. All three come from `@animate-ui/vue/primitives/questionnaire`.
 - **Sidebar**: built on `@animate-ui/vue/primitives/sidebar` (its docs page lists the edits in `utils.ts` and the parts).
+- **Combobox with a trigger button**: the label the button shows (`{{ selected?.label ?? '…' }}`) is plain text with no reka-ui part to swap. Wrap it in `ComboboxValue` (from `@animate-ui/vue/primitives/reka-ui`) so it swaps as the choice changes, like `SelectValue` does.
 - **Toast**: shadcn-vue's toast is Sonner, not reka-ui. For an animated toast, build the list on `@animate-ui/vue/primitives/reka-ui/toast` (reka-ui's toast manager; `status` where Base UI says `type`, and Animate UI's `ToastContent` around what a toast shows).
 
 ## B. Built on reka-ui: swap the import

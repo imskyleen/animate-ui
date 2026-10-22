@@ -4,9 +4,11 @@ import {
   ComboboxItemIndicator as RekaComboboxItemIndicator,
   ComboboxPortal as RekaComboboxPortal,
   ComboboxRoot as RekaComboboxRoot,
+  Primitive,
   type ComboboxContentProps as RekaComboboxContentProps,
   type ComboboxItemIndicatorProps as RekaComboboxItemIndicatorProps,
 } from 'reka-ui';
+import { defineComponent, h } from 'vue';
 import type { Transition } from 'motion-v';
 
 import type { ItemCheckAnimationProps } from '../../../internal/item-indicator';
@@ -17,6 +19,7 @@ import {
   createListPortal,
   createListRoot,
 } from '../../../internal/reka-list';
+import { withValueSwap } from '../../../internal/value-swap';
 
 type ComboboxContentProps = RekaComboboxContentProps & {
   transition?: Transition;
@@ -57,6 +60,17 @@ const ComboboxItemIndicator = createListItemIndicator(
   'ComboboxItemIndicator',
 ) as unknown as typeof RekaComboboxItemIndicator;
 
+/** The picked value, shown in the trigger: its text swaps through a blur as it changes. */
+const ComboboxValue = withValueSwap(
+  defineComponent({
+    inheritAttrs: false,
+    setup(_, { attrs, slots }) {
+      return () => h(Primitive, { as: 'span', ...attrs }, slots);
+    },
+  }),
+  'ComboboxValue',
+);
+
 export {
   ComboboxAnchor,
   ComboboxArrow,
@@ -79,6 +93,7 @@ export {
 
 export {
   ComboboxRoot,
+  ComboboxValue,
   ComboboxPortal,
   ComboboxContent,
   ComboboxItem,

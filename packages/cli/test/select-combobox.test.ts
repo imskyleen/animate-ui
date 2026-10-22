@@ -31,6 +31,13 @@ test('select: every base swaps its primitive and loses the CSS keyframes', () =>
   }
 });
 
+test('react-aria select: the value comes from the mirror, so its text swaps', () => {
+  for (const file of fixtures('react-aria', 'select')) {
+    const { imports } = transform(read('react-aria', file));
+    expect(imports.map((change) => change.name), file).toContain('SelectValue');
+  }
+});
+
 test('combobox: the `@base-ui/react` import of every base moves to the Base UI barrel', () => {
   for (const library of ['radix-ui', 'base-ui']) {
     for (const file of fixtures(library, 'combobox')) {
@@ -47,10 +54,11 @@ test('combobox: the `@base-ui/react` import of every base moves to the Base UI b
   }
 });
 
-test('react-aria combobox: the list, its items and the tags come from the mirror too', () => {
+test('react-aria combobox: the combobox, its list, its items and the tags come from the mirror too', () => {
   for (const file of fixtures('react-aria', 'combobox')) {
     const { imports } = transform(read('react-aria', file));
     expect(imports.map((change) => change.name).sort(), file).toEqual([
+      'ComboBox',
       'ListBox',
       'ListBoxItem',
       'Popover',

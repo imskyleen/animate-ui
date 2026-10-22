@@ -4,6 +4,7 @@ import {
   SelectItemIndicator as RekaSelectItemIndicator,
   SelectPortal as RekaSelectPortal,
   SelectRoot as RekaSelectRoot,
+  SelectValue as RekaSelectValue,
   type SelectContentProps as RekaSelectContentProps,
   type SelectItemIndicatorProps as RekaSelectItemIndicatorProps,
 } from 'reka-ui';
@@ -17,6 +18,7 @@ import {
   createListPortal,
   createListRoot,
 } from '../../../internal/reka-list';
+import { withValueSwap } from '../../../internal/value-swap';
 
 type SelectContentProps = RekaSelectContentProps & {
   transition?: Transition;
@@ -55,6 +57,9 @@ const SelectItemIndicator = createListItemIndicator(
   'SelectItemIndicator',
 ) as unknown as typeof RekaSelectItemIndicator;
 
+/** The picked value: its text swaps through a blur as it changes. */
+const SelectValue = withValueSwap(RekaSelectValue, 'SelectValue');
+
 export {
   SelectArrow,
   SelectGroup,
@@ -65,7 +70,6 @@ export {
   SelectScrollUpButton,
   SelectSeparator,
   SelectTrigger,
-  SelectValue,
   SelectViewport,
   type SelectRootProps,
   type SelectRootEmits,
@@ -77,6 +81,7 @@ export {
 
 export {
   SelectRoot,
+  SelectValue,
   SelectPortal,
   SelectContent,
   SelectItem,

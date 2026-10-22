@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 
+import { useValueSwap } from '../../../internal/value-swap';
 import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   IndicatorMotion,
@@ -118,7 +119,6 @@ declare namespace ItemIndicator {
 
 export import Label = SelectPrimitive.Label;
 export import Trigger = SelectPrimitive.Trigger;
-export import Value = SelectPrimitive.Value;
 export import Icon = SelectPrimitive.Icon;
 export import Portal = SelectPrimitive.Portal;
 export import Backdrop = SelectPrimitive.Backdrop;
@@ -132,4 +132,12 @@ export import Group = SelectPrimitive.Group;
 export import GroupLabel = SelectPrimitive.GroupLabel;
 export import Separator = SelectPrimitive.Separator;
 
-export { Root, Popup, Item, ItemIndicator };
+function Value({ ref, ...props }: Value.Props) {
+  return <SelectPrimitive.Value ref={useValueSwap(ref)} {...props} />;
+}
+
+declare namespace Value {
+  type Props = React.ComponentProps<typeof SelectPrimitive.Value>;
+}
+
+export { Root, Value, Popup, Item, ItemIndicator };

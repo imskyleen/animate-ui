@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Select as SelectPrimitive } from 'radix-ui';
 import { AnimatePresence, type Transition } from 'motion/react';
 
+import { useValueSwap } from '../../../internal/value-swap';
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
@@ -148,7 +149,12 @@ function Provider(
 }
 
 const Trigger = SelectPrimitive.Trigger;
-const Value = SelectPrimitive.Value;
+function Value({
+  ref,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Value>) {
+  return <SelectPrimitive.Value ref={useValueSwap(ref)} {...props} />;
+}
 const Icon = SelectPrimitive.Icon;
 
 function Portal({
