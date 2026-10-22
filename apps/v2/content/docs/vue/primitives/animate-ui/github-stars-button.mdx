@@ -1,0 +1,127 @@
+---
+title: GitHub Stars Button
+description: A button showing a repository's GitHub stars, counted up with a filling star.
+---
+
+<VueComponentPreview name="animate-ui/github-stars-button" />
+
+## Installation
+
+<VueRegistryInstallation name="buttons-github-stars" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  GitHubStarsButton,
+  GitHubStarsButtonIcon,
+  GitHubStarsButtonLogo,
+  GitHubStarsButtonNumber,
+  GitHubStarsButtonParticles,
+} from '@/components/animate-ui/buttons/github-stars';
+import StarIcon from './StarIcon.vue';
+</script>
+
+<template>
+  <GitHubStarsButton username="imskyleen" repo="animate-ui" as-child>
+    <a href="https://github.com/imskyleen/animate-ui">
+      <GitHubStarsButtonLogo class="size-4" />
+      <GitHubStarsButtonNumber />
+      <GitHubStarsButtonParticles class="text-yellow-500">
+        <GitHubStarsButtonIcon :icon="StarIcon" color="gold" />
+      </GitHubStarsButtonParticles>
+    </a>
+  </GitHubStarsButton>
+</template>
+```
+
+A button built on [GitHub Stars](/docs/vue/primitives/animate-ui/github-stars): its parts are GitHub Stars' (`GithubStarsLogo`, `GithubStarsNumber`, `GithubStarsIcon`, `GithubStarsParticles`), exported here under the button's name. The count is fetched from the GitHub API (`api.github.com/repos/<username>/<repo>`), unauthenticated; pass it with `value` to skip the request.
+
+
+## Animation
+
+- The button stays hidden (`visibility: hidden`, `aria-busy`) until the count is loaded. Then the number counts up from 0 with rolling digits ([Sliding Number](/docs/vue/primitives/animate-ui/sliding-number)), the star fills from the bottom as it climbs, and bursts into particles when the count is reached.
+- Pressing scales the button to `tapScale` (0.97), on Motion's spring for scale (`stiffness: 550, damping: 30`). It doesn't scale on hover, unless you set `hoverScale`.
+- `<AnimateUIProvider :tempo>` paces the press spring.
+- Under reduced motion, the digits change without rolling, the burst is skipped and the button doesn't scale.
+
+## API Reference
+
+### GitHubStarsButton
+
+<TypeTable
+  type={{
+    variant: {
+      description: 'Look of the button.',
+      type: "'default' | 'accent' | 'outline' | 'ghost' | null",
+      default: "'default'",
+    },
+    size: {
+      description: 'Height and padding of the button.',
+      type: "'default' | 'sm' | 'lg' | null",
+      default: "'default'",
+    },
+    username: {
+      description: 'Owner of the repository.',
+      type: 'string',
+    },
+    repo: {
+      description: 'Name of the repository.',
+      type: 'string',
+    },
+    value: {
+      description: 'A fixed star count. The API is not called.',
+      type: 'number',
+    },
+    delay: {
+      description: 'Delay before the request, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    'in-view': {
+      description: 'Wait for the element to be in view before the request.',
+      type: 'boolean',
+      default: 'false',
+    },
+    'in-view-once': {
+      description: 'Only the first time the element comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+    'in-view-margin': {
+      description: 'Margin of the in-view area.',
+      type: 'string',
+      default: "'0px'",
+    },
+    'hover-scale': {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    'tap-scale': {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    transition: {
+      description: 'Transition of the tap (and hover) scale.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }",
+    },
+    'as-child': {
+      description: 'Render your child element (a link) instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### GitHubStarsButtonLogo, GitHubStarsButtonNumber, GitHubStarsButtonIcon, GitHubStarsButtonParticles
+
+The parts of [GitHub Stars](/docs/vue/primitives/animate-ui/github-stars#api-reference): `GithubStarsLogo`, `GithubStarsNumber`, `GithubStarsIcon` and `GithubStarsParticles`.

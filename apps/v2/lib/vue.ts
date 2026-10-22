@@ -544,6 +544,39 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
   'reka-ui/toast': {
     Toaster: { progressBar: { value: true } },
   },
+  'animate-ui/flip-button': {
+    FlipButton: {
+      from: {
+        value: 'top',
+        options: { top: 'top', right: 'right', bottom: 'bottom', left: 'left' },
+      },
+      tapScale: { value: 0.97, min: 0, max: 2, step: 0.01 },
+    },
+  },
+  'animate-ui/liquid-button': {
+    LiquidButton: {
+      delay: { value: 0.3, min: 0.1, max: 0.5, step: 0.05 },
+      fillHeight: { value: 3, min: 0, max: 10, step: 1 },
+      tapScale: { value: 0.97, min: 0, max: 2, step: 0.01 },
+    },
+  },
+  'animate-ui/github-stars-button': {
+    GitHubStarsButton: {
+      variant: {
+        value: 'default',
+        options: {
+          default: 'default',
+          accent: 'accent',
+          outline: 'outline',
+          ghost: 'ghost',
+        },
+      },
+      size: {
+        value: 'default',
+        options: { default: 'default', sm: 'sm', lg: 'lg' },
+      },
+    },
+  },
   'backgrounds/bubble': {
     BubbleBackground: { interactive: { value: true } },
   },

@@ -76,6 +76,9 @@ const OWN_PAGES = [
   ['splitting-text', 'ANIMATIONS'],
   ['swapping-text', 'inline-grid'],
   ['typing-text', 'Highly customizable'],
+  ['flip-button', 'Back Button'],
+  ['liquid-button', ':fill-height='],
+  ['github-stars-button', 'starVariants'],
 ] as const;
 
 for (const [library, pages] of [
@@ -187,7 +190,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(68);
+  await expect(cards).toHaveCount(71);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

@@ -73,27 +73,42 @@ for (const [library, prefix, target] of [
 const toRegistry = (source: string) =>
   source.replace(/from 'cn'/g, "from '@/lib/utils'");
 
-const backgrounds = path.join(root, 'registry', 'vue', 'backgrounds');
-for (const name of readdirSync(backgrounds).sort()) {
-  const dir = path.join(backgrounds, name);
-  const files = readdirSync(dir).filter((file) => file !== 'meta.json');
-  const sources = files.map((file) =>
-    readFileSync(path.join(dir, file), 'utf8'),
-  );
-  const imports = sources.join('\n');
-  write(
-    `backgrounds-${name}`,
-    JSON.parse(readFileSync(path.join(dir, 'meta.json'), 'utf8')) as Meta,
-    [
-      'motion-v',
-      ...(imports.includes('@animate-ui/vue') ? ['@animate-ui/vue'] : []),
-    ],
-    files.map((file, index) => ({
-      path: `components/animate-ui/backgrounds/${name}/${file}`,
-      content: toRegistry(sources[index]!),
-    })),
-  );
-  count++;
+/** The npm packages the files import: each bare import's but Vue and `cn`. */
+function dependenciesOf(sources: string[]) {
+  const packages = new Set<string>();
+  for (const source of sources)
+    for (const [, from] of source.matchAll(
+      /from ['"]([^'"./@][^'"]*|@[^'"/]+\/[^'"/]+)/g,
+    )) {
+      const name = from!.startsWith('@')
+        ? from!.split('/').slice(0, 2).join('/')
+        : from!.split('/')[0]!;
+      if (name !== 'vue' && name !== 'cn') packages.add(name);
+    }
+  // @animate-ui/vue animates with motion-v, its peer.
+  if (packages.has('@animate-ui/vue')) packages.add('motion-v');
+  return [...packages].sort();
+}
+
+for (const group of ['backgrounds', 'buttons', 'components']) {
+  const groupDir = path.join(root, 'registry', 'vue', group);
+  for (const name of readdirSync(groupDir).sort()) {
+    const dir = path.join(groupDir, name);
+    const files = readdirSync(dir).filter((file) => file !== 'meta.json');
+    const sources = files.map((file) =>
+      readFileSync(path.join(dir, file), 'utf8'),
+    );
+    write(
+      `${group}-${name}`,
+      JSON.parse(readFileSync(path.join(dir, 'meta.json'), 'utf8')) as Meta,
+      dependenciesOf(sources),
+      files.map((file, index) => ({
+        path: `components/animate-ui/${group}/${name}/${file}`,
+        content: toRegistry(sources[index]!),
+      })),
+    );
+    count++;
+  }
 }
 
 console.log(`Vue registry: ${count}`);

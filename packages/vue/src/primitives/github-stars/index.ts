@@ -56,7 +56,10 @@ type GithubStarsProps = {
 
 const elementOf = (node: unknown) => {
   const element = (node as { $el?: unknown } | null)?.$el ?? node;
-  return element instanceof HTMLElement ? element : null;
+  if (element instanceof HTMLElement) return element;
+  // A child component rendering a fragment: its element follows the anchor.
+  const next = element instanceof Node ? element.nextSibling : null;
+  return next instanceof HTMLElement ? next : null;
 };
 
 /** Loads a repository's stars from GitHub (or takes `value`) and counts up to them. */

@@ -1,0 +1,92 @@
+---
+title: Liquid Button
+description: A button that fills with color from the bottom on hover.
+---
+
+<VueComponentPreview name="animate-ui/liquid-button" />
+
+## Installation
+
+<VueRegistryInstallation name="buttons-liquid" />
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import LiquidButton from '@/components/animate-ui/buttons/liquid/LiquidButton.vue';
+</script>
+
+<template>
+  <LiquidButton>Get started</LiquidButton>
+</template>
+```
+
+## Animation
+
+- On hover, a `fillHeight` line of `--liquid-button-color` slides in along the bottom, then rises to fill the button, each step taking `delay` (a CSS transition). Leaving, the fill variables ease back over 0.3s, then the text color and the liquid drain in reverse.
+- Pressing scales the button to `tapScale` (0.97), and releasing springs it back (Animate UI's press spring, `stiffness: 550, damping: 30`). Hovering fills it without scaling it, unless you set `hoverScale` (then a 0.3s ease-out).
+- `transition` replaces the press, release and leave transitions.
+- `<AnimateUIProvider :tempo>` paces the Motion transitions (not the CSS `delay`).
+- Under reduced motion, the button fills without scaling when pressed.
+
+## API Reference
+
+### LiquidButton
+
+<TypeTable
+  type={{
+    delay: {
+      description: 'Duration of each step of the fill (a CSS time).',
+      type: 'string',
+      default: "'0.3s'",
+    },
+    'fill-height': {
+      description:
+        'Height of the line that slides in before the fill rises (a CSS length).',
+      type: 'string',
+      default: "'3px'",
+    },
+    'hover-scale': {
+      description:
+        'Scale of the button on hover. The buttons answer the press, not the hover: none unless you set one.',
+      type: 'number',
+      default: '1',
+    },
+    'tap-scale': {
+      description: 'Scale of the button while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    transition: {
+      description:
+        'Transition of the press, release and leave (hover uses a 0.3s ease-out on the scale).',
+      type: 'Transition',
+      default:
+        "{ transform: { type: 'spring', stiffness: 550, damping: 30, restSpeed: 10 }, default: { duration: 0.3, ease: [0.25, 0.1, 0.35, 1] } }",
+    },
+    'as-child': {
+      description: 'Render your child element instead of a `button`.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Props of the button.',
+      type: "HTMLMotionProps<'button'>",
+    },
+  }}
+/>
+
+### CSS variables
+
+<TypeTable
+  type={{
+    '--liquid-button-color': {
+      description: 'Color of the liquid.',
+      type: 'color',
+    },
+    '--liquid-button-background-color': {
+      description: 'Background color of the button at rest.',
+      type: 'color',
+    },
+  }}
+/>

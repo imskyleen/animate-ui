@@ -9,6 +9,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'animate-ui/scroll-fade': () =>
     import('./demos/animate-ui/scroll-fade.vue'),
   'animate-ui/shine': () => import('./demos/animate-ui/shine.vue'),
+  'animate-ui/liquid-button': () => import('./demos/animate-ui/liquid-button.vue'),
   'animate-ui/magnetic': () => import('./demos/animate-ui/magnetic.vue'),
   'animate-ui/tilt': () => import('./demos/animate-ui/tilt.vue'),
   'animate-ui/blur': () => import('./demos/animate-ui/blur.vue'),
@@ -33,6 +34,9 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
     import('./demos/animate-ui/shimmering-text.vue'),
   'animate-ui/sliding-text': () =>
     import('./demos/animate-ui/sliding-text.vue'),
+  'animate-ui/flip-button': () => import('./demos/animate-ui/flip-button.vue'),
+  'animate-ui/github-stars-button': () =>
+    import('./demos/animate-ui/github-stars-button.vue'),
   'animate-ui/gradient-text': () =>
     import('./demos/animate-ui/gradient-text.vue'),
   'animate-ui/highlight': () =>
@@ -104,6 +108,10 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/animate-ui-questionnaire': () =>
     import('./fixtures/animate-ui-questionnaire.vue'),
   'fixtures/reka-ui-drawer': () => import('./fixtures/reka-ui-drawer.vue'),
+  'fixtures/animate-ui-github-stars-button': () =>
+    import('./fixtures/animate-ui-github-stars-button.vue'),
+  'fixtures/animate-ui-github-stars-in-view': () =>
+    import('./fixtures/animate-ui-github-stars-in-view.vue'),
   'fixtures/reka-ui-toast': () => import('./fixtures/reka-ui-toast.vue'),
   'fixtures/reka-ui-toast-update': () => import('./fixtures/reka-ui-toast-update.vue'),
   'fixtures/animate-ui-highlight-cases': () =>
