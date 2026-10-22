@@ -243,3 +243,41 @@ for (const demo of ['/tests/demos/base-ui/combobox', '/tests/demos/react-aria/co
     expect(copies).toEqual([]);
   });
 }
+
+// Bug: a list laid over its trigger (item-aligned) hid the whole swap, which played under it.
+for (const { name, demo, over } of [
+  { name: 'radix-ui', demo: '/tests/demos/radix-ui/select', over: true },
+  { name: 'base-ui', demo: '/tests/demos/base-ui/select', over: true },
+  { name: 'vue reka-ui', demo: '/tests/vue-demos/reka-ui/select', over: true },
+  { name: 'react-aria', demo: '/tests/demos/react-aria/select', over: false },
+]) {
+  test(`${name} select: the swap ${over ? 'waits for the list over the trigger to start leaving' : 'starts at once under a list below'}`, async ({ page }) => {
+    await page.goto(demo, { waitUntil: 'networkidle' });
+    const trigger = page.locator('[role="combobox"], button[aria-haspopup]').first();
+    await trigger.click();
+    await expect(page.getByRole('option').first()).toBeVisible();
+    await page.waitForTimeout(500);
+    const started = page.evaluate(
+      () =>
+        new Promise<{ after: number; list: number }>((resolve) => {
+          const start = performance.now();
+          const tick = () => {
+            if (!document.querySelector('[data-animate-ui-value-ghost]'))
+              return void requestAnimationFrame(tick);
+            const list = document.querySelector('[role="listbox"]');
+            let opacity = list ? 1 : 0;
+            for (let node: Element | null = list; node; node = node.parentElement)
+              opacity *= Number(getComputedStyle(node).opacity);
+            resolve({ after: performance.now() - start, list: opacity });
+          };
+          requestAnimationFrame(tick);
+        }),
+    );
+    await page.getByRole('option', { name: 'Banana', exact: true }).first().click();
+    const { after, list } = await started;
+    if (over) {
+      expect(after).toBeGreaterThan(200);
+      expect(list).toBeLessThan(0.95);
+    } else expect(after).toBeLessThan(150);
+  });
+}

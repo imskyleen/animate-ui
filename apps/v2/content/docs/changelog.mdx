@@ -35,7 +35,7 @@ version: '2.2.0'
 <ChangelogItemDescription>
 
 - The Sidebar's trigger shows Animate UI's animated Panel Left: its panel narrows while the sidebar is closed, instead of swapping two icons.
-- Select and Combobox swap their chosen text instead of changing it in one frame: the old text rises into a blur as the new one rises into place out of it, in 400ms, in Radix, Base UI, React Aria and reka-ui. A combobox's input does it when an item is picked, not while typing; in Vue, `ComboboxValue` wraps the label a combobox's trigger shows.
+- Select and Combobox swap their chosen text instead of changing it in one frame: the old text rises into a blur as the new one rises into place out of it, in 400ms, in Radix, Base UI, React Aria and reka-ui. A list laid over its trigger is let go first. A combobox's input does it when an item is picked, not while typing; in Vue, `ComboboxValue` wraps the label a combobox's trigger shows.
 - Morphing Text morphs more smoothly: the letters both texts share slide in their order without crossing, the others blur out and the new ones rise in, and each letter keeps the font's kerning at rest.
 - Sliding Text inside a link or a button slides when the whole control is hovered or clicked, not just its text.
 - Animated icons take `initial={false}`: mounted while `animate` is on, they show its end state at once instead of playing it.

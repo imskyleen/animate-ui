@@ -95,6 +95,24 @@ function crossfade(
   return stop;
 }
 
+/** A list laid over its trigger (item-aligned) hides the value until it starts fading out. */
+function covered(el: HTMLElement) {
+  const rect = el.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  for (const list of document.querySelectorAll('[role="listbox"]')) {
+    if (list.contains(el)) continue;
+    const box = list.getBoundingClientRect();
+    if (x < box.left || x > box.right || y < box.top || y > box.bottom)
+      continue;
+    let opacity = 1;
+    for (let node: Element | null = list; node; node = node.parentElement)
+      opacity *= Number(getComputedStyle(node).opacity);
+    if (opacity > 0.9) return true;
+  }
+  return false;
+}
+
 /** Swaps a value's text (a select's or a combobox's) through a blur as it changes. */
 function watchValueText(el: HTMLElement, timing: () => Timing) {
   let text = el.textContent ?? '';
@@ -108,6 +126,10 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
   const settle = () => {
     const next = el.textContent ?? '';
     if (next === text) return;
+    if (covered(el)) {
+      frame = requestAnimationFrame(settle);
+      return;
+    }
     stop?.();
     stop = crossfade(el, copy, box, timing(), (options) => {
       const incoming = el.cloneNode(true) as HTMLElement;
