@@ -12,7 +12,7 @@ type Timing = { duration: number; easing: string; blur: string; shift: number };
 
 const GHOST = 'data-animate-ui-value-ghost';
 const INCOMING = 'data-animate-ui-value-incoming';
-const SWAP = { ...motionTokens.transition.swap, duration: 0.25 };
+const SWAP = { duration: 0.4, ease: motionTokens.ease.soft };
 const BLUR = 'blur(4px)';
 const SHIFT = 6;
 
@@ -108,7 +108,10 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
   let box = boxOf(el);
   let stop: (() => void) | null = null;
 
-  const observer = new MutationObserver(() => {
+  let frame = 0;
+
+  /** Once a frame, before it's painted: a text changed and changed back in between doesn't swap. */
+  const settle = () => {
     const next = el.textContent ?? '';
     if (next === text) return;
     stop?.();
@@ -142,6 +145,10 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
     text = next;
     copy = el.cloneNode(true) as HTMLElement;
     box = boxOf(el);
+  };
+  const observer = new MutationObserver(() => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(settle);
   });
   observer.observe(el, { childList: true, subtree: true, characterData: true });
   const resize = new ResizeObserver(() => {
@@ -149,6 +156,7 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
   });
   resize.observe(el);
   return () => {
+    cancelAnimationFrame(frame);
     observer.disconnect();
     resize.disconnect();
     stop?.();

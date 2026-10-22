@@ -56,7 +56,7 @@ for (const c of CASES) {
     trigger(page).evaluate(async (el, ghost) => {
       const frames: { t: number; opacity: number | null; text: string; width: number }[] = [];
       const start = performance.now();
-      while (performance.now() - start < 400) {
+      while (performance.now() - start < 1100) {
         await new Promise((r) => requestAnimationFrame(r));
         const g = document.querySelector<HTMLElement>(ghost);
         frames.push({
@@ -86,8 +86,9 @@ for (const c of CASES) {
       expect(Math.min(...opacities)).toBeLessThan(0.2);
       for (let i = 1; i < opacities.length; i++)
         expect(opacities[i]).toBeLessThanOrEqual(opacities[i - 1]! + 0.01);
+      // Bug: reka-ui sets the placeholder and the value back within a frame as the list closes, which swapped again.
       expect((await frames).at(-1)!.opacity).toBeNull();
-      expect(seen.at(-1)!.t - seen[0]!.t).toBeGreaterThan(170);
+      expect(seen.at(-1)!.t - seen[0]!.t).toBeGreaterThan(330);
       const widths = (await frames).map((f) => f.width);
       expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(0.5);
       if (c.input) await expect(trigger(page)).toHaveValue(c.picks[1]);
@@ -142,7 +143,7 @@ for (const c of CASES) {
           const state = (window as unknown as { __incoming: (s: HTMLElement) => Incoming }).__incoming;
           const out: { blur: number; opacity: number; text: string; color: string }[] = [];
           const start = performance.now();
-          while (performance.now() - start < 450) {
+          while (performance.now() - start < 650) {
             await new Promise((r) => requestAnimationFrame(r));
             const s = document.querySelector<HTMLElement>('[data-animate-ui-value-incoming]');
             const st = s ? state(s) : null;
