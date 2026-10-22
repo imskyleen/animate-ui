@@ -1,0 +1,197 @@
+---
+title: Questionnaire
+description: A multi-step questionnaire with single-choice, multiple-choice, freeform, and skippable questions. Each question slides out before the next one slides in, while the height glides to the new one's.
+---
+
+<VueComponentPreview name="reka-ui/questionnaire" />
+
+## Installation
+
+shadcn-vue's Questionnaire keeps its logic in its own files (`useQuestionnaire.ts`), with no headless package to swap: the CLI has no import to change in it. Its motion comes from `@animate-ui/vue/primitives/questionnaire`, which you call from three of its files.
+
+### 1. Install the packages
+
+```npm
+npm install @animate-ui/vue motion-v
+```
+
+### 2. Add shadcn-vue's questionnaire
+
+```npm
+npx shadcn-vue@latest add questionnaire
+```
+
+### 3. Animate `components/ui/questionnaire`
+
+In `Questionnaire.vue`, animate the form:
+
+```vue title="components/ui/questionnaire/Questionnaire.vue"
+<script setup lang="ts">
+import { useQuestionnaireMotion } from "@animate-ui/vue/primitives/questionnaire" // [!code ++]
+// …
+const rootElement = ref<HTMLFormElement | null>(null)
+useQuestionnaireMotion(rootElement) // [!code ++]
+</script>
+```
+
+In `QuestionnaireChoice.vue`, render the label as a Motion element, for the press:
+
+```vue title="components/ui/questionnaire/QuestionnaireChoice.vue"
+<script setup lang="ts">
+import { useChoicePress } from "@animate-ui/vue/primitives/questionnaire" // [!code ++]
+import { motion } from "motion-v" // [!code ++]
+// …
+const disabled = computed(() => item.disabled.value || props.disabled)
+const press = useChoicePress(() => disabled.value) // [!code ++]
+</script>
+
+<template>
+  <label // [!code --]
+  <motion.label // [!code ++]
+    v-bind="press" // [!code ++]
+    data-slot="questionnaire-choice"
+    …
+  </label> // [!code --]
+  </motion.label> // [!code ++]
+</template>
+```
+
+In `QuestionnaireProgress.vue`, roll the numbers of its default label:
+
+```vue title="components/ui/questionnaire/QuestionnaireProgress.vue"
+<script setup lang="ts">
+import { QuestionnaireCount } from "@animate-ui/vue/primitives/questionnaire" // [!code ++]
+// …
+</script>
+
+<template>
+  …
+    <slot …>
+      {{ label }} // [!code --]
+      <template v-if="root.total.value"> // [!code ++]
+        Question <QuestionnaireCount :value="root.current.value" /> of <QuestionnaireCount :value="root.total.value" /> // [!code ++]
+      </template> // [!code ++]
+    </slot>
+  …
+</template>
+```
+
+## Usage
+
+Use shadcn-vue's questionnaire as usual:
+
+```vue
+<script setup lang="ts">
+import {
+  Questionnaire,
+  QuestionnaireActions,
+  QuestionnaireChoice,
+  QuestionnaireChoices,
+  QuestionnaireDescription,
+  QuestionnaireError,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireProgress,
+  QuestionnaireSkip,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+} from '@/components/ui/questionnaire';
+
+function handleSubmit(event: Event) {
+  event.preventDefault();
+  const answers = new FormData(event.currentTarget as HTMLFormElement);
+  // answers.get("direction"), answers.getAll(...) for multiple items.
+}
+</script>
+
+<template>
+  <Questionnaire @submit="handleSubmit">
+    <QuestionnaireProgress />
+    <QuestionnaireItem name="direction" required>
+      <QuestionnaireTitle>What should we prototype next?</QuestionnaireTitle>
+      <QuestionnaireDescription>
+        Choose a direction or write your own.
+      </QuestionnaireDescription>
+      <QuestionnaireChoices>
+        <QuestionnaireChoice value="delegation">Delegation</QuestionnaireChoice>
+        <QuestionnaireChoice value="questions">Question prompts</QuestionnaireChoice>
+      </QuestionnaireChoices>
+      <QuestionnaireError />
+    </QuestionnaireItem>
+    <QuestionnaireItem name="detail">
+      <QuestionnaireTitle>How much detail should it include?</QuestionnaireTitle>
+      <QuestionnaireChoices>
+        <QuestionnaireChoice value="focused">Focused</QuestionnaireChoice>
+        <QuestionnaireChoice value="complete">Complete flow</QuestionnaireChoice>
+      </QuestionnaireChoices>
+    </QuestionnaireItem>
+    <QuestionnaireActions>
+      <QuestionnairePrevious />
+      <QuestionnaireSkip />
+      <QuestionnaireNext />
+      <QuestionnaireSubmit />
+    </QuestionnaireActions>
+  </Questionnaire>
+</template>
+```
+
+Leave out tw-animate-css classes on `QuestionnaireItem` (`data-active:animate-in`…): they would run on top of the step's entrance.
+
+## Animation
+
+- **The questions change one after the other, sliding by their order**, like the tab panels: going on (Next, Skip, Enter, Ctrl/⌘+Enter, the right arrow outside a text field or a radio), the leaving question slides 24px toward the start as it fades out into a 5px blur, over 150ms on an ease-out (`cubic-bezier(0, 0, 0.58, 1)`); once it's gone, the next one comes in from 24px toward the end, out of the blur, over 300ms (`cubic-bezier(0.25, 0.1, 0.35, 1)`). Going back (Previous, the left arrow, a reset), the reverse; right to left, mirrored. A jump over several questions (a reset, an invalid answer found on submit, a controlled `item`) goes straight there: the questions in between never show.
+- **The height glides** from the leaving question's to the next one's once the leaving one has gone, as the next one comes in, over 450ms on Motion's layout curve (`cubic-bezier(0.4, 0, 0.1, 1)`: a gentle start, a long deceleration, never past its size), so the actions below move on that curve instead of jumping. Until then, it's held at the leaving one's height, so what's below doesn't slide over the question leaving (an error changing meanwhile takes the height along at once: below). If the question's content changes size on the way (content loaded late or added), the height follows it from where it is and at the speed it has, on a spring that never goes past (stiffness 660, damping 52). An error showing or folding on the way takes the question's height along on its own curve (below).
+- **The leaving question stays where it was**, over the next one: shadcn-vue hides it (`hidden`, `inert`) in the render that changes the step, and Animate UI shows it again out of the flow until it has gone. It stays `inert`. The next one is never hidden on the way: shadcn-vue focuses it in that render, and the focus stays on it.
+- Changed again on the way (Next, then Previous at once): each question goes on from where it is. One coming in that leaves again fades out from its opacity, in that share of the 150ms; one picked again while it leaves comes back from where it is, without waiting; the height goes on from where it is. Two steps in a row (Next, then Skip at once): the next question also waits for the one still leaving from the step before.
+- **Progress**: the numbers of its default label ("Question 2 of 3") roll to the new ones: the old number slides 0.6em out (up when it grows, down when it shrinks) as the new one comes in from the other side, each fading through a 2px blur, on a spring that never goes past (stiffness 300, damping 35: about 750ms, 90% of the way in about 225ms). Changed again on the way, the number coming in leaves from where it is. A Progress inside each question doesn't roll: the next question shows its own number, and the leaving one keeps its own until it has gone. Your own slot content stays as it is.
+- **A choice pressed** scales to 0.985 on Animate UI's press spring (stiffness 550, damping 30): like the buttons, a touch lighter (it's a whole row), and back up when let go: press only, nothing scales on hover, and nothing under reduced motion. A choice whose label isn't a `motion.label` doesn't.
+- **A choice checked**: shadcn-vue's indicator animates like Animate UI's radios and checkboxes. A single choice's dot pops in from 0 on a bouncy spring (stiffness 200, damping 16) and leaves the same way; a multiple choice's check draws itself in 0.3s after 0.2s (`cubic-bezier(0, 0, 0.58, 1)`, once the box has answered) and erases itself in 0.3s. With `checkAnimation="pop"` on an [`AnimateUIProvider`](/docs/vue/installation#choose-how-checks-animate-optional), the check pops in from half its size out of a 2px blur (a spring, stiffness 500, damping 24, after 0.2s) and shrinks back out in 0.15s. shadcn-vue hides the dot and the check as soon as the choice is unchecked: they're held shown while they leave. The indicator's background, border and text colors change over 200ms (`ease`) instead of at once. Letter or number shortcuts and Space check choices like a click, and so do the arrow keys on a single choice's radios; on a multiple choice's boxes, the arrow keys only move the focus.
+- **The error unfolds**: its height grows from 0, and the gap above it from none (its top margin from minus the question's gap), as it fades in out of a 2px blur, over 350ms on a soft ease-out (`cubic-bezier(0.215, 0.61, 0.355, 1)`), so what's below it moves instead of jumping. It folds back the same way once the question is answered (or skipped), held shown until it has. Changed again on the way (an answer picked as it unfolds), it goes on from its height, gap, opacity and blur. If its question's height is still gliding (a step just changed, Submit jumped back to an invalid question, or the error changed just before), the question goes on from its height to the one it'll have with the error open (or folded), from then on, on that same 350ms curve: the error is never clipped, then chased.
+- **Previous, Skip, Next and Submit** show and hide in place: from 0.9 of their own scale and a 2px blur as they fade in to their own resting look (a disabled button's `opacity-50` included: it fades to 0.5, never past it), over 150ms (`cubic-bezier(0.23, 1, 0.32, 1)`), and back out the same way from it, held shown (still `inert`) until they've gone. The ones leaving stay where they were, out of the flow, so what stays doesn't move. shadcn-vue's Next and Submit share a cell of `QuestionnaireActions`: on the last question, they swap through each other. Changed again on the way, each goes on from where it is.
+- **Nothing moves on mount**, nor before the page has been painted: a resumed question (`defaultItem`) and default answers show at rest.
+- `<AnimateUIProvider tempo>` paces every transition, the height's follow spring included.
+- Under reduced motion, the questions still change one after the other, fading through their blur without sliding: out over 200ms, then in over 200ms (`cubic-bezier(0.23, 1, 0.32, 1)`), the height changing at once to the next one's when the leaving one has faded out. The error (what's below it jumps), the buttons (to their own resting opacity), the dot and the check fade only, and the progress numbers crossfade over 200ms.
+- The demo is the React one in Vue, on shadcn-vue's questionnaire: three questions, a required one with three described choices and a freeform answer, an optional multiple choice (Skip shows), and a required last one (Submit reads "Save plan"), with letter shortcuts. Submitting shows the answers in Animate UI's [Toast](/docs/vue/primitives/reka-ui/toast).
+
+### How it works
+
+shadcn-vue's markup is untouched, and nothing is re-rendered: it keeps every question mounted (their answers are the form's) and hides the inactive ones (`hidden`, `inert`) in the render that changes the step, and hides its buttons and its error the same way. `useQuestionnaireMotion` finds the parts it animates by their `data-slot` and watches them with a MutationObserver (`data-active` on the questions, `data-checked` on the choices, `data-invalid` on the errors, `data-hidden` on the buttons). Its callback runs before the frame is painted: it animates the elements themselves with the Web Animations API, each form only its own parts.
+
+On a step change, the leaving question gets its `hidden` attribute removed and inline `position: absolute`, `top`, `left`, `width`, `margin: 0`, `grid-area: auto` and `box-sizing: border-box` (its own height kept), laid over the next one, on the next one's unrounded box (the questions' parent gets `position: relative` while something is pinned in it, unless it's positioned). Once it has gone, it's `hidden` again, and the question and its parent get their own inline styles back (yours included). The next one's entrance is delayed by the exit and fills backwards: it stays transparent while the leaving one goes, without ever being hidden. Its height glides as a `min-height` and `max-height` animation, with the same delay (held at the leaving one's height meanwhile), clipping its content vertically on the way; an error changing while it glides takes it over with its own `min-height` and `max-height` animation. A button leaving is pinned where it was the same way (its height too), read in the layout and with the state it was drawn in (a button turning disabled as it goes leaves from its look then), and an error or a button leaving has its `hidden` attribute removed until it has gone. The dot or check of a choice unchecked gets an inline `display: block` while it leaves. Changed again on the way, each animation starts from the element's computed style. The indicator's color transition and the progress numbers' pseudo-elements come from a small stylesheet; the color transition applies once the form has `data-animate-ui-questionnaire-ready`.
+
+The progress numbers are `data-animate-ui-questionnaire-count` spans. While one rolls, it has `data-animate-ui-from` and `data-animate-ui-to`, its own text is painted transparent (`-webkit-text-fill-color`), and its `::before` (the old number) and `::after` (the new one) are animated over it; in a question leaving, `data-animate-ui-hold` keeps the old number painted by its `::before` until the question is hidden.
+
+## API Reference
+
+`@animate-ui/vue/primitives/questionnaire` exports three things. `AnimateUIProvider`'s `tempo` and `checkAnimation` apply to all of them.
+
+### useQuestionnaireMotion
+
+`useQuestionnaireMotion(form: Ref<HTMLElement | null>)`: animates shadcn-vue's questionnaire from its root `<form>`, each form only its own parts, found by their `data-slot` (`questionnaire-item`, `questionnaire-choice`, `questionnaire-error`, `questionnaire-previous`, `questionnaire-skip`, `questionnaire-next`, `questionnaire-submit`). It sets on the form `data-animate-ui-questionnaire`, always; `data-animate-ui-questionnaire-ready` once the page has been painted (changes animate from then on); and the `--animate-ui-questionnaire-color-duration` and `--animate-ui-questionnaire-color-easing` variables (the indicator's color transition, paced by the tempo).
+
+### useChoicePress
+
+`useChoicePress(disabled?: () => boolean)`: the Motion props a choice's `motion.label` takes for the press (none while disabled or under reduced motion).
+
+### QuestionnaireCount
+
+<TypeTable
+  type={{
+    value: {
+      description:
+        'The number it shows, rolling to each new one: a `data-animate-ui-questionnaire-count` span.',
+      type: 'number',
+    },
+  }}
+/>
+
+The dot and the check it animates are shadcn-vue's: the `[data-slot="questionnaire-choice-indicator-dot"]` of a single choice and the `[data-slot="questionnaire-choice-indicator-check"]` of a multiple one (`data-type` on the choice), inside the choice. A choice of your own animates too, as long as it carries those slots.
+
+## Accessibility
+
+Everything is shadcn-vue's: each question is a `fieldset` with its `legend`, its description and its active error are tied to it with `aria-describedby`, choices are native radios and checkboxes, the progress is a named `progressbar`, the buttons are real buttons, and the questionnaire moves the focus to the next question, or to an answer when validation fails. The animation is visual only. A question or a button shown again while it leaves stays `inert` (no clicks, no focus, out of the accessibility tree), and a leaving button keeps its `aria-hidden`. The progress keeps its `aria-valuenow` and `aria-valuetext` ("Question 2 of 3"), and its text stays the label: the rolling numbers are pseudo-elements with empty alternative text (`content: attr(…) / ""`), so its `aria-live` announcement reads only "Question 2 of 3", mid-roll too. A browser without alternative text for `content` (Safari before 17.4, Firefox before 128) reads them as well while they roll. The error is in the page, with `role="alert"`, from the frame it starts unfolding.
+
+## Credits
+
+- [shadcn-vue's Questionnaire](https://www.shadcn-vue.com/docs/components/questionnaire).

@@ -28,6 +28,7 @@ const PAGES = [
   ['pagination', "ui/pagination' </script>"],
   ['tooltip', 'variant="outline"'],
   ['toast', 'Show Toast'],
+  ['questionnaire', 'What should the agent build next?'],
 ] as const;
 
 /** Animate UI's own primitives in Vue, with a text from their demo's source. */
@@ -185,7 +186,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(66);
+  await expect(cards).toHaveCount(67);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

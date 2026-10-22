@@ -33,6 +33,8 @@ const LARGE = { width: 480, height: 360 };
 // sits higher, unzoomed, so the open list fits.
 const VUE_TALL: Record<string, Omit<Preview, 'id' | 'demo' | 'play'>> = {
   combobox: { viewport: LARGE, zoom: false, shift: 220 },
+  // shadcn-vue's questionnaire is roomier than shadcn/ui's.
+  questionnaire: { viewport: { width: 640, height: 560 } },
 };
 
 const zoomed = (size: { width: number; height: number }, zoom: number) => ({
@@ -816,9 +818,9 @@ function previews(): Preview[] {
           id: `vue/primitives/${slug}`,
           demo: `/tests/vue-demos/${library}/${slug}`,
           ...(ROOMY.has(slug) ? { viewport: LARGE } : {}),
-          ...VUE_TALL[slug],
           ...(TEXTS.has(slug) ? { nowrap: true as const } : {}),
           ...(PLAYS[slug] ?? { play: toggle((page) => buttons(page).first()) }),
+          ...VUE_TALL[slug],
         });
       }
   for (const effect of PAGE_TRANSITION_EFFECTS)

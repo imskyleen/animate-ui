@@ -90,6 +90,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/navigation-menu': () =>
     import('./demos/reka-ui/navigation-menu.vue'),
   'reka-ui/popover': () => import('./demos/reka-ui/popover.vue'),
+  'reka-ui/questionnaire': () => import('./demos/reka-ui/questionnaire.vue'),
   'reka-ui/toast': () => import('./demos/reka-ui/toast.vue'),
   'reka-ui/toast-promise': () => import('./demos/reka-ui/toast-promise.vue'),
   'reka-ui/toast-types': () => import('./demos/reka-ui/toast-types.vue'),
@@ -99,6 +100,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'reka-ui/preview-link-card': () =>
     import('./demos/reka-ui/preview-link-card.vue'),
   'reka-ui/radio-group': () => import('./demos/reka-ui/radio-group.vue'),
+  'fixtures/animate-ui-questionnaire': () =>
+    import('./fixtures/animate-ui-questionnaire.vue'),
   'fixtures/reka-ui-toast': () => import('./fixtures/reka-ui-toast.vue'),
   'fixtures/reka-ui-toast-update': () => import('./fixtures/reka-ui-toast-update.vue'),
   'fixtures/animate-ui-highlight-cases': () =>

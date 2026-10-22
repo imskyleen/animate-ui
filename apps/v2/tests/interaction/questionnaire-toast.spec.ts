@@ -1,10 +1,15 @@
 import { expect, test } from '../test';
 
-for (const lib of ['radix-ui', 'base-ui', 'react-aria'])
+for (const [lib, url] of [
+  ...['radix-ui', 'base-ui', 'react-aria'].map(
+    (lib) => [lib, `/tests/demos/${lib}/questionnaire`] as const,
+  ),
+  ['vue reka-ui', '/tests/vue-demos/reka-ui/questionnaire'] as const,
+])
   test(`${lib} questionnaire demo: a saved plan shows Animate UI's toast`, async ({
     page,
   }) => {
-    await page.goto(`/tests/demos/${lib}/questionnaire`, {
+    await page.goto(url, {
       waitUntil: 'networkidle',
     });
     const form = page.locator('form');

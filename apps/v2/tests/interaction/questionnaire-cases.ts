@@ -278,8 +278,10 @@ function readQuestionnaire(form: Element | null) {
     el.querySelector('legend')?.textContent?.trim() ?? '';
   const nameOf = (label: Element) =>
     (
-      label.querySelector('[data-slot="questionnaire-choice-label"]')
-        ?.firstChild?.textContent ??
+      [
+        ...(label.querySelector('[data-slot="questionnaire-choice-label"]')
+          ?.childNodes ?? []),
+      ].find((node) => node.textContent?.trim())?.textContent ??
       label.textContent ??
       ''
     ).trim();
@@ -575,8 +577,12 @@ const clickWhen = (page: Page, form: string, when: string, target: Target) =>
                   own(el) &&
                   el.closest('fieldset')!.getClientRects().length > 0 &&
                   (
-                    el.querySelector('[data-slot="questionnaire-choice-label"]')
-                      ?.firstChild?.textContent ?? ''
+                    [
+                      ...(el.querySelector(
+                        '[data-slot="questionnaire-choice-label"]',
+                      )?.childNodes ?? []),
+                    ].find((node) => node.textContent?.trim())?.textContent ??
+                    ''
                   ).trim() === target.choice,
               )
               ?.querySelector('input');
@@ -643,8 +649,10 @@ export const pick = (page: Page, form: string, name: string) =>
           el.closest('[data-animate-ui-questionnaire]') === root &&
           el.closest('fieldset')!.getClientRects().length > 0 &&
           (
-            el.querySelector('[data-slot="questionnaire-choice-label"]')
-              ?.firstChild?.textContent ?? ''
+            [
+              ...(el.querySelector('[data-slot="questionnaire-choice-label"]')
+                ?.childNodes ?? []),
+            ].find((node) => node.textContent?.trim())?.textContent ?? ''
           ).trim() === name,
       );
       if (!label) throw new Error(`No choice "${name}" on screen`);
@@ -706,6 +714,7 @@ export async function waitForQuestionnaires(page: Page) {
       ...document.querySelectorAll('form[data-animate-ui-questionnaire]'),
     ];
     const hydrated = (el: Element) =>
+      Boolean(el.closest('[data-slot="vue-demo"][data-mounted]')) ||
       Object.keys(el).some((key) => key.startsWith('__reactProps'));
     return (
       forms.length > 0 &&
@@ -1394,8 +1403,10 @@ async function pressChoice(page: Page, form: string, label: string, ms = 250) {
   return { scales, held };
 }
 
-export function describeQuestionnaire(library: string) {
-  const url = `/tests/demos/${library}/questionnaire`;
+export function describeQuestionnaire(
+  library: string,
+  url = `/tests/demos/${library}/questionnaire`,
+) {
   const form = FORM;
   const restingOn = (legend: string) =>
     `(d) => d.items.length === 1 && d.items[0].legend === ${JSON.stringify(legend)} && d.items[0].animations.length === 0`;
