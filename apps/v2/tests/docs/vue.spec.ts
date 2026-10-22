@@ -39,6 +39,8 @@ const OWN_PAGES = [
   ['image-zoom', 'Black porcelain mug, zoomable'],
   ['magnetic', "onlyOnHover === 'true'"],
   ['particles', 'ParticlesLabel'],
+  ['tooltip', 'Strikethrough'],
+  ['avatar-group', 'Guillermo Rauch'],
   ['cursor', 'on(enableCursorFollow)'],
   ['spring', 'aria-label="Drag me"'],
   ['pinned-list', 'pinned-list-row.vue'],
@@ -75,7 +77,7 @@ for (const [library, pages] of [
   ['animate-ui', OWN_PAGES],
 ] as const)
   for (const [name, text] of pages)
-    test(`the Vue ${name} page shows its Vue demo and .vue source`, async ({
+    test(`the Vue ${library} ${name} page shows its Vue demo and .vue source`, async ({
       page,
     }) => {
       await page.goto(`/docs/vue/primitives/${library}/${name}`, {
@@ -179,7 +181,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(61);
+  await expect(cards).toHaveCount(62);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

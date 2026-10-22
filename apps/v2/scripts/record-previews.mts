@@ -560,7 +560,9 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
 
   'auto-height': { play: toggle((page) => buttons(page).first(), 1000) },
   'avatar-group': {
-    play: sweep((page) => page.locator('main [data-slot]').first()),
+    play: sweep((page) =>
+      page.locator('main [data-slot]:not([data-slot="vue-demo"])').first(),
+    ),
   },
   blur: { play: replay() },
   button: {

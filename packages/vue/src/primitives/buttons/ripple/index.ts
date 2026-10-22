@@ -20,7 +20,8 @@ import {
   useTempoTransition,
 } from '../../../utils/motion';
 import { Slot } from '../../slot';
-import { callHandler, SCALE_SPRING, TAP_SCALE } from '../_button';
+import { callHandler } from '../../../internal/handlers';
+import { SCALE_SPRING, TAP_SCALE } from '../_button';
 
 const RIPPLE_TRANSITION: Transition = { duration: 0.6, ease: 'easeOut' };
 

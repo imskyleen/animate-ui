@@ -49,16 +49,21 @@
     }
   },
   "peerDependencies": {
+    "@floating-ui/vue": "^2.0.0",
     "motion-v": "^2.8.0",
     "reka-ui": "^2.11.0",
     "vue": "^3.5.0"
   },
   "peerDependenciesMeta": {
+    "@floating-ui/vue": {
+      "optional": true
+    },
     "reka-ui": {
       "optional": true
     }
   },
   "devDependencies": {
+    "@floating-ui/vue": "^2.0.1",
     "@workspace/eslint-config": "workspace:*",
     "eslint": "catalog:",
     "motion-v": "^2.8.0",

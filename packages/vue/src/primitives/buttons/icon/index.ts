@@ -9,7 +9,7 @@ import {
 } from 'vue';
 
 import { Button, type ButtonProps } from '../button';
-import { callHandler } from '../_button';
+import { callHandler } from '../../../internal/handlers';
 import {
   Particles,
   ParticlesEffect,

@@ -14,7 +14,7 @@ import type { Transition } from 'motion-v';
 
 import { Button, type ButtonProps } from '../button';
 import { IconSwap } from '../_icon-swap';
-import { callHandler } from '../_button';
+import { callHandler } from '../../../internal/handlers';
 
 type CopyButtonContextType = {
   copied: () => boolean;

@@ -1,0 +1,140 @@
+---
+title: Avatar Group
+description: Overlapping avatars where the hovered one rises, with a tooltip that glides from avatar to avatar.
+---
+
+<VueComponentPreview name="animate-ui/avatar-group" />
+
+## Installation
+
+<Installation />
+
+The tooltips are Animate UI's [Tooltip](/docs/vue/primitives/animate-ui/tooltip), positioned with [Floating UI](https://floating-ui.com), a peer dependency of this primitive:
+
+```npm
+npm install @floating-ui/react
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { AvatarGroup } from '@animate-ui/vue/primitives/avatar-group';
+
+defineProps<{ people: { name: string; src: string }[] }>();
+</script>
+
+<template>
+  <AvatarGroup class="h-12 -space-x-3" invert-overlap>
+    <img
+      v-for="person in people"
+      :key="person.name"
+      :src="person.src"
+      :alt="person.name"
+      class="size-12 rounded-full border-3 border-background"
+    />
+  </AvatarGroup>
+</template>
+```
+
+Each child is an avatar. Put an `AvatarGroupTooltip` inside an avatar to give it a tooltip:
+
+```vue
+<div class="size-12 rounded-full border-3 border-background bg-muted">
+  SK
+  <AvatarGroupTooltip class="rounded-md bg-foreground px-3 py-1.5 text-xs text-background">
+    <AvatarGroupTooltipArrow class="size-2.5 fill-foreground" />
+    <p>Skyleen</p>
+  </AvatarGroupTooltip>
+</div>
+```
+
+## Animation
+
+- The hovered (or pressed) avatar rises by `translate` on a bouncy spring (stiffness 300, damping 17): it overshoots by about 17% before it settles, and dips below its place the same way when it comes back down.
+- The tooltips share one popup ([Tooltip](/docs/vue/primitives/animate-ui/tooltip)): it opens at once (`open-delay` is 0) and glides from avatar to avatar on its spring (stiffness 400, damping 29), a little past the next avatar before it settles.
+- `<AnimateUIProvider :tempo>` paces the default springs.
+- Under reduced motion, the avatar rises at once and the tooltip only fades.
+
+## API Reference
+
+### AvatarGroup
+
+Takes the [TooltipProvider](/docs/vue/primitives/animate-ui/tooltip#tooltipprovider) and [Tooltip](/docs/vue/primitives/animate-ui/tooltip#tooltip) props, with other defaults.
+
+<TypeTable
+  type={{
+    '#default': {
+      description: 'The avatars.',
+      type: 'slot',
+      required: true,
+    },
+    'invert-overlap': {
+      description:
+        'Stack the avatars the other way: each one above the next instead of below.',
+      type: 'boolean',
+      default: 'false',
+    },
+    translate: {
+      description: 'How far the hovered avatar rises (a `y` value).',
+      type: 'string | number',
+      default: "'-30%'",
+    },
+    transition: {
+      description: 'Transition of the rise.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 17 }",
+    },
+    'tooltip-transition': {
+      description: 'Transition of the tooltip.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 400, damping: 29 }",
+    },
+    'open-delay': {
+      description: 'Delay in milliseconds before a tooltip opens.',
+      type: 'number',
+      default: '0',
+    },
+    'close-delay': {
+      description: 'Delay in milliseconds before a tooltip closes.',
+      type: 'number',
+      default: '0',
+    },
+    side: {
+      description: 'Side of the avatar the tooltip is placed on.',
+      type: '"top" | "bottom" | "left" | "right"',
+      default: '"top"',
+    },
+    'side-offset': {
+      description: 'Distance in pixels from the avatar.',
+      type: 'number',
+      default: '25',
+    },
+    align: {
+      description: 'How the tooltip is aligned on that side.',
+      type: '"start" | "center" | "end"',
+      default: '"center"',
+    },
+    'align-offset': {
+      description: 'Offset in pixels from the alignment.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Props of the container (a flex row).',
+      type: 'HTMLAttributes',
+    },
+  }}
+/>
+
+### AvatarGroupTooltip
+
+The [TooltipContent](/docs/vue/primitives/animate-ui/tooltip#tooltipcontent) props.
+
+### AvatarGroupTooltipArrow
+
+The [TooltipArrow](/docs/vue/primitives/animate-ui/tooltip#tooltiparrow) props.
+
+## Credits
+
+- Inspired by [Jhey](https://codepen.io/jh3y/pen/yyLmmMW).

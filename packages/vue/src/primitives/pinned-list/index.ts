@@ -23,7 +23,7 @@ import {
   useShouldReduceMotion,
   useTempoTransition,
 } from '../../utils/motion';
-import { callHandler } from '../buttons/_button';
+import { callHandler } from '../../internal/handlers';
 
 const ITEM_TRANSITION: Transition = {
   stiffness: 320,

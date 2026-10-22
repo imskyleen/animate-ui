@@ -340,6 +340,9 @@ importers:
 
   packages/vue:
     devDependencies:
+      '@floating-ui/vue':
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.44(typescript@6.0.3))
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config

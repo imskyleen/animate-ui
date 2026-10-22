@@ -168,6 +168,27 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       alignOffset: { value: 5 },
     },
   },
+  'animate-ui/tooltip': {
+    TooltipProvider: {
+      openDelay: { value: 0 },
+      closeDelay: { value: 300 },
+    },
+    Tooltip: {
+      side: {
+        value: 'top',
+        options: { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+      },
+      sideOffset: { value: 10 },
+      align: {
+        value: 'center',
+        options: { start: 'start', center: 'center', end: 'end' },
+      },
+      alignOffset: { value: 0 },
+    },
+    TooltipArrow: {
+      withTransition: { value: true },
+    },
+  },
   'animate-ui/particles': {
     ParticlesEffect: {
       side: {
