@@ -75,6 +75,7 @@ export type HighlightScope = {
   left: (id: string) => void;
   handOff: (item: HTMLElement, reduce: boolean) => Start;
   startOf: (id: string, item: HTMLElement, reduce: boolean) => Start;
+  leavingStartOf: (id: string, item: HTMLElement, reduce: boolean) => Start;
   register: (handle: SurfaceHandle) => () => void;
   gone: (opacity: number) => void;
   paint: (surface: Surface) => Surface;
@@ -118,6 +119,15 @@ function createScope(
   let gone: { opacity: number; at: number } | null = null;
   // Read as an item lights up, before the surface it takes over unmounts.
   const starts = new Map<string, Start>();
+  // Leaving copies remount on every hand-off: they start from the surface as it is now, not once it has unmounted.
+  const leavingStarts = new Map<string, Start>();
+  const items = new Map<string, HTMLElement>();
+  const holdStarts = (list: readonly Leaving[]) => {
+    for (const other of list) {
+      const item = items.get(other.id);
+      if (item) leavingStarts.set(other.id, handOffFrom(item, reduce()));
+    }
+  };
   const handOffFrom = (item: HTMLElement, reduced: boolean) => {
     const start = handOff(surface, item, reduced);
     if (
@@ -153,9 +163,11 @@ function createScope(
       return;
     }
     const along = rest.map((other) => ({ ...other, to: item, key: k }));
-    leaving.value = cross
+    const next = cross
       ? [...without(along, moves.id), { id: moves.id, to: item, key: k }]
       : along;
+    holdStarts(next);
+    leaving.value = next;
   };
 
   return {
@@ -163,6 +175,7 @@ function createScope(
     leaving,
     slot,
     light: (id, item) => {
+      items.set(id, item);
       lit.delete(id);
       lit.set(id, item);
       activate(id, item);
@@ -176,7 +189,9 @@ function createScope(
       }
       activeId.value = null;
       const k = (key += 1);
-      leaving.value = [...without(leaving.value, id), { id, to: null, key: k }];
+      const fading = { id, to: null, key: k };
+      holdStarts([fading]);
+      leaving.value = [...without(leaving.value, id), fading];
     },
     left: (id) => {
       leaving.value = without(leaving.value, id);
@@ -185,6 +200,11 @@ function createScope(
     startOf: (id, item, reduced) => {
       const start = starts.get(id);
       starts.delete(id);
+      return start ?? handOffFrom(item, reduced);
+    },
+    leavingStartOf: (id, item, reduced) => {
+      const start = leavingStarts.get(id);
+      leavingStarts.delete(id);
       return start ?? handOffFrom(item, reduced);
     },
     register: (handle) => {
@@ -623,7 +643,7 @@ const SurfaceCopy = defineComponent({
     const resume = useTempoTransition<Transition>(() => RESUME_TRANSITION);
     const start =
       props.leavingTo || props.fadeOut
-        ? props.scope.handOff(props.item, reduce.value)
+        ? props.scope.leavingStartOf(props.id, props.item, reduce.value)
         : props.scope.startOf(props.id, props.item, reduce.value);
     const target =
       props.leavingTo && !reduce.value
