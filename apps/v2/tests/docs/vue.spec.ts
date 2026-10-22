@@ -415,3 +415,13 @@ test('the Vue home has the skill section, pointing at the Vue docs', async ({
     timeout: 15_000,
   });
 });
+
+test('a Vue component in Reka UI and Animate UI lists Reka UI first', async ({
+  page,
+}) => {
+  await page.goto('/docs/vue/primitives/animate-ui/tooltip');
+  const tabs = page
+    .getByRole('tab')
+    .filter({ hasText: /^(Reka UI|Animate UI)$/ });
+  await expect(tabs).toHaveText(['Reka UI', 'Animate UI']);
+});

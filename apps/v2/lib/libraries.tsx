@@ -79,13 +79,13 @@ export const LIBRARIES: Library[] = [
     peer: 'react-aria-components',
     Logo: ReactAriaLogo,
   },
-  { id: 'animate-ui', title: 'Animate UI', Logo: AnimateUILogo },
   {
     id: 'reka-ui',
     title: 'Reka UI',
     docsUrl: (name) => `https://reka-ui.com/docs/components/${name}`,
     Logo: RekaUILogo,
   },
+  { id: 'animate-ui', title: 'Animate UI', Logo: AnimateUILogo },
 ];
 
 export function getLibrary(id: string) {
