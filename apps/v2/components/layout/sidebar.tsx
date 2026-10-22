@@ -46,9 +46,7 @@ import { GitHubLink, NAV_ITEMS, ThemeToggle } from './header';
 
 type Link = { name: ReactNode; url: string; active: boolean };
 
-const PRIMITIVES_URL = '/docs/primitives';
-const BACKGROUNDS_URL = '/docs/backgrounds';
-const ICONS_URL = '/docs/icons';
+const CHANGELOG_URL = '/docs/changelog';
 
 type SectionIcon = IconSvgElement | ReactNode;
 
@@ -91,19 +89,6 @@ function folderLinks(folder: PageTree.Folder, suffix?: RegExp) {
   );
 }
 
-/** A folder's pages, with those of its library folders (`primitives/reka-ui`). */
-function deepLinks(
-  folder: PageTree.Folder,
-): { name: ReactNode; url: string }[] {
-  return folder.children.flatMap((node) =>
-    node.type === 'page'
-      ? [{ name: node.name, url: node.url }]
-      : node.type === 'folder'
-        ? deepLinks(node)
-        : [],
-  );
-}
-
 type PrimitiveEntry = {
   name: ReactNode;
   slug: string;
@@ -116,7 +101,7 @@ function collectPrimitives(folder: PageTree.Folder | undefined) {
     if (library.type !== 'folder') continue;
     for (const page of library.children) {
       if (page.type !== 'page') continue;
-      const [, , , libraryId, slug] = page.url.split('/') as LibraryId[];
+      const [libraryId, slug] = page.url.split('/').slice(-2) as LibraryId[];
       if (!slug || !libraryId) continue;
       const entry = entries.get(slug) ?? { name: page.name, slug, urls: {} };
       entry.urls[libraryId] = page.url;
@@ -280,65 +265,17 @@ function MenuSection() {
   );
 }
 
-/** A framework's own tree: its pages as the guide, each folder as a section. */
-function FolderSections({
-  folder,
-  pathname,
-}: {
-  folder: PageTree.Folder;
-  pathname: string;
-}) {
-  const guide: Link[] = [];
-  const sections: { title: string; links: Link[] }[] = [];
-  if (folder.index)
-    guide.push({
-      name: folder.index.name,
-      url: folder.index.url,
-      active: pathname === folder.index.url,
-    });
-  for (const node of folder.children) {
-    if (node.type === 'page')
-      guide.push({
-        name: node.name,
-        url: node.url,
-        active: pathname === node.url,
-      });
-    if (node.type === 'folder' && node.index)
-      guide.push({
-        name: node.index.name,
-        url: node.index.url,
-        active: pathname === node.index.url,
-      });
-    if (node.type === 'folder')
-      sections.push({
-        title: node.name === 'Primitives' ? 'Components' : String(node.name),
-        links: deepLinks(node).map((link) => ({
-          ...link,
-          active: pathname === link.url,
-        })),
-      });
-  }
-  return (
-    <>
-      <Section title="Guide" icon={BookOpen02Icon} links={guide} />
-      {sections.map((section) => (
-        <Section
-          key={section.title}
-          title={section.title}
-          icon={ComponentIcon}
-          links={section.links}
-        />
-      ))}
-    </>
-  );
-}
-
 function SidebarBody({ mobile }: { mobile: boolean }) {
-  const { root } = useTreeContext();
+  const { root, full } = useTreeContext();
   const pathname = usePathname();
   const preferred = usePreferredLibrary();
+  const frameworkRoot =
+    root.type === 'folder' && (root as PageTree.Folder).root
+      ? (root as PageTree.Folder)
+      : null;
 
   const { guide, primitives, backgrounds, icons } = useMemo(() => {
+    const docs = frameworkRoot ? '/docs/vue' : '/docs';
     const guide: Omit<Link, 'active'>[] = [];
     let primitivesFolder: PageTree.Folder | undefined;
     let backgrounds: Omit<Link, 'active'>[] = [];
@@ -347,35 +284,40 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
       if (node.type === 'page') guide.push({ name: node.name, url: node.url });
       if (node.type === 'folder' && node.root) continue;
       if (node.type === 'folder' && node.index) {
-        guide.push({ name: node.name, url: node.index.url });
-        if (node.index.url === PRIMITIVES_URL) primitivesFolder = node;
-        if (node.index.url === BACKGROUNDS_URL)
+        guide.push({ name: node.index.name, url: node.index.url });
+        if (node.index.url === `${docs}/primitives`) primitivesFolder = node;
+        if (node.index.url === `${docs}/backgrounds`)
           backgrounds = folderLinks(node, / Background$/);
-        if (node.index.url === ICONS_URL)
-          icons = folderLinks(node).map((link) =>
-            ICON_LIBRARY_LOGOS[link.url]
+        if (node.index.url === `${docs}/icons`)
+          icons = folderLinks(node).map((link) => {
+            const logo = ICON_LIBRARY_LOGOS[link.url.replace(docs, '/docs')];
+            return logo
               ? {
                   ...link,
                   name: (
                     <span className="flex items-center gap-2">
-                      <Fragment key="logo">
-                        {ICON_LIBRARY_LOGOS[link.url]}
-                      </Fragment>
+                      <Fragment key="logo">{logo}</Fragment>
                       <Fragment key="name">{link.name}</Fragment>
                     </span>
                   ),
                 }
-              : link,
-          );
+              : link;
+          });
       }
     }
+    // The changelog covers every framework.
+    const changelog = full.children.find(
+      (node) => node.type === 'page' && node.url === CHANGELOG_URL,
+    );
+    if (frameworkRoot && changelog?.type === 'page')
+      guide.push({ name: changelog.name, url: changelog.url });
     return {
       guide,
       primitives: collectPrimitives(primitivesFolder),
       backgrounds,
       icons,
     };
-  }, [root]);
+  }, [root, full, frameworkRoot]);
 
   const sections = new Map<PrimitiveSection, Link[]>();
   for (const entry of primitives) {
@@ -396,68 +338,47 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
     ]);
   }
 
-  const frameworkRoot =
-    root.type === 'folder' && (root as PageTree.Folder).root
-      ? (root as PageTree.Folder)
-      : null;
   return (
     <SidebarScroll>
       <FrameworkSwitch />
       <FrameworkPanel framework={frameworkRoot ? 'vue' : 'react'}>
-        {frameworkRoot ? (
-          <AnimatedNav>
-            {mobile && <MenuSection />}
-            <FolderSections folder={frameworkRoot} pathname={pathname} />
-          </AnimatedNav>
-        ) : (
-          <AnimatedNav>
-            {mobile && (
-              <Section
-                title="Menu"
-                icon={Menu01Icon}
-                links={NAV_ITEMS.map((item) => ({
-                  name: item.title,
-                  url: item.url,
-                  active: false,
-                }))}
-              />
-            )}
+        <AnimatedNav>
+          {mobile && <MenuSection />}
+          <Section
+            title="Guide"
+            icon={BookOpen02Icon}
+            links={guide.map((link) => ({
+              ...link,
+              active: pathname === link.url,
+            }))}
+          />
+          {PRIMITIVE_SECTIONS.map((section) => (
             <Section
-              title="Guide"
-              icon={BookOpen02Icon}
-              links={guide.map((link) => ({
-                ...link,
-                active: pathname === link.url,
-              }))}
+              key={section.id}
+              title={section.title}
+              icon={section.icon}
+              links={sections.get(section.id) ?? []}
+              hideSuffix={section.id in SECTION_SUFFIX}
             />
-            {PRIMITIVE_SECTIONS.map((section) => (
-              <Section
-                key={section.id}
-                title={section.title}
-                icon={section.icon}
-                links={sections.get(section.id) ?? []}
-                hideSuffix={section.id in SECTION_SUFFIX}
-              />
-            ))}
-            <Section
-              title="Backgrounds"
-              icon={Image02Icon}
-              hideSuffix
-              links={backgrounds.map((link) => ({
-                ...link,
-                active: pathname === link.url,
-              }))}
-            />
-            <Section
-              title="Icons"
-              icon={GridIcon}
-              links={icons.map((link) => ({
-                ...link,
-                active: pathname === link.url,
-              }))}
-            />
-          </AnimatedNav>
-        )}
+          ))}
+          <Section
+            title="Backgrounds"
+            icon={Image02Icon}
+            hideSuffix
+            links={backgrounds.map((link) => ({
+              ...link,
+              active: pathname === link.url,
+            }))}
+          />
+          <Section
+            title="Icons"
+            icon={GridIcon}
+            links={icons.map((link) => ({
+              ...link,
+              active: pathname === link.url,
+            }))}
+          />
+        </AnimatedNav>
       </FrameworkPanel>
     </SidebarScroll>
   );

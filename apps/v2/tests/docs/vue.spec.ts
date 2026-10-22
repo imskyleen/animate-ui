@@ -369,3 +369,32 @@ test('every Vue sidebar page is marked new, but the introduction, installation a
     expect([href, badge]).toEqual([href, plain.includes(href!) ? null : 'new']);
   for (const href of plain) expect(rows.map(([h]) => h)).toContain(href);
 });
+
+test('the Vue sidebar has the React sections, names and order', async ({
+  page,
+}) => {
+  const rows = async (url: string) => {
+    await page.goto(url);
+    return page.locator('#nd-sidebar div:has(> p) > a').evaluateAll((links) =>
+      links.map((link) => {
+        const row = link.cloneNode(true) as HTMLElement;
+        row.querySelectorAll('[data-slot="badge"]').forEach((b) => b.remove());
+        return [
+          link.closest('div:has(> p)')!.querySelector(':scope > p')!
+            .textContent,
+          row.textContent!.trim(),
+          link.querySelectorAll('svg').length,
+        ];
+      }),
+    );
+  };
+  const react = await rows('/docs/primitives/animate-ui/cursor');
+  const vue = await rows('/docs/vue/primitives/animate-ui/cursor');
+  expect(vue).toEqual(
+    react.map(([section, name, logos]) => [
+      section,
+      name === '@animate-ui/react' ? '@animate-ui/vue' : name,
+      logos,
+    ]),
+  );
+});

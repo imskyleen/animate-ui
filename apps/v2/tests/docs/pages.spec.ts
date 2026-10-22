@@ -270,7 +270,7 @@ test('installation: the manual steps list the exact CSS animation classes the CL
 test('the sidebar groups primitives into sections', async ({ page }) => {
   await page.goto('/docs/primitives/animate-ui/cursor');
   const section = (title: string) =>
-    page.locator('#nd-sidebar > * > div').filter({
+    page.locator('#nd-sidebar div:has(> p)').filter({
       has: page.locator('p', { hasText: new RegExp(`^${title}$`) }),
     });
   const titles = await page.locator('#nd-sidebar p').allTextContents();
