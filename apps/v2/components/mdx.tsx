@@ -26,6 +26,7 @@ import {
   PrimitivesGrid,
 } from './docs/preview-grids';
 import { Installation } from './docs/installation';
+import { MotionGridEditor } from './docs/motion-grid-editor';
 import { PageTransitionEffects } from './docs/page-transition-effects';
 import { VueComponentPreview } from './docs/vue-component-preview';
 import {
@@ -69,6 +70,7 @@ export function getMDXComponents(components?: MDXComponents) {
     BackgroundsGrid,
     IconLibrariesGrid,
     Installation,
+    MotionGridEditor,
     RegistryInstallation,
     VueRegistryInstallation,
     PageTransitionEffects,

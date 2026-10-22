@@ -114,6 +114,7 @@ export function toLlmMarkdown(text: string) {
       '### $1',
     )
     .replace(/^ *<\/?Changelog(?:Item)?>\n?/gm, '')
+    .replace(/^## Editor(?: \[#editor\])?\n+<MotionGridEditor\b[^>]*\/>\n*/gm, '')
     .replace(
       /^<(ComponentPreview|IconsGallery|PrimitivesGrid|BackgroundsGrid|IconLibrariesGrid)\b[^>]*\/>\n*/gm,
       '',

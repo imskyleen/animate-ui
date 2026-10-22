@@ -191,6 +191,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/reka-ui-switch': () => import('./fixtures/reka-ui-switch.vue'),
   'fixtures/reka-ui-accordion': () =>
     import('./fixtures/reka-ui-accordion.vue'),
+  'docs/motion-grid-preview': () => import('./docs/motion-grid-preview.vue'),
   'fixtures/reka-ui-collapsible': () =>
     import('./fixtures/reka-ui-collapsible.vue'),
 };
