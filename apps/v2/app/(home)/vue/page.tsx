@@ -41,9 +41,7 @@ export const metadata: Metadata = {
 export default function VueHomePage() {
   return (
     <>
-      <Orbit
-        only={['Switch', 'Accordion', 'Checkbox', 'Radio Group', 'Progress']}
-      />
+      <Orbit />
       <HomeFooter docs="/docs/vue" />
     </>
   );

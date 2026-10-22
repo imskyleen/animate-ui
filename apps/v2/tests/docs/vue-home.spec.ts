@@ -44,14 +44,17 @@ test('the Vue home is the home adapted to Vue', async ({ page }) => {
     'href',
     '/docs/vue',
   );
-  await expect(header.getByRole('link', { name: 'Icons' })).toHaveCount(0);
+  await expect(header.getByRole('link', { name: 'Icons' })).toHaveAttribute(
+    'href',
+    '/docs/vue/icons',
+  );
   await expect(
     header.getByRole('link', { name: 'Animate UI' }),
   ).toHaveAttribute('href', '/vue');
   await expect(
     page.locator('footer').getByRole('link', { name: 'Docs' }),
   ).toHaveAttribute('href', '/docs/vue');
-  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(5);
+  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(9);
   await expect(page.locator('[data-slot="home-ai"]')).toHaveCount(0);
 });
 
@@ -101,7 +104,7 @@ test('the home switch changes framework in place: the hero stays, the page keeps
   await tabs(page).getByRole('tab', { name: 'Vue' }).click();
   await page.waitForURL('**/vue');
   await expect(page.locator('main section p').first()).toHaveText(/Reka UI\./);
-  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(5);
+  await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(9);
   expect(
     await page.evaluate(() => ({
       kept: (document.querySelector('main section') as { kept?: boolean }).kept,
@@ -171,7 +174,7 @@ test('the favicon has the Vue green logo on Vue pages, and goes back on React on
 });
 
 for (const reduced of [false, true])
-  test(`a short last row of cards sits centered under the others${reduced ? ', under reduced motion' : ''}`, async ({
+  test(`the full grid of cards sits in centered rows, like React's${reduced ? ', under reduced motion' : ''}`, async ({
     page,
   }) => {
     if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -205,6 +208,6 @@ for (const reduced of [false, true])
         spread: Math.max(...rows) - Math.min(...rows),
       };
     };
-    await expect.poll(async () => (await centers()).rows).toBe(2);
+    await expect.poll(async () => (await centers()).rows).toBe(3);
     await expect.poll(async () => (await centers()).spread).toBeLessThan(1);
   });

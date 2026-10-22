@@ -29,6 +29,7 @@ const LINKS = {
   vue: [
     { title: 'Docs', url: '/docs/vue' },
     { title: 'Primitives', url: '/docs/vue/primitives' },
+    { title: 'Icons', url: '/docs/vue/icons' },
   ],
 };
 
