@@ -320,6 +320,55 @@ export function disclosureDemoTests(name: string, options: DemoOptions) {
       expect(result.after.at(-1)).toBeCloseTo(result.full, 0);
     });
 
+    // Bug: a closed panel kept its parent's gap until it unmounted, so the layout jumped by it at the end of the close and the start of the open.
+    test('the gap beside the panel opens and closes with it, without a jump', async ({
+      page,
+    }) => {
+      const track = () =>
+        page.evaluate(
+          async ({ selector, text, label }) => {
+            const frame = () => new Promise((r) => requestAnimationFrame(r));
+            const button = [...document.querySelectorAll('button')].find(
+              (b) =>
+                b.getAttribute('aria-label') === label ||
+                b.textContent?.trim() === label,
+            )!;
+            const panelHeight = () =>
+              [...document.querySelectorAll<HTMLElement>(selector)]
+                .find((el) => el.textContent?.includes(text))
+                ?.getBoundingClientRect().height ?? 0;
+            const container = button.parentElement!.parentElement!;
+            const before = container.getBoundingClientRect().height;
+            button.click();
+            const frames: [number, number][] = [];
+            const start = performance.now();
+            while (performance.now() - start < 1200) {
+              await frame();
+              frames.push([
+                panelHeight(),
+                container.getBoundingClientRect().height,
+              ]);
+            }
+            return { before, frames };
+          },
+          { selector: panel, text: closed.text, label: closed.trigger },
+        );
+      const opening = await track();
+      const shut = opening.frames
+        .filter(([h]) => h < 0.5)
+        .map(([, size]) => size);
+      for (const size of shut)
+        expect(Math.abs(size - opening.before)).toBeLessThan(1.5);
+      await page.waitForTimeout(200);
+      const closing = await track();
+      const gone = closing.frames
+        .filter(([h]) => h < 0.5)
+        .map(([, size]) => size);
+      expect(gone.length).toBeGreaterThan(0);
+      for (const size of gone)
+        expect(Math.abs(size - gone.at(-1)!)).toBeLessThan(1.5);
+    });
+
     test('reduced motion: the height jumps', async ({ page }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       const timeline = await recordHeights(page, panel, 1000, closed.text);

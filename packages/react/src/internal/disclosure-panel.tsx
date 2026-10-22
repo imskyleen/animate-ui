@@ -12,17 +12,21 @@ import {
 
 const collapsed = {
   height: 0,
+  marginTop: 'var(--animate-ui-panel-shut-margin, 0px)',
   opacity: 0,
   filter: motionTokens.blur.disclosure,
 };
 const expanded = {
   height: 'auto',
+  marginTop: 'var(--animate-ui-panel-margin, 0px)',
   opacity: 1,
   filter: 'blur(0px)',
   transitionEnd: { filter: 'none' },
 };
 
 const CONTENT_VAR = '--animate-ui-panel-content';
+const OPEN_MARGIN_VAR = '--animate-ui-panel-margin';
+const SHUT_MARGIN_VAR = '--animate-ui-panel-shut-margin';
 
 const EDGE_MASK = `linear-gradient(to bottom, black max(100% - 16px, 200% - var(${CONTENT_VAR}, 100%)), transparent)`;
 
@@ -38,6 +42,25 @@ function measurePanel(element: HTMLElement | null) {
 
 function releasePanel(element: HTMLElement | null) {
   element?.style.removeProperty(CONTENT_VAR);
+}
+
+/** A closed panel takes back the gap its parent's column leaves for it, so the gap shrinks with it. */
+function fitGap(element: HTMLElement | null | undefined) {
+  const parent = element?.parentElement;
+  if (!element || !parent) return;
+  const style = getComputedStyle(parent);
+  const column =
+    style.display.endsWith('grid') ||
+    (style.display.endsWith('flex') &&
+      style.flexDirection.startsWith('column'));
+  const gap =
+    column && parent.childElementCount > 1 ? parseFloat(style.rowGap) || 0 : 0;
+  const inline = element.style.marginTop;
+  element.style.marginTop = '';
+  const own = parseFloat(getComputedStyle(element).marginTop) || 0;
+  element.style.marginTop = inline;
+  element.style.setProperty(OPEN_MARGIN_VAR, `${own}px`);
+  element.style.setProperty(SHUT_MARGIN_VAR, `${own - gap}px`);
 }
 
 const DISCLOSURE_TRANSITION: Transition = motionTokens.transition.disclosure;
@@ -57,7 +80,7 @@ function useDisclosureTransitions(
     exitTransition ?? transition ?? DISCLOSURE_TRANSITION,
   );
   const instantMoves = (t: Transition): Transition =>
-    reduce ? { ...t, height: INSTANT } : t;
+    reduce ? { ...t, height: INSTANT, marginTop: INSTANT } : t;
   return {
     enter: revealedByFind ? INSTANT : instantMoves(enter),
     exit: instantMoves(exit),
@@ -80,6 +103,7 @@ function useDisclosurePanel(
   React.useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return undefined;
+    fitGap(element);
     if (!visible) {
       if (hiddenMode === 'until-found')
         element.setAttribute('hidden', 'until-found');
@@ -264,6 +288,7 @@ function BaseUIPanel<P extends BaseUIPanelProps>({
 }
 
 export {
+  fitGap,
   collapsed,
   expanded,
   panelStyle,

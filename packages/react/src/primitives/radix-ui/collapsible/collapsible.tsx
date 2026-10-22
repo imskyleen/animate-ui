@@ -9,6 +9,7 @@ import { ReducedMotionConfig } from '../../../utils/motion';
 import {
   collapsed,
   expanded,
+  fitGap,
   measurePanel,
   panelStyle,
   releasePanel,
@@ -65,6 +66,7 @@ function Content({
   const { open } = useOpen();
   const { enter, exit } = useDisclosureTransitions(transition, exitTransition);
   const ref = React.useRef<HTMLDivElement>(null);
+  React.useLayoutEffect(() => fitGap(ref.current), [open]);
 
   const slot = slotChild(asChild, children);
   return (
