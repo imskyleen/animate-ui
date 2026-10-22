@@ -910,7 +910,7 @@ export function MotionGridEditor({
 
         <div
           data-slot="motion-grid-editor-code"
-          className="overflow-hidden rounded-lg bg-background [&_figure]:my-0"
+          className="[&_figure]:my-0 [&_figure]:rounded-lg"
         >
           <DynamicCodeBlock
             code={generateCode(framework, animation)}

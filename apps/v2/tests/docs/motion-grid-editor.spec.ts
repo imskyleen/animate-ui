@@ -46,6 +46,25 @@ for (const framework of FRAMEWORKS) {
       await expect(preview(page)).toHaveCount(49);
     });
 
+    // Bug: the code block's wrapper painted the page's color behind its rounder corners.
+    test("the code block meets the editor with the panels' radius, nothing behind its corners", async ({
+      page,
+    }) => {
+      const wrapper = editor(page).locator(
+        '[data-slot="motion-grid-editor-code"]',
+      );
+      await expect(wrapper).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const panel = await editor(page)
+        .locator('[data-slot="motion-grid-editor-preview"]')
+        .evaluate((el) => {
+          for (let node: Element | null = el; node; node = node.parentElement)
+            if (getComputedStyle(node).borderRadius !== '0px')
+              return getComputedStyle(node).borderRadius;
+          return '';
+        });
+      await expect(wrapper.locator('figure')).toHaveCSS('border-radius', panel);
+    });
+
     test('renders the editor, its preview and code for its framework', async ({
       page,
     }) => {
