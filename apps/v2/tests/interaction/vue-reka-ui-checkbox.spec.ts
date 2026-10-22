@@ -123,6 +123,19 @@ test('vue reka-ui checkbox demo: every box keeps its border color as it checks, 
     await page.waitForTimeout(400);
     expect(await border(), id).toBe(unchecked);
   }
+  // The blue box's inside is opaque: the card turning blue doesn't tint it whole before its fill has grown.
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const alpha = await page.locator('#toggle-2').evaluate((el) => {
+      const color = getComputedStyle(el).backgroundColor;
+      const match =
+        color.match(/\/\s*([\d.]+)\)$/) ??
+        color.match(/^rgba\(.*,\s*([\d.]+)\)$/);
+      return match ? Number(match[1]) : 1;
+    });
+    expect(alpha, scheme).toBe(1);
+  }
+  await page.emulateMedia({ colorScheme: 'light' });
   // The card around the blue box changes color on the box's timing, so it doesn't flash over the fill.
   const timing = (selector: string, pseudo?: string) =>
     page
