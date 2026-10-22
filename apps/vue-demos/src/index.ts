@@ -118,6 +118,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/animate-ui-github-stars-in-view': () =>
     import('./fixtures/animate-ui-github-stars-in-view.vue'),
   'fixtures/code-block-done': () => import('./fixtures/code-block-done.vue'),
+  'fixtures/animate-ui-sliding-text': () =>
+    import('./fixtures/animate-ui-sliding-text.vue'),
   'fixtures/page-transition': () => import('./fixtures/page-transition.vue'),
   'fixtures/page-transition-router': () =>
     import('./fixtures/page-transition-router.vue'),

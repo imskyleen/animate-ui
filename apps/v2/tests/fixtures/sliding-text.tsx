@@ -11,6 +11,20 @@ export default function SlidingTextFixture() {
       </p>
       <SlidingText data-testid="up" direction="up" text="Upward" />
       <SlidingText data-testid="click" trigger="click" text="Click me" />
+      <a
+        data-testid="link"
+        href="#"
+        className="inline-block rounded-md bg-neutral-200 px-10 py-5"
+      >
+        <SlidingText text="Get started" />
+      </a>
+      <button
+        type="button"
+        data-testid="button-click"
+        className="inline-block rounded-md bg-neutral-200 px-10 py-5"
+      >
+        <SlidingText trigger="click" text="Next" />
+      </button>
       <SlidingText
         data-testid="wrapped"
         className="w-40"

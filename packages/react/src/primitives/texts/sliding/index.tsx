@@ -26,6 +26,9 @@ const BLEED = '0.25em';
 
 const GAP = '0.6em';
 
+// Inside a link or a button, the whole control slides it, not just its text.
+const HOST = 'a, button, [role="button"], [role="link"]';
+
 const DEFAULT_TRANSITION: Transition = {
   duration: 0.25,
   ease: motionTokens.ease.fill,
@@ -55,6 +58,7 @@ function SlidingTextContent({
   onHoverStart,
   onHoverEnd,
   onClick,
+  ref,
   ...props
 }: SlidingTextProps) {
   const reduce = useShouldReduceMotion();
@@ -81,9 +85,53 @@ function SlidingTextContent({
     }
     controlsRef.current = animate(progress, target, transition);
   };
+  const slideToRef = React.useRef(slideTo);
+  React.useLayoutEffect(() => {
+    slideToRef.current = slideTo;
+  });
+
+  const elementRef = React.useRef<HTMLSpanElement | null>(null);
+  const [host, setHost] = React.useState<Element | null>(null);
+  React.useLayoutEffect(() => {
+    setHost(elementRef.current?.parentElement?.closest(HOST) ?? null);
+  }, []);
+  React.useEffect(() => {
+    if (!host) return;
+    const enter = (event: Event) => {
+      if (
+        trigger === 'hover' &&
+        (event as PointerEvent).pointerType !== 'touch'
+      )
+        slideToRef.current(1);
+    };
+    const leave = (event: Event) => {
+      if (
+        trigger === 'hover' &&
+        (event as PointerEvent).pointerType !== 'touch'
+      )
+        slideToRef.current(0);
+    };
+    const click = () => {
+      if (trigger === 'click')
+        slideToRef.current(Math.round(targetRef.current) + 1);
+    };
+    host.addEventListener('pointerenter', enter);
+    host.addEventListener('pointerleave', leave);
+    host.addEventListener('click', click);
+    return () => {
+      host.removeEventListener('pointerenter', enter);
+      host.removeEventListener('pointerleave', leave);
+      host.removeEventListener('click', click);
+    };
+  }, [host, trigger]);
 
   return (
     <motion.span
+      ref={(node: HTMLSpanElement | null) => {
+        elementRef.current = node;
+        if (typeof ref === 'function') ref(node);
+        else if (ref) ref.current = node;
+      }}
       data-slot="sliding-text"
       data-direction={direction}
       data-trigger={trigger}
@@ -97,15 +145,16 @@ function SlidingTextContent({
         ...style,
       }}
       onHoverStart={(event, info) => {
-        if (trigger === 'hover') slideTo(1);
+        if (trigger === 'hover' && !host) slideTo(1);
         onHoverStart?.(event, info);
       }}
       onHoverEnd={(event, info) => {
-        if (trigger === 'hover') slideTo(0);
+        if (trigger === 'hover' && !host) slideTo(0);
         onHoverEnd?.(event, info);
       }}
       onClick={(event) => {
-        if (trigger === 'click') slideTo(Math.round(targetRef.current) + 1);
+        if (trigger === 'click' && !host)
+          slideTo(Math.round(targetRef.current) + 1);
         onClick?.(event);
       }}
     >

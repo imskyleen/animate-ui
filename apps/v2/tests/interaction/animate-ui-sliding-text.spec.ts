@@ -251,3 +251,52 @@ for (const framework of FRAMEWORKS) {
     });
   });
 }
+
+for (const framework of FRAMEWORKS) {
+  const fixture = framework.vue
+    ? framework.fixture('sliding-text')
+    : '/tests/fixtures/sliding-text';
+  // The furthest the track moves in the next 600ms.
+  const slide = (page: Page, id: string) =>
+    page
+      .locator(`[data-testid="${id}"] [data-slot="sliding-text-track"]`)
+      .evaluate(async (el) => {
+        let furthest = 0;
+        const start = performance.now();
+        while (performance.now() - start < 600) {
+          await new Promise((r) => requestAnimationFrame(r));
+          const y = new DOMMatrix(getComputedStyle(el).transform).m42;
+          furthest = Math.max(furthest, Math.abs(y));
+        }
+        return furthest;
+      });
+
+  // Bug: inside a link, only the text itself started the slide, not the rest of the link.
+  test.describe(`${framework.name} sliding text in a link or a button`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto(fixture, { waitUntil: 'networkidle' });
+      await ready(page, '[data-testid="link"] [data-slot="sliding-text"]');
+    });
+
+    test('hovering the link anywhere, its padding included, slides it', async ({
+      page,
+    }) => {
+      const box = (await page.getByTestId('link').boundingBox())!;
+      const moved = slide(page, 'link');
+      await page.mouse.move(box.x + 6, box.y + 6);
+      expect(await moved).toBeGreaterThan(5);
+    });
+
+    test('trigger="click": clicking the button anywhere slides it, hovering does not', async ({
+      page,
+    }) => {
+      const box = (await page.getByTestId('button-click').boundingBox())!;
+      const hovered = slide(page, 'button-click');
+      await page.mouse.move(box.x + 6, box.y + 6);
+      expect(await hovered).toBe(0);
+      const clicked = slide(page, 'button-click');
+      await page.mouse.click(box.x + 6, box.y + 6);
+      expect(await clicked).toBeGreaterThan(5);
+    });
+  });
+}

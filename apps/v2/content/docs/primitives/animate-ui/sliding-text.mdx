@@ -31,6 +31,7 @@ export function NavLink() {
 - With `trigger="hover"`, leaving slides it back the other way. Left halfway, it turns back from where it is.
 - With `trigger="click"`, each click slides it once more in the same direction. A click during a slide carries it on without a jump.
 - The box keeps the text's size and baseline, so it fits inside a line, a link or a button. A text on several lines slides as a whole.
+- Inside a link or a button (or an element with `role="button"` or `role="link"`), the whole control slides it: hovering or clicking its padding counts, not just the text.
 - `<AnimateUIProvider tempo>` paces the default transition.
 - Under reduced motion, the text doesn't move.
 - Screen readers read the text once: the copy is hidden from them.
