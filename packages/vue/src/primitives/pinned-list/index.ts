@@ -8,10 +8,12 @@ import {
   type InjectionKey,
   type PropType,
   type Ref,
+  watch,
 } from 'vue';
 import {
   AnimatePresence,
   LayoutGroup,
+  layoutGroupInjectionKey,
   motion,
   type Transition,
 } from 'motion-v';
@@ -127,6 +129,13 @@ const PinnedListLabel = defineComponent({
   },
   setup(props, { attrs, slots }) {
     const defaultTransition = useTempoTransition(() => LABEL_TRANSITION);
+    // A label mounting measures the layout at once: the items below must have saved theirs first.
+    const group = inject(layoutGroupInjectionKey, null);
+    watch(
+      () => props.hide,
+      () => group?.group?.dirty(),
+      { flush: 'pre' },
+    );
     return () =>
       h(AnimatePresence as Component, { initial: false }, () =>
         props.hide

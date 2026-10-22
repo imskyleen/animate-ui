@@ -125,6 +125,31 @@ for (const framework of FRAMEWORKS) {
       ).toHaveCount(4);
     });
 
+    // Bug: in Vue, when the pinned label came back, the All label and the items below jumped down at once.
+    test('the pinned label coming back slides what is below, without a jump', async ({
+      page,
+    }) => {
+      await open(page);
+      await page.getByRole('button', { name: 'Unpin Drafts' }).click();
+      await page.getByRole('button', { name: 'Unpin Projects' }).click();
+      await expect(group(page, 'pinned').getByText('Pinned')).toHaveCount(0);
+      await page.waitForTimeout(800);
+      const label = group(page, 'unpinned').getByText('All', { exact: true });
+      const steps = label.evaluate(async (el) => {
+        const tops: number[] = [];
+        const start = performance.now();
+        while (performance.now() - start < 900) {
+          await new Promise((r) => requestAnimationFrame(r));
+          tops.push(el.getBoundingClientRect().top);
+        }
+        return tops.slice(1).map((top, i) => Math.abs(top - tops[i]!));
+      });
+      await page.getByRole('button', { name: 'Pin Inbox' }).click();
+      const moves = await steps;
+      expect(moves.filter((step) => step > 0.5).length).toBeGreaterThan(5);
+      expect(Math.max(...moves)).toBeLessThan(15);
+    });
+
     test('reduced motion: the item jumps to its new place', async ({
       page,
     }) => {
