@@ -34,7 +34,7 @@ const swap = useTempoTransition(motionTransition.swap);
 - `mode="popLayout"`: the old icon leaves while the new one arrives. The `relative` wrapper keeps the leaving one in place even while the button around it is scaled by its press.
 - `initial={false}`: nothing animates on mount.
 - `transition: swap` goes inside `animate` and `exit`, through `useTempoTransition` so the tempo reaches it.
-- A text swaps without the scale: opacity and `blur.icon` only, `layout="position"` when the box around it resizes (rules B9). Words taking turns, a string changing or a number: Rotating, Morphing or Rolling Text, Sliding Number (catalog).
+- A text swaps without the scale: opacity and `blur.icon` only, `layout="position"` when the box around it resizes (rules B9). A label swapping inside a button or beside a control keeps the control's size: give the label's box a `min-width` for the longest label (`min-w-[5ch]` for Save / Saved), centered, so nothing around it moves. Words taking turns, a string changing or a number: Rotating, Morphing or Rolling Text, Sliding Number (catalog).
 - A number with its unit ('$9/month') swaps as one piece, keyed on its whole text.
 - Larger content (a panel, a card) uses `blur.surface` and its own recipe's transition.
 
