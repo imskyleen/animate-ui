@@ -6,7 +6,7 @@ version: '2.2.0'
 
 <Changelog>
 
-<ChangelogItem date="2026-10-21">
+<ChangelogItem date="2026-10-23">
   <ChangelogItemVersion>
 
 ## 2.2.0
@@ -19,14 +19,14 @@ version: '2.2.0'
 
 - Animate UI for Vue: `@animate-ui/vue` animates reka-ui's primitives with Motion for Vue, moving like the React ones.
   - Accordion, Collapsible, Switch, Checkbox, Toggle, Progress, Radio Group, Toggle Group, Dialog, Alert Dialog, Sheet, Popover, Tooltip, Hover Card, Dropdown Menu, Context Menu, Menubar, Tabs, Slider, Select, Navigation Menu, Preview Link Card, Combobox, Pagination, Sidebar, Toast, Drawer and Questionnaire.
+  - In Vue, `ComboboxValue` wraps the label a combobox's trigger shows, so it swaps its text like the rest.
 - Animate UI's own primitives in Vue: Counting Number, Gradient Text, Highlight Text, Morphing Text, Rolling Text, Rotating Text, Scrolling Number, Shimmering Text, Sliding Number, Sliding Text, Splitting Text, Swapping Text, Typing Text, Button, Copy Button, Flip Button, GitHub Stars Button, Icon Button, Liquid Button, Ripple Button, Theme Toggler Button, Motion Grid, Scroll Progress, Spring, Pinned List, GitHub Stars, Cursor, Tooltip, Avatar Group, Tabs, Input OTP, Code Block, Page Transition, Auto Height, Blur, Click, Effect, Fade, Highlight, Image Zoom, Magnetic, Particles, Scroll Fade, Shine, Slide, Theme Toggler, Tilt and Zoom.
 - The animated icons in Vue, Lucide and Hugeicons: each is a .vue file added with shadcn-vue, on the `@animate-ui/vue/icons` core.
 - The backgrounds in Vue: Bubble, Fireworks, Glyph, Gradient, Gravity Stars, Hexagon, Hole, Stars and Topography, added with shadcn-vue.
-- The CLI animates shadcn-vue projects too: `animate` swaps the reka-ui imports and removes the CSS animations.
-- The skill animates Vue and Nuxt projects too (shadcn-vue, reka-ui, Motion for Vue), and the CLI's `audit` reads `.vue` files.
+- The CLI animates shadcn-vue projects too: `animate` swaps the reka-ui imports and removes the CSS animations, and `audit` reads `.vue` files.
+- The skill animates Vue and Nuxt projects too (shadcn-vue, reka-ui, Motion for Vue).
 - The Vue registry has an index, so shadcn-vue's `search` and its MCP server find Animate UI's icons, backgrounds and components.
-- The docs have a React / Vue switch in the sidebar, every guide page in Vue, and a Vue home page.
-- The Motion Grid page has its editor back, in React and Vue.
+- The docs have a React / Vue switch, always in view at the top of the sidebar, every guide page in Vue, and a Vue home page.
 
 </ChangelogItemDescription>
 
@@ -34,15 +34,13 @@ version: '2.2.0'
 
 <ChangelogItemDescription>
 
-- The Sidebar's trigger shows Animate UI's animated Panel Left: its panel narrows while the sidebar is closed, instead of swapping two icons, in React and Vue.
-- Menus and lists stagger their rows as they open: Dropdown Menu, Context Menu, Menubar, Select, Combobox and Navigation Menu, in Radix, Base UI, React Aria and reka-ui, and the Sidebar's collapsible submenus. Each row slides in from the right out of a blur, 33ms after the one before (closer in a long list), an item already highlighted shows its highlight once its row has landed, and the box itself (a submenu's panel too) is there at once; moving between menus, reopening while closing and filtering don't stagger again.
-- Select and Combobox swap their chosen text instead of changing it in one frame: the old text rises into a blur as the new one rises into place out of it, in 400ms, in Radix, Base UI, React Aria and reka-ui. A list laid over its trigger is let go first. A combobox's input does it when an item is picked, not while typing; in Vue, `ComboboxValue` wraps the label a combobox's trigger shows.
-- Sidebar: from a sub-menu button back to its trigger, the highlight glides up as one, instead of a two-tone band cut at the sub-menu's edge, in Radix, Base UI, React Aria and reka-ui.
-- Theme Toggler wipes across the old page on a site with a Page Transition (the page no longer goes blank while the new theme comes in), and elements named for other view transitions, like a header kept across pages, are wiped with the page instead of crossfading on their own, in React and Vue. Page Transition only hides the old page during a page change, in Next.js, React Router, TanStack Router and Vue.
-- Questionnaire: content that appears while the next question's height is still waiting to glide restarts that glide on its own timing every time, instead of sometimes switching to a quicker spring, in React and Vue.
-- Morphing Text morphs more smoothly: the letters both texts share slide in their order without crossing, the others blur out and the new ones rise in, and each letter keeps the font's kerning at rest, in React and Vue.
-- Sliding Text inside a link or a button slides when the whole control is hovered or clicked, not just its text, in React and Vue.
-- Animated icons take `initial={false}` (`:initial="false"` in Vue): mounted while `animate` is on, they show its end state at once instead of playing it.
+- Menus and lists stagger their rows as they open: Dropdown Menu, Context Menu, Menubar, Select, Combobox and Navigation Menu, in Radix, Base UI and React Aria, and the Sidebar's collapsible submenus. Each row slides in from the right out of a blur, 33ms after the one before (closer in a long list), an item already highlighted shows its highlight once its row has landed, and the box itself (a submenu's panel too) is there at once; moving between menus, reopening while closing and filtering don't stagger again.
+- Select and Combobox swap their chosen text instead of changing it in one frame: the old text rises into a blur as the new one rises into place out of it, in 400ms, in Radix, Base UI and React Aria. A list laid over its trigger is let go first. A combobox's input does it when an item is picked, not while typing.
+- The Sidebar's trigger shows Animate UI's animated Panel Left: its panel narrows while the sidebar is closed, instead of swapping two icons.
+- Morphing Text morphs more smoothly: the letters both texts share slide in their order without crossing, the others blur out and the new ones rise in, and each letter keeps the font's kerning at rest.
+- Sliding Text inside a link or a button slides when the whole control is hovered or clicked, not just its text.
+- Animated icons take `initial={false}`: mounted while `animate` is on, they show its end state at once instead of playing it.
+- The Motion Grid page has its editor back.
 
 </ChangelogItemDescription>
 
@@ -50,16 +48,14 @@ version: '2.2.0'
 
 <ChangelogItemDescription>
 
+- Sidebar: from a sub-menu button back to its trigger, the highlight glides up as one, instead of a two-tone band cut at the sub-menu's edge.
+- Theme Toggler wipes across the old page on a site with a Page Transition (the page no longer goes blank while the new theme comes in), and elements named for other view transitions, like a header kept across pages, are wiped with the page instead of crossfading on their own. Page Transition only hides the old page during a page change, in Next.js, React Router and TanStack Router.
+- Questionnaire: content that appears while the next question's height is still waiting to glide restarts that glide on its own timing every time, instead of sometimes switching to a quicker spring.
 - Toggle Group surfaces, menu highlights and the text a toast swaps out sit exactly on their items in a box of fractional width, instead of up to half a pixel off.
 - A Collapsible or Accordion panel in a column with a `gap` closes that gap as it folds, instead of the layout jumping by it at the end of the close and the start of the open.
-- Navigation Menu triggers painted like the page no longer hide the highlight gliding under them, and in Vue the last content no longer stays over the trigger once the menu closes.
-- In Vue, the Pinned List slides its All label and items down when its Pinned label comes back, instead of jumping.
-- In Vue, the Highlight effect and the Tabs highlight glide from item to item without blinking, on click and on hover.
-- In Vue, the Tooltip's arrow stays under its popup as it glides from trigger to trigger.
-- In Vue, the Theme Toggler keeps the new theme's icon while the wipe crosses the page, instead of showing the previous one until it ends.
-- Pagination: the page left no longer fades its own border out beside the sliding indicator when its link changes look (outline to ghost), in React and Vue.
-- The Hexagon background's borders are as thick on the slanted sides as on the upright ones, in React and Vue.
-- In Vue, a fast sweep over the Sidebar leaves one highlight, instead of earlier ones staying lit where they were.
+- Navigation Menu triggers painted like the page no longer hide the highlight gliding under them.
+- Pagination: the page left no longer fades its own border out beside the sliding indicator when its link changes look (outline to ghost).
+- The Hexagon background's borders are as thick on the slanted sides as on the upright ones.
 
 </ChangelogItemDescription>
 
