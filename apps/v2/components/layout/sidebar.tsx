@@ -184,7 +184,7 @@ function SidebarScroll({ children }: { children: ReactNode }) {
   return (
     <div
       data-slot="sidebar-scroll"
-      className="min-h-0 flex-1 scroll-fade-y overflow-y-auto overscroll-none px-6 pt-4 pb-8 [scrollbar-width:none] max-md:pt-8 md:pb-18"
+      className="min-h-0 flex-1 scroll-fade-y overflow-y-auto overscroll-none px-6 pt-6 pb-8 [scrollbar-width:none] md:pb-18"
     >
       {children}
     </div>
@@ -339,48 +339,52 @@ function SidebarBody({ mobile }: { mobile: boolean }) {
   }
 
   return (
-    <SidebarScroll>
-      <FrameworkSwitch />
-      <FrameworkPanel framework={frameworkRoot ? 'vue' : 'react'}>
-        <AnimatedNav>
-          {mobile && <MenuSection />}
-          <Section
-            title="Guide"
-            icon={BookOpen02Icon}
-            links={guide.map((link) => ({
-              ...link,
-              active: pathname === link.url,
-            }))}
-          />
-          {PRIMITIVE_SECTIONS.map((section) => (
+    <>
+      <div className="shrink-0 px-6 pt-4 max-md:pt-8">
+        <FrameworkSwitch />
+      </div>
+      <SidebarScroll>
+        <FrameworkPanel framework={frameworkRoot ? 'vue' : 'react'}>
+          <AnimatedNav>
+            {mobile && <MenuSection />}
             <Section
-              key={section.id}
-              title={section.title}
-              icon={section.icon}
-              links={sections.get(section.id) ?? []}
-              hideSuffix={section.id in SECTION_SUFFIX}
+              title="Guide"
+              icon={BookOpen02Icon}
+              links={guide.map((link) => ({
+                ...link,
+                active: pathname === link.url,
+              }))}
             />
-          ))}
-          <Section
-            title="Backgrounds"
-            icon={Image02Icon}
-            hideSuffix
-            links={backgrounds.map((link) => ({
-              ...link,
-              active: pathname === link.url,
-            }))}
-          />
-          <Section
-            title="Icons"
-            icon={GridIcon}
-            links={icons.map((link) => ({
-              ...link,
-              active: pathname === link.url,
-            }))}
-          />
-        </AnimatedNav>
-      </FrameworkPanel>
-    </SidebarScroll>
+            {PRIMITIVE_SECTIONS.map((section) => (
+              <Section
+                key={section.id}
+                title={section.title}
+                icon={section.icon}
+                links={sections.get(section.id) ?? []}
+                hideSuffix={section.id in SECTION_SUFFIX}
+              />
+            ))}
+            <Section
+              title="Backgrounds"
+              icon={Image02Icon}
+              hideSuffix
+              links={backgrounds.map((link) => ({
+                ...link,
+                active: pathname === link.url,
+              }))}
+            />
+            <Section
+              title="Icons"
+              icon={GridIcon}
+              links={icons.map((link) => ({
+                ...link,
+                active: pathname === link.url,
+              }))}
+            />
+          </AnimatedNav>
+        </FrameworkPanel>
+      </SidebarScroll>
+    </>
   );
 }
 

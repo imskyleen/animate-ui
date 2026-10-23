@@ -194,7 +194,6 @@ export function FrameworkSwitch() {
           ? { href: pathname, same: true }
           : counterpart(pathname, framework, urls, preferred)
       }
-      className="mb-6"
       itemClassName="flex-1"
     />
   );

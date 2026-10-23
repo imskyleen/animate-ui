@@ -147,7 +147,7 @@ const samplePanel = (page: Page) =>
     while (performance.now() - start < 2500) {
       await new Promise((r) => requestAnimationFrame(r));
       const panel = document.querySelector(
-        '#nd-sidebar [data-slot="sidebar-scroll"] > div:nth-child(2)',
+        '#nd-sidebar [data-slot="sidebar-scroll"] > div:first-child',
       );
       if (!panel) continue;
       const style = getComputedStyle(panel);
@@ -190,3 +190,26 @@ for (const reduced of [false, true])
     expect(Math.abs(last.x)).toBeLessThan(0.5);
     expect(last).toMatchObject({ opacity: 1, vue: true });
   });
+
+// Bug: the switch sat at the top of the sidebar's scroll and scrolled away with the list.
+test('the switch stays in view while the sidebar list scrolls', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/docs/vue/primitives/reka-ui/accordion');
+  const list = page.getByRole('tablist', { name: 'Framework' });
+  const before = (await list.boundingBox())!;
+  await page
+    .locator('#nd-sidebar [data-slot="sidebar-scroll"]')
+    .evaluate((el) => (el.scrollTop = 700));
+  await expect
+    .poll(() =>
+      page
+        .locator('#nd-sidebar [data-slot="sidebar-scroll"]')
+        .evaluate((el) => el.scrollTop),
+    )
+    .toBeGreaterThan(300);
+  const after = (await list.boundingBox())!;
+  expect(after.y).toBeCloseTo(before.y, 0);
+  await expect(list).toBeInViewport({ ratio: 1 });
+});
