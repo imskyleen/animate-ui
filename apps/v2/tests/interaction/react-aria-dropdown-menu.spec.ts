@@ -17,13 +17,14 @@ test.describe('react-aria dropdown-menu demo', () => {
     });
   });
 
-  test('opens with a 220ms scale and fade, like the other menus', async ({
+  test('opens with a 220ms scale, the box there at once for its rows to stagger in, like the other menus', async ({
     page,
   }) => {
     const probe = await probeFirstFrame(page, CONTENT);
     await page.getByRole('button', { name: 'Open', exact: true }).click();
     const first = await probe.firstFrame();
-    expect(first.opacity).toBeLessThan(1);
+    // The rows fade in one after another; the box itself arrives at once.
+    expect(first.opacity).toBeGreaterThan(0.8);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
     await page.waitForTimeout(650);

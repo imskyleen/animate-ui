@@ -14,11 +14,14 @@ test.describe('base-ui context-menu demo', () => {
     });
   });
 
-  test('grows from the pointer in 220ms', async ({ page }) => {
+  test('grows from the pointer in 220ms, the box there at once for its rows to stagger in', async ({
+    page,
+  }) => {
     const probe = await probeFirstFrame(page, CONTENT);
     await page.getByText('Right click here').click({ button: 'right' });
     const first = await probe.firstFrame();
-    expect(first.opacity).toBeLessThan(1);
+    // The rows fade in one after another; the box itself arrives at once.
+    expect(first.opacity).toBeGreaterThan(0.8);
     expect(first.scale).toBeLessThan(1);
     expect(first.scale).toBeGreaterThanOrEqual(0.899);
     const [x, y] = first.origin.split(' ').map(parseFloat);
