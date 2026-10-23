@@ -80,6 +80,10 @@ Icon Button: render the particles only while liked, aim them at the icon (`side`
 
 Liquid Button, Flip Button, Theme Toggler Button and GitHub Stars Button are styled files, not package exports: add them with `<dlx> shadcn@latest add @animate-ui/buttons-<name>` (`liquid`, `flip`, `theme-toggler`, `github-stars`); they land in `components/animate-ui/buttons/` and take `variant` and `size` where their page lists them.
 
+## Theme wipe
+
+A theme switch that sweeps across the page is the Theme Toggler (`@animate-ui/react/primitives/effects/theme-toggler`, in Vue `@animate-ui/vue/primitives/effects/theme-toggler`; a View Transition): it wipes the whole page in one piece, a header named for page changes included, and it works under a Page Transition. Don't write one by hand. If one is already hand-written, give its transition a type (`document.startViewTransition({ update, types: ['theme'] })`, falling back to the callback form where the object throws), and unname everything below `body` for that type (`:root:active-view-transition-type(theme) body, :root:active-view-transition-type(theme) body *{view-transition-name:none !important}`). Otherwise named elements crossfade on their own instead of being wiped. Animate only `::view-transition-new(root)`'s `clip-path`, never hide `::view-transition-old(root)`.
+
 ## Page transitions (registry file)
 
 Animated changes between the pages of a Next.js (App Router), React Router or TanStack Router app: Page Transition, ten effects (`fade`, `slide`, `push`, `zoom`, `iris`, `wipe`, `bands`, `stack`, `flow`, `chop`) plus `random`, and `PageTransitionShared` to morph an element from one page to the next. Add with `<dlx> shadcn@latest add @animate-ui/components-page-transition` (`-react-router`, `-tanstack-router` for the other routers); it lands in `components/animate-ui/components/page-transition.tsx`. Wiring, direction and new effects: `recipes/route.md`.
