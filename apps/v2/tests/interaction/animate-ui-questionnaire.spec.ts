@@ -269,9 +269,12 @@ for (const fw of FIXTURES) {
         expect(run.follows, 'a follow, in place of the glide').toHaveLength(1);
         expect(run.follows[0]!.same).toBe(false);
       }
-      const ratio = two.follows[0]!.duration / one.follows[0]!.duration;
-      expect(ratio, 'the follow, against tempo 1').toBeGreaterThan(1.5);
-      expect(ratio).toBeLessThanOrEqual(2.05);
+      // a frame-old glide still waiting got the follow spring instead
+      expect(one.follows[0]!.duration).toBeCloseTo(STEP_HEIGHT.duration, 0);
+      expect(two.follows[0]!.duration).toBeCloseTo(
+        atTempo(STEP_HEIGHT, 2).duration,
+        0,
+      );
     });
 
     test("AnimateUIProvider tempo={2}: content added halfway through the height's glide is followed on spring.morph paced by the tempo (twice as long)", async ({

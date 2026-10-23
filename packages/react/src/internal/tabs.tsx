@@ -462,7 +462,7 @@ function glideHeight(
 
   const check = () => {
     if (animations.height !== (glide ?? undefined)) return watch.disconnect();
-    if (glide && glide === waiting && Number(glide.currentTime ?? 0) < 0) {
+    if (glide && glide === waiting && Number(glide.currentTime ?? 0) < delay) {
       const started = glide.startTime;
       glide.cancel();
       const natural = extentOf(target);
