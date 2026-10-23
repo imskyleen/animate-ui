@@ -1,7 +1,12 @@
 import { expect, test, type Page } from '../test';
 
 import { paintedLeft } from './menubar-handoff';
-import { recordSwap, seriesOf, type SwapFrame } from './navigation-menu-swap';
+import {
+  recordSwap,
+  seriesOf,
+  swapStarted,
+  type SwapFrame,
+} from './navigation-menu-swap';
 
 const COPY = '[data-animate-ui-handoff]';
 const SURFACE = '[data-slot="trigger-highlight"]';
@@ -78,6 +83,7 @@ async function expectResizeKeepsSpeed(page: Page, container: string) {
   await page.waitForTimeout(700);
   const start = await widthOf();
   const recording = recordSwap(page, container, 1100);
+  await swapStarted(page);
   await hover(page, 'Medium');
   await page.waitForFunction(
     ({ container, than }) =>
@@ -126,6 +132,7 @@ export function describeRadixNavigationMenuCases(
       await page.waitForTimeout(700);
       const one = await restOf(page, `${first} one link`);
       const recording = recordSwap(page, 'body', 600);
+      await swapStarted(page);
       await hover(page, `${first} two`);
       const frames = await recording;
       const two = await restOf(page, `${first} two link`);
@@ -145,6 +152,7 @@ export function describeRadixNavigationMenuCases(
       await page.waitForTimeout(700);
       const one = await restOf(page, 'Right one link');
       const recording = recordSwap(page, 'body', 600);
+      await swapStarted(page);
       await hover(page, 'Right two');
       const frames = await recording;
       const two = await restOf(page, 'Right two link');
@@ -223,6 +231,7 @@ export function describeBaseNavigationMenuCases() {
       await glide('One');
       await page.waitForTimeout(700);
       const recording = recordSwap(page, 'body', 700);
+      await swapStarted(page);
       await glide('Two');
       const frames = await recording;
       expect(seriesOf(frames, 'One link', true).length).toBeGreaterThan(2);
@@ -315,6 +324,7 @@ export function describeBaseNavigationMenuCases() {
       page,
     }) => {
       const recording = recordSwap(page, 'body', 700);
+      await swapStarted(page);
       await hover(page, 'Components');
       await page.waitForTimeout(160);
       await hover(page, 'With Icon');

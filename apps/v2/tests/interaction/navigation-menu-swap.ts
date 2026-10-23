@@ -22,9 +22,13 @@ export type SwapFrame = {
   nested: number;
 };
 
+const recordings = new WeakMap<Page, number>();
+
 export function recordSwap(page: Page, container: string, duration: number) {
+  const id = (recordings.get(page) ?? 0) + 1;
+  recordings.set(page, id);
   return page.evaluate(
-    ({ container, content, copy, duration }) =>
+    ({ container, content, copy, duration, id }) =>
       new Promise<SwapFrame[]>((resolve) => {
         const frames: SwapFrame[] = [];
         const t0 = performance.now();
@@ -54,12 +58,22 @@ export function recordSwap(page: Page, container: string, duration: number) {
             contents,
             nested: document.querySelectorAll(`${copy} ${copy}`).length,
           });
+          (window as unknown as { __swap: number }).__swap = id;
           if (performance.now() - t0 < duration) requestAnimationFrame(tick);
           else resolve(frames);
         };
         requestAnimationFrame(tick);
       }),
-    { container, content: CONTENT, copy: COPY, duration },
+    { container, content: CONTENT, copy: COPY, duration, id },
+  );
+}
+
+// The recording runs in the page: wait for it before acting, or a quick
+// framework has already moved on by its first frame.
+export function swapStarted(page: Page) {
+  return page.waitForFunction(
+    (id) => (window as unknown as { __swap?: number }).__swap === id,
+    recordings.get(page),
   );
 }
 
@@ -118,6 +132,7 @@ export function describeNavigationMenuSwap(
     }) => {
       const intro = await restOf(page, 'Introduction');
       let recording = recordSwap(page, nav.container, 700);
+      await swapStarted(page);
       await hover(page, 'Components');
       await page.waitForTimeout(40);
       const copy = page.locator(COPY).first();
@@ -153,6 +168,7 @@ export function describeNavigationMenuSwap(
 
       await page.waitForTimeout(300);
       recording = recordSwap(page, nav.container, 600);
+      await swapStarted(page);
       await hover(page, 'Getting started');
       frames = await recording;
       leaving = seriesOf(frames, 'Alert Dialog', true);
@@ -173,6 +189,7 @@ export function describeNavigationMenuSwap(
       page,
     }) => {
       const recording = recordSwap(page, nav.container, 1800);
+      await swapStarted(page);
       for (let pass = 0; pass < 3; pass++)
         for (const name of ['Components', 'Getting started']) {
           await hover(page, name);
@@ -195,6 +212,7 @@ export function describeNavigationMenuSwap(
     }) => {
       const intro = await restOf(page, 'Introduction');
       const recording = recordSwap(page, nav.container, 900);
+      await swapStarted(page);
       await hover(page, 'Components');
       await page.locator(COPY).first().waitFor({ state: 'attached' });
       await hover(page, 'Getting started');
@@ -289,6 +307,7 @@ export function describeNavigationMenuSwap(
       }) => {
         const intro = await restOf(page, 'Introduction');
         const recording = recordSwap(page, nav.container, 600);
+        await swapStarted(page);
         await hover(page, 'Components');
         const frames = await recording;
         const alert = await restOf(page, 'Alert Dialog');
@@ -335,6 +354,7 @@ export function describeNavigationMenuSwap(
     }) => {
       const before = (await boxOf(page)).width;
       const recording = recordSwap(page, nav.container, 900);
+      await swapStarted(page);
       await hover(page, 'Components');
       const frames = await recording;
       const after = (await boxOf(page)).width;
@@ -365,6 +385,7 @@ export function describeNavigationMenuSwap(
     }) => {
       const before = (await boxOf(page)).width;
       const recording = recordSwap(page, nav.container, 1000);
+      await swapStarted(page);
       await hover(page, 'Components');
       await page.waitForFunction(
         ({ container, than }) =>
@@ -396,6 +417,7 @@ export function describeNavigationMenuSwap(
       }) => {
         const start = (await boxOf(page)).x;
         const recording = recordSwap(page, nav.container, 1100);
+        await swapStarted(page);
         await hover(page, 'Components');
         await page.waitForFunction(
           ({ container, left }) =>
@@ -430,6 +452,7 @@ export function describeNavigationMenuSwap(
       }) => {
         const start = (await boxOf(page)).x;
         const recording = recordSwap(page, nav.container, 1100);
+        await swapStarted(page);
         await hover(page, 'With Icon');
         await page.waitForFunction(
           ({ container, left }) =>
@@ -464,6 +487,7 @@ export function describeNavigationMenuSwap(
       await hover(page, 'Getting started');
       await page.waitForTimeout(700);
       const recording = recordSwap(page, nav.container, 500);
+      await swapStarted(page);
       await hover(page, 'Components');
       const frames = await recording;
       const alert = await restOf(page, 'Alert Dialog');
