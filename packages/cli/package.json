@@ -23,7 +23,7 @@
   "homepage": "https://animate-ui.com",
   "type": "module",
   "bin": {
-    "animate-ui": "./dist/index.mjs"
+    "animate-ui": "dist/index.mjs"
   },
   "files": [
     "dist"
