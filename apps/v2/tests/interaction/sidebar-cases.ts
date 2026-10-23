@@ -576,6 +576,33 @@ export function describeSidebar(
       expect(Math.abs(back[0]!.top - models.y)).toBeLessThan(0.5);
     });
 
+    // Bug: from a sub-menu button to its own trigger, the highlight left in the sub-menu was cut at
+    // its edge while the trigger's faded in over it: a two-tone band between the rows.
+    test('out of a sub-menu to its trigger, the trigger takes the highlight whole', async ({
+      page,
+    }) => {
+      await hover(page, 'History');
+      await page.waitForTimeout(400);
+      const recording = recordHighlight(page, 500);
+      await hover(page, 'Playground');
+      const frames = await recording;
+      const playground = await boxOf(page, 'Playground');
+      const taking = frames.flatMap((frame) =>
+        frame.surfaces.filter((surface) => surface.button === 'Playground'),
+      );
+      expect(taking.length).toBeGreaterThan(5);
+      for (const surface of taking)
+        expect(surface.opacity, `${surface.top}px`).toBeGreaterThan(0.99);
+      const leaving = frames.flatMap((frame) =>
+        frame.surfaces.filter((surface) => surface.button === 'History'),
+      );
+      expect(leaving.length).toBeGreaterThan(1);
+      expect(leaving.at(-1)!.opacity).toBeLessThan(0.5);
+      const last = frames.at(-1)!.surfaces;
+      expect(last).toHaveLength(1);
+      expect(Math.abs(last[0]!.top - playground.y)).toBeLessThan(0.5);
+    });
+
     for (const [where, name] of [
       ['header', 'Acme Inc'],
       ['footer', 'shadcn'],

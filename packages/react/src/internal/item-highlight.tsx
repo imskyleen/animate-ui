@@ -328,6 +328,15 @@ function clipperOf(item: HTMLElement) {
 const crossesClip = (from: HTMLElement, to: HTMLElement) =>
   clipperOf(from) !== clipperOf(to);
 
+// Out of a clipped box into the one around it, the one leaving is cut on the
+// way: it fades out under the one coming in, whole at once. Otherwise the one
+// coming in fades in over the one leaving.
+const comesOut = (from: HTMLElement, to: HTMLElement) => {
+  const inner = clipperOf(from);
+  const outer = clipperOf(to);
+  return !!inner && !inner.contains(to) && (!outer || outer.contains(from));
+};
+
 type ItemHighlight = {
   ref: (node: HTMLElement | null) => void;
   highlight: React.ReactNode;
@@ -606,6 +615,7 @@ type Start = {
   fresh: boolean;
   velocity: Offset;
   cross: boolean;
+  enters: boolean;
 };
 
 const IN_PLACE: Offset = { x: 0, y: 0, scaleX: 1, scaleY: 1 };
@@ -640,11 +650,13 @@ function handOff(
       fresh: true,
       velocity: STILL,
       cross: false,
+      enters: false,
     };
   const style = getComputedStyle(previous.element);
   const opacity = Number(style.opacity);
   const color = style.backgroundColor;
   const cross = crossesClip(previous.item, item);
+  const enters = cross && !comesOut(previous.item, item);
   const offset = offsetOn(previous.element.getBoundingClientRect(), item);
   if (reduce || !offset)
     return {
@@ -654,6 +666,7 @@ function handOff(
       fresh: false,
       velocity: STILL,
       cross,
+      enters,
     };
 
   const own = item.getBoundingClientRect();
@@ -671,6 +684,7 @@ function handOff(
       scaleY: (velocity.scaleY * from.height) / own.height,
     },
     cross,
+    enters,
   };
 }
 
@@ -780,6 +794,13 @@ function SurfaceCopy({
     }
 
     if (target) {
+      if (running && comesOut(item, leavingTo!))
+        animations.push(
+          element.animate([{ opacity: 1 }, { opacity: 0 }], {
+            ...timing!,
+            fill: 'forwards',
+          }),
+        );
       if (running)
         running.animation.finished.then(
           () => left(id),
@@ -804,7 +825,7 @@ function SurfaceCopy({
         () => left(id),
         () => {},
       );
-    } else if (start.cross && timing) {
+    } else if (start.enters && timing) {
       animations.push(
         element.animate([{ opacity: 0 }, { opacity: 1 }], timing),
       );
