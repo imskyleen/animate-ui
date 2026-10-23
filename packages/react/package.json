@@ -46,6 +46,7 @@
     "dist"
   ],
   "scripts": {
+    "prepublishOnly": "node ../../scripts/check-publish.mjs agent && pnpm build && node ../../scripts/check-publish.mjs dist",
     "build": "node scripts/generate-barrels.mts && tsdown",
     "dev": "tsdown --watch",
     "check-types": "tsc --noEmit",

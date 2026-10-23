@@ -11,7 +11,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "registry:build": "pnpm --filter=v2 registry",
     "prepare": "husky",
-    "check-types": "turbo check-types"
+    "check-types": "turbo check-types",
+    "release": "pnpm -r --filter @animate-ui/react --filter @animate-ui/vue --filter @animate-ui/cli publish --no-git-checks"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",

@@ -26,6 +26,7 @@
     "dist"
   ],
   "scripts": {
+    "prepublishOnly": "node ../../scripts/check-publish.mjs agent && pnpm build && node ../../scripts/check-publish.mjs dist",
     "build": "node scripts/generate-barrel.mts && tsdown",
     "dev": "tsdown --watch",
     "gen": "node scripts/generate-barrel.mts",
