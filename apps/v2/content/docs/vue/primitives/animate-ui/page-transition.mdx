@@ -74,6 +74,7 @@ An element on both pages, like a card that becomes a page header, morphs from on
 
 - Each page is a snapshot the browser animates: the old page plays its exit and the new one its entrance, on Animate UI's curves (`ease.out` to arrive, a quicker `ease.leave` to go). Both stay inside the page's box.
 - Direction comes from the `nav-back` and `nav-forward` transition types: `routeTransitions` sets `nav-back` when the history goes back to the entry before, `nav-forward` otherwise.
+- Other view transitions on the same pages (a Theme Toggler's wipe) are left alone: the old page is only hidden during a page change.
 - View transitions aren't interruptible: a click during one waits for it to end, so the effects stay short (0.3s to 0.7s).
 - Under reduced motion, every effect becomes the crossfade, blur included.
 

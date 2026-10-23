@@ -4,7 +4,7 @@ import { useShouldReduceMotion } from '@animate-ui/vue/utils/motion'
 import { AnimateView } from 'motion-v'
 import { computed, inject, onBeforeUnmount, onMounted, onUpdated, shallowRef, useId, watch } from 'vue'
 import { routeLocationKey } from 'vue-router'
-import { backgroundOf, CLIP, clipRadius, EFFECTS, frameOf, pickEffect } from './effects'
+import { backgroundOf, CLIP, clipRadius, EFFECTS, frameOf, markRoot, pickEffect } from './effects'
 
 defineOptions({ inheritAttrs: false })
 
@@ -68,6 +68,7 @@ onBeforeUnmount(() => {
 })
 
 function animation(types: string[]) {
+  markRoot()
   refreshStyle()
   const named = types.find((type): type is Effect => type in EFFECTS)
   const enter = frameOf(element.value!, point)

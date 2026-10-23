@@ -54,6 +54,21 @@ type ThemeTogglerProps = {
 
 const WIPE_DURATION = 700;
 const WIPE_EASING = 'ease-in-out';
+const WIPE_TYPE = 'animate-ui-theme';
+
+// Elements named for other transitions (a header kept across pages) are
+// wiped with the page instead of crossfading on their own.
+const WIPE_STYLE =
+  '::view-transition-old(root), ::view-transition-new(root){animation:none;mix-blend-mode:normal;}' +
+  `:root:active-view-transition-type(${WIPE_TYPE}) body, :root:active-view-transition-type(${WIPE_TYPE}) body *{view-transition-name:none !important;}`;
+
+function startWipe(update: () => void) {
+  try {
+    return document.startViewTransition({ update, types: [WIPE_TYPE] });
+  } catch {
+    return document.startViewTransition(update);
+  }
+}
 
 function subscribeToNothing() {
   return () => {};
@@ -141,7 +156,7 @@ function ThemeTogglerInner({
         return;
       }
 
-      await document.startViewTransition(() => {
+      await startWipe(() => {
         flushSync(() => {
           setPreview({ effective: theme, resolved });
           document.documentElement.classList.toggle(
@@ -186,7 +201,7 @@ function ThemeTogglerInner({
             toggleTheme,
           })
         : children}
-      <style>{`::view-transition-old(root), ::view-transition-new(root){animation:none;mix-blend-mode:normal;}`}</style>
+      <style>{WIPE_STYLE}</style>
     </React.Fragment>
   );
 }

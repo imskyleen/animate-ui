@@ -39,6 +39,7 @@ The wrapper is a `div`: give it the layout's classes (`className`) when it sits 
   ```
 
 - **Shared elements**: an element on both pages (a card's cover becoming the page header) morphs with `PageTransitionShared`, the same `name` on both pages and unique on each: ``<PageTransitionShared name={`cover-${post.id}`} className="h-20 rounded-lg bg-primary" />``.
+- **Other view transitions on the same pages** (a Theme Toggler's wipe, the app's own): the file's root rules (the old page hidden, the new one still) only apply while a page change runs (`data-page-transition` on `<html>`, set when its effect starts, removed when the transition ends), so a theme wipe still crosses the old page. A wipe across the whole page starts its transition with a type and unnames everything below `body` for it (`:root:active-view-transition-type(<type>) body *{view-transition-name:none !important}`), or a named header crossfades on its own instead of being wiped.
 - `pageKey` (Next.js and React Router) also replaces the pathname when what identifies a page isn't the URL (a client-side wizard, tabs in state).
 
 Facts to state in the output when they matter: the browser's back button doesn't animate with Next.js and React Router (React renders history navigations at once), TanStack Router animates it forward; a view transition isn't interruptible, a click during one waits for it; under reduced motion every effect becomes the crossfade.

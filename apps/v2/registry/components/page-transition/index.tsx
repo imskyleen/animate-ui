@@ -76,7 +76,7 @@ function bandFrames(back: boolean, { top, bottom }: Frame) {
 }
 
 const CLIP =
-  '::view-transition-old(root){display:none}::view-transition-new(root){animation:none}' +
+  ':root[data-page-transition]::view-transition-old(root){display:none}:root[data-page-transition]::view-transition-new(root){animation:none}' +
   '::view-transition-image-pair(*.page-transition){overflow:clip}' +
   '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
   '::view-transition-old(*.page-transition-shared),::view-transition-new(*.page-transition-shared){height:100%;object-fit:cover}';
@@ -84,6 +84,38 @@ const CLIP =
 const SHARE = { duration: 0.45, ease: ease.resize };
 
 const radii = new Map<string, string>();
+
+// Only a page change hides the old page: other view transitions (a theme
+// switch) keep theirs.
+let marks = 0;
+
+function markRoot() {
+  const root = document.documentElement;
+  const mark = ++marks;
+  root.setAttribute('data-page-transition', '');
+  const transition = (
+    document as Document & { activeViewTransition?: ViewTransition | null }
+  ).activeViewTransition;
+  const done = transition
+    ? transition.finished
+    : new Promise((resolve) => requestAnimationFrame(resolve)).then(() =>
+        Promise.all(
+          root
+            .getAnimations({ subtree: true })
+            .filter((animation) =>
+              (
+                animation.effect as KeyframeEffect | null
+              )?.pseudoElement?.startsWith('::view-transition'),
+            )
+            .map((animation) => animation.finished),
+        ),
+      );
+  void done
+    .catch(() => {})
+    .finally(() => {
+      if (mark === marks) root.removeAttribute('data-page-transition');
+    });
+}
 
 function morphRadius(name: string, from: string | undefined, to: string) {
   if (!from || from === to) return;
@@ -388,6 +420,7 @@ function PageTransition({
   }, []);
 
   const animation = (types: string[]) => {
+    markRoot();
     refreshStyle();
     const named = types.find((type): type is Effect => type in EFFECTS);
     const enter = frameOf(localRef.current!, pointRef.current);

@@ -229,7 +229,7 @@ function pickEffect(previous?: Effect): Effect {
 const NAME = 'page-transition';
 
 const STYLE =
-  '::view-transition-old(root){display:none}::view-transition-new(root){animation:none}' +
+  ':root[data-page-transition]::view-transition-old(root){display:none}:root[data-page-transition]::view-transition-new(root){animation:none}' +
   `::view-transition-old(${NAME}),::view-transition-new(${NAME}){animation:none;mix-blend-mode:normal;background-color:var(--page-transition-background,canvas)}` +
   `::view-transition-image-pair(${NAME}){overflow:clip;border-radius:var(--page-transition-radius,0)}` +
   '::view-transition-group(*.page-transition-shared){z-index:1;overflow:clip}' +
@@ -405,6 +405,17 @@ function PageTransition({
           }
         ).activeViewTransition;
         if (!transition) return;
+        // Only a page change hides the old page: other view transitions (a
+        // theme switch) keep theirs.
+        const root = document.documentElement;
+        root.setAttribute('data-page-transition', '');
+        transition.finished.finally(() => {
+          if (
+            (document as Document & { activeViewTransition?: unknown })
+              .activeViewTransition !== transition
+          )
+            root.removeAttribute('data-page-transition');
+        });
         const types = (transition as ViewTransition & { types?: Set<string> })
           .types;
         refreshStyle();

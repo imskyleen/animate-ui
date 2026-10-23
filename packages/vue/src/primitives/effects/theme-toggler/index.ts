@@ -50,6 +50,21 @@ type ThemeTogglerProps = {
 
 const WIPE_DURATION = 700;
 const WIPE_EASING = 'ease-in-out';
+const WIPE_TYPE = 'animate-ui-theme';
+
+// Elements named for other transitions (a header kept across pages) are
+// wiped with the page instead of crossfading on their own.
+const WIPE_STYLE =
+  '::view-transition-old(root), ::view-transition-new(root){animation:none;mix-blend-mode:normal;}' +
+  `:root:active-view-transition-type(${WIPE_TYPE}) body, :root:active-view-transition-type(${WIPE_TYPE}) body *{view-transition-name:none !important;}`;
+
+function startWipe(update: () => Promise<void>) {
+  try {
+    return document.startViewTransition({ update, types: [WIPE_TYPE] });
+  } catch {
+    return document.startViewTransition(update);
+  }
+}
 
 const PLACEHOLDER_STATE = {
   effective: 'system',
@@ -120,7 +135,7 @@ const ThemeTogglerInner = defineComponent({
       }
       const [fromClip, toClip] = getClipKeyframes(props.direction);
       try {
-        await document.startViewTransition(async () => {
+        await startWipe(async () => {
           preview.value = { effective: theme, resolved };
           document.documentElement.classList.toggle(
             'dark',
@@ -152,11 +167,7 @@ const ThemeTogglerInner = defineComponent({
           resolved: state.resolved,
           toggleTheme,
         }),
-        h(
-          'style',
-          null,
-          '::view-transition-old(root), ::view-transition-new(root){animation:none;mix-blend-mode:normal;}',
-        ),
+        h('style', null, WIPE_STYLE),
       ]);
     };
   },
