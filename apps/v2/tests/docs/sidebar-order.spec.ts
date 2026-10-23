@@ -5,7 +5,7 @@ test('the sidebar lists Installation right after Introduction', async ({
 }) => {
   await page.goto('/docs', { waitUntil: 'networkidle' });
   const links = await page
-    .locator('aside a[href^="/docs"]')
+    .locator('aside a[href^="/docs"]:not([role="tab"])')
     .evaluateAll((anchors) => anchors.map((a) => a.getAttribute('href')));
   const intro = links.indexOf('/docs');
   expect(intro).toBeGreaterThanOrEqual(0);

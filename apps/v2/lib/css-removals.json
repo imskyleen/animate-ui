@@ -1233,6 +1233,45 @@
         "added": []
       }
     ],
+    "drawer": [
+      {
+        "part": "DrawerContent",
+        "removed": [
+          "transform-[translate3d(var(--drawer-swipe-movement-x,0px),var(--drawer-swipe-movement-y,0px),0)]",
+          "transition-transform",
+          "duration-500",
+          "ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "data-swiping:duration-0",
+          "data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[swipe-direction=up]:data-[state=open]:slide-in-from-top",
+          "data-[swipe-direction=up]:data-[state=closed]:slide-out-to-top",
+          "data-[swipe-direction=down]:data-[state=open]:slide-in-from-bottom",
+          "data-[swipe-direction=down]:data-[state=closed]:slide-out-to-bottom",
+          "data-[swipe-direction=right]:data-[state=open]:slide-in-from-right",
+          "data-[swipe-direction=right]:data-[state=closed]:slide-out-to-right",
+          "data-[swipe-direction=left]:data-[state=open]:slide-in-from-left",
+          "data-[swipe-direction=left]:data-[state=closed]:slide-out-to-left"
+        ],
+        "added": []
+      },
+      {
+        "part": "DrawerOverlay",
+        "removed": [
+          "cn('data-[state=open]:animate-in",
+          "data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0",
+          "data-[state=open]:fade-in-0",
+          "fixed",
+          "bg-black/80",
+          "duration-500',"
+        ],
+        "added": [
+          "cn('fixed",
+          "bg-black/80',"
+        ]
+      }
+    ],
     "dropdown-menu": [
       {
         "part": "DropdownMenuContent",
@@ -1285,6 +1324,7 @@
         "added": []
       }
     ],
+    "input-otp": [],
     "menubar": [
       {
         "part": "MenubarContent",
@@ -1364,6 +1404,7 @@
         "added": []
       }
     ],
+    "pagination": [],
     "popover": [
       {
         "part": "PopoverContent",

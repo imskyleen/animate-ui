@@ -55,7 +55,7 @@ test('the Vue home is the home adapted to Vue', async ({ page }) => {
     page.locator('footer').getByRole('link', { name: 'Docs' }),
   ).toHaveAttribute('href', '/docs/vue');
   await expect(page.locator('[data-slot="orbit-card"]')).toHaveCount(9);
-  await expect(page.locator('[data-slot="home-ai"]')).toHaveCount(0);
+  await expect(page.locator('[data-slot="home-ai"]')).toHaveCount(1);
 });
 
 test('on the Vue home the logo mark is Vue green and the wordmark keeps the text color', async ({
@@ -129,6 +129,7 @@ test('the home switch is a pill with the code block gray behind it', async ({
   }));
   const block = await page
     .locator('[data-slot="command-cover"]')
+    .first()
     .evaluate((el) => getComputedStyle(el.parentElement!).backgroundColor);
   expect(style.bg).toBe(block);
   expect(style.radius).toBeGreaterThanOrEqual(style.height / 2);

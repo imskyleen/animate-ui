@@ -351,9 +351,7 @@ export function createMenuContent(
                     origin: options.origin,
                     sub: Boolean(options.sub),
                     handoff: Boolean(options.handoff),
-                    returnFocus: attrs.onCloseAutoFocus
-                      ? 'none'
-                      : options.returnFocus,
+                    returnFocus: options.returnFocus,
                     transition: props.transition,
                     exitTransition: props.exitTransition,
                     onReturned: () => (returned = true),

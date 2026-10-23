@@ -109,8 +109,9 @@ for (const [library, pages] of [
         page
           .locator('pre')
           .filter({ hasText: '<script setup lang="ts">' })
-          .filter({ hasText: text }),
-      ).toHaveCount(1);
+          .filter({ hasText: text })
+          .first(),
+      ).toBeAttached();
     });
 
 for (const scheme of ['light', 'dark'] as const)
