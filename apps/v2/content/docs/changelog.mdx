@@ -1,10 +1,36 @@
 ---
 title: Changelog
 description: What changed in Animate UI.
-version: '2.2.1'
+version: '2.3.0'
 ---
 
 <Changelog>
+
+<ChangelogItem date="2026-10-25">
+  <ChangelogItemVersion>
+
+## 2.3.0
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- Bottom Navigation, in React and Vue: a bottom bar whose highlight glides to the selected item. While the page scrolls down, `scrollBehavior` folds it to the selected item (`"minimize"`), slides it out (`"hide"`) or leaves it (`"none"`, the default); it comes back on the way up, at the top, on focus or on a tap. An optional label opens on the selected item as the highlight widens with it, and an optional accessory (an action button, a player) stays beside it.
+
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Fixes</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- Vue animated icons inside a button or a link no longer take the focus when clicked (which showed an outline around the icon) and are no longer stops in the Tab order: the control around them gets the focus.
+- Vue animated icons used on their own (not inside `AnimateIcon`) now play with `animate-on-view`, and a looping one waits off screen between laps, like in React.
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
 
 <ChangelogItem date="2026-10-23">
   <ChangelogItemVersion>
