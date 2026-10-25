@@ -148,6 +148,16 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       },
     },
   },
+  'animate-ui/bottom-navigation': {
+    BottomNavigation: {
+      scrollBehavior: {
+        value: 'minimize',
+        options: { none: 'none', hide: 'hide', minimize: 'minimize' },
+      },
+      labels: { value: true },
+      accessory: { value: true },
+    },
+  },
   'animate-ui/scroll-progress': {
     ScrollProgressProvider: {
       global: { value: false },

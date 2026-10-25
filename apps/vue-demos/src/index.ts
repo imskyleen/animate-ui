@@ -64,6 +64,8 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'backgrounds/topography': () => import('./demos/backgrounds/topography.vue'),
   'animate-ui/input-otp': () => import('./demos/animate-ui/input-otp.vue'),
   'animate-ui/tabs': () => import('./demos/animate-ui/tabs.vue'),
+  'animate-ui/bottom-navigation': () =>
+    import('./demos/animate-ui/bottom-navigation.vue'),
   'animate-ui/avatar-group': () => import('./demos/animate-ui/avatar-group.vue'),
   'animate-ui/tooltip': () => import('./demos/animate-ui/tooltip.vue'),
   'animate-ui/cursor': () => import('./demos/animate-ui/cursor.vue'),

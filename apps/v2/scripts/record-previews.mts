@@ -575,6 +575,25 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
     ),
   },
   blur: { play: replay() },
+  'bottom-navigation': {
+    viewport: { width: 640, height: 480 },
+    async play(page) {
+      const item = (name: string) =>
+        page.locator(`main nav [aria-label="${name}"]`);
+      await press(page, item('Search'));
+      await wait(page, 700);
+      await press(page, item('Wallet'));
+      await wait(page, 700);
+      await glide(page, size.width / 2, size.height * 0.4, 350);
+      await page.mouse.wheel(0, 260);
+      await wait(page, 1000);
+      await page.mouse.wheel(0, -160);
+      await wait(page, 900);
+      await press(page, item('Home'));
+      await wait(page, 700);
+      await away(page);
+    },
+  },
   button: {
     async play(page) {
       for (let i = 0; i < 2; i++) {

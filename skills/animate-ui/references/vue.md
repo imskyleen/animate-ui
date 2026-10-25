@@ -32,7 +32,7 @@ import { OTPInput } from '@animate-ui/vue/primitives/input-otp'; // after
 
 The whole import moves; parts Animate UI doesn't animate are re-exported unchanged. Remove the component's CSS animation classes as § B says (tw-animate utilities and the `duration-*` beside them, `animate-accordion-*`, `animate-collapsible-*`); keep everything else. Animated parts that enter and leave take `transition` and `exit-transition`, parts that only move take `transition`. A drag or swipe asked on a hand-built sheet (C, step 4) moves it onto reka-ui's Drawer through `@animate-ui/vue/primitives/reka-ui` (`DrawerRoot` with `swipe-direction`, `DrawerPortal`, `DrawerOverlay`, `DrawerContent`, `DrawerTitle`, `DrawerDescription`); Vaul isn't used in Vue.
 
-Animate UI's own primitives keep React's paths under `@animate-ui/vue/primitives/` (`texts/sliding-number`, `effects/fade`, `buttons/button`, `tabs`, `tooltip`, `github-stars`, `code-block`…), with kebab-case props in templates (`:initial-blur`, `in-view`) and events instead of callbacks (`@done`, `@number-change`).
+Animate UI's own primitives keep React's paths under `@animate-ui/vue/primitives/` (`texts/sliding-number`, `effects/fade`, `buttons/button`, `tabs`, `tooltip`, `bottom-navigation`, `github-stars`, `code-block`…), with kebab-case props in templates (`:initial-blur`, `in-view`) and events instead of callbacks (`@done`, `@number-change`). Where React takes a ref object, Vue takes the element: `:scroll-container="scrollRef"` with a template ref.
 
 ## Files added to the project
 

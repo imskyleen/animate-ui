@@ -53,6 +53,7 @@ const OWN_PAGES = [
   ['cursor', 'on(enableCursorFollow)'],
   ['spring', 'aria-label="Drag me"'],
   ['pinned-list', 'pinned-list-row.vue'],
+  ['bottom-navigation', 'scroll-container="scrollRef"'],
   ['github-stars', 'github-stars-star.vue'],
   ['motion-grid', 'initializingFrames'],
   ['scroll-progress', 'isGlobal'],
@@ -217,7 +218,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(74);
+  await expect(cards).toHaveCount(75);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));

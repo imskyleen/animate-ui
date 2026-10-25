@@ -1,0 +1,220 @@
+---
+title: Bottom Navigation
+description: A bottom bar whose highlight glides to the selected item, and that can fold to it or slide away while the page scrolls down.
+releaseDate: '2026-10-25'
+---
+
+<ComponentPreview name="animate-ui/bottom-navigation" />
+
+## Installation
+
+<Installation />
+
+## Usage
+
+```tsx
+import {
+  BottomNavigation,
+  BottomNavigationAccessory,
+  BottomNavigationHighlight,
+  BottomNavigationHighlightItem,
+  BottomNavigationItem,
+  BottomNavigationLabel,
+} from '@animate-ui/react/primitives/bottom-navigation';
+
+const ITEMS = [
+  { value: 'home', href: '/', label: 'Home', icon: <HomeIcon /> },
+  { value: 'search', href: '/search', label: 'Search', icon: <SearchIcon /> },
+];
+
+export function AppNavigation() {
+  return (
+    <BottomNavigation
+      defaultValue="home"
+      scrollBehavior="minimize"
+      aria-label="Main"
+      className="fixed inset-x-0 bottom-4 mx-auto flex w-fit items-center gap-2"
+    >
+      <BottomNavigationHighlight className="absolute inset-0 rounded-full bg-muted">
+        <ul className="flex rounded-full border bg-background p-1.5">
+          {ITEMS.map((item) => (
+            <li key={item.value}>
+              <BottomNavigationHighlightItem value={item.value}>
+                <BottomNavigationItem
+                  value={item.value}
+                  href={item.href}
+                  className="flex items-center px-4 py-2"
+                >
+                  {item.icon}
+                  <BottomNavigationLabel className="pl-2">
+                    {item.label}
+                  </BottomNavigationLabel>
+                </BottomNavigationItem>
+              </BottomNavigationHighlightItem>
+            </li>
+          ))}
+        </ul>
+      </BottomNavigationHighlight>
+      <BottomNavigationAccessory className="rounded-full border bg-background p-1.5">
+        <button className="size-11 rounded-full hover:bg-muted">+</button>
+      </BottomNavigationAccessory>
+    </BottomNavigation>
+  );
+}
+```
+
+Items are links: give them an `href`, or `asChild` with your router's link or a `button`. The selected item gets `aria-current="page"` and `data-state="active"`. With a router, pass the current route as `value` so the highlight follows navigation. `BottomNavigationHighlight` and `BottomNavigationHighlightItem` are optional; without them, style the active item with `data-state="active"`.
+
+`scrollBehavior` sets what the bar does while the page scrolls down: `"minimize"` folds it to the selected item, like iOS' tab bar, `"hide"` slides it out, and `"none"` (the default) leaves it. It comes back as soon as the page scrolls up or reaches the top, an item takes focus, or the bar is tapped. It listens to the window, or to `scrollContainer` when the page scrolls inside an element. To fold, items shrink to nothing, padding included: space them with padding rather than a `gap`, which would stay.
+
+`BottomNavigationLabel` and `BottomNavigationAccessory` are optional:
+
+- A label shows only on the selected item, so the bar stays icons and one name. Its text stays in the accessibility tree, so it names the item even while closed.
+- The accessory (a button, a player, a search field) stays beside the bar, folded or not: it follows the bar as it folds. Pressing or focusing it leaves the bar folded.
+
+A closed label takes no room: put its spacing inside it (`pl-2`), not on the item.
+
+## Animation
+
+- The highlight slides to the selected item on a spring (stiffness 300, damping 30): one surface is handed from the previous item to the new one, at full opacity ([Highlight](/docs/primitives/animate-ui/highlight)).
+- Items scale to 0.97 while pressed, on the buttons' spring.
+- Labels open on the highlight's spring, so the highlight widens with the selected item: the new label grows from nothing out of a 4px blur as the previous one narrows and blurs away.
+- Both scroll behaviors start once the page has scrolled down by 6px and run on a critically damped spring (stiffness 300, damping 35).
+  - `"minimize"`: the other items narrow to nothing as they fade out into a 4px blur, the bar closing around the selected one with its highlight; they come back the same way.
+  - `"hide"`: the bar slides out past the bottom edge, and back on the way up.
+- `<AnimateUIProvider tempo>` paces every spring.
+- Under reduced motion, the highlight moves at once, items don't scale, labels change width at once (fading), the bar folds at once, and the hidden bar fades out instead of sliding (and can’t be clicked while hidden).
+
+## API Reference
+
+### BottomNavigation
+
+<TypeTable
+  type={{
+    defaultValue: {
+      description: 'The item selected at first (uncontrolled).',
+      type: 'string',
+    },
+    value: {
+      description: 'The selected item (controlled).',
+      type: 'string',
+    },
+    onValueChange: {
+      description: 'Called with the item to select (controlled).',
+      type: '(value: string) => void',
+    },
+    scrollBehavior: {
+      description:
+        'What the bar does while the page scrolls down: fold to the selected item, slide out, or nothing. It comes back on the way up.',
+      type: "'none' | 'hide' | 'minimize'",
+      default: "'none'",
+    },
+    scrollContainer: {
+      description:
+        'The element that scrolls, when it isn’t the window. A hidden bar then slides past its bottom edge.',
+      type: 'React.RefObject<HTMLElement | null>',
+    },
+    transition: {
+      description: 'Transition of the bar folding, hiding and coming back.',
+      type: 'Transition',
+      default:
+        "{ type: 'spring', stiffness: 300, damping: 35, restDelta: 0.01 }",
+    },
+    '...props': {
+      description:
+        'Props of the `nav` (give it an `aria-label`). `data-minimized` is set while it is folded, `data-hidden` while it is hidden.',
+      type: "HTMLMotionProps<'nav'>",
+    },
+  }}
+/>
+
+### BottomNavigationHighlight
+
+Takes the [Highlight](/docs/primitives/animate-ui/highlight#highlight) props, except `controlledItems` and `value`.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the highlight.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 30 }",
+    },
+  }}
+/>
+
+### BottomNavigationHighlightItem
+
+Takes the [HighlightItem](/docs/primitives/animate-ui/highlight#highlightitem) props.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'Value of the item it wraps.',
+      type: 'string',
+      required: true,
+    },
+  }}
+/>
+
+### BottomNavigationItem
+
+<TypeTable
+  type={{
+    asChild: {
+      description:
+        'Render the child element instead of a link, merging their props and behavior.',
+      type: 'boolean',
+      default: 'false',
+    },
+    value: {
+      description: 'Value of the item.',
+      type: 'string',
+      required: true,
+    },
+    tapScale: {
+      description: 'Scale while pressed.',
+      type: 'number',
+      default: '0.97',
+    },
+    '...props': {
+      description:
+        'Props of the link. Calling `event.preventDefault()` in `onClick` keeps the selection as it is.',
+      type: "HTMLMotionProps<'a'>",
+    },
+  }}
+/>
+
+### BottomNavigationLabel
+
+Goes inside a `BottomNavigationItem`.
+
+<TypeTable
+  type={{
+    transition: {
+      description: 'Transition of the label opening and closing.',
+      type: 'Transition',
+      default: "{ type: 'spring', stiffness: 300, damping: 30 }",
+    },
+    '...props': {
+      description:
+        'Props of the text. `className` styles the inner span, so its padding is part of the width that opens.',
+      type: "HTMLMotionProps<'span'>",
+    },
+  }}
+/>
+
+### BottomNavigationAccessory
+
+<TypeTable
+  type={{
+    '...props': {
+      description:
+        'Props of the wrapper, a sibling of the bar inside `BottomNavigation`.',
+      type: "HTMLMotionProps<'div'>",
+    },
+  }}
+/>
+
+### useBottomNavigation
+
+Returns `activeValue`, `handleValueChange`, `scrollBehavior` and `minimized`.
