@@ -27,6 +27,9 @@ export default function IconsFixture() {
           <RefreshCw size={48} />
         </AnimateIcon>
       </section>
+      <section data-testid="loop-standalone">
+        <RefreshCw animate loop loopDelay={300} animation="rotate" size={48} />
+      </section>
       <section data-testid="loop-no-ref">
         <AnimateIcon asChild animate loop loopDelay={200} animation="rotate">
           <NoRef>
@@ -82,6 +85,7 @@ export default function IconsFixture() {
         <Bell animateOnTap loop size={48} />
       </section>
       <div className="h-[1500px]" />
+      <Bell animateOnView data-testid="view-standalone" size={48} />
       <AnimateIcon
         ref={viewRef}
         animateOnView

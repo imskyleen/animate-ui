@@ -39,3 +39,34 @@ test('vue sidebar collapsed from the start: the trigger icon shows narrowed at o
   expect(shifts.length).toBeGreaterThan(10);
   expect(shifts.filter((x) => x > -1.95)).toEqual([]);
 });
+
+// Bug: Motion for Vue's focus listeners made the icon's SVG focusable: a click
+// on it focused the SVG (with an outline) instead of the button, and Tab
+// stopped on its parts.
+test('vue sidebar trigger: a click on its icon focuses the button, and Tab skips the icon', async ({
+  page,
+}) => {
+  await page.goto('/tests/vue-demos/reka-ui/sidebar', {
+    waitUntil: 'networkidle',
+  });
+  await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+  const trigger = page.locator('[data-sidebar="trigger"]');
+  const icon = (await trigger.locator('svg').boundingBox())!;
+  await page.mouse.click(icon.x + icon.width / 2, icon.y + icon.height / 2);
+  const focused = () =>
+    page.evaluate(() => ({
+      tag: document.activeElement!.tagName,
+      trigger: document.activeElement!.matches('[data-sidebar="trigger"]'),
+      outlined: [
+        ...document.querySelectorAll('[data-sidebar="trigger"] *'),
+      ].some((el) => el.matches(':focus')),
+    }));
+  expect(await focused()).toEqual({
+    tag: 'BUTTON',
+    trigger: true,
+    outlined: false,
+  });
+  await page.keyboard.press('Tab');
+  expect((await focused()).tag).not.toBe('svg');
+  expect((await focused()).trigger).toBe(false);
+});

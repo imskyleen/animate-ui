@@ -1027,3 +1027,49 @@ for (const framework of ICON_FRAMEWORKS)
     expect(seen.some((x) => x > 7.2 && x < 8.8)).toBe(true);
     expect(seen.at(-1)).toBeCloseTo(9, 1);
   });
+
+for (const framework of ICON_FRAMEWORKS) {
+  const angles = (svg: Locator, ms: number) =>
+    svg.evaluate(
+      (el, ms) =>
+        new Promise<number[]>((resolve) => {
+          const samples: number[] = [];
+          const start = performance.now();
+          const tick = () => {
+            const { a, b } = new DOMMatrix(getComputedStyle(el).transform);
+            samples.push(Math.round((Math.atan2(b, a) * 180) / Math.PI));
+            if (performance.now() - start < ms) requestAnimationFrame(tick);
+            else resolve(samples);
+          };
+          requestAnimationFrame(tick);
+        }),
+      ms,
+    );
+
+  // Bug (Vue): an icon used on its own never found its element, so it
+  // never paused off screen and never played on view.
+  test(`${framework.name}an icon used on its own waits off screen between laps, and loops again once back`, async ({
+    page,
+  }) => {
+    await open(page, framework.path);
+    const section = page.getByTestId('loop-standalone');
+    const svg = section.locator('svg');
+    await section.evaluate(
+      (el) => (el.style.transform = 'translateY(-10000px)'),
+    );
+    await page.waitForTimeout(3000);
+    expect(new Set(await angles(svg, 1500)).size).toBe(1);
+    await section.evaluate((el) => (el.style.transform = ''));
+    expect(new Set(await angles(svg, 2500)).size).toBeGreaterThan(5);
+  });
+
+  test(`${framework.name}an icon used on its own plays on view`, async ({
+    page,
+  }) => {
+    await open(page, framework.path);
+    const svg = page.locator('svg[data-testid="view-standalone"]');
+    await record(svg, 5);
+    await svg.scrollIntoViewIfNeeded();
+    await waitForThreshold(page);
+  });
+}

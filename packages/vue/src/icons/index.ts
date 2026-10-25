@@ -5,6 +5,7 @@ import {
   inject,
   onBeforeUnmount,
   onMounted,
+  onUpdated,
   provide,
   ref,
   shallowRef,
@@ -99,6 +100,9 @@ type AnimateIconProps<T = string> = Omit<IconProps<T>, 'size'> & {
   asChild?: boolean;
 };
 
+const FOCUSABLE =
+  'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
 const AnimateIconKey: InjectionKey<() => AnimateIconContextValue> = Symbol(
   'AnimateUIAnimateIcon',
 );
@@ -153,8 +157,12 @@ const iconProps = {
 } as const;
 
 const elementOf = (node: unknown) => {
-  const element = (node as { $el?: unknown } | null)?.$el ?? node;
-  return element instanceof Element ? element : null;
+  let element = ((node as { $el?: unknown } | null)?.$el ?? node) as
+    Node | null | undefined;
+  // A fragment's anchor: its element follows it.
+  while (element && !(element instanceof Element))
+    element = element.nextSibling;
+  return element ?? null;
 };
 
 type Handler = (event: Event) => void;
@@ -423,6 +431,17 @@ const AnimateIconRoot = defineComponent({
       startsAnimated: startsAnimated.value,
     }));
 
+    // Motion for Vue's focus listeners would put the SVG parts in the Tab order.
+    const untab = () => {
+      const el = element.value;
+      if (!el) return;
+      for (const node of [el, ...el.querySelectorAll('*')])
+        if (node instanceof SVGElement && !node.hasAttribute('tabindex'))
+          node.setAttribute('tabindex', '-1');
+    };
+    onMounted(untab);
+    onUpdated(untab);
+
     const handlers = {
       onPointerenter: (event: PointerEvent) => {
         call(attrs.onPointerenter, event);
@@ -445,6 +464,16 @@ const AnimateIconRoot = defineComponent({
       onPointercancel: (event: PointerEvent) => {
         call(attrs.onPointercancel, event);
         if (o.animateOnTap()) stopAnimation();
+      },
+      // Motion for Vue listens to focus on every motion element, which makes
+      // an SVG focusable: on click, hand the focus to the control around it.
+      onFocusin: (event: FocusEvent) => {
+        call(attrs.onFocusin, event);
+        const target = event.target;
+        if (!(target instanceof SVGElement)) return;
+        const host = target.parentElement?.closest<HTMLElement>(FOCUSABLE);
+        if (host) host.focus({ preventScroll: true });
+        else target.blur();
       },
     };
 

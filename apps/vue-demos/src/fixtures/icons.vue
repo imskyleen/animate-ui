@@ -22,6 +22,9 @@ const viewRef = ref(null)
         <RefreshCw :size="48" />
       </AnimateIcon>
     </section>
+    <section data-testid="loop-standalone">
+      <RefreshCw animate loop :loop-delay="300" animation="rotate" :size="48" />
+    </section>
     <section data-testid="loop-no-ref">
       <AnimateIcon as-child animate loop :loop-delay="200" animation="rotate">
         <NoRef>
@@ -77,6 +80,7 @@ const viewRef = ref(null)
       <Bell animate-on-tap loop :size="48" />
     </section>
     <div class="h-[1500px]" />
+    <Bell animate-on-view data-testid="view-standalone" :size="48" />
     <AnimateIcon
       ref="viewRef"
       animate-on-view
