@@ -37,34 +37,43 @@ const PAYMENTS = [
   { name: "Linear", time: "22:02", amount: "€8.00" },
 ]
 
+// Labels below the icons make wider items, beside them only the selected one.
+const LAYOUT = {
+  below: "w-[4.875rem] flex-col pt-[5px] data-[minimized]:w-12 data-[minimized]:pt-0",
+  beside: "px-5 data-[minimized]:w-12 data-[minimized]:px-0",
+}
+
 export const controls = {
   BottomNavigation: {
     scrollBehavior: {
       value: "minimize",
       options: { none: "none", hide: "hide", minimize: "minimize" },
     },
-    labels: { value: true },
+    labels: {
+      value: "below",
+      options: { below: "below", beside: "beside", none: "none" },
+    },
     accessory: { value: true },
   },
 }
 
 export default function BottomNavigationDemo({
   scrollBehavior = "minimize",
-  labels = true,
+  labels = "below",
   accessory = true,
 }: {
   scrollBehavior?: "none" | "hide" | "minimize"
-  labels?: boolean | string
+  labels?: "below" | "beside" | "none"
   accessory?: boolean | string
 }) {
-  const showLabels = String(labels) === "true"
+  const layout = LAYOUT[labels === "below" ? "below" : "beside"]
   const showAccessory = String(accessory) === "true"
   const [value, setValue] = React.useState("home")
   const [presses, setPresses] = React.useState(0)
   const scrollRef = React.useRef<HTMLDivElement>(null)
 
   return (
-    <div className="relative h-[440px] w-[340px] overflow-hidden rounded-[2rem] border bg-background shadow-sm">
+    <div className="relative h-[440px] w-[420px] overflow-hidden rounded-[2rem] border bg-background shadow-sm">
       <div ref={scrollRef} className="h-full overflow-y-auto px-5 pt-6 pb-24">
         <p className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
           Today
@@ -96,10 +105,10 @@ export default function BottomNavigationDemo({
           scrollBehavior={scrollBehavior}
           scrollContainer={scrollRef}
           aria-label="Main"
-          className="pointer-events-auto flex items-center gap-2"
+          className="pointer-events-auto flex items-center gap-2.5"
         >
-          <BottomNavigationHighlight className="absolute inset-0 z-0 rounded-full bg-muted">
-            <ul className="flex items-center rounded-full border bg-background/80 p-1.5 shadow-lg backdrop-blur">
+          <BottomNavigationHighlight className="absolute inset-x-0 inset-y-1 z-0 rounded-full bg-muted">
+            <ul className="flex items-center rounded-full bg-background/80 px-1 shadow-lg ring-1 ring-border backdrop-blur">
               {ITEMS.map(({ value: item, label, Icon }) => (
                 <li key={item}>
                   <BottomNavigationHighlightItem value={item}>
@@ -107,11 +116,24 @@ export default function BottomNavigationDemo({
                       <button
                         type="button"
                         aria-label={label}
-                        className="relative z-10 flex h-11 items-center justify-center rounded-full px-3.5 text-muted-foreground outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 hover:text-foreground data-[state=active]:text-foreground"
+                        className={`relative z-10 flex h-[3.875rem] items-center justify-center overflow-hidden rounded-full text-muted-foreground outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 hover:text-foreground data-[minimized]:h-12 data-[state=active]:text-foreground ${layout}`}
                       >
-                        <Icon animate={value === item} initial={false} size={20} />
-                        {showLabels && (
-                          <BottomNavigationLabel className="pl-2 text-sm font-medium">
+                        <Icon
+                          animate={value === item}
+                          initial={false}
+                          size={22}
+                          className="shrink-0"
+                        />
+                        {labels === "below" && (
+                          <BottomNavigationLabel className="pt-[5px] text-xs leading-4 font-medium">
+                            {label}
+                          </BottomNavigationLabel>
+                        )}
+                        {labels === "beside" && (
+                          <BottomNavigationLabel
+                            show="active"
+                            className="pl-2 text-sm font-medium"
+                          >
                             {label}
                           </BottomNavigationLabel>
                         )}
@@ -123,14 +145,16 @@ export default function BottomNavigationDemo({
             </ul>
           </BottomNavigationHighlight>
           {showAccessory && (
-            <BottomNavigationAccessory className="rounded-full border bg-background/80 p-1.5 shadow-lg backdrop-blur">
+            <BottomNavigationAccessory
+              className="size-[3.875rem] rounded-full bg-background/80 p-1 shadow-lg ring-1 ring-border backdrop-blur data-[minimized]:size-12"
+            >
               <Button
                 type="button"
                 aria-label="New payment"
                 onClick={() => setPresses((count) => count + 1)}
-                className="flex size-11 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors duration-300 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                className="flex size-full items-center justify-center rounded-full text-muted-foreground outline-none transition-colors duration-300 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
               >
-                <Plus key={presses} animate={presses > 0} size={20} />
+                <Plus key={presses} animate={presses > 0} size={22} />
               </Button>
             </BottomNavigationAccessory>
           )}

@@ -82,6 +82,10 @@ function scrollTopOf(target: HTMLElement | Window) {
 
 const ACCESSORY = '[data-slot="bottom-navigation-accessory"]';
 
+function keyboardFocus(target: EventTarget) {
+  return target instanceof Element && target.matches(':focus-visible');
+}
+
 function inAccessory(target: EventTarget) {
   return target instanceof Element && !!target.closest(ACCESSORY);
 }
@@ -199,7 +203,9 @@ function BottomNavigationRoot({
         transition={reduce ? (transition ?? fade) : scrollTransition}
         onFocusCapture={(event: React.FocusEvent<HTMLElement>) => {
           onFocusCapture?.(event);
-          if (!inAccessory(event.target)) setCollapsed(false);
+          // A press focuses too: its click grows the bar, with its selection.
+          if (keyboardFocus(event.target) && !inAccessory(event.target))
+            setCollapsed(false);
         }}
         onClick={(event: React.MouseEvent<HTMLElement>) => {
           onClick?.(event);
@@ -252,50 +258,117 @@ type BottomNavigationItemProps = WithAsChild<
   }
 >;
 
-const FOLDED_SIZE = ['width', 'paddingLeft', 'paddingRight'] as const;
+const BOX = [
+  'width',
+  'height',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+] as const;
 
-function useFold(
+type Size = number[];
+
+const sizeOf = (el: HTMLElement): Size => {
+  const style = getComputedStyle(el);
+  return BOX.map((key) => parseFloat(style[key]));
+};
+
+const clearBox = (el: HTMLElement) => {
+  for (const key of BOX) el.style[key] = '';
+};
+
+const LABEL = '[data-slot="bottom-navigation-label"]';
+
+// The element's size once the labels in it have opened or folded.
+// Under its icon, a label folds its height; beside it, its width.
+const isBelow = (label: Element) =>
+  !!label.parentElement &&
+  getComputedStyle(label.parentElement).flexDirection.startsWith('column');
+
+const settledSizeOf = (el: HTMLElement): Size => {
+  const labels = [...el.querySelectorAll<HTMLElement>(LABEL)];
+  const saved = labels.map(({ style }) => [style.width, style.height] as const);
+  for (const label of labels) {
+    const folded = 'folded' in label.dataset ? '0px' : 'auto';
+    label.style.width = isBelow(label) ? 'auto' : folded;
+    label.style.height = isBelow(label) ? folded : 'auto';
+  }
+  const size = sizeOf(el);
+  labels.forEach(({ style }, index) => {
+    [style.width, style.height] = saved[index]!;
+  });
+  return size;
+};
+
+// When the bar minimizes or grows back, the element eases from its last size
+// and padding to the ones its CSS gives it in the new state.
+function useMorph(
   element: React.RefObject<HTMLElement | null>,
-  folded: boolean,
+  minimized: boolean,
   transition: Transition,
+  selected?: boolean,
 ) {
-  const sizeRef = React.useRef<Record<string, number> | null>(null);
-  const wasFoldedRef = React.useRef(false);
+  const reduce = useShouldReduceMotion();
+  const sizeRef = React.useRef<Size | null>(null);
+  const controlsRef = React.useRef<ReturnType<typeof animateStyles> | null>(
+    null,
+  );
+  const minimizedRef = React.useRef(minimized);
+  const selectedRef = React.useRef(selected);
 
   React.useLayoutEffect(() => {
     const el = element.current;
-    if (!el || folded === wasFoldedRef.current) return;
-    wasFoldedRef.current = folded;
-    if (folded && !el.style.width) {
-      const style = getComputedStyle(el);
-      sizeRef.current = {
-        width: el.getBoundingClientRect().width,
-        paddingLeft: parseFloat(style.paddingLeft),
-        paddingRight: parseFloat(style.paddingRight),
-      };
-    }
-    const target = sizeRef.current;
-    if (!target) return;
-    const px = (key: string) => (folded ? '0px' : `${target[key]}px`);
+    if (!el) return;
+    sizeRef.current = sizeOf(el);
+    const observer = new ResizeObserver(() => {
+      if (!controlsRef.current) sizeRef.current = sizeOf(el);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [element]);
+
+  React.useLayoutEffect(() => {
+    const el = element.current;
+    const reselected = selected !== selectedRef.current;
+    selectedRef.current = selected;
+    // Selected while it eases, it heads for its new size instead.
+    if (
+      !el ||
+      (minimized === minimizedRef.current &&
+        !(reselected && controlsRef.current))
+    )
+      return;
+    minimizedRef.current = minimized;
+    const from = controlsRef.current ? sizeOf(el) : sizeRef.current;
+    controlsRef.current?.stop();
+    controlsRef.current = null;
+    clearBox(el);
+    const to = settledSizeOf(el);
+    sizeRef.current = to;
+    if (reduce || !from || from.every((value, index) => value === to[index]))
+      return;
     const controls = animateStyles(
       el,
       {
-        width: px('width'),
-        paddingLeft: px('paddingLeft'),
-        paddingRight: px('paddingRight'),
-        opacity: folded ? 0 : 1,
-        filter: folded ? 'blur(4px)' : 'blur(0px)',
+        ...Object.fromEntries(
+          BOX.map((key, index) => [
+            key,
+            [`${from[index]}px`, `${to[index]}px`],
+          ]),
+        ),
       },
       transition.type === 'spring'
         ? { ...transition, type: spring }
         : transition,
     );
-    if (!folded)
-      controls.then(() => {
-        if (wasFoldedRef.current) return;
-        for (const key of FOLDED_SIZE) el.style[key] = '';
-      });
-  }, [element, folded, transition]);
+    controlsRef.current = controls;
+    controls.then(() => {
+      if (controlsRef.current !== controls) return;
+      controlsRef.current = null;
+      clearBox(el);
+    });
+  }, [element, minimized, selected, reduce, transition]);
 }
 
 function BottomNavigationItem({
@@ -305,25 +378,18 @@ function BottomNavigationItem({
   asChild = false,
   transition,
   onClick,
-  style,
   ...props
 }: BottomNavigationItemProps) {
-  const {
-    activeValue,
-    handleValueChange,
-    minimized,
-    scrollBehavior,
-    scrollTransition,
-  } = useBottomNavigation();
+  const { activeValue, handleValueChange, minimized, scrollTransition } =
+    useBottomNavigation();
   const reduce = useShouldReduceMotion();
   const press = useTempoTransition(SCALE_SPRING);
   const isActive = activeValue === value;
-  const folded = minimized && !isActive;
   const Component = asChild ? Slot : motion.a;
 
   const localRef = React.useRef<HTMLAnchorElement | null>(null);
   React.useImperativeHandle(ref, () => localRef.current as HTMLAnchorElement);
-  useFold(localRef, folded, scrollTransition);
+  useMorph(localRef, minimized, scrollTransition, isActive);
 
   return (
     <BottomNavigationItemProvider value={{ isActive }}>
@@ -331,13 +397,8 @@ function BottomNavigationItem({
         ref={localRef}
         data-slot="bottom-navigation-item"
         data-state={isActive ? 'active' : 'inactive'}
+        data-minimized={minimized ? '' : undefined}
         aria-current={isActive ? 'page' : undefined}
-        inert={folded || undefined}
-        style={
-          scrollBehavior === 'minimize'
-            ? { overflow: 'hidden', ...style }
-            : style
-        }
         initial={reduce ? undefined : { transform: 'scale(1)' }}
         whileTap={reduce ? undefined : { transform: `scale(${tapScale})` }}
         transition={transition ?? press}
@@ -351,26 +412,59 @@ function BottomNavigationItem({
   );
 }
 
+type BottomNavigationLabelShow = 'always' | 'active';
+
 type BottomNavigationLabelProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
   children?: React.ReactNode;
+  show?: BottomNavigationLabelShow;
 };
 
-// Opens to its text's width out of a blur; closed, it takes no room.
+// Opens out of a blur and folds away with its room: when the bar minimizes,
+// and with `show="active"`, when its item isn't selected.
 function BottomNavigationLabel({
+  ref,
+  show = 'always',
   transition,
   className,
   style,
   children,
   ...props
 }: BottomNavigationLabelProps) {
+  const { minimized, scrollTransition } = useBottomNavigation();
   const { isActive } = useBottomNavigationItem();
-  const slide = useTempoTransition(LABEL_TRANSITION);
+  const reduce = useShouldReduceMotion();
+  const fade = useTempoTransition(FADE_TRANSITION);
+  const select = useTempoTransition(LABEL_TRANSITION);
+  const folded = minimized || (show === 'active' && !isActive);
+  const localRef = React.useRef<HTMLSpanElement | null>(null);
+  React.useImperativeHandle(ref, () => localRef.current as HTMLSpanElement);
+  const [below, setBelow] = React.useState(false);
+  React.useLayoutEffect(() => {
+    if (localRef.current) setBelow(isBelow(localRef.current));
+  }, []);
+  // Opened or folded by the bar, it moves with the items' sizes.
+  const minimizedRef = React.useRef(minimized);
+  const byBar = minimizedRef.current !== minimized || show === 'always';
+  React.useLayoutEffect(() => {
+    minimizedRef.current = minimized;
+  }, [minimized]);
+  const size = transition ?? (byBar ? scrollTransition : select);
+  // Beside its icon, it fades with its width; below it, out of the way first.
+  const look =
+    show === 'active'
+      ? size
+      : folded
+        ? { ...fade, duration: (fade.duration ?? 0.2) / 2 }
+        : fade;
 
   return (
     <motion.span
+      ref={localRef}
       data-slot="bottom-navigation-label"
+      data-folded={folded ? '' : undefined}
       style={{
         display: 'inline-flex',
+        justifyContent: below ? 'center' : 'flex-start',
         flexShrink: 0,
         overflow: 'clip',
         whiteSpace: 'nowrap',
@@ -378,11 +472,16 @@ function BottomNavigationLabel({
       }}
       initial={false}
       animate={
-        isActive
-          ? { width: 'auto', opacity: 1, filter: 'blur(0px)' }
-          : { width: 0, opacity: 0, filter: 'blur(4px)' }
+        folded
+          ? {
+              width: below ? 'auto' : 0,
+              height: below ? 0 : 'auto',
+              opacity: 0,
+              filter: 'blur(4px)',
+            }
+          : { width: 'auto', height: 'auto', opacity: 1, filter: 'blur(0px)' }
       }
-      transition={transition ?? slide}
+      transition={reduce ? INSTANT : { ...size, opacity: look, filter: look }}
       {...props}
     >
       <span className={className} style={{ display: 'inline-flex' }}>
@@ -394,8 +493,23 @@ function BottomNavigationLabel({
 
 type BottomNavigationAccessoryProps = HTMLMotionProps<'div'>;
 
-function BottomNavigationAccessory(props: BottomNavigationAccessoryProps) {
-  return <motion.div data-slot="bottom-navigation-accessory" {...props} />;
+function BottomNavigationAccessory({
+  ref,
+  ...props
+}: BottomNavigationAccessoryProps) {
+  const { minimized, scrollTransition } = useBottomNavigation();
+  const localRef = React.useRef<HTMLDivElement | null>(null);
+  React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
+  useMorph(localRef, minimized, scrollTransition);
+
+  return (
+    <motion.div
+      ref={localRef}
+      data-slot="bottom-navigation-accessory"
+      data-minimized={minimized ? '' : undefined}
+      {...props}
+    />
+  );
 }
 
 export {
@@ -408,6 +522,7 @@ export {
   useBottomNavigation,
   type BottomNavigationProps,
   type BottomNavigationLabelProps,
+  type BottomNavigationLabelShow,
   type BottomNavigationAccessoryProps,
   type BottomNavigationScrollBehavior,
   type BottomNavigationHighlightProps,

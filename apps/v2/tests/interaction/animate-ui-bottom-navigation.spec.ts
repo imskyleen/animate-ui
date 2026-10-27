@@ -71,6 +71,19 @@ for (const framework of FRAMEWORKS) {
   const labelWidth = (page: Page, name: string) =>
     widthOf(page, `${NAV} [aria-label="${name}"] ${LABEL}`);
 
+  const itemSizes = (page: Page) =>
+    page.locator(`${NAV} li button`).evaluateAll((els) =>
+      els.map((el) => {
+        const rect = el.getBoundingClientRect();
+        return [Math.round(rect.width), Math.round(rect.height)];
+      }),
+    );
+
+  const minimize = async (page: Page) => {
+    await scrollTo(page, 120);
+    await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
+  };
+
   const cardBottom = (page: Page) =>
     list(page).evaluate((el) => el.getBoundingClientRect().bottom);
 
@@ -80,8 +93,7 @@ for (const framework of FRAMEWORKS) {
       .evaluateAll((els) =>
         els.map(
           (el) =>
-            (el as HTMLElement).style.width +
-            (el as HTMLElement).style.paddingLeft,
+            (el as HTMLElement).style.width + (el as HTMLElement).style.height,
         ),
       );
 
@@ -101,7 +113,7 @@ for (const framework of FRAMEWORKS) {
     });
 
     test('selecting an item glides the highlight to it', async ({ page }) => {
-      await open(page, undefined, { labels: 'false' });
+      await open(page, undefined, { labels: 'none' });
       const wallet = page.getByRole('button', { name: 'Wallet' });
       const end = (await wallet.boundingBox())!.x;
       const start = await highlightX(page, 'home');
@@ -132,40 +144,180 @@ for (const framework of FRAMEWORKS) {
     });
 
     test.describe('minimize', () => {
-      test('scrolling down folds the bar to the selected item, up unfolds it', async ({
+      const EXPANDED = [78, 62];
+      const MINIMIZED = [48, 48];
+
+      test('scrolling down shrinks every item to its icon, up grows them back', async ({
         page,
       }) => {
         await open(page, 'minimize');
-        await page.getByRole('button', { name: 'Wallet' }).click();
-        await settled(page, 'Wallet');
-        const wallet = page.getByRole('button', { name: 'Wallet' });
+        expect(await itemSizes(page)).toEqual(Array(4).fill(EXPANDED));
         const full = await navWidth(page);
-        const item = (await wallet.boundingBox())!.width;
-        await scrollTo(page, 120);
-        await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
+        await minimize(page);
         await page.waitForTimeout(80);
         const mid = await navWidth(page);
         expect(mid).toBeLessThan(full - 1);
-        expect(mid).toBeGreaterThan(item + 20);
         await expect
-          .poll(async () => (await navWidth(page)) - item)
-          .toBeLessThan(20);
-        await expect(
-          page.getByRole('button', { name: 'Home' }),
-        ).toHaveJSProperty('inert', true);
-        await expect(wallet).toBeVisible();
+          .poll(() => itemSizes(page))
+          .toEqual(Array(4).fill(MINIMIZED));
+        expect(await navWidth(page)).toBeLessThan(mid - 1);
+        for (const name of ['Home', 'Search', 'Wallet', 'Profile'])
+          await expect(page.getByRole('button', { name })).toBeVisible();
+        await expect(page.locator(`${NAV} [inert]`)).toHaveCount(0);
 
         await scrollTo(page, 60);
         await expect(page.locator(NAV)).not.toHaveAttribute('data-minimized');
+        await page.waitForTimeout(80);
+        const growing = (await itemSizes(page))[0];
+        expect(growing[0]).toBeGreaterThan(MINIMIZED[0]);
+        expect(growing[0]).toBeLessThan(EXPANDED[0]);
         await expect
           .poll(async () => Math.abs((await navWidth(page)) - full))
           .toBeLessThan(0.5);
-        await expect(
-          page.getByRole('button', { name: 'Home' }),
-        ).toHaveJSProperty('inert', false);
+        await expect.poll(() => inlineSizes(page)).toEqual(['', '', '', '']);
       });
 
-      test('the highlight stays under the selected item while folding', async ({
+      test('labels fold away and the icons end centered in their items', async ({
+        page,
+      }) => {
+        await open(page, 'minimize');
+        const label = page.locator(`${NAV} [aria-label="Wallet"] ${LABEL}`);
+        const iconOffset = () =>
+          page.getByRole('button', { name: 'Wallet' }).evaluate((el) => {
+            const item = el.getBoundingClientRect();
+            const icon = el.querySelector('svg')!.getBoundingClientRect();
+            return icon.y + icon.height / 2 - (item.y + item.height / 2);
+          });
+        expect(await iconOffset()).toBeLessThan(-3);
+        // Each frame's opacity and height while the bar minimizes.
+        const frames = label.evaluate(
+          (el) =>
+            new Promise<number[][]>((resolve) => {
+              const out: number[][] = [];
+              const start = performance.now();
+              const tick = (now: number) => {
+                out.push([
+                  Number(getComputedStyle(el).opacity),
+                  el.getBoundingClientRect().height,
+                ]);
+                if (now - start < 600) requestAnimationFrame(tick);
+                else resolve(out);
+              };
+              requestAnimationFrame(tick);
+            }),
+        );
+        await minimize(page);
+        // It has faded out while its room is still folding.
+        expect(
+          (await frames).some(
+            ([opacity, height]) => opacity < 0.2 && height > 3,
+          ),
+        ).toBe(true);
+        await expect
+          .poll(() => label.evaluate((el) => el.getBoundingClientRect().height))
+          .toBe(0);
+        expect(Math.abs(await iconOffset())).toBeLessThan(0.5);
+        // Folded, it still names its item for screen readers.
+        await expect(
+          page.getByRole('button', { name: 'Wallet' }),
+        ).toBeVisible();
+
+        await scrollTo(page, 60);
+        await expect
+          .poll(() =>
+            label.evaluate((el) => Number(getComputedStyle(el).opacity)),
+          )
+          .toBe(1);
+        expect(await iconOffset()).toBeLessThan(-3);
+      });
+
+      // Bug: on growing back, the items' padding came back at once while
+      // their width still grew, squeezing the icons for a few frames.
+      for (const labels of ['below', 'beside', 'none'])
+        test(`the icons keep their size as the bar minimizes and grows back (labels ${labels})`, async ({
+          page,
+        }) => {
+          await open(page, 'minimize', { labels });
+          const widths = page.locator(NAV).evaluate(
+            (nav) =>
+              new Promise<number[][]>((resolve) => {
+                const out: number[][] = [];
+                const start = performance.now();
+                const tick = (now: number) => {
+                  for (const item of nav.querySelectorAll('li button')) {
+                    const box = item.getBoundingClientRect();
+                    const icon = item
+                      .querySelector('svg')!
+                      .getBoundingClientRect();
+                    out.push([
+                      icon.width,
+                      icon.x + icon.width / 2 - (box.x + box.width / 2),
+                      icon.y - box.y,
+                    ]);
+                  }
+                  if (now - start < 1400) requestAnimationFrame(tick);
+                  else resolve(out);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+          await minimize(page);
+          await page.waitForTimeout(600);
+          await scrollTo(page, 60);
+          const frames = await widths;
+          expect(Math.min(...frames.map(([width]) => width))).toBeGreaterThan(
+            21.5,
+          );
+          // Its place in its item glides, frame after frame, without a jump.
+          const tops = frames.map(([, , top]) => top);
+          const jumps = tops
+            .slice(4)
+            .map((top, index) => Math.abs(top - tops[index]!));
+          expect(Math.max(...jumps)).toBeLessThan(1.5);
+          // Alone or above its label, it stays in the middle of its item.
+          if (labels !== 'beside')
+            expect(
+              Math.max(...frames.map(([, offset]) => Math.abs(offset))),
+            ).toBeLessThan(1);
+        });
+
+      // Bug: labels folded their width too: below the icons, their words
+      // came back cut on both sides; beside them, centred and cut.
+      for (const labels of ['below', 'beside'])
+        test(`labels fold along their item (labels ${labels})`, async ({
+          page,
+        }) => {
+          await open(page, 'minimize', { labels });
+          const label = page.locator(`${NAV} [aria-label="Home"] ${LABEL}`);
+          const full = await label.evaluate(
+            (el) => el.getBoundingClientRect().width,
+          );
+          // Each frame's width, and how far the text sits from the left.
+          const frames = label.evaluate(
+            (el) =>
+              new Promise<number[][]>((resolve) => {
+                const out: number[][] = [];
+                const start = performance.now();
+                const tick = (now: number) => {
+                  const box = el.getBoundingClientRect();
+                  const text = el.firstElementChild!.getBoundingClientRect();
+                  out.push([box.width, text.left - box.left]);
+                  if (now - start < 1400) requestAnimationFrame(tick);
+                  else resolve(out);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+          await minimize(page);
+          await page.waitForTimeout(600);
+          await scrollTo(page, 60);
+          for (const [width, offset] of await frames) {
+            if (labels === 'below') expect(width).toBeCloseTo(full, 0);
+            else expect(Math.abs(offset)).toBeLessThan(0.5);
+          }
+        });
+
+      test('the highlight stays on the selected item while the bar minimizes', async ({
         page,
       }) => {
         await open(page, 'minimize');
@@ -185,7 +337,15 @@ for (const framework of FRAMEWORKS) {
                 ]
                   .find((el) => getComputedStyle(el).visibility !== 'hidden')!
                   .getBoundingClientRect();
-                out.push(Math.abs(highlight.x - item.x));
+                out.push(
+                  Math.abs(highlight.x - item.x) +
+                    Math.abs(highlight.width - item.width) +
+                    Math.abs(
+                      highlight.y +
+                        highlight.height / 2 -
+                        (item.y + item.height / 2),
+                    ),
+                );
                 if (now - start < 600) requestAnimationFrame(tick);
                 else resolve(out);
               };
@@ -196,122 +356,272 @@ for (const framework of FRAMEWORKS) {
         expect(Math.max(...(await gaps))).toBeLessThan(1);
       });
 
-      test('tapping the folded bar unfolds it and lets go of the inline sizes', async ({
+      test('tapping a minimized item selects it and grows the bar back', async ({
         page,
       }) => {
         await open(page, 'minimize');
         const full = await navWidth(page);
-        await scrollTo(page, 120);
-        await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
-        await page.waitForTimeout(600);
-        await page.locator(NAV).click();
+        await minimize(page);
+        await expect
+          .poll(() => itemSizes(page))
+          .toEqual(Array(4).fill(MINIMIZED));
+        await page.getByRole('button', { name: 'Profile' }).click();
         await expect(page.locator(NAV)).not.toHaveAttribute('data-minimized');
+        await expect(
+          page.getByRole('button', { name: 'Profile' }),
+        ).toHaveAttribute('aria-current', 'page');
         await expect
           .poll(async () => Math.abs((await navWidth(page)) - full))
           .toBeLessThan(0.5);
+        await settled(page, 'Profile');
         await expect.poll(() => inlineSizes(page)).toEqual(['', '', '', '']);
       });
 
-      // Unfolding while the bar still folded (and folding back mid-unfold)
-      // left the items at a fixed inline width.
-      test('interrupted folds and unfolds end at the bar’s own sizes', async ({
+      // Growing back while the bar still shrank (and shrinking again
+      // mid-grow) must not leave the items at a fixed inline size.
+      test('interrupted minimizes end at the items’ own sizes', async ({
         page,
       }) => {
         await open(page, 'minimize');
         const full = await navWidth(page);
-        for (const fold of [120, 900, 150, 600, 80, 300]) {
+        for (const wait of [120, 900, 150, 600, 80, 300]) {
           await scrollTo(page, 200);
-          await page.waitForTimeout(fold);
+          await page.waitForTimeout(wait);
           await scrollTo(page, 100);
           await page.waitForTimeout(120);
           await scrollTo(page, 200);
-          await page.waitForTimeout(fold);
+          await page.waitForTimeout(wait);
           await scrollTo(page, 100);
           await expect
             .poll(async () => Math.abs((await navWidth(page)) - full))
             .toBeLessThan(0.5);
           await expect.poll(() => inlineSizes(page)).toEqual(['', '', '', '']);
+          expect(await itemSizes(page)).toEqual(Array(4).fill(EXPANDED));
         }
       });
 
-      // The fold's sizes came back on the item's next render: selected after
-      // a fold, it stayed icon-wide, its label and highlight cut.
-      test('an item folded before opens its label once selected', async ({
+      test('under reduced motion, the bar minimizes at once', async ({
         page,
       }) => {
-        await open(page, 'minimize');
-        await page.getByRole('button', { name: 'Wallet' }).click();
-        await settled(page, 'Wallet');
-        await scrollTo(page, 150);
-        await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
-        await page.waitForTimeout(500);
-        await scrollTo(page, 60);
-        await expect.poll(() => inlineSizes(page)).toEqual(['', '', '', '']);
-        await page.getByRole('button', { name: 'Home' }).click();
-        await settled(page, 'Home');
-        expect(await labelWidth(page, 'Home')).toBeGreaterThan(20);
-        expect(await inlineSizes(page)).toEqual(['', '', '', '']);
-      });
-
-      test('under reduced motion, the bar folds at once', async ({ page }) => {
         await page.emulateMedia({ reducedMotion: 'reduce' });
         await open(page, 'minimize');
-        const item = (await page
-          .getByRole('button', { name: 'Home' })
-          .boundingBox())!.width;
-        await scrollTo(page, 120);
-        await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
+        await minimize(page);
         await page.waitForTimeout(50);
-        expect((await navWidth(page)) - item).toBeLessThan(20);
+        expect(await itemSizes(page)).toEqual(Array(4).fill(MINIMIZED));
+        expect(
+          await page
+            .locator(`${NAV} [aria-label="Home"] ${LABEL}`)
+            .evaluate((el) => el.getBoundingClientRect().height),
+        ).toBe(0);
+        await scrollTo(page, 60);
+        await expect(page.locator(NAV)).not.toHaveAttribute('data-minimized');
+        await page.waitForTimeout(50);
+        expect(await itemSizes(page)).toEqual(Array(4).fill(EXPANDED));
       });
     });
 
     test.describe('labels', () => {
-      test('only the selected item shows its label', async ({ page }) => {
+      test('every item shows its label under its icon', async ({ page }) => {
         await open(page);
-        expect(await labelWidth(page, 'Home')).toBeGreaterThan(20);
-        for (const name of ['Search', 'Wallet', 'Profile']) {
-          expect(await labelWidth(page, name)).toBe(0);
-          await expect(
-            page.locator(`${NAV} [aria-label="${name}"] ${LABEL}`),
-          ).toHaveCSS('opacity', '0');
-          // Closed, it still names its item for screen readers.
-          expect(
-            await page
-              .locator(`${NAV} [aria-label="${name}"] ${LABEL}`)
-              .evaluate((el) => !el.closest('[inert]')),
-          ).toBe(true);
+        for (const name of ['Home', 'Search', 'Wallet', 'Profile']) {
+          const label = page.locator(`${NAV} [aria-label="${name}"] ${LABEL}`);
+          await expect(label).toHaveCSS('opacity', '1');
+          expect(await labelWidth(page, name)).toBeGreaterThan(20);
+          const [icon, text] = await page
+            .getByRole('button', { name })
+            .evaluate((el) => [
+              el.querySelector('svg')!.getBoundingClientRect().bottom,
+              el
+                .querySelector('[data-slot="bottom-navigation-label"]')!
+                .getBoundingClientRect().top,
+            ]);
+          expect(text).toBeGreaterThanOrEqual(icon - 0.5);
         }
       });
 
-      test('selecting an item opens its label as the other one closes, the highlight around it', async ({
-        page,
-      }) => {
-        await open(page);
-        const home = await labelWidth(page, 'Home');
-        await page.getByRole('button', { name: 'Wallet' }).click();
-        await page.waitForTimeout(80);
-        const opening = await labelWidth(page, 'Wallet');
-        const closing = await labelWidth(page, 'Home');
-        expect(opening).toBeGreaterThan(0);
-        expect(closing).toBeLessThan(home - 1);
-        await expect.poll(() => labelWidth(page, 'Home')).toBe(0);
-        await settled(page, 'Wallet');
-        expect(await labelWidth(page, 'Wallet')).toBeGreaterThan(opening + 1);
+      test.describe('beside', () => {
+        const beside = { labels: 'beside' };
+
+        test('only the selected item shows its label, next to its icon', async ({
+          page,
+        }) => {
+          await open(page, undefined, beside);
+          expect(await labelWidth(page, 'Home')).toBeGreaterThan(20);
+          const [icon, text] = await page
+            .getByRole('button', { name: 'Home' })
+            .evaluate((el) => [
+              el.querySelector('svg')!.getBoundingClientRect().right,
+              el
+                .querySelector('[data-slot="bottom-navigation-label"]')!
+                .getBoundingClientRect().left,
+            ]);
+          expect(text).toBeGreaterThanOrEqual(icon - 0.5);
+          for (const name of ['Search', 'Wallet', 'Profile']) {
+            expect(await labelWidth(page, name)).toBe(0);
+            await expect(
+              page.locator(`${NAV} [aria-label="${name}"] ${LABEL}`),
+            ).toHaveCSS('opacity', '0');
+          }
+        });
+
+        test('selecting an item opens its label as the other one closes, the highlight around it', async ({
+          page,
+        }) => {
+          await open(page, undefined, beside);
+          const home = await labelWidth(page, 'Home');
+          // Both labels' widths, frame after frame.
+          const frames = page.locator(NAV).evaluate(
+            (nav) =>
+              new Promise<number[][]>((resolve) => {
+                const out: number[][] = [];
+                const width = (name: string) =>
+                  nav
+                    .querySelector(
+                      `[aria-label="${name}"] [data-slot="bottom-navigation-label"]`,
+                    )!
+                    .getBoundingClientRect().width;
+                const start = performance.now();
+                const tick = (now: number) => {
+                  out.push([width('Home'), width('Wallet')]);
+                  if (now - start < 700) requestAnimationFrame(tick);
+                  else resolve(out);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+          await page.getByRole('button', { name: 'Wallet' }).click();
+          await expect.poll(() => labelWidth(page, 'Home')).toBe(0);
+          await settled(page, 'Wallet');
+          const wallet = await labelWidth(page, 'Wallet');
+          expect(wallet).toBeGreaterThan(20);
+          // Mid-way, one opens while the other closes.
+          expect(
+            (await frames).some(
+              ([closing, opening]) =>
+                closing > 1 &&
+                closing < home - 1 &&
+                opening > 1 &&
+                opening < wallet - 1,
+            ),
+          ).toBe(true);
+        });
+
+        // The item's size to grow back to was measured with its label still
+        // folded: it stopped icon-wide and its label then pushed it open.
+        test('minimized, every item is its icon; grown back, the selected one opens its label at once', async ({
+          page,
+        }) => {
+          await open(page, 'minimize', beside);
+          const home = page.getByRole('button', { name: 'Home' });
+          const full = (await home.boundingBox())!.width;
+          await minimize(page);
+          await expect
+            .poll(() => itemSizes(page))
+            .toEqual(Array(4).fill([48, 48]));
+          await expect.poll(() => labelWidth(page, 'Home')).toBe(0);
+          // Its width once its size animation ends.
+          const released = home.evaluate(
+            (el) =>
+              new Promise<number>((resolve) => {
+                let sized = false;
+                const tick = () => {
+                  if (el.getAnimations().length) sized = true;
+                  else if (sized)
+                    return resolve(el.getBoundingClientRect().width);
+                  requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+          await scrollTo(page, 60);
+          expect(Math.abs((await released) - full)).toBeLessThan(1);
+          await expect.poll(() => inlineSizes(page)).toEqual(['', '', '', '']);
+          await settled(page, 'Home');
+        });
+
+        // Bug: the label faded in late (and out early): the pill stood open
+        // with no text in it.
+        test('the selected label shows as much as its pill is open', async ({
+          page,
+        }) => {
+          await open(page, 'minimize', beside);
+          const full = await labelWidth(page, 'Home');
+          const label = page.locator(`${NAV} [aria-label="Home"] ${LABEL}`);
+          const frames = label.evaluate(
+            (el) =>
+              new Promise<number[][]>((resolve) => {
+                const out: number[][] = [];
+                const start = performance.now();
+                const tick = (now: number) => {
+                  out.push([
+                    el.getBoundingClientRect().width,
+                    Number(getComputedStyle(el).opacity),
+                  ]);
+                  if (now - start < 1600) requestAnimationFrame(tick);
+                  else resolve(out);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+          await minimize(page);
+          await page.waitForTimeout(700);
+          await scrollTo(page, 60);
+          for (const [width, opacity] of await frames)
+            expect(opacity).toBeGreaterThan(width / full - 0.45);
+        });
+
+        // Bug: the press's focus grew the bar before its click selected: the
+        // item grew to an icon's width, then jumped open once let go.
+        test('tapping a minimized item grows it open in one move', async ({
+          page,
+        }) => {
+          await open(page, 'minimize', beside);
+          await minimize(page);
+          await expect
+            .poll(() => itemSizes(page))
+            .toEqual(Array(4).fill([48, 48]));
+          const wallet = page.getByRole('button', { name: 'Wallet' });
+          // Each frame's time and width.
+          const widths = wallet.evaluate(
+            (el) =>
+              new Promise<number[][]>((resolve) => {
+                const out: number[][] = [];
+                const start = performance.now();
+                const tick = (now: number) => {
+                  out.push([now, el.getBoundingClientRect().width]);
+                  if (now - start < 1200) requestAnimationFrame(tick);
+                  else resolve(out);
+                };
+                requestAnimationFrame(tick);
+              }),
+          );
+          await wallet.click();
+          const frames = await widths;
+          expect(frames.at(-1)![1]).toBeGreaterThan(80);
+          const steps = frames.slice(1).map(([time, width], index) => {
+            const [before, previous] = frames[index]!;
+            return (width - previous) / Math.max(time - before, 1);
+          });
+          // In px per ms: the spring peaks well under 1.
+          expect(Math.max(...steps)).toBeLessThan(1);
+          expect(Math.min(...steps)).toBeGreaterThan(-0.05);
+        });
+
+        test('under reduced motion, labels switch at once', async ({
+          page,
+        }) => {
+          await page.emulateMedia({ reducedMotion: 'reduce' });
+          await open(page, undefined, beside);
+          await page.getByRole('button', { name: 'Wallet' }).click();
+          await page.waitForTimeout(50);
+          expect(await labelWidth(page, 'Home')).toBe(0);
+          expect(await labelWidth(page, 'Wallet')).toBeGreaterThan(20);
+        });
       });
 
       test('without labels, items are icons only', async ({ page }) => {
-        await open(page, undefined, { labels: 'false' });
+        await open(page, undefined, { labels: 'none' });
         await expect(page.locator(LABEL)).toHaveCount(0);
-      });
-
-      test('under reduced motion, labels switch at once', async ({ page }) => {
-        await page.emulateMedia({ reducedMotion: 'reduce' });
-        await open(page);
-        await page.getByRole('button', { name: 'Wallet' }).click();
-        await page.waitForTimeout(50);
-        expect(await labelWidth(page, 'Home')).toBe(0);
-        expect(await labelWidth(page, 'Wallet')).toBeGreaterThan(20);
       });
     });
 
@@ -324,30 +634,48 @@ for (const framework of FRAMEWORKS) {
         return bar.x + bar.width;
       };
 
-      test('it sits beside the bar, unfolded or folded', async ({ page }) => {
+      test('it sits beside the bar and minimizes with it', async ({ page }) => {
         await open(page, 'minimize');
         const accessory = page.getByRole('button', { name: 'New payment' });
+        const barHeight = async () =>
+          (await page.locator(`${NAV} ul`).boundingBox())!.height;
         await expect(accessory).toBeVisible();
         expect((await accessoryBox(page))!.x).toBeGreaterThan(
           await barRight(page),
         );
-        await scrollTo(page, 120);
-        await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
-        await expect(accessory).toBeVisible();
-        const unfolded = (await accessoryBox(page))!.x;
+        const expanded = (await page.locator(ACCESSORY).boundingBox())!;
+        expect(Math.abs(expanded.height - (await barHeight()))).toBeLessThan(
+          0.5,
+        );
+        await minimize(page);
+        await page.waitForTimeout(80);
+        const mid = (await page.locator(ACCESSORY).boundingBox())!.height;
+        expect(mid).toBeLessThan(expanded.height - 0.5);
         await expect
-          .poll(async () => (await accessoryBox(page))!.x)
-          .toBeLessThan(unfolded - 20);
+          .poll(
+            async () => (await page.locator(ACCESSORY).boundingBox())!.height,
+          )
+          .toBeLessThan(expanded.height - 10);
         await page.waitForTimeout(700);
-        expect((await accessoryBox(page))!.x).toBeGreaterThan(
-          await barRight(page),
+        const minimized = (await page.locator(ACCESSORY).boundingBox())!;
+        expect(Math.abs(minimized.height - (await barHeight()))).toBeLessThan(
+          0.5,
         );
+        expect(minimized.x).toBeGreaterThan(await barRight(page));
+        await expect
+          .poll(() =>
+            page
+              .locator(ACCESSORY)
+              .evaluate((el) => (el as HTMLElement).style.width),
+          )
+          .toBe('');
       });
 
-      test('pressing or focusing it keeps the bar folded', async ({ page }) => {
+      test('pressing or focusing it keeps the bar minimized', async ({
+        page,
+      }) => {
         await open(page, 'minimize');
-        await scrollTo(page, 120);
-        await expect(page.locator(NAV)).toHaveAttribute('data-minimized', '');
+        await minimize(page);
         await page.waitForTimeout(500);
         const accessory = page.getByRole('button', { name: 'New payment' });
         await accessory.focus();

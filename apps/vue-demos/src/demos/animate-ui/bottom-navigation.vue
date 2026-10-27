@@ -19,13 +19,19 @@ import Wallet from '../../../../v2/registry/vue/icons/wallet/Wallet.vue'
 const props = withDefaults(
   defineProps<{
     scrollBehavior?: 'none' | 'hide' | 'minimize'
-    labels?: boolean | string
+    labels?: 'below' | 'beside' | 'none'
     accessory?: boolean | string
   }>(),
-  { scrollBehavior: 'minimize', labels: true, accessory: true },
+  { scrollBehavior: 'minimize', labels: 'below', accessory: true },
 )
 
-const showLabels = computed(() => String(props.labels) === 'true')
+// Labels below the icons make wider items, beside them only the selected one.
+const LAYOUT = {
+  below: 'w-[4.875rem] flex-col pt-[5px] data-[minimized]:w-12 data-[minimized]:pt-0',
+  beside: 'px-5 data-[minimized]:w-12 data-[minimized]:px-0',
+}
+
+const layout = computed(() => LAYOUT[props.labels === 'below' ? 'below' : 'beside'])
 const showAccessory = computed(() => String(props.accessory) === 'true')
 
 const ITEMS = [
@@ -54,7 +60,7 @@ const scrollRef = ref<HTMLElement | null>(null)
 </script>
 
 <template>
-  <div class="relative h-[440px] w-[340px] overflow-hidden rounded-[2rem] border bg-background shadow-sm">
+  <div class="relative h-[440px] w-[420px] overflow-hidden rounded-[2rem] border bg-background shadow-sm">
     <div ref="scrollRef" class="h-full overflow-y-auto px-5 pt-6 pb-24">
       <p class="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
         Today
@@ -79,20 +85,24 @@ const scrollRef = ref<HTMLElement | null>(null)
         :scroll-behavior="scrollBehavior"
         :scroll-container="scrollRef"
         aria-label="Main"
-        class="pointer-events-auto flex items-center gap-2"
+        class="pointer-events-auto flex items-center gap-2.5"
       >
-        <BottomNavigationHighlight class="absolute inset-0 z-0 rounded-full bg-muted">
-          <ul class="flex items-center rounded-full border bg-background/80 p-1.5 shadow-lg backdrop-blur">
+        <BottomNavigationHighlight class="absolute inset-x-0 inset-y-1 z-0 rounded-full bg-muted">
+          <ul class="flex items-center rounded-full bg-background/80 px-1 shadow-lg ring-1 ring-border backdrop-blur">
             <li v-for="item in ITEMS" :key="item.value">
               <BottomNavigationHighlightItem :value="item.value">
                 <BottomNavigationItem :value="item.value" as-child>
                   <button
                     type="button"
                     :aria-label="item.label"
-                    class="relative z-10 flex h-11 items-center justify-center rounded-full px-3.5 text-muted-foreground outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 hover:text-foreground data-[state=active]:text-foreground"
+                    class="relative z-10 flex h-[3.875rem] items-center justify-center overflow-hidden rounded-full text-muted-foreground outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 hover:text-foreground data-[minimized]:h-12 data-[state=active]:text-foreground"
+                    :class="layout"
                   >
-                    <component :is="item.icon" :animate="value === item.value" :initial="false" :size="20" />
-                    <BottomNavigationLabel v-if="showLabels" class="pl-2 text-sm font-medium">
+                    <component :is="item.icon" :animate="value === item.value" :initial="false" :size="22" class="shrink-0" />
+                    <BottomNavigationLabel v-if="labels === 'below'" class="pt-[5px] text-xs leading-4 font-medium">
+                      {{ item.label }}
+                    </BottomNavigationLabel>
+                    <BottomNavigationLabel v-if="labels === 'beside'" show="active" class="pl-2 text-sm font-medium">
                       {{ item.label }}
                     </BottomNavigationLabel>
                   </button>
@@ -103,15 +113,15 @@ const scrollRef = ref<HTMLElement | null>(null)
         </BottomNavigationHighlight>
         <BottomNavigationAccessory
           v-if="showAccessory"
-          class="rounded-full border bg-background/80 p-1.5 shadow-lg backdrop-blur"
+          class="size-[3.875rem] rounded-full bg-background/80 p-1 shadow-lg ring-1 ring-border backdrop-blur data-[minimized]:size-12"
         >
           <Button
             type="button"
             aria-label="New payment"
-            class="flex size-11 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors duration-300 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            class="flex size-full items-center justify-center rounded-full text-muted-foreground outline-none transition-colors duration-300 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
             @click="presses++"
           >
-            <Plus :key="presses" :animate="presses > 0" :size="20" />
+            <Plus :key="presses" :animate="presses > 0" :size="22" />
           </Button>
         </BottomNavigationAccessory>
       </BottomNavigation>
