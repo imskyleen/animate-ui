@@ -1,6 +1,6 @@
 {
   "name": "@animate-ui/vue",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "type": "module",
   "sideEffects": false,
   "description": "Animated drop-in primitives for reka-ui, built with Motion for Vue.",
@@ -50,6 +50,7 @@
   },
   "peerDependencies": {
     "@floating-ui/vue": "^2.0.0",
+    "embla-carousel": "^8.6.0",
     "embla-carousel-vue": "^8.6.0",
     "motion-v": "^2.8.0",
     "reka-ui": "^2.11.0",
@@ -59,6 +60,9 @@
   },
   "peerDependenciesMeta": {
     "@floating-ui/vue": {
+      "optional": true
+    },
+    "embla-carousel": {
       "optional": true
     },
     "embla-carousel-vue": {
