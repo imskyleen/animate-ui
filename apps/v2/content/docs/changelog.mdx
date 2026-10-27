@@ -1,10 +1,38 @@
 ---
 title: Changelog
 description: What changed in Animate UI.
-version: '2.3.0'
+version: '2.4.0'
 ---
 
 <Changelog>
+
+<ChangelogItem date="2026-10-27">
+  <ChangelogItemVersion>
+
+## 2.4.0
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Components</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- Carousel, in React and Vue: a drop-in for `embla-carousel-react` and `embla-carousel-vue`, so shadcn/ui's and shadcn-vue's carousels animate like the other components (`animate-ui animate carousel`). Set from `opts`: slides that shrink away from the center, the far ones waiting behind (`scale`, the neighbours' scale), and slides sized to show a set number (`visible`), in both orientations, the slides out of sight kept out of reach. `CarouselDots` (a pill stretching from one dot to the next) and `CarouselCounter` (a sliding number) come with it. The CLI swaps the Embla import.
+- Code Block is now shadcn/ui's and shadcn-vue's own code block, animated by `animate-ui animate code-block`, which rewrites it in place (`Content` from the code-block primitive, the Copy Button; the page lists the edits too), in React and Vue, listed with the components: header, title, actions, line numbers, wrapping, diff and highlighted lines, the small size and the destructive variant, with the code typing itself out (evenly, or like someone typing with `cadence: 'natural'`), the last characters fading in behind a cursor that pulses when it pauses, the block following the last line, a copy button whose icon swaps, and the lines gliding when wrapping is turned on or off.
+- `useCodeWriting`, from `primitives/code-block`, types any code out: highlight what it returns, line by line. The `CodeBlock` primitive is still exported.
+- Bottom Navigation minimizes like a tab bar, in React and Vue: with `scrollBehavior="minimize"`, every item stays and shrinks to its icon (style the minimized size with `data-[minimized]`), labels fold away and the accessory shrinks with the bar, the highlight staying on the selected item. Labels show on every item, under the icons in the demo; `show="active"` keeps them beside the selected item's icon only, as before. A press on a minimized item grows the bar and selects it in one move.
+
+</ChangelogItemDescription>
+
+<ChangelogItemTitle>Fixes</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- The docs' Previous and Next follow the sidebar, in React and Vue: no entry skipped, no jump to another section ([#188](https://github.com/imskyleen/animate-ui/issues/188)).
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
 
 <ChangelogItem date="2026-10-25">
   <ChangelogItemVersion>
