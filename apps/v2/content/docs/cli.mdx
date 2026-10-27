@@ -64,6 +64,7 @@ import { Dialog as DialogPrimitive } from '@animate-ui/react/primitives/radix-ui
 | `react-aria-components`       | `@animate-ui/react/primitives/react-aria`           |
 | `vaul` (the Radix UI Drawer)  | `@animate-ui/react/primitives/radix-ui/drawer`      |
 | `input-otp`                   | `@animate-ui/react/primitives/input-otp`            |
+| `embla-carousel-react`        | `@animate-ui/react/primitives/carousel`             |
 | `@shadcn/react/questionnaire` | `@animate-ui/react/primitives/questionnaire`        |
 
 The umbrella entries (`radix-ui`, `@base-ui/react`, `react-aria-components`) re-export everything else from the library, so an import mixing animated and plain parts (`{ Dialog, Slot }`) keeps working. An import with nothing to animate is left alone.
@@ -102,10 +103,12 @@ The rest of the file stays as it is: your styles, parts, props and markup.
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Radix UI   | Accordion, Alert Dialog, Checkbox, Collapsible, Context Menu, Dialog, Drawer (Vaul), Dropdown Menu, Hover Card, Menubar, Navigation Menu, Popover, Progress, Radio Group, Select, Slider, Switch, Tabs, Toggle, Toggle Group, Tooltip           |
 | Base UI    | Accordion, Alert Dialog, Checkbox, Collapsible, Combobox, Context Menu, Dialog, Drawer, Menu, Menubar, Navigation Menu, Popover, Preview Card, Progress, Radio, Radio Group, Select, Slider, Switch, Tabs, Toast, Toggle, Toggle Group, Tooltip |
-| React Aria | Checkbox, ComboBox, Disclosure, ListBox, Menu, Modal, Popover, ProgressBar, RadioGroup, SelectValue, Slider, Switch, Tabs, TagGroup, ToggleButton, ToggleButtonGroup, Tooltip                                                                                          |
-| Others     | Input OTP (`input-otp`), Questionnaire (`@shadcn/react`)                                                                                                                                                                                        |
+| React Aria | Checkbox, ComboBox, Disclosure, ListBox, Menu, Modal, Popover, ProgressBar, RadioGroup, SelectValue, Slider, Switch, Tabs, TagGroup, ToggleButton, ToggleButtonGroup, Tooltip                                                                   |
+| Others     | Carousel (`embla-carousel-react`), Input OTP (`input-otp`), Questionnaire (`@shadcn/react`)                                                                                                                                                     |
 
 It works with every shadcn/ui style.
+
+shadcn/ui's Code Block has no primitive to swap: `animate code-block` rewrites it in place (its `pre` becomes `@animate-ui/react/primitives/code-block`'s `Content`, its copy button is built on the Copy Button). A part you changed is left as it is, with a pointer to the [Code Block page](/docs/primitives/animate-ui/code-block) and its edits.
 
 ## migrate
 

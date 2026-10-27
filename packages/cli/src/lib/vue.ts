@@ -9,6 +9,8 @@ const DIALOG_STRIP = [/^duration-(100|200)$/, /^transition$/, /^ease-in-out$/];
 export const VUE_PRIMITIVES: Record<string, RegExp[]> = {
   accordion: [],
   'alert-dialog': DIALOG_STRIP,
+  carousel: [],
+  'code-block': [],
   checkbox: [],
   collapsible: [],
   combobox: [],
@@ -46,6 +48,10 @@ const REKA_IMPORT = /(\bfrom\s+)(["'])reka-ui\2/g;
 
 /** Other packages a shadcn-vue component imports that Animate UI replaces. */
 export const VUE_PACKAGES: Record<string, { from: string; to: string }> = {
+  carousel: {
+    from: 'embla-carousel-vue',
+    to: `${VUE_PACKAGE}/primitives/carousel`,
+  },
   'input-otp': {
     from: 'vue-input-otp',
     to: `${VUE_PACKAGE}/primitives/input-otp`,
@@ -99,6 +105,102 @@ function withSheetSide(code: string) {
   );
 }
 
+const CODE_BLOCK_MODULE = `${VUE_PACKAGE}/primitives/code-block`;
+const COPY_MODULE = `${VUE_PACKAGE}/primitives/buttons/copy`;
+
+// After a script's last import.
+function addImports(code: string, lines: string[]) {
+  const imports = [...code.matchAll(/^import .*$/gm)];
+  const last = imports[imports.length - 1];
+  if (!last) return code;
+  const at = last.index! + last[0].length;
+  return `${code.slice(0, at)}\n${lines.join('\n')}${code.slice(at)}`;
+}
+
+/**
+ * shadcn-vue's code block has no primitive import to swap: in
+ * `CodeBlockContent.vue` the outer `Primitive as="pre"` becomes the
+ * code-block primitive's `Content`, and `CodeBlockCopyButton.vue` is built on
+ * the Copy Button. Each file is rewritten only when it has shadcn-vue's shape.
+ */
+function rewriteCodeBlock(code: string) {
+  const rewritten: string[] = [];
+  const manual: string[] = [];
+  if (code.includes(CODE_BLOCK_MODULE) || code.includes(COPY_MODULE))
+    return { code, rewritten, manual };
+
+  if (/data-slot="code-block-content"/.test(code)) {
+    const opening = /<Primitive(\s+as="pre"\s+data-slot="code-block-content")/;
+    const end = code.lastIndexOf('</template>');
+    const closing = code.lastIndexOf('</Primitive>', end);
+    if (!opening.test(code) || closing < 0) {
+      manual.push('CodeBlockContent');
+      return { code, rewritten, manual };
+    }
+    let out =
+      code.slice(0, closing) +
+      '</CodeBlockContentPrimitive>' +
+      code.slice(closing + '</Primitive>'.length);
+    out = out.replace(opening, '<CodeBlockContentPrimitive$1');
+    out = addImports(out, [
+      `import { Content as CodeBlockContentPrimitive } from "${CODE_BLOCK_MODULE}"`,
+    ]);
+    rewritten.push('CodeBlockContent: pre → CodeBlockContentPrimitive');
+    return { code: out, rewritten, manual };
+  }
+
+  if (/data-slot="code-block-copy-button"/.test(code)) {
+    const clipboard = /^import \{ useClipboard \} from ["']@vueuse\/core["']\n/m;
+    const state = /const \{ copy, copied \} = useClipboard\([^)]*\)/;
+    const button =
+      /^([ \t]*)<Button\n([\s\S]*?)^[ \t]*data-slot="code-block-copy-button"\n([\s\S]*?)^[ \t]*@click="copy\(props\.value\)"\n([\s\S]*?)^([ \t]*)<(\S[^>]*?) v-if="copied" \/>\n[ \t]*<(\S[^>]*?) v-else \/>\n([ \t]*)<\/Button>/m;
+    const match = button.exec(code);
+    if (!clipboard.test(code) || !state.test(code) || !match) {
+      manual.push('CodeBlockCopyButton');
+      return { code, rewritten, manual };
+    }
+    const [whole, indent, before, between, after, at, copiedIcon, icon] =
+      match as unknown as string[];
+    const inner = [
+      `${indent}<Button`,
+      `${before}${between}${after}${at}<CopyButtonIcon>`,
+      `${at}  <template #icon>`,
+      `${at}    <${icon} />`,
+      `${at}  </template>`,
+      `${at}  <template #copied-icon>`,
+      `${at}    <${copiedIcon} />`,
+      `${at}  </template>`,
+      `${at}</CopyButtonIcon>`,
+      `${indent}</Button>`,
+    ]
+      .join('\n')
+      .replace(/^/gm, '  ');
+    const wrapped = [
+      `${indent}<CopyButton`,
+      `${indent}  as-child`,
+      `${indent}  data-slot="code-block-copy-button"`,
+      `${indent}  :content="props.value"`,
+      `${indent}  :delay="2000"`,
+      `${indent}  @copied-change="(value: boolean) => (copied = value)"`,
+      `${indent}>`,
+      inner,
+      `${indent}</CopyButton>`,
+    ].join('\n');
+    let out = code
+      .replace(whole!, wrapped)
+      .replace(clipboard, '')
+      .replace(state, 'const copied = ref(false)');
+    out = addImports(out, [
+      `import { CopyButton, CopyButtonIcon } from "${COPY_MODULE}"`,
+      'import { ref } from "vue"',
+    ]);
+    rewritten.push('CodeBlockCopyButton: built on CopyButton');
+    return { code: out, rewritten, manual };
+  }
+
+  return { code, rewritten, manual };
+}
+
 export type VueTransformResult = {
   code: string;
   imports: number;
@@ -106,6 +208,10 @@ export type VueTransformResult = {
   removedClasses: string[];
   centering: string[];
   sheetSide: boolean;
+  /** Parts rewritten in place (the code block, which has no import to swap). */
+  rewritten: string[];
+  /** Parts that didn't have the shape to rewrite: their docs list the edits. */
+  manual: string[];
 };
 
 /** A file of a shadcn-vue component folder: reka-ui imports swapped, CSS animations removed. */
@@ -135,7 +241,12 @@ export function transformVue(
         },
       )
     : swapped;
-  const sided = component === 'sheet' ? withSheetSide(repackaged) : repackaged;
+  const block =
+    component === 'code-block'
+      ? rewriteCodeBlock(repackaged)
+      : { code: repackaged, rewritten: [], manual: [] };
+  const sided =
+    component === 'sheet' ? withSheetSide(block.code) : block.code;
   const { code: stripped, removed } = stripAnimationClasses(sided, extra);
   const { code: centered, centering } =
     options.tailwind === 3
@@ -147,6 +258,8 @@ export function transformVue(
     packageImports,
     removedClasses: removed,
     centering,
-    sheetSide: sided !== repackaged,
+    sheetSide: component === 'sheet' && sided !== block.code,
+    rewritten: block.rewritten,
+    manual: block.manual,
   };
 }

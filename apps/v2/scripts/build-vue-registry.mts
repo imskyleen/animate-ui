@@ -15,7 +15,12 @@ const outDir = path.join(root, 'public', 'r', 'vue');
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 
-type Meta = { title: string; description: string; keywords?: string[] };
+type Meta = {
+  title: string;
+  description: string;
+  keywords?: string[];
+  registryDependencies?: string[];
+};
 
 function write(
   name: string,
@@ -33,6 +38,9 @@ function write(
         title: meta.title,
         description: meta.description,
         dependencies,
+        ...(meta.registryDependencies && {
+          registryDependencies: meta.registryDependencies,
+        }),
         files: files.map((file) => ({ ...file, type: 'registry:component' })),
         ...(meta.keywords && { meta: { keywords: meta.keywords } }),
       },

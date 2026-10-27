@@ -1,7 +1,17 @@
 export type PrimitiveSection =
   'components' | 'animate-ui' | 'buttons' | 'texts' | 'numbers' | 'effects';
 
-const SHADCN_COMPONENTS = new Set(['input-otp']);
+/** The sidebar's primitive sections, in their order. */
+export const SECTION_ORDER: PrimitiveSection[] = [
+  'components',
+  'animate-ui',
+  'buttons',
+  'texts',
+  'numbers',
+  'effects',
+];
+
+const SHADCN_COMPONENTS = new Set(['carousel', 'code-block', 'input-otp']);
 
 const SECTIONS: Record<string, 'buttons' | 'texts' | 'numbers' | 'effects'> = {
   button: 'buttons',

@@ -21,6 +21,11 @@ type AnimateOptions = {
 
 const EXTENSIONS = ['.tsx', '.jsx', '.ts', '.js'];
 
+const CODE_BLOCK_DOCS =
+  'https://animate-ui.com/docs/primitives/animate-ui/code-block';
+const CODE_BLOCK_DOCS_VUE =
+  'https://animate-ui.com/docs/vue/primitives/animate-ui/code-block';
+
 function listFiles(dir: string): string[] {
   if (!existsSync(dir)) return [];
   return readdirSync(dir, { withFileTypes: true, recursive: true })
@@ -114,6 +119,10 @@ export function animate(components: string[], options: AnimateOptions) {
       log(
         `${styleText('yellow', '!')} ${relative(file)} imports ${source}, Base UI's beta: move it to @base-ui/react (Base UI 1) first, then run animate again.`,
       );
+    for (const part of result.manual)
+      log(
+        `${styleText('yellow', '!')} ${relative(file)}: ${part} isn't shadcn/ui's as installed, left as is: see ${CODE_BLOCK_DOCS} for the edit.`,
+      );
     if (result.code === code) continue;
 
     if (!options.dryRun) {
@@ -133,6 +142,7 @@ export function animate(components: string[], options: AnimateOptions) {
     for (const change of result.imports) {
       log(`    ${change.name}: ${change.from} → ${change.to}`);
     }
+    for (const part of result.rewritten) log(`    ${part}`);
     if (result.removedClasses.length > 0) {
       log(`    removed CSS animations: ${result.removedClasses.join(' ')}`);
     }
@@ -234,6 +244,10 @@ function animateVue(
       const result = transformVue(code, name, {
         tailwind: project.tailwind,
       })!;
+      for (const part of result.manual)
+        log(
+          `${styleText('yellow', '!')} ${relative(file)}: ${part} isn't shadcn-vue's as installed, left as is: see ${CODE_BLOCK_DOCS_VUE} for the edit.`,
+        );
       if (result.code === code) continue;
       if (!options.dryRun) {
         try {
@@ -252,6 +266,7 @@ function animateVue(
         log(`    reka-ui → ${VUE_PACKAGE}/primitives/reka-ui`);
       if (result.packageImports > 0)
         log(`    ${VUE_PACKAGES[name]!.from} → ${VUE_PACKAGES[name]!.to}`);
+      for (const part of result.rewritten) log(`    ${part}`);
       if (result.removedClasses.length > 0)
         log(`    removed CSS animations: ${result.removedClasses.join(' ')}`);
       if (result.sheetSide)

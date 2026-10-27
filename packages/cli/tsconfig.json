@@ -24,6 +24,7 @@
   "exclude": [
     "test/fixtures",
     "test/fixtures-vue",
+    "test/fixtures-code-block",
     "test/__snapshots__"
   ]
 }

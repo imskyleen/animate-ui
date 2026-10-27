@@ -82,12 +82,13 @@ The rest of each file stays as it is: your styles, parts, props and markup.
 
 ### Supported primitives
 
-| Library       | Primitives                                                                                                                                                                                                                                                  |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Reka UI       | Accordion, Alert Dialog, Checkbox, Collapsible, Combobox, Context Menu, Dialog, Drawer, Dropdown Menu, Hover Card, Menubar, Navigation Menu, Pagination, Popover, Progress, Radio Group, Select, Sheet, Slider, Switch, Tabs, Toggle, Toggle Group, Tooltip |
-| vue-input-otp | Input OTP                                                                                                                                                                                                                                                   |
+| Library            | Primitives                                                                                                                                                                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Reka UI            | Accordion, Alert Dialog, Checkbox, Collapsible, Combobox, Context Menu, Dialog, Drawer, Dropdown Menu, Hover Card, Menubar, Navigation Menu, Pagination, Popover, Progress, Radio Group, Select, Sheet, Slider, Switch, Tabs, Toggle, Toggle Group, Tooltip |
+| vue-input-otp      | Input OTP                                                                                                                                                                                                                                                   |
+| embla-carousel-vue | Carousel                                                                                                                                                                                                                                                    |
 
-The Questionnaire and the Sidebar have no import to swap: their pages list the edits.
+The Questionnaire and the Sidebar have no import to swap: their pages list the edits. The Code Block has none either: `animate code-block` rewrites it in place (the outer `Primitive` of `CodeBlockContent.vue` becomes `@animate-ui/vue/primitives/code-block`'s `Content`, `CodeBlockCopyButton.vue` is built on the Copy Button), and leaves a file you changed as it is, with a pointer to the [Code Block page](/docs/vue/primitives/animate-ui/code-block).
 
 ## audit
 

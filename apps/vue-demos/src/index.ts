@@ -64,6 +64,7 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'backgrounds/topography': () => import('./demos/backgrounds/topography.vue'),
   'animate-ui/input-otp': () => import('./demos/animate-ui/input-otp.vue'),
   'animate-ui/tabs': () => import('./demos/animate-ui/tabs.vue'),
+  'animate-ui/carousel': () => import('./demos/animate-ui/carousel.vue'),
   'animate-ui/bottom-navigation': () =>
     import('./demos/animate-ui/bottom-navigation.vue'),
   'animate-ui/avatar-group': () => import('./demos/animate-ui/avatar-group.vue'),
@@ -124,6 +125,16 @@ const demos: Record<string, () => Promise<{ default: Component }>> = {
   'fixtures/animate-ui-github-stars-in-view': () =>
     import('./fixtures/animate-ui-github-stars-in-view.vue'),
   'fixtures/code-block-done': () => import('./fixtures/code-block-done.vue'),
+  'fixtures/code-block-cursor': () =>
+    import('./fixtures/code-block-cursor.vue'),
+  'fixtures/animate-ui-carousel-trimmed': () =>
+    import('./fixtures/animate-ui-carousel-trimmed.vue'),
+  'fixtures/animate-ui-carousel-vertical': () =>
+    import('./fixtures/animate-ui-carousel-vertical.vue'),
+  'fixtures/animate-ui-carousel-demos': () =>
+    import('./fixtures/animate-ui-carousel-demos.vue'),
+  'fixtures/shadcn-carousel-demos': () =>
+    import('./fixtures/shadcn-carousel-demos.vue'),
   'fixtures/animate-ui-sliding-text': () =>
     import('./fixtures/animate-ui-sliding-text.vue'),
   'fixtures/page-transition': () => import('./fixtures/page-transition.vue'),

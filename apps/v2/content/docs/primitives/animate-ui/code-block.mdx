@@ -1,92 +1,230 @@
 ---
 title: Code Block
-description: A code block highlighted with Shiki that can type its code out, character by character.
-updatedDate: '2026-10-18'
+description: shadcn/ui's code block, animated. The code types itself out with a cursor at its end, the block follows the last line, and the copy button's icon swaps.
+updatedDate: '2026-10-25'
 ---
 
 <ComponentPreview name="animate-ui/code-block" />
 
 ## Installation
 
-<Installation />
+<Installation name="code-block">
 
-The code is highlighted with [Shiki](https://shiki.style), a peer dependency of this primitive, loaded on demand:
+Import the primitives:
 
-```npm
-npm install shiki
+```tsx title="components/ui/code-block.tsx"
+import * as CodeBlockPrimitive from '@animate-ui/react/primitives/code-block'; // [!code ++]
+import { CopyButton, CopyButtonIcon } from '@animate-ui/react/primitives/buttons/copy'; // [!code ++]
 ```
+
+In `CodeBlockCopyButton`, the Copy Button copies and swaps the icons: it replaces the timer, the click handler and the two icons.
+
+```tsx title="components/ui/code-block.tsx"
+function CodeBlockCopyButton({
+  value,
+  variant = 'ghost',
+  size = 'icon-xs',
+  className,
+  ...props
+}: React.ComponentProps<typeof Button> & { value: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  return (
+    <>
+      <CopyButton
+        asChild
+        data-slot="code-block-copy-button"
+        content={value}
+        delay={2000}
+        onCopiedChange={setCopied}
+      >
+        <Button
+          data-copied={copied || undefined}
+          variant={variant}
+          size={size}
+          aria-label={copied ? 'Copied' : 'Copy'}
+          className={cn('hover:bg-foreground/5 dark:hover:bg-foreground/10', className)}
+          {...props}
+        >
+          <CopyButtonIcon icon={<CopyIcon />} copiedIcon={<CheckIcon />} />
+        </Button>
+      </CopyButton>
+      <span aria-live="polite" className="sr-only">
+        {copied ? 'Copied' : ''}
+      </span>
+    </>
+  );
+}
+```
+
+In `CodeBlockContent`, the `pre` becomes the primitive's `Content` (its props, classes and children stay): it takes `writing` and `cursor`.
+
+```tsx title="components/ui/code-block.tsx"
+}: React.ComponentProps<'pre'> & { // [!code --]
+}: React.ComponentProps<typeof CodeBlockPrimitive.Content> & { // [!code ++]
+  wrap?: boolean;
+  lineNumbers?: boolean;
+  startLine?: number;
+}) {
+  return (
+    <pre // [!code --]
+    <CodeBlockPrimitive.Content // [!code ++]
+      data-slot="code-block-content"
+      …
+    </pre> // [!code --]
+    </CodeBlockPrimitive.Content> // [!code ++]
+  );
+}
+```
+
+`CodeBlockLine` and the other parts stay as they are.
+
+</Installation>
+
+shadcn/ui's Code Block isn't built on a primitive library: `animate-ui animate code-block` rewrites it in place instead. Its `pre` becomes the code-block primitive's `Content`, and its copy button is built on the [Copy Button](/docs/primitives/animate-ui/copy-button), keeping your icons. A part you changed is left as it is, and the CLI points here: the Manual tab lists the edits.
 
 ## Usage
 
 ```tsx
-import { CodeBlock } from '@animate-ui/react/primitives/code-block';
+import { useCodeWriting } from '@animate-ui/react/primitives/code-block';
 
-export function Snippet() {
+import { useHighlightedCode } from '@/hooks/use-highlighted-code';
+import {
+  CodeBlock,
+  CodeBlockActions,
+  CodeBlockContent,
+  CodeBlockCopyButton,
+  CodeBlockHeader,
+  CodeBlockLine,
+  CodeBlockTitle,
+} from '@/components/ui/code-block';
+
+export function Snippet({ code }: { code: string }) {
+  const written = useCodeWriting<HTMLDivElement>(code, {
+    duration: 4000,
+    inView: true,
+  });
+  const lines = useHighlightedCode(written.code, 'ts');
+
   return (
-    <CodeBlock
-      code="console.log('Hello, world!');"
-      lang="javascript"
-      writing
-      duration={2000}
-    />
+    <CodeBlock ref={written.ref}>
+      <CodeBlockHeader>
+        <CodeBlockTitle>route.ts</CodeBlockTitle>
+        <CodeBlockActions>
+          <CodeBlockCopyButton value={code} />
+        </CodeBlockActions>
+      </CodeBlockHeader>
+      <CodeBlockContent writing={written.writing} lineNumbers>
+        {lines.map((line, index) => (
+          <CodeBlockLine key={index}>{line}</CodeBlockLine>
+        ))}
+      </CodeBlockContent>
+    </CodeBlock>
   );
 }
 ```
 
-The block renders Shiki's `<pre>` inside a div. Style it through that div (`[&_pre]:…`, `[&_.line]:…`); `data-writing` and `data-done` let you show a cursor while it types.
+Everything else is shadcn/ui's: the [composition](https://ui.shadcn.com/docs/components/base/code-block#composition), plain string content, line numbers, wrapping, diff and highlighted lines, the small size and the destructive variant. Without `useCodeWriting`, the block shows its code at once, like shadcn/ui's.
 
-## Ready-made block
+`useCodeWriting` types the code out and returns what is written so far: highlight that, and give `writing` to `CodeBlockContent` for the cursor and the scroll. Its `ref` goes on the element whose entering the viewport starts the writing (with `inView`). The copy button copies the whole `value`, even while the code is being written.
 
-A styled block around the primitive, with a cursor while it types and a copy button, is a file you add to your project and own:
+## Animation
 
-<RegistryInstallation name="components-code-block" />
+- With `useCodeWriting`, the code appears one character at a time, evenly over `duration` (after `delay`). With `cadence: 'natural'`, it types like someone typing instead: quicker inside a word, pausing after punctuation and at the end of a line, the next line's indentation coming at once. Each new line is highlighted as it comes: `useHighlightedCode` tokenizes only the lines that are new.
+- While it writes, `CodeBlockContent` shows a cursor (`|`) at the end of the last line (`cursor={false}` hides it) and scrolls smoothly to follow the last line.
+- The last characters written fade in behind the cursor, on `CodeBlockLine`s (plain string content gets the cursor only): transparent right behind it, opaque again 4 characters back. When the writing pauses (450ms without a new character) or moves to a new line, the fade slides off the end in 250ms (ease-out `cubic-bezier(0.23, 1, 0.32, 1)`), and the cursor pulses until it goes on.
+- With `inView`, writing starts when the block scrolls into view.
+- The copy button's icon shrinks into a blur as the check grows out of it when the code is copied, and swaps back after 2 seconds ([Copy Button](/docs/primitives/animate-ui/copy-button)); the button scales to 0.97 while pressed.
+- Wrapping on or off (`wrap`), the lines glide to their new place and the block to its new height, in 300ms with the same ease-out.
+- Under reduced motion, the whole code is shown at once (`onDone` is still called), so there is no cursor or fade; wrapping changes at once; the copy icons crossfade through their blur without scaling, and the button doesn't scale.
 
-```tsx
-import { CodeBlock } from '@/components/animate-ui/components/code-block';
+## API Reference
 
-export function Snippet() {
-  return (
-    <CodeBlock
-      code="console.log('Hello, world!');"
-      lang="javascript"
-      writing
-      duration={2000}
-    />
-  );
-}
-```
+Every part takes [shadcn/ui's props](https://ui.shadcn.com/docs/components/base/code-block#api-reference). Animate UI adds, through `CodeBlockPrimitive.Content`:
 
-It takes every prop of the primitive, plus:
+### CodeBlockContent
 
 <TypeTable
   type={{
-    cursor: {
-      description: 'Show a cursor at the end of the code while it types.',
-      type: 'boolean',
-      default: 'true',
-    },
-    copyButton: {
-      description: 'Show a button copying the code, in the top right corner.',
-      type: 'boolean',
-      default: 'true',
-    },
-    scrollClassName: {
+    writing: {
       description:
-        'Classes of the scrolling surface around the code (its size, background, padding).',
-      type: 'string',
+        'The code is being written: show the cursor and follow the last line.',
+      type: 'boolean',
+      default: 'false',
+    },
+    cursor: {
+      description: 'Show a cursor at the end of the code while it writes.',
+      type: 'boolean',
+      default: 'true',
     },
   }}
 />
 
-## Animation
+### useCodeWriting
 
-- With `writing`, the code appears one character at a time, evenly over `duration` (after `delay`), and the block and `scrollContainerRef` (its parent element by default) scroll smoothly to follow the last line.
-- With `inView`, writing starts when the block scrolls into view.
-- Under reduced motion, the whole code is shown at once (`onDone` is still called).
+`useCodeWriting(code, options, ref?)` returns `{ ref, code, writing, done, isInView }`: `code` is what is written so far, `writing` is true until the whole code is shown.
 
-## API Reference
+<TypeTable
+  type={{
+    writing: {
+      description: 'Type the code out instead of showing it at once.',
+      type: 'boolean',
+      default: 'true',
+    },
+    duration: {
+      description: 'How long writing takes, in milliseconds.',
+      type: 'number',
+      default: '5000',
+    },
+    delay: {
+      description: 'Delay before writing starts, in milliseconds.',
+      type: 'number',
+      default: '0',
+    },
+    cadence: {
+      description:
+        'How the characters are spaced out: evenly, or like someone typing.',
+      type: "'even' | 'natural'",
+      default: "'even'",
+    },
+    onDone: {
+      description: 'Called once the whole code is shown.',
+      type: '() => void',
+    },
+    onWrite: {
+      description: 'Called on each written character, and once done.',
+      type: '(info: { index: number; length: number; done: boolean }) => void',
+    },
+    inView: {
+      description: 'Start writing only once `ref`’s element is in view.',
+      type: 'boolean',
+      default: 'false',
+    },
+    inViewMargin: {
+      description: 'Margin around the viewport for `inView`.',
+      type: 'string',
+      default: '"0px"',
+    },
+    inViewOnce: {
+      description:
+        'With `inView`, write only the first time it comes into view.',
+      type: 'boolean',
+      default: 'true',
+    },
+  }}
+/>
 
-### CodeBlock
+## Primitive
+
+`@animate-ui/react/primitives/code-block` also exports the `CodeBlock` primitive: one element that highlights a whole `code` with Shiki's `codeToHtml` (a peer dependency, loaded on demand) and types it out.
+
+```tsx
+import { CodeBlock } from '@animate-ui/react/primitives/code-block';
+
+<CodeBlock code="console.log('Hello, world!');" lang="javascript" writing />;
+```
+
+### CodeBlock (primitive)
 
 <TypeTable
   type={{

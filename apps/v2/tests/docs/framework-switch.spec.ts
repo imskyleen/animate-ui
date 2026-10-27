@@ -29,6 +29,29 @@ test('a component switches to the same component in the other framework', async 
   await page.waitForURL('**/docs/primitives/base-ui/accordion');
 });
 
+// Bug: an Animate UI page was looked for among reka-ui's, so it switched to
+// the introduction; and back from Vue, a page Radix has too went to Radix's.
+test('an Animate UI page switches to the same Animate UI page, both ways', async ({
+  page,
+}) => {
+  await page.goto('/docs/primitives/animate-ui/code-block', {
+    waitUntil: 'networkidle',
+  });
+  await ready(page);
+  await tab(page, 'Vue').click();
+  await page.waitForURL('**/docs/vue/primitives/animate-ui/code-block');
+  await ready(page);
+  await tab(page, 'React').click();
+  await page.waitForURL('**/docs/primitives/animate-ui/code-block');
+
+  await page.goto('/docs/vue/primitives/animate-ui/tabs', {
+    waitUntil: 'networkidle',
+  });
+  await ready(page);
+  await tab(page, 'React').click();
+  await page.waitForURL('**/docs/primitives/animate-ui/tabs');
+});
+
 test('switching to the same component plays no page transition', async ({
   page,
 }) => {

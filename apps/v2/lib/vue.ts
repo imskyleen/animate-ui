@@ -148,6 +148,15 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
       },
     },
   },
+  'animate-ui/carousel': {
+    Carousel: {
+      scale: { value: 0.8, min: 0.5, max: 1, step: 0.05 },
+      visible: { value: 3, min: 1, max: 5, step: 1 },
+      loop: { value: true },
+      dots: { value: true },
+      counter: { value: true },
+    },
+  },
   'animate-ui/bottom-navigation': {
     BottomNavigation: {
       scrollBehavior: {
@@ -633,9 +642,13 @@ export const VUE_DEMO_CONTROLS: Record<string, Controls> = {
   'animate-ui/code-block': {
     CodeBlock: {
       delay: { value: 0, min: 0, max: 3000, step: 100 },
-      duration: { value: 10000, min: 0, max: 30000, step: 1000 },
+      duration: { value: 6000, min: 0, max: 30000, step: 1000 },
       writing: { value: true },
       cursor: { value: true },
+      cadence: {
+        value: 'even',
+        options: { even: 'even', natural: 'natural' },
+      },
     },
   },
   'animate-ui/page-transition': {

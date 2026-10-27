@@ -20,8 +20,8 @@ import { isVuePath } from '@/lib/vue';
 
 export type Framework = 'react' | 'vue';
 
-const REACT_PRIMITIVE = /^\/docs\/primitives\/[^/]+\/([^/]+)$/;
-const VUE_PRIMITIVE = /^\/docs\/vue\/primitives\/[^/]+\/([^/]+)$/;
+const REACT_PRIMITIVE = /^\/docs\/primitives\/([^/]+)\/([^/]+)$/;
+const VUE_PRIMITIVE = /^\/docs\/vue\/primitives\/([^/]+)\/([^/]+)$/;
 
 function collectUrls(nodes: PageTree.Node[], urls: Set<string>) {
   for (const node of nodes) {
@@ -45,20 +45,35 @@ function counterpart(
   preferred: string | null,
 ) {
   if (target === 'vue') {
-    const slug = REACT_PRIMITIVE.exec(pathname)?.[1];
+    const [, library, slug] = REACT_PRIMITIVE.exec(pathname) ?? [];
+    if (slug) {
+      // Animate UI's own pages first, then reka-ui's for the others.
+      const libraries =
+        library === 'animate-ui'
+          ? ['animate-ui', 'reka-ui']
+          : ['reka-ui', 'animate-ui'];
+      for (const vue of libraries) {
+        const url = `/docs/vue/primitives/${vue}/${slug}`;
+        if (urls.has(url)) return { href: url, same: true };
+      }
+      return { href: '/docs/vue', same: false };
+    }
     const guide = /^\/docs(?:\/(.+))?$/.exec(pathname)?.[1];
-    const url = slug
-      ? `/docs/vue/primitives/reka-ui/${slug}`
-      : guide
-        ? `/docs/vue/${GUIDE_PAGES[guide] ?? guide}`
-        : '/docs/vue';
+    const url = guide
+      ? `/docs/vue/${GUIDE_PAGES[guide] ?? guide}`
+      : '/docs/vue';
     return urls.has(url)
       ? { href: url, same: true }
       : { href: '/docs/vue', same: false };
   }
-  const slug = VUE_PRIMITIVE.exec(pathname)?.[1];
+  const [, library, slug] = VUE_PRIMITIVE.exec(pathname) ?? [];
   if (slug) {
-    const libraries = [preferred, 'radix-ui', ...LIBRARIES.map((l) => l.id)];
+    const libraries = [
+      ...(library === 'animate-ui' ? ['animate-ui'] : []),
+      preferred,
+      'radix-ui',
+      ...LIBRARIES.map((l) => l.id),
+    ];
     for (const library of libraries) {
       const url = `/docs/primitives/${library}/${slug}`;
       if (library && urls.has(url)) return { href: url, same: true };

@@ -1,61 +1,368 @@
 "use client"
 
-import { useTheme } from "next-themes"
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "cn"
 
-import { CodeBlock } from "@/registry/components/code-block"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import * as CodeBlockPrimitive from "@animate-ui/react/primitives/code-block"
+import {
+  CopyButton,
+  CopyButtonIcon,
+} from "@animate-ui/react/primitives/buttons/copy"
 
-const CODE = `'use client';
+import { Button } from "@/components/ui/button"
 
-import * as React from 'react';
+const codeBlockVariants = cva(
+  "group/code-block relative flex w-full min-w-0 flex-col overflow-hidden rounded-2xl text-sm has-[>[data-slot=code-block-content]:focus-visible]:ring-3 has-[>[data-slot=code-block-content]:focus-visible]:ring-ring/30 data-[size=sm]:rounded-xl data-[size=sm]:text-xs",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-muted text-foreground ring-1 ring-foreground/5 dark:ring-foreground/10",
+        destructive:
+          "bg-destructive/5 text-destructive ring-1 ring-destructive/15 dark:bg-destructive/10 dark:ring-destructive/20",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
 
-type MyComponentProps = {
-  myProps: string;
-} & React.ComponentProps<'div'>;
-
-function MyComponent(props: MyComponentProps) {
+function CodeBlock({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof codeBlockVariants> & { size?: "default" | "sm" }) {
   return (
-    <div {...props}>
-      <p>My Component</p>
-    </div>
-  );
+    <div
+      data-slot="code-block"
+      data-variant={variant}
+      data-size={size}
+      className={cn(codeBlockVariants({ variant }), className)}
+      {...props}
+    />
+  )
 }
 
-export { MyComponent, type MyComponentProps };`
+function CodeBlockHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="code-block-header"
+      className={cn(
+        "flex min-w-0 shrink-0 items-center gap-2 px-4 pt-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pt-3 group-data-[variant=destructive]/code-block:text-destructive *:has-[>[data-slot=code-block-title]]:min-w-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CodeBlockTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="code-block-title"
+      className={cn(
+        "min-w-0 truncate font-sans text-sm font-medium text-foreground group-data-[size=sm]/code-block:text-xs group-data-[variant=destructive]/code-block:text-destructive [&_svg]:pointer-events-none [&_svg]:inline-block [&_svg]:align-middle [&_svg:not([class*='size-'])]:size-4 group-data-[size=sm]/code-block:[&_svg:not([class*='size-'])]:size-3.5 *:[svg]:me-1.5",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CodeBlockActions({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="code-block-actions"
+      className={cn(
+        "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-foreground/5 dark:*:data-[slot=button]:hover:bg-foreground/10 [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:end-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:end-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:ring-1 [[data-slot=code-block]>&]:*:[button]:ring-foreground/10",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CodeBlockCopyButton({
+  value,
+  variant = "ghost",
+  size = "icon-xs",
+  className,
+  ...props
+}: React.ComponentProps<typeof Button> & { value: string }) {
+  const [copied, setCopied] = React.useState(false)
+
+  return (
+    <>
+      <CopyButton
+        asChild
+        data-slot="code-block-copy-button"
+        content={value}
+        delay={2000}
+        onCopiedChange={setCopied}
+      >
+        <Button
+          data-copied={copied || undefined}
+          variant={variant}
+          size={size}
+          aria-label={copied ? "Copied" : "Copy"}
+          className={cn(
+            "hover:bg-foreground/5 dark:hover:bg-foreground/10",
+            className
+          )}
+          {...props}
+        >
+          <CopyButtonIcon
+            icon={<HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />}
+            copiedIcon={<HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />}
+          />
+        </Button>
+      </CopyButton>
+      <span aria-live="polite" className="sr-only">
+        {copied ? "Copied" : ""}
+      </span>
+    </>
+  )
+}
+
+function CodeBlockContent({
+  className,
+  children,
+  style,
+  wrap = false,
+  lineNumbers = false,
+  startLine = 1,
+  ...props
+}: React.ComponentProps<typeof CodeBlockPrimitive.Content> & {
+  wrap?: boolean
+  lineNumbers?: boolean
+  startLine?: number
+}) {
+  return (
+    <CodeBlockPrimitive.Content
+      data-slot="code-block-content"
+      data-wrap={wrap || undefined}
+      data-numbered={lineNumbers || undefined}
+      dir="ltr"
+      tabIndex={0}
+      style={{ counterReset: `line ${startLine - 1}`, ...style }}
+      className={cn(
+        "min-h-0 min-w-0 scroll-fade-x scrollbar-thin overflow-auto px-4 py-4 text-start font-mono leading-relaxed outline-none group-has-data-[slot=code-block-footer]/code-block:pb-2 group-has-data-[slot=code-block-header]/code-block:pt-2 group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:py-3 group-data-[size=sm]/code-block:group-has-data-[slot=code-block-header]/code-block:pt-1.5 data-wrap:scroll-fade-y data-wrap:wrap-break-word data-wrap:whitespace-pre-wrap",
+        className
+      )}
+      {...props}
+    >
+      <code
+        data-slot="code-block-code"
+        className="grid min-h-lh min-w-max content-start in-data-numbered:grid-cols-[auto_1fr] in-data-wrap:min-w-0"
+      >
+        {lineNumbers && typeof children === "string"
+          ? children
+              .replace(/\n$/, "")
+              .split("\n")
+              .map((line, index) => (
+                <CodeBlockLine key={index}>{line}</CodeBlockLine>
+              ))
+          : children}
+      </code>
+    </CodeBlockPrimitive.Content>
+  )
+}
+
+const codeBlockLineVariants = cva(
+  "relative -mx-4 block min-h-lh px-4 group-data-[size=sm]/code-block:-mx-3 group-data-[size=sm]/code-block:px-3 before:min-w-6 before:text-end before:text-muted-foreground after:absolute after:start-1 after:top-0 after:text-muted-foreground after:select-none in-data-numbered:col-span-2 in-data-numbered:grid in-data-numbered:grid-cols-subgrid in-data-numbered:gap-x-3 in-data-numbered:[counter-increment:line] in-data-numbered:before:content-[counter(line)] in-data-numbered:before:select-none in-data-numbered:supports-[content:counter(line)_/_'']:before:content-[counter(line)_/_'']",
+  {
+    variants: {
+      variant: {
+        default: "",
+        added: "bg-foreground/5 after:content-['+']",
+        removed: "bg-destructive/10 after:text-destructive after:content-['−']",
+        highlighted: "bg-foreground/5",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function CodeBlockLine({
+  className,
+  variant = "default",
+  children,
+  ...props
+}: React.ComponentProps<"span"> & VariantProps<typeof codeBlockLineVariants>) {
+  // An empty line holds a newline so copying a selection keeps blank lines.
+  const empty =
+    children === undefined ||
+    children === null ||
+    children === "" ||
+    (Array.isArray(children) && children.length === 0)
+
+  return (
+    <span
+      data-slot="code-block-line"
+      data-variant={variant}
+      className={cn(codeBlockLineVariants({ variant }), className)}
+      {...props}
+    >
+      <span data-slot="code-block-line-content" className="min-w-0">
+        {empty ? "\n" : children}
+      </span>
+    </span>
+  )
+}
+
+function CodeBlockFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="code-block-footer"
+      className={cn(
+        "flex min-w-0 shrink-0 items-center gap-2 px-4 pb-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pb-3",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  CodeBlock,
+  CodeBlockHeader,
+  CodeBlockTitle,
+  CodeBlockActions,
+  CodeBlockCopyButton,
+  CodeBlockContent,
+  CodeBlockLine,
+  CodeBlockFooter,
+}
+
+import {
+  Download01Icon,
+  FileCodeIcon,
+  TextWrapIcon,
+} from "@hugeicons/core-free-icons"
+import { useCodeWriting } from "@animate-ui/react/primitives/code-block"
+
+import { useHighlightedCode } from "@/hooks/use-highlighted-code"
+
+const code = `import { streamText } from "ai"
+
+export async function POST(request: Request) {
+  const { messages } = await request.json()
+
+  const result = streamText({
+    model: "anthropic/claude-sonnet-4.5",
+    system: "You are a helpful assistant. Answer in one short paragraph.",
+    messages,
+  })
+
+  return result.toUIMessageStreamResponse()
+}`
+
+// The block keeps its full height while the code is written.
+const LINES = code.split("\n").length
+
+function download(value: string, filename: string) {
+  const url = URL.createObjectURL(new Blob([value], { type: "text/plain" }))
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
 
 export const controls = {
   CodeBlock: {
     delay: { value: 0, min: 0, max: 3000, step: 100 },
-    duration: { value: 10000, min: 0, max: 30000, step: 1000 },
+    duration: { value: 6000, min: 0, max: 30000, step: 1000 },
     writing: { value: true },
     cursor: { value: true },
+    cadence: {
+      value: "even",
+      options: { even: "even", natural: "natural" },
+    },
   },
 }
 
 export default function CodeBlockDemo({
   delay = 0,
-  duration = 10000,
+  duration = 6000,
   writing = true,
   cursor = true,
+  cadence = "even",
 }: {
-  delay?: number
-  duration?: number
-  writing?: boolean
-  cursor?: boolean
+  delay?: number | string
+  duration?: number | string
+  writing?: boolean | string
+  cursor?: boolean | string
+  cadence?: "natural" | "even"
 }) {
-  const { resolvedTheme } = useTheme()
+  const [wrap, setWrap] = React.useState(false)
+  const written = useCodeWriting<HTMLDivElement>(code, {
+    writing: String(writing) === "true",
+    delay: Number(delay),
+    duration: Number(duration),
+    cadence,
+    inView: true,
+  })
+  const lines = useHighlightedCode(written.code, "ts")
 
   return (
-    <CodeBlock
-      key={`${delay}-${duration}-${writing}`}
-      code={CODE}
-      lang="tsx"
-      theme={resolvedTheme === "dark" ? "dark" : "light"}
-      writing={writing}
-      delay={delay}
-      duration={duration}
-      cursor={cursor}
-      className="w-[420px] max-w-full"
-      scrollClassName="h-[372px] max-h-none"
-    />
+    <div className="w-full max-w-lg">
+      <CodeBlock ref={written.ref}>
+        <CodeBlockHeader>
+          <CodeBlockTitle>
+            <HugeiconsIcon icon={FileCodeIcon} strokeWidth={2} />
+            app/api/chat/route.ts
+          </CodeBlockTitle>
+          <CodeBlockActions>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              aria-label="Wrap lines"
+              aria-pressed={wrap}
+              className="aria-pressed:text-foreground"
+              onClick={() => setWrap(!wrap)}
+            >
+              <HugeiconsIcon icon={TextWrapIcon} strokeWidth={2} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              aria-label="Download"
+              onClick={() => download(code, "route.ts")}
+            >
+              <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+            </Button>
+            <CodeBlockCopyButton value={code} />
+          </CodeBlockActions>
+        </CodeBlockHeader>
+        <CodeBlockContent
+          wrap={wrap}
+          lineNumbers
+          writing={written.writing}
+          cursor={String(cursor) === "true"}
+          style={{ minHeight: `calc(${LINES}lh + 1.5rem)` }}
+        >
+          {lines.map((line, index) => (
+            <CodeBlockLine
+              key={index}
+              variant={index >= 5 && index <= 9 ? "highlighted" : "default"}
+            >
+              {line}
+            </CodeBlockLine>
+          ))}
+        </CodeBlockContent>
+      </CodeBlock>
+    </div>
   )
 }

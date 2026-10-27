@@ -135,7 +135,7 @@ test('no registry component shadows a global name', () => {
   expect(shadowing).toEqual([]);
 });
 
-test('the styled buttons and code block are registry files, not package exports', () => {
+test('the styled buttons are registry files; the code block and carousel are shadcn/ui\'s own, animated from the package', () => {
   const PACKAGE = join(__dirname, '../../../../packages/react/src/primitives');
   for (const name of ['liquid', 'flip', 'github-stars', 'theme-toggler']) {
     const item = JSON.parse(
@@ -151,14 +151,14 @@ test('the styled buttons and code block are registry files, not package exports'
     expect(item.files[0]!.content).not.toMatch(/from '\.\.?\//);
     expect(existsSync(join(PACKAGE, 'buttons', name))).toBe(false);
   }
-  const block = JSON.parse(
-    readFileSync(join(OUT, 'components-code-block.json'), 'utf8'),
-  ) as { dependencies: string[]; files: { target: string }[] };
-  expect(block.files[0]!.target).toBe(
-    '@components/animate-ui/components/code-block.tsx',
-  );
-  expect(block.dependencies).toContain('shiki');
-  expect(existsSync(join(PACKAGE, 'code-block'))).toBe(true);
+  // shadcn/ui's own files, animated by the package: no registry copy.
+  for (const name of ['code-block', 'carousel']) {
+    expect(existsSync(join(OUT, `components-${name}.json`))).toBe(false);
+    expect(existsSync(join(PACKAGE, name))).toBe(true);
+  }
+  expect(
+    readFileSync(join(PACKAGE, 'code-block', 'index.tsx'), 'utf8'),
+  ).toMatch(/export \{[^}]*\bContent\b/);
 });
 
 test('a demo built on a primitive that uses another one declares that one’s peers too', () => {

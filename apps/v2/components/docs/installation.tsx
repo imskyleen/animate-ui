@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -40,6 +41,7 @@ export async function Command({
 const PRIMITIVES = '@animate-ui/react/primitives/';
 
 const DROP_INS: Record<string, string> = {
+  carousel: 'embla-carousel-react',
   'input-otp': 'input-otp',
   questionnaire: '@shadcn/react/questionnaire',
 };
@@ -120,7 +122,10 @@ async function ImportDiff({
     const { from, to } = swap(module!, imported);
     const single = named
       ? `import { ${specifiers.join(', ')} }`
-      : `import ${clause!.trim()}`;
+      : `import ${clause!
+          .trim()
+          .replace(/\s+/g, ' ')
+          .replace(/,\s*\}/, ' }')}`;
     if (
       !named ||
       specifiers.length === 1 ||
@@ -150,6 +155,7 @@ const VUE_MODULE = '@animate-ui/vue/primitives/reka-ui';
 
 /** The package each shadcn-vue component imports that Animate UI replaces: reka-ui unless listed. */
 const VUE_SWAPS: Record<string, [string, string]> = {
+  carousel: ['embla-carousel-vue', '@animate-ui/vue/primitives/carousel'],
   'input-otp': ['vue-input-otp', '@animate-ui/vue/primitives/input-otp'],
 };
 
@@ -160,8 +166,22 @@ async function VueImportDiff({ name }: { name: string }) {
   const files = await readdir(dir).catch(() => [] as string[]);
   const values = new Set<string>();
   const types = new Set<string>();
-  for (const file of files.filter((f) => f.endsWith('.vue')).sort()) {
+  const defaults: string[] = [];
+  // Packages other than reka-ui can be imported from the component's .ts files.
+  const sources = files.filter(
+    (f) =>
+      f.endsWith('.vue') ||
+      (Object.hasOwn(VUE_SWAPS, name) && f.endsWith('.ts')),
+  );
+  for (const file of sources.sort()) {
     const code = await readFile(path.join(dir, file), 'utf8');
+    for (const [, type, local] of code.matchAll(
+      new RegExp(
+        `^import\\s+(type\\s+)?(\\w+)\\s+from\\s+["']${from}["']`,
+        'gm',
+      ),
+    ))
+      defaults.push(`${type ? 'import type' : 'import'} ${local}`);
     for (const [, type, names] of code.matchAll(
       new RegExp(
         `^import\\s+(type\\s+)?\\{([^}]*)\\}\\s+from\\s+["']${from}["']`,
@@ -173,6 +193,10 @@ async function VueImportDiff({ name }: { name: string }) {
   }
   const lines: string[] = [];
   let diff = '';
+  for (const clause of defaults) {
+    lines.push(`${clause} from '${from}'`, `${clause} from '${to}'`);
+    diff += '-+';
+  }
   for (const [kind, names] of [
     ['import type', types],
     ['import', values],
@@ -268,10 +292,13 @@ export function Installation({
   name,
   library,
   framework,
+  children,
 }: {
   name?: string;
   library?: LibraryId;
   framework?: 'react' | 'vue';
+  /** The edits to make by hand, for a component with no import to swap. */
+  children?: ReactNode;
 }) {
   const vue = library === 'reka-ui' || framework === 'vue';
   const packages = vue
@@ -305,12 +332,20 @@ export function Installation({
               </Step>
               <Step>
                 <h3>Animate it</h3>
-                <p>
-                  The CLI finds your {kit} components through{' '}
-                  <code>components.json</code>, swaps their primitive imports
-                  for Animate UI&apos;s and removes the CSS animation classes
-                  Motion replaces.
-                </p>
+                {children ? (
+                  <p>
+                    The CLI finds your {kit} components through{' '}
+                    <code>components.json</code> and makes the edits the Manual
+                    tab lists for you.
+                  </p>
+                ) : (
+                  <p>
+                    The CLI finds your {kit} components through{' '}
+                    <code>components.json</code>, swaps their primitive imports
+                    for Animate UI&apos;s and removes the CSS animation classes
+                    Motion replaces.
+                  </p>
+                )}
                 <Command
                   command={(m) =>
                     `${m.dlx} @animate-ui/cli@latest animate ${name}`
@@ -329,15 +364,32 @@ export function Installation({
                 <h3>Install the packages</h3>
                 <Command command={(m) => `${m.add} ${packages}`} />
               </Step>
-              <Step>
-                <h3>Swap the import</h3>
-                {vue ? (
-                  <VueImportDiff name={name} />
-                ) : (
-                  library && <ImportDiff library={library} name={name} />
-                )}
-              </Step>
-              <RemoveCss library={library} name={name} />
+              {children ? (
+                <>
+                  <Step>
+                    <h3>Add the {kit} component</h3>
+                    <Command
+                      command={(m) => `${m.dlx} ${shadcn}@latest add ${name}`}
+                    />
+                  </Step>
+                  <Step>
+                    <h3>Edit the component</h3>
+                    {children}
+                  </Step>
+                </>
+              ) : (
+                <>
+                  <Step>
+                    <h3>Swap the import</h3>
+                    {vue ? (
+                      <VueImportDiff name={name} />
+                    ) : (
+                      library && <ImportDiff library={library} name={name} />
+                    )}
+                  </Step>
+                  <RemoveCss library={library} name={name} />
+                </>
+              )}
             </Steps>
           ),
         },

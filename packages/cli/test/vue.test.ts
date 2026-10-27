@@ -36,7 +36,8 @@ const changedLines = (before: string, after: string) => {
 };
 
 describe('transformVue, on shadcn-vue’s own files', () => {
-  for (const name of Object.keys(VUE_PRIMITIVES))
+  // The code block is rewritten in place, not just swapped: code-block.test.ts.
+  for (const name of Object.keys(VUE_PRIMITIVES).filter((name) => name !== 'code-block'))
     test(`${name}: every reka-ui import swapped, nothing else but animation classes`, () => {
       for (const { file, code } of files(name)) {
         const result = transformVue(code, name)!;
@@ -254,6 +255,20 @@ describe('animate, in a shadcn-vue project', () => {
     expect(readFileSync(ui('switch', 'Switch.vue'), 'utf8')).toContain(
       'from "reka-ui"',
     );
+  });
+
+  test('animates the code block in place and says what it rewrote', () => {
+    cpSync(path.join(FIXTURES, 'code-block'), ui('code-block'), {
+      recursive: true,
+    });
+    const { code, output } = run(['code-block']);
+    expect(code).toBe(0);
+    expect(output).toContain('CodeBlockContent: pre → CodeBlockContentPrimitive');
+    expect(output).toContain('CodeBlockCopyButton: built on CopyButton');
+    expect(readFileSync(ui('code-block', 'CodeBlockContent.vue'), 'utf8')).toContain(
+      '<CodeBlockContentPrimitive',
+    );
+    expect(run(['code-block']).output).toContain('Nothing to animate');
   });
 
   test('all: every supported folder, the others listed', () => {

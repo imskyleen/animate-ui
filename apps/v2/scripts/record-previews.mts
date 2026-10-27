@@ -609,7 +609,35 @@ const PLAYS: Record<string, Omit<Preview, 'id' | 'demo'>> = {
   click: {
     play: toggle((page) => page.locator('main').getByText(/./).first(), 500),
   },
-  'code-block': { mount: true, tail: 2500 },
+  carousel: {
+    viewport: { width: 860, height: 645 },
+    async play(page) {
+      const next = page.locator('main [data-slot="carousel-next"]');
+      await press(page, next);
+      await wait(page, 900);
+      await press(page, next);
+      await wait(page, 900);
+      const box = (await page
+        .locator('main [data-slot="carousel-content"]')
+        .boundingBox())!;
+      await glide(page, box.x + box.width / 2, box.y + box.height / 2, 300);
+      await page.mouse.down();
+      await glide(
+        page,
+        box.x + box.width / 2 + 180,
+        box.y + box.height / 2,
+        600,
+      );
+      await page.mouse.up();
+      await wait(page, 1000);
+      await away(page);
+    },
+  },
+  'code-block': {
+    mount: true,
+    tail: 7000,
+    viewport: { width: 640, height: 480 },
+  },
   'page-transition': {
     async play(page) {
       for (const name of ['Docs', 'Blog', 'Home']) {

@@ -270,3 +270,24 @@ test('@animate-ui/react as a peer dependency counts as installed', () => {
   );
   expect(run(['accordion']).output).not.toContain("isn't installed yet");
 });
+
+test('animate code-block rewrites shadcn/ui\'s code block in place and says what it rewrote', () => {
+  const file = path.join(path.dirname(uiFile()), 'code-block.tsx');
+  writeFileSync(
+    file,
+    readFileSync(
+      path.join(import.meta.dirname, 'fixtures-code-block', 'installed.lucide.tsx'),
+      'utf8',
+    ),
+  );
+  const { code, output } = run(['code-block']);
+  expect(code).toBe(0);
+  expect(output).toContain('code-block.tsx');
+  expect(output).toContain('CodeBlockContent: pre → CodeBlockPrimitive.Content');
+  expect(output).toContain('CodeBlockCopyButton: built on CopyButton');
+  const written = readFileSync(file, 'utf8');
+  expect(written).toContain('<CodeBlockPrimitive.Content');
+  expect(written).toContain('<CopyButtonIcon icon={<CopyIcon />} copiedIcon={<CheckIcon />} />');
+  // Again: already animated, nothing to do.
+  expect(run(['code-block']).output).toContain('Nothing to animate');
+});

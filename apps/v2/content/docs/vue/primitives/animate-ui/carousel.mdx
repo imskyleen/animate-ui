@@ -1,0 +1,93 @@
+---
+title: Carousel
+description: Slides that shrink and wait behind the neighbours away from the center, dots that stretch from one to the next and a sliding counter. A drop-in replacement for embla-carousel-vue, with the same API.
+new: true
+---
+
+<VueComponentPreview name="animate-ui/carousel" />
+
+## Installation
+
+<Installation name="carousel" />
+
+shadcn-vue's Carousel is built on [Embla Carousel](https://www.embla-carousel.com). Animate UI's carousel exports exactly the same `emblaCarouselVue` and types and adds the animation, set from `opts`. `animate-ui animate carousel` swaps the `embla-carousel-vue` import for it. It is built on embla-carousel-vue, so keep that dependency (`shadcn-vue add carousel` installs it).
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import {
+  CarouselCounter,
+  CarouselDots,
+} from '@animate-ui/vue/primitives/carousel'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
+</script>
+
+<template>
+  <Carousel :opts="{ loop: true, align: 'center', scale: 0.8, visible: 3 }">
+    <CarouselContent class="-ml-1">
+      <CarouselItem v-for="index in 5" :key="index" class="pl-1">
+        <img
+          :src="`/photo-${index}.jpg`"
+          class="aspect-square rounded-xl object-cover"
+        />
+      </CarouselItem>
+    </CarouselContent>
+    <CarouselPrevious />
+    <CarouselNext />
+    <CarouselDots />
+    <CarouselCounter />
+  </Carousel>
+</template>
+```
+
+Everything else is shadcn-vue's and Embla's: parts, sizes, spacing, orientation, options, API, events and plugins. Without `scale` and `visible`, it lays out and moves exactly like shadcn-vue's.
+
+- `scale` is the neighbours' scale, from 0 to 1: the slides shrink away from the center (1 or none leaves them as they are). Use it with `align: 'center'`, in a loop for slides on both sides (without one, add `containScroll: false` so the first and last slides come to the center too). It scales each slide's content, its first child, so give each `CarouselItem` one.
+- `visible` sizes the slides so that many show, the selected one in the middle, edge to edge with `scale`, keeping your spacing (`pl-*` on the items). With an even number, the slides at the edges show half. A loop needs a slide more than it shows on each side: at least 5 slides for 3 visible, 7 for 4 or 5. The slides are sized once the carousel mounts: on a server-rendered page, give `CarouselItem` a close basis to start from.
+- The edges clip what overflows them, so draw a slide's outline inside it (a border or an inset ring).
+- The arrows sit along the slides, whatever you put under them, standing up too.
+- The slides out of sight, behind the others or past the edges, are `inert` and `aria-hidden` until they show.
+- `CarouselDots` and `CarouselCounter` come from the package: place them anywhere inside `Carousel`. Style them with classes (the dots and pill take `currentColor`). `CarouselCounter`'s default slot gets `current` and `count` for your own text.
+
+## Animation
+
+- With `scale`, the slides follow the scroll, frame by frame, while dragged or snapping: the selected one at its full size, each slide out `scale` times smaller (0.8, then 0.64) and drawn in to keep the gap between slides, out to the ones `visible` shows; the ones past them wait behind, a little smaller still, and slide out from behind as they come in. In a loop, each slide takes the nearest way around, so both sides stay filled. It works the same standing up (`orientation="vertical"`, with a height on `CarouselContent`). Each slide sits above the ones farther from the center.
+- `CarouselDots`: the current dot is a pill that follows the scroll, its front stretching to the next dot over the first half of the way and its back catching up over the second. In a loop, from the last slide to the first, it stretches back across all the dots the same way.
+- `CarouselCounter`: the number slides to the next one ([Sliding Number](/docs/vue/primitives/animate-ui/sliding-number)).
+- Under reduced motion, the slides keep their size and the counter's number changes at once.
+
+## API Reference
+
+`emblaCarouselVue` takes [Embla's options and plugins](https://www.embla-carousel.com/api/options/); shadcn-vue's `Carousel` passes its `opts` to it. Animate UI adds:
+
+### opts
+
+<TypeTable
+  type={{
+    scale: {
+      description:
+        "The neighbours' scale, from 0 to 1: the slides shrink away from the center.",
+      type: 'number',
+    },
+    visible: {
+      description:
+        'How many slides show, the selected one in the middle: sizes the slides.',
+      type: 'number',
+    },
+  }}
+/>
+
+### CarouselDots
+
+The dots, one per slide.
+
+### CarouselCounter
+
+Its default slot gets `current` and `count`; without one, it reads `Slide {current} of {count}`.

@@ -2,6 +2,7 @@ import { parse } from '@babel/parser';
 import type * as t from '@babel/types';
 
 import { centerWithMargins, stripClasses } from './classes';
+import { codeBlockEdits } from './code-block';
 import {
   findPrimitive,
   barrelModule,
@@ -21,6 +22,10 @@ export type TransformResult = {
   centering: string[];
   unsupported: string[];
   beta: string[];
+  /** Parts rewritten in place (the code block, which has no import to swap). */
+  rewritten: string[];
+  /** Parts that didn't have the shape to rewrite: their docs list the edits. */
+  manual: string[];
 };
 
 type Edit = { start: number; end: number; text: string };
@@ -196,6 +201,7 @@ export function transform(
       ['base-ui', baseUiPackageName(source)],
       ['radix-ui', source === 'vaul' ? 'drawer' : undefined],
       ['animate-ui', source === 'input-otp' ? 'input-otp' : undefined],
+      ['animate-ui', source === 'embla-carousel-react' ? 'carousel' : undefined],
       [
         'animate-ui',
         source === '@shadcn/react/questionnaire' ? 'questionnaire' : undefined,
@@ -349,6 +355,18 @@ export function transform(
     walk(ast.program, false);
   }
 
+  const rewritten: string[] = [];
+  const manual: string[] = [];
+  if (/data-slot=["']code-block-(content|copy-button)["']/.test(code)) {
+    const first = ast.program.body.find((node) => node.type === 'ImportDeclaration');
+    const quote = first ? code[first.source.start!]! : '"';
+    const semi = first && code[first.end! - 1] === ';' ? ';' : '';
+    const block = codeBlockEdits(code, ast.program, quote, semi);
+    edits.push(...block.edits);
+    rewritten.push(...block.rewritten);
+    manual.push(...block.manual);
+  }
+
   let output = code;
   for (const edit of edits.sort((a, b) => b.start - a.start)) {
     output = output.slice(0, edit.start) + edit.text + output.slice(edit.end);
@@ -361,5 +379,7 @@ export function transform(
     centering,
     unsupported,
     beta,
+    rewritten,
+    manual,
   };
 }

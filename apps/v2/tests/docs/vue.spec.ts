@@ -54,6 +54,7 @@ const OWN_PAGES = [
   ['spring', 'aria-label="Drag me"'],
   ['pinned-list', 'pinned-list-row.vue'],
   ['bottom-navigation', 'scroll-container="scrollRef"'],
+  ['carousel', 'CarouselDots'],
   ['github-stars', 'github-stars-star.vue'],
   ['motion-grid', 'initializingFrames'],
   ['scroll-progress', 'isGlobal'],
@@ -84,7 +85,7 @@ const OWN_PAGES = [
   ['liquid-button', ':fill-height='],
   ['github-stars-button', 'starVariants'],
   ['theme-toggler-button', 'Moon02Icon'],
-  ['code-block', 'scroll-class='],
+  ['code-block', 'useHighlightedCode(written.code'],
   ['page-transition', 'startTransition'],
 ] as const;
 
@@ -218,7 +219,7 @@ test('the Vue primitives grid shows the Vue components with their own recordings
 }) => {
   await page.goto('/docs/vue/primitives');
   const cards = page.locator('[data-slot="preview-card-root"]');
-  await expect(cards).toHaveCount(75);
+  await expect(cards).toHaveCount(76);
   const posters = await cards
     .locator('img')
     .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));
@@ -376,7 +377,8 @@ test('the Vue sidebar has the React sections, names and order', async ({
   page,
 }) => {
   const rows = async (url: string) => {
-    await page.goto(url);
+    // The sidebar is rendered again once the page settles: read it then.
+    await page.goto(url, { waitUntil: 'networkidle' });
     return page.locator('#nd-sidebar div:has(> p) > a').evaluateAll((links) =>
       links.map((link) => {
         const row = link.cloneNode(true) as HTMLElement;

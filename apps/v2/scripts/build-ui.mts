@@ -13,6 +13,7 @@ type Meta = {
   from?: string;
   target?: string;
   replace?: [string, string][];
+  registryDependencies?: string[];
 };
 
 let count = 0;
@@ -40,7 +41,9 @@ for (const category of ['backgrounds', 'buttons', 'components']) {
       ...content.matchAll(
         /(?:from\s+|import\s+|import\(\s*)["']([^"'.][^"']*)["']/g,
       ),
-    ].map(([, source]) => source!);
+    ]
+      .map(([, source]) => source!)
+      .filter((source) => !source.startsWith('@/'));
     const packages = new Set(
       specifiers
         .map((source) => source.match(/^(@[^/]+\/[^/]+|[^/]+)/)![1]!)
@@ -60,6 +63,9 @@ for (const category of ['backgrounds', 'buttons', 'components']) {
           title: meta.title,
           description: meta.description,
           dependencies,
+          ...(meta.registryDependencies
+            ? { registryDependencies: meta.registryDependencies }
+            : {}),
           files: [
             {
               path: `registry/${category}/${name}/index.tsx`,
