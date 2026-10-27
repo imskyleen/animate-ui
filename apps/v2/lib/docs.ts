@@ -1,4 +1,9 @@
-import type { LibraryId } from './libraries';
+import { LIBRARIES, type LibraryId } from './libraries';
+import {
+  primitiveSection,
+  SECTION_ORDER,
+  type PrimitiveSection,
+} from './primitive-sections';
 import { source } from './source';
 
 type Page = ReturnType<typeof source.getPages>[number];
@@ -25,83 +30,91 @@ export function getPrimitiveUrls(name: string, framework: Framework = 'react') {
 
 type TreeNode = ReturnType<typeof source.getPageTree>['children'][number];
 
-/** The Vue guide in its sidebar order, then its primitives by name. */
-function getVueNeighbours(page: Page) {
-  const tree = source.getPageTree();
-  const vue = [...tree.children, ...(tree.fallback?.children ?? [])].find(
-    (node) =>
-      node.type === 'folder' &&
-      (node.index?.url ?? node.children.find((c) => c.type === 'page')?.url) ===
-        '/docs/vue',
-  );
-  if (vue?.type !== 'folder') return {};
-  const titles = new Map(source.getPages().map((p) => [p.url, p.data.title]));
-  const guide: string[] = vue.index ? [vue.index.url] : [];
-  const walk = (nodes: TreeNode[]) => {
-    for (const node of nodes) {
-      if (node.type === 'page' && !getPrimitiveUrl(node.url))
-        guide.push(node.url);
-      if (node.type === 'folder') {
-        if (node.index) guide.push(node.index.url);
-        walk(node.children);
-      }
+/**
+ * The pages in the sidebar's order: the guide, the primitives by section and
+ * name (each on `library`'s page when it has one, as the sidebar links them),
+ * the backgrounds, then the icons.
+ */
+function sidebarOrder(
+  children: TreeNode[],
+  docs: string,
+  library: LibraryId | undefined,
+  extra: string[],
+) {
+  const guide: string[] = [];
+  const backgrounds: string[] = [];
+  const icons: string[] = [];
+  let primitives: TreeNode[] = [];
+  const pagesOf = (folder: TreeNode) =>
+    folder.type === 'folder'
+      ? folder.children.flatMap((child) =>
+          child.type === 'page' ? [child.url] : [],
+        )
+      : [];
+  for (const node of children) {
+    if (node.type === 'page') guide.push(node.url);
+    if (node.type !== 'folder' || node.root || !node.index) continue;
+    guide.push(node.index.url);
+    if (node.index.url === `${docs}/primitives`) primitives = node.children;
+    if (node.index.url === `${docs}/backgrounds`)
+      backgrounds.push(...pagesOf(node));
+    if (node.index.url === `${docs}/icons`) icons.push(...pagesOf(node));
+  }
+  guide.push(...extra);
+
+  const entries = new Map<string, Partial<Record<LibraryId, string>>>();
+  for (const folder of primitives)
+    for (const url of pagesOf(folder)) {
+      const [id, slug] = url.split('/').slice(-2) as [LibraryId, string];
+      entries.set(slug, { ...entries.get(slug), [id]: url });
     }
-  };
-  walk(vue.children);
-  const primitives = source
-    .getPages()
-    .filter((p) => getPrimitive(p)?.framework === 'vue')
-    .sort((a, b) => a.slugs.at(-1)!.localeCompare(b.slugs.at(-1)!))
-    .map((p) => p.url);
-  const order = [...guide, ...primitives].map((url) => ({
-    name: titles.get(url) ?? url,
-    url,
-  }));
-  const index = order.findIndex((item) => item.url === page.url);
-  if (index === -1) return {};
-  return { previous: order[index - 1], next: order[index + 1] };
+  const sections = new Map<PrimitiveSection, string[]>();
+  for (const [slug, urls] of [...entries].sort(([a], [b]) =>
+    a.localeCompare(b),
+  )) {
+    const ids = LIBRARIES.map((l) => l.id).filter((id) => urls[id]);
+    const section = primitiveSection(
+      slug,
+      ids.every((id) => id === 'animate-ui'),
+    );
+    const url = urls[library!] ?? urls[ids[0]!]!;
+    sections.set(section, [...(sections.get(section) ?? []), url]);
+  }
+
+  return [
+    ...guide,
+    ...SECTION_ORDER.flatMap((section) => sections.get(section) ?? []),
+    ...backgrounds,
+    ...icons,
+  ];
 }
 
-const getPrimitiveUrl = (url: string) =>
-  /^\/docs\/vue\/primitives\/[^/]+\/[^/]+$/.test(url);
-
+/** The pages before and after one, in the sidebar's order. */
 export function getNeighbours(page: Page) {
-  if (page.slugs[0] === 'vue') return getVueNeighbours(page);
-  const library = getPrimitive(page)?.library;
-  type Node = ReturnType<typeof source.getPageTree>['children'][number];
-  const isPrimitive = (url: string) => url.startsWith('/docs/primitives/');
+  const tree = source.getPageTree();
   const titles = new Map(source.getPages().map((p) => [p.url, p.data.title]));
-  const flatten = (nodes: Node[]): { name: string; url: string }[] =>
-    nodes.flatMap((node) => {
-      if (node.type === 'page')
-        return isPrimitive(node.url)
-          ? []
-          : [
-              {
-                name: titles.get(node.url) ?? String(node.name),
-                url: node.url,
-              },
-            ];
-      if (node.type === 'folder')
-        return [
-          ...(node.index && !isPrimitive(node.index.url)
-            ? [{ name: String(node.name), url: node.index.url }]
-            : []),
-          ...flatten(node.children),
-        ];
-      return [];
-    });
-  const guide = flatten(source.getPageTree().children);
-  const primitives = library
-    ? source
-        .getPages()
-        .filter((p) => getPrimitive(p)?.library === library)
-        .sort((a, b) => a.slugs[2]!.localeCompare(b.slugs[2]!))
-        .map((p) => ({ name: p.data.title, url: p.url }))
-    : [];
-
-  const order = [...guide, ...primitives];
-  const index = order.findIndex((item) => item.url === page.url);
+  const library = getPrimitive(page)?.library;
+  let order: string[];
+  if (page.slugs[0] === 'vue') {
+    const vue = [...tree.children, ...(tree.fallback?.children ?? [])].find(
+      (node) =>
+        node.type === 'folder' &&
+        (node.index?.url ??
+          node.children.find((c) => c.type === 'page')?.url) === '/docs/vue',
+    );
+    if (vue?.type !== 'folder') return {};
+    // The Vue sidebar ends its guide with the changelog, shared with React.
+    const changelog = titles.has('/docs/changelog') ? ['/docs/changelog'] : [];
+    order = [
+      ...(vue.index ? [vue.index.url] : []),
+      ...sidebarOrder(vue.children, '/docs/vue', library, changelog),
+    ];
+  } else {
+    order = sidebarOrder(tree.children, '/docs', library, []);
+  }
+  const index = order.indexOf(page.url);
   if (index === -1) return {};
-  return { previous: order[index - 1], next: order[index + 1] };
+  const link = (url: string | undefined) =>
+    url ? { name: titles.get(url) ?? url, url } : undefined;
+  return { previous: link(order[index - 1]), next: link(order[index + 1]) };
 }
