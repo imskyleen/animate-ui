@@ -14,8 +14,9 @@ A Vue project (`vue` in `package.json`, Nuxt, or a `components.json` whose `$sch
 
 The same commands: `animate <component>`, `animate all`, `--exclude`, `--dry-run`. The CLI reads `components.json`, sees shadcn-vue, and in every file of `components/ui/<name>/` swaps `reka-ui` imports for `@animate-ui/vue/primitives/reka-ui` (`vue-input-otp` for `@animate-ui/vue/primitives/input-otp`), removes the CSS animation classes Motion replaces, and gives a sheet's side to its content. It animates accordion, alert-dialog, checkbox, collapsible, combobox, context-menu, dialog, drawer, dropdown-menu, hover-card, input-otp, menubar, navigation-menu, pagination, popover, progress, radio-group, select, sheet, slider, switch, tabs, toggle, toggle-group and tooltip; it names the others it leaves.
 
-Three shadcn-vue components have no import to swap, and one has a part to add: their docs pages give the steps (`animate-ui.com/docs/vue/primitives/reka-ui/<name>`).
+Four shadcn-vue components have no import to swap, and one has a part to add: their docs pages give the steps (`animate-ui.com/docs/vue/primitives/reka-ui/<name>`, `animate-ui/code-block` for the Code Block, which `animate code-block` also rewrites in place).
 
+- **Code Block** (`animate code-block` does it): in `CodeBlockContent.vue` the outer `Primitive as="pre"` becomes `Content` from `@animate-ui/vue/primitives/code-block` (it takes `writing` and `cursor`); `CodeBlockCopyButton.vue` wraps its `Button` in `CopyButton as-child` (`:content`, `:delay="2000"`, `@copied-change`, `data-slot` on `CopyButton`) with `CopyButtonIcon` slots, from `@animate-ui/vue/primitives/buttons/copy`.
 - **Questionnaire**: its logic lives in its own files. Three edits: `useQuestionnaireMotion(rootElement)` in `Questionnaire.vue`; in `QuestionnaireChoice.vue`, `const press = useChoicePress(() => disabled.value)` and the root `<label>` becomes `<motion.label v-bind="press">`; in `QuestionnaireProgress.vue`, the default label becomes `Question <QuestionnaireCount :value="root.current.value" /> of <QuestionnaireCount :value="root.total.value" />`. All three come from `@animate-ui/vue/primitives/questionnaire`.
 - **Sidebar**: built on `@animate-ui/vue/primitives/sidebar` (its docs page lists the edits in `utils.ts` and the parts).
 - **Combobox with a trigger button**: the label the button shows (`{{ selected?.label ?? '…' }}`) is plain text with no reka-ui part to swap. Wrap it in `ComboboxValue` (from `@animate-ui/vue/primitives/reka-ui`) so it swaps as the choice changes, like `SelectValue` does.
@@ -28,6 +29,8 @@ import { DialogContent, DialogRoot } from 'reka-ui'; // before
 import { DialogContent, DialogRoot } from '@animate-ui/vue/primitives/reka-ui'; // after (re-exports all of reka-ui)
 import { OTPInput } from 'vue-input-otp'; // before
 import { OTPInput } from '@animate-ui/vue/primitives/input-otp'; // after
+import emblaCarouselVue from 'embla-carousel-vue'; // before
+import emblaCarouselVue from '@animate-ui/vue/primitives/carousel'; // after (opts take scale and visible)
 ```
 
 The whole import moves; parts Animate UI doesn't animate are re-exported unchanged. Remove the component's CSS animation classes as § B says (tw-animate utilities and the `duration-*` beside them, `animate-accordion-*`, `animate-collapsible-*`); keep everything else. Animated parts that enter and leave take `transition` and `exit-transition`, parts that only move take `transition`. A drag or swipe asked on a hand-built sheet (C, step 4) moves it onto reka-ui's Drawer through `@animate-ui/vue/primitives/reka-ui` (`DrawerRoot` with `swipe-direction`, `DrawerPortal`, `DrawerOverlay`, `DrawerContent`, `DrawerTitle`, `DrawerDescription`); Vaul isn't used in Vue.
@@ -36,7 +39,7 @@ Animate UI's own primitives keep React's paths under `@animate-ui/vue/primitives
 
 ## Files added to the project
 
-What the catalog calls "a file you add" (icons, backgrounds, the Flip, Liquid, GitHub Stars and Theme Toggler buttons, the Code Block, the Page Transition) comes from the Vue registry, with shadcn-vue:
+What the catalog calls "a file you add" (icons, backgrounds, the Flip, Liquid, GitHub Stars and Theme Toggler buttons, the Page Transition) comes from the Vue registry, with shadcn-vue:
 
 ```bash
 pnpm dlx shadcn-vue@latest add https://animate-ui.com/r/vue/<name>.json
