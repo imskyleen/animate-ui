@@ -45,7 +45,7 @@ What the catalog calls "a file you add" (icons, backgrounds, the Flip, Liquid, G
 pnpm dlx shadcn-vue@latest add https://animate-ui.com/r/vue/<name>.json
 ```
 
-With `"registries": { "@animate-ui": "https://animate-ui.com/r/vue/{name}.json" }` in `components.json`, `add @animate-ui/<name>` and `search @animate-ui` work too. Names: `icons-lucide-<icon>`, `icons-hugeicons-<icon>`, `backgrounds-<name>`, `buttons-flip`, `buttons-liquid`, `buttons-github-stars`, `buttons-theme-toggler`, `components-code-block`, `components-page-transition`. They land in `components/animate-ui/<group>/…` as `.vue` files.
+With `"registries": { "@animate-ui": "https://animate-ui.com/r/vue/{name}.json" }` in `components.json`, `add @animate-ui/<name>` and `search @animate-ui` work too. Names: `icons-lucide-<icon>`, `icons-hugeicons-<icon>`, `backgrounds-<name>`, `buttons-flip`, `buttons-liquid`, `buttons-github-stars`, `buttons-theme-toggler`, `components-page-transition`. They land in `components/animate-ui/<group>/…` as `.vue` files.
 
 ## Pace
 
