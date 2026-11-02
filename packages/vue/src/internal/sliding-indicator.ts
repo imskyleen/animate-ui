@@ -36,8 +36,9 @@ const NONE = (value: string) => !value || value === 'none';
 
 function layoutSizeOf(element: HTMLElement) {
   const style = getComputedStyle(element);
-  let width = parseFloat(style.width);
-  let height = parseFloat(style.height);
+  // A hidden element reports its specified width (e.g. "100%"), not pixels: only trust px values
+  let width = style.width.endsWith('px') ? parseFloat(style.width) : NaN;
+  let height = style.height.endsWith('px') ? parseFloat(style.height) : NaN;
   if (!Number.isFinite(width) || !Number.isFinite(height))
     return { width: element.offsetWidth, height: element.offsetHeight };
   if (style.boxSizing !== 'border-box') {
