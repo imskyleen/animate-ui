@@ -274,6 +274,49 @@ export function describeNavigationMenuSwap(
       });
     });
 
+    // #192: back in while the popup was closing, a still copy of the content
+    // stayed over the one coming in
+    for (const [item, label] of [
+      ['Getting started', 'Introduction'],
+      ['Components', 'Alert Dialog'],
+    ] as const)
+      test(`out and quickly back onto ${item}, only its content shows, without a blink`, async ({
+        page,
+      }) => {
+        for (const away of [80, 150, 250]) {
+          await hover(page, 'Getting started');
+          await page.waitForTimeout(900);
+          const recording = recordSwap(page, nav.container, 900);
+          await swapStarted(page);
+          await page.mouse.move(5, 500);
+          await page.waitForTimeout(away);
+          await hover(page, item);
+          const frames = await recording;
+          const late = frames.filter((frame) => frame.t > away + 450);
+          for (const frame of late)
+            expect(
+              frame.contents.filter((c) => c.copy && c.shown > 0.02),
+              `${away}ms away, ${frame.t}ms`,
+            ).toEqual([]);
+          expect(
+            late.at(-1)?.contents.some((c) => c.label.startsWith(label)),
+          ).toBe(true);
+          if (item === 'Getting started' && away < 250)
+            for (const frame of frames)
+              expect(
+                Math.max(
+                  0,
+                  ...frame.contents
+                    .filter((c) => c.label.startsWith(label))
+                    .map((c) => c.shown),
+                ),
+                `${away}ms away, ${frame.t}ms`,
+              ).toBeGreaterThan(0.9);
+          await page.mouse.move(5, 500);
+          await page.waitForTimeout(1200);
+        }
+      });
+
     test('as painted, the content holds still as the popup starts moving', async ({
       page,
     }) => {

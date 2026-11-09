@@ -483,7 +483,8 @@ function ContentMotion({
     }
   }, [state.open, state.activationDirection, swapper, id]);
   useStaggerOnOpen(nodeRef, state.open, {
-    fresh: wayOf(state.activationDirection) === null,
+    fresh: (node) =>
+      wayOf(state.activationDirection) === null && !swapper.takesOver(node),
   });
 
   return (

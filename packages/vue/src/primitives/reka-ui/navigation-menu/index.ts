@@ -368,7 +368,11 @@ const ViewportContentMotion = defineComponent({
     useStaggerOnOpen(
       () => element.value,
       () => true,
-      { fresh: () => way === null },
+      {
+        fresh: () =>
+          way === null &&
+          !(element.value && menu?.swapper.takesOver(element.value)),
+      },
     );
     return () =>
       h(

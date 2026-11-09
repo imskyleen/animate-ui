@@ -463,11 +463,26 @@ function holdStill(copy: ContentCopy) {
   }, 1000);
 }
 
+function fadeAway(copy: ContentCopy, timing: ReturnType<typeof toCssTiming>) {
+  const element = copy.element;
+  const fade = element.animate(
+    [{ opacity: Number(getComputedStyle(element).opacity) }, { opacity: 0 }],
+    { ...timing, fill: 'forwards' },
+  );
+  layers.set(element, { menu: copy.menu, to: [0, 0], fade });
+  const remove = () => {
+    if (layers.get(element)?.fade === fade) drop(copy);
+  };
+  fade.finished.then(remove, remove);
+}
+
 class ContentSwapper {
   follower: MoveFollower | null = null;
   private own: { timings: SwapTimings; reduce: boolean } | null = null;
   private fallback: { timings: SwapTimings; reduce: boolean } | null = null;
   private leaving = new Map<HTMLElement, ContentCopy>();
+  private held = new Map<string, ContentCopy>();
+  private resumed = new WeakSet<HTMLElement>();
 
   configure(timings: SwapTimings, reduce: boolean, fallback = false) {
     if (fallback) this.fallback = { timings, reduce };
@@ -482,6 +497,11 @@ class ContentSwapper {
     return this.settings?.reduce ?? false;
   }
 
+  private timing(name: 'out' | 'fadeIn') {
+    const timings = this.settings?.timings;
+    return toCssTiming(timings ? timings[name] : { duration: 0 });
+  }
+
   get move() {
     return this.settings?.timings.move ?? null;
   }
@@ -491,6 +511,11 @@ class ContentSwapper {
     return () => {
       if (this.follower === follower) this.follower = null;
     };
+  }
+
+  /** Whether `node` came back over its still copy, so it doesn't open again. */
+  takesOver(node: HTMLElement) {
+    return this.resumed.delete(node);
   }
 
   private entering: Entering | null = null;
@@ -505,6 +530,22 @@ class ContentSwapper {
 
   enter(node: HTMLElement, menu: string | null, way: Way | null) {
     this.leaving.delete(node);
+    for (const [key, copy] of this.held) {
+      this.held.delete(key);
+      if (!copy.element.isConnected) continue;
+      // Back while its popup was closing: it takes over its still copy
+      if (key === menu) {
+        if (way) continue;
+        drop(copy);
+        this.resumed.add(node);
+        const rest = Number(getComputedStyle(node).opacity) || 1;
+        if (copy.opacity < rest)
+          node.animate(
+            [{ opacity: copy.opacity }, { opacity: rest }],
+            this.timing('fadeIn'),
+          );
+      } else fadeAway(copy, this.timing('out'));
+    }
     this.entering = { node, menu, way };
     this.schedule();
   }
@@ -528,7 +569,10 @@ class ContentSwapper {
       this.awaiting = null;
     }
     if (!entering) {
-      for (const [, copy] of copies) holdStill(copy);
+      for (const [, copy] of copies) {
+        holdStill(copy);
+        if (copy.menu) this.held.set(copy.menu, copy);
+      }
       if (copies.length)
         requestAnimationFrame(() => {
           for (const [node, copy] of copies)

@@ -166,7 +166,7 @@ function useStaggerOnOpen(
   open: boolean,
   options: {
     skip?: boolean;
-    fresh?: boolean;
+    fresh?: boolean | ((el: HTMLElement) => boolean);
     closed?: (el: HTMLElement) => boolean;
   } = {},
 ) {
@@ -180,7 +180,9 @@ function useStaggerOnOpen(
   React.useLayoutEffect(() => {
     const el = ref.current;
     if (!open || reduce || skip || !el) return;
-    if (fresh === undefined ? !closed(el) : !fresh) return;
+    const opening =
+      typeof fresh === 'function' ? fresh(el) : (fresh ?? closed(el));
+    if (!opening) return;
     return staggerRows(el, timingRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps, @eslint-react/exhaustive-deps
   }, [open]);

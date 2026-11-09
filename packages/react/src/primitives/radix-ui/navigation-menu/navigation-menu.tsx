@@ -349,7 +349,9 @@ function ViewportContentMotion({ ref, style, ...props }: SlotChildProps) {
     swapper.enter(node, id, way);
     return () => swapper.leave(node, id);
   }, [swapper, id, way]);
-  useStaggerOnOpen(nodeRef, true, { fresh: way === null });
+  useStaggerOnOpen(nodeRef, true, {
+    fresh: (node) => way === null && !swapper?.takesOver(node),
+  });
 
   return (
     <div
