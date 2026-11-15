@@ -1,6 +1,6 @@
 {
   "name": "@animate-ui/vue",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "type": "module",
   "sideEffects": false,
   "description": "Animated drop-in primitives for reka-ui, built with Motion for Vue.",

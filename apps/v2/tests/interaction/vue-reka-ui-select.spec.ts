@@ -379,3 +379,51 @@ test.describe('vue-reka-ui select value on close', () => {
       expect(new Set(await painted)).toEqual(new Set(['Banana']));
     });
 });
+
+// Its clock started as it was made, but a first open lays the list out before
+// the next paint: the fade was over unseen, and the list popped in
+test.describe('vue-reka-ui select first open', () => {
+  for (const [name, path] of [
+    ['item-aligned', DEMO],
+    ['popper', POPPER],
+  ] as const)
+    test(`${name}: the list fades in from its first painted frame`, async ({
+      page,
+    }) => {
+      await load(page, path);
+      const painted = page.evaluate(
+        () =>
+          new Promise<number[]>((resolve) => {
+            const seen: number[] = [];
+            // A resize observer runs after layout, right before the paint
+            const tick = document.createElement('div');
+            tick.style.cssText =
+              'position:fixed;top:0;left:0;width:1px;height:1px';
+            document.body.append(tick);
+            const observer = new ResizeObserver(() => {
+              const list = document.querySelector('[data-animate-ui-list]');
+              if (list) seen.push(Number(getComputedStyle(list).opacity));
+            });
+            observer.observe(tick);
+            const start = performance.now();
+            const frame = () => {
+              tick.style.width = tick.style.width === '1px' ? '2px' : '1px';
+              if (performance.now() - start < 1200)
+                requestAnimationFrame(frame);
+              else {
+                observer.disconnect();
+                tick.remove();
+                resolve(seen);
+              }
+            };
+            requestAnimationFrame(frame);
+          }),
+      );
+      await trigger(page).click();
+      const seen = await painted;
+      expect(
+        seen.filter((opacity) => opacity > 0.05 && opacity < 0.95).length,
+        seen.map((opacity) => opacity.toFixed(2)).join(' '),
+      ).toBeGreaterThanOrEqual(2);
+    });
+});

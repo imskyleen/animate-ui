@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   h,
   inject,
@@ -119,7 +120,11 @@ export function createListContent(
       const tempoEnter = useTempoTransition(
         () => props.transition ?? MENU_TRANSITION,
       );
-      const enter = useStaggeredEnter(() => tempoEnter.value);
+      const staggered = useStaggeredEnter(() => tempoEnter.value);
+      // A transition passed in replaces the defaults, the rows' fade included
+      const enter = computed(() =>
+        props.transition ? tempoEnter.value : staggered.value,
+      );
       const leave = useTempoTransition(
         () => props.exitTransition ?? props.transition ?? MENU_TRANSITION,
       );
@@ -187,6 +192,15 @@ export function createListContent(
                   : { opacity: 1 },
               enter.value,
             );
+            // From its first painted frame: a first open lays the list out
+            // after this, long enough for the fade to be over unseen
+            if (fresh) {
+              const entering = controls;
+              entering.pause();
+              requestAnimationFrame(() => {
+                if (controls === entering) entering.play();
+              });
+            }
             return;
           }
           unstagger?.();
