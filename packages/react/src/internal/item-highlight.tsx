@@ -58,8 +58,9 @@ type HighlightScopeValue = {
   light: (id: string, item: HTMLElement) => void;
   unlight: (id: string) => void;
   left: (id: string) => void;
-  handOff: (item: HTMLElement, reduce: boolean) => Start;
+  handOff: (item: HTMLElement, reduce: boolean, fading?: boolean) => Start;
   register: (handle: SurfaceHandle) => () => void;
+  carry: (handle: SurfaceHandle) => () => void;
   gone: (opacity: number) => void;
   paint: (surface: Surface) => Surface;
 };
@@ -114,6 +115,7 @@ function OwnHighlightScope({
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [leaving, setLeaving] = React.useState<readonly Leaving[]>([]);
   const surfaceRef = React.useRef<SurfaceHandle | null>(null);
+  const carriersRef = React.useRef(new Set<SurfaceHandle>());
   const keyRef = React.useRef(0);
   const paintRef = React.useRef<Surface | null>(null);
   const litRef = React.useRef(new Map<string, HTMLElement>());
@@ -164,6 +166,7 @@ function OwnHighlightScope({
   const unlight = React.useCallback(
     (id: string) => {
       const lit = litRef.current;
+      const item = lit.get(id);
       if (!lit.delete(id) || activeRef.current !== id) return;
       const next = [...lit].at(-1);
       if (next) {
@@ -173,17 +176,24 @@ function OwnHighlightScope({
       activeRef.current = null;
       setActiveId(null);
       const key = (keyRef.current += 1);
-      setLeaving((list) => [...without(list, id), { id, to: null, key }]);
+      // The copies carrying it there end in the one fading out
+      setLeaving((list) => [
+        ...without(list, id).filter((other) => other.to !== item),
+        { id, to: null, key },
+      ]);
     },
     [activate],
   );
   const goneRef = React.useRef<{ opacity: number; at: number } | null>(null);
   const handOffFrom = React.useCallback(
-    (item: HTMLElement, reduce: boolean) => {
-      const start = handOff(surfaceRef.current, item, reduce);
+    (item: HTMLElement, reduce: boolean, fading = false) => {
+      const from = fading
+        ? mostShown(surfaceRef.current, carriersRef.current)
+        : surfaceRef.current;
+      const start = handOff(from, item, reduce);
       const gone = goneRef.current;
       if (
-        !surfaceRef.current?.element.isConnected &&
+        !from?.element.isConnected &&
         gone &&
         performance.now() - gone.at < 120
       )
@@ -194,6 +204,12 @@ function OwnHighlightScope({
   );
   const gone = React.useCallback((opacity: number) => {
     goneRef.current = { opacity, at: performance.now() };
+  }, []);
+  const carry = React.useCallback((handle: SurfaceHandle) => {
+    carriersRef.current.add(handle);
+    return () => {
+      carriersRef.current.delete(handle);
+    };
   }, []);
   const register = React.useCallback((handle: SurfaceHandle) => {
     surfaceRef.current = handle;
@@ -218,6 +234,7 @@ function OwnHighlightScope({
       left,
       handOff: handOffFrom,
       register,
+      carry,
       gone,
       paint,
     }),
@@ -231,6 +248,7 @@ function OwnHighlightScope({
       left,
       handOffFrom,
       register,
+      carry,
       gone,
       paint,
     ],
@@ -290,8 +308,13 @@ function blendsIn(node: HTMLElement, surface: Surface) {
 
 function readSurface(node: HTMLElement): Surface {
   const cleared = savedStyles.get(node);
-  const transition = save(node, ['transition']);
-  node.style.setProperty('transition', 'none', 'important');
+  // Only a transition on the background has to stop for it to be read: taking
+  // the others off would cancel them (a sidebar button's width as it folds)
+  const stops = /all|background/.test(
+    getComputedStyle(node).transitionProperty,
+  );
+  const transition = stops ? save(node, ['transition']) : null;
+  if (stops) node.style.setProperty('transition', 'none', 'important');
   if (cleared) restore(node, cleared);
   const style = getComputedStyle(node);
   const surface = {
@@ -304,7 +327,7 @@ function readSurface(node: HTMLElement): Surface {
     node.style.setProperty('background-image', 'none', 'important');
   }
   void getComputedStyle(node).backgroundColor;
-  restore(node, transition);
+  if (transition) restore(node, transition);
   return surface;
 }
 
@@ -637,6 +660,25 @@ function velocityOf({ animation, ease, duration, from }: Glide): Offset {
   };
 }
 
+// Carried over from another clipped box, the highlight is shown by the copies
+// leaving for it while it fades in: it fades out from the one shown most
+function mostShown(
+  surface: SurfaceHandle | null,
+  carriers: Set<SurfaceHandle>,
+) {
+  let shown = surface?.element.isConnected ? surface : null;
+  let most = shown ? Number(getComputedStyle(shown.element).opacity) : 0;
+  for (const carrier of carriers) {
+    if (!carrier.element.isConnected) continue;
+    const opacity = Number(getComputedStyle(carrier.element).opacity);
+    if (opacity > most) {
+      shown = carrier;
+      most = opacity;
+    }
+  }
+  return shown ?? surface;
+}
+
 function handOff(
   previous: SurfaceHandle | null,
   item: HTMLElement,
@@ -750,7 +792,7 @@ function SurfaceCopy({
   const glide = useTempoTransition<Transition>(HIGHLIGHT_TRANSITION);
   const fade = useTempoTransition<Transition>(FADE_TRANSITION);
   const resume = useTempoTransition<Transition>(RESUME_TRANSITION);
-  const [start] = React.useState(() => scope.handOff(item, reduce));
+  const [start] = React.useState(() => scope.handOff(item, reduce, fadeOut));
   const [target] = React.useState(() =>
     leavingTo && !reduce
       ? offsetOn(leavingTo.getBoundingClientRect(), item)
@@ -758,7 +800,7 @@ function SurfaceCopy({
   );
   const elementRef = React.useRef<HTMLSpanElement>(null);
   const transitionsRef = React.useRef({ glide, fade, resume });
-  const { register, gone, left } = scope;
+  const { register, carry, gone, left } = scope;
   useBesideBox(elementRef, item, beside);
 
   React.useLayoutEffect(() => {
@@ -807,8 +849,10 @@ function SurfaceCopy({
           () => {},
         );
       else left(id);
+      const uncarry = carry({ id, element, item, glide: running });
       return () => {
         for (const animation of animations) animation.cancel();
+        uncarry();
       };
     }
 
@@ -863,7 +907,18 @@ function SurfaceCopy({
       unregister();
       gone(opacity);
     };
-  }, [register, gone, left, id, item, start, target, leavingTo, fadeOut]);
+  }, [
+    register,
+    carry,
+    gone,
+    left,
+    id,
+    item,
+    start,
+    target,
+    leavingTo,
+    fadeOut,
+  ]);
 
   const { duration: colorDuration, easing: colorEasing } = toCssTiming(fade);
 

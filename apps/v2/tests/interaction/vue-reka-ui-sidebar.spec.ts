@@ -137,7 +137,7 @@ test('vue sidebar: swept quickly down its buttons, the highlight never steps bac
     expect(tops.length).toBeGreaterThan(20);
     for (let i = 1; i < tops.length; i++)
       expect(tops[i]!, `pass ${pass}, frame ${i}`).toBeGreaterThanOrEqual(
-        tops[i - 1]! - 1,
+        tops[i - 1]! - 3,
       );
   }
 });

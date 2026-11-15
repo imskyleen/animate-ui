@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '../test';
 
 import { describeMenuHighlight } from './menu-highlight';
-import { probeFirstFrame, sample } from './motion-probe';
+import { paintedOpacities, probeFirstFrame, sample } from './motion-probe';
 import { expectAtRestThrough, withAnimation } from './item-checks';
 import { expectCloseWithoutHold, expectPickHold } from './pick-hold';
 
@@ -331,4 +331,25 @@ test.describe('radix-ui select checks', () => {
       );
     });
   }
+});
+
+// Its clock started at mount, but a first open lays the list out before the
+// next paint: the fade was over unseen, and the list popped in
+test.describe('radix-ui select first open', () => {
+  for (const [name, path] of [
+    ['item-aligned', DEMO],
+    ['popper', POPPER],
+  ] as const)
+    test(`${name}: the list fades in from its first painted frame`, async ({
+      page,
+    }) => {
+      await load(page, path);
+      const painted = paintedOpacities(page, LIST, 1200);
+      await trigger(page).click();
+      const seen = await painted;
+      expect(
+        seen.filter((opacity) => opacity > 0.05 && opacity < 0.95).length,
+        seen.map((opacity) => opacity.toFixed(2)).join(' '),
+      ).toBeGreaterThanOrEqual(2);
+    });
 });

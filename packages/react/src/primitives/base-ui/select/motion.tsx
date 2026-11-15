@@ -21,6 +21,7 @@ import {
 import {
   staggerFromClosed,
   useStaggeredEnter,
+  usePainted,
   useStaggerTiming,
 } from '../../../internal/stagger';
 import {
@@ -110,9 +111,10 @@ function usePopupRender(
   { transition, exitTransition }: PopupAnimationProps,
 ) {
   const reduce = useShouldReduceMotion();
-  const enter = useStaggeredEnter(
-    useTempoTransition(transition ?? MENU_TRANSITION),
-  );
+  const tempoEnter = useTempoTransition(transition ?? MENU_TRANSITION);
+  const staggered = useStaggeredEnter(tempoEnter);
+  // A transition passed in replaces the defaults, the rows' fade included
+  const enter = transition ? tempoEnter : staggered;
   const exit = useTempoTransition(
     exitTransition ?? transition ?? MENU_TRANSITION,
   );
@@ -123,6 +125,7 @@ function usePopupRender(
       ? { ...exit, delay: exitDelay + hold(root.picked) }
       : exit;
   const group = useCheckGroup();
+  const painted = usePainted();
   const shownRef = React.useRef(false);
   const nodeRef = React.useRef<HTMLElement | null>(null);
   const staggerRef = React.useRef<(() => void) | null>(null);
@@ -132,7 +135,7 @@ function usePopupRender(
     { children, ...renderProps }: PopupRenderProps,
     state: { open: boolean; side: string },
   ) => {
-    const { open } = state;
+    const open = state.open && painted;
     const aligned = state.side === 'none';
     const hidden = aligned
       ? { opacity: 0 }
@@ -147,7 +150,7 @@ function usePopupRender(
         animate={
           open
             ? { ...visible, transition: enter }
-            : { ...hidden, transition: held }
+            : { ...hidden, transition: state.open ? { duration: 0 } : held }
         }
         onAnimationStart={() => {
           if (!open) {
@@ -173,7 +176,7 @@ function usePopupRender(
       >
         <IndicatorGroupContext value={group}>
           <CheckRegistryContext value={root?.registerCheck ?? null}>
-            <HighlightScope open={open}>{children}</HighlightScope>
+            <HighlightScope open={state.open}>{children}</HighlightScope>
           </CheckRegistryContext>
         </IndicatorGroupContext>
       </motion.div>

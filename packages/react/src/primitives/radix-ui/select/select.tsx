@@ -5,7 +5,11 @@ import { Select as SelectPrimitive } from 'radix-ui';
 import { AnimatePresence, type Transition } from 'motion/react';
 
 import { useValueSwap } from '../../../internal/value-swap';
-import { useStaggeredEnter, useStaggerOnOpen } from '../../../internal/stagger';
+import {
+  usePainted,
+  useStaggeredEnter,
+  useStaggerOnOpen,
+} from '../../../internal/stagger';
 import { getStrictContext } from '../../../utils/strict-context';
 import {
   ReducedMotionConfig,
@@ -188,7 +192,12 @@ function Content({
       <AnimatePresence onExitComplete={() => setPresent(false)}>
         {open && (
           <ReducedMotionConfig key="content">
-            <ContentMotion {...props} enter={enter} exit={exit} />
+            <ContentMotion
+              {...props}
+              enter={enter}
+              exit={exit}
+              own={transition !== undefined}
+            />
           </ReducedMotionConfig>
         )}
       </AnimatePresence>
@@ -203,11 +212,13 @@ type ContentMotionProps = Omit<
 > & {
   enter: Transition;
   exit: Transition;
+  own: boolean;
 };
 
 function ContentMotion({
   enter,
   exit,
+  own,
   asChild,
   children,
   style,
@@ -221,8 +232,12 @@ function ContentMotion({
     picked && !reduce ? { ...exit, delay: exitDelay + hold(picked) } : exit;
   const group = useCheckGroup();
   const ref = React.useRef<HTMLElement>(null);
-  useStaggerOnOpen(ref, open);
-  const quick = useStaggeredEnter(enter);
+  const painted = usePainted();
+  const shown = open && painted;
+  useStaggerOnOpen(ref, shown);
+  const staggered = useStaggeredEnter(enter);
+  // A transition passed in replaces the defaults, the rows' fade included
+  const quick = own ? enter : staggered;
   const popper = props.position === 'popper';
   const hidden = popper
     ? { opacity: 0, scale: reduce ? 1 : HIDDEN_SCALE.menu }
@@ -237,9 +252,9 @@ function ContentMotion({
         element={slot.element}
         initial={hidden}
         animate={
-          open
+          shown
             ? { ...visible, transition: quick }
-            : { ...hidden, transition: leave }
+            : { ...hidden, transition: open ? { duration: 0 } : leave }
         }
         exit={{ ...hidden, transition: leave }}
         inert={!open}

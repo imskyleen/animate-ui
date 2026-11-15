@@ -119,3 +119,38 @@ export function recordMotion(
     { selector, text, child, duration },
   );
 }
+
+/** The opacity `selector` is painted with, ancestors included, frame by frame for `ms`. */
+export function paintedOpacities(page: Page, selector: string, ms: number) {
+  return page.evaluate(
+    ({ selector, ms }) =>
+      new Promise<number[]>((resolve) => {
+        const seen: number[] = [];
+        // A resize observer runs after layout, right before the paint
+        const tick = document.createElement('div');
+        tick.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px';
+        document.body.append(tick);
+        const observer = new ResizeObserver(() => {
+          const el = document.querySelector(selector);
+          if (!el) return;
+          let opacity = 1;
+          for (let n: Element | null = el; n; n = n.parentElement)
+            opacity *= Number(getComputedStyle(n).opacity);
+          seen.push(opacity);
+        });
+        observer.observe(tick);
+        const start = performance.now();
+        const frame = () => {
+          tick.style.width = tick.style.width === '1px' ? '2px' : '1px';
+          if (performance.now() - start < ms) requestAnimationFrame(frame);
+          else {
+            observer.disconnect();
+            tick.remove();
+            resolve(seen);
+          }
+        };
+        requestAnimationFrame(frame);
+      }),
+    { selector, ms },
+  );
+}

@@ -9,7 +9,10 @@ type Case = { cpu: number; step: number };
 const CASES: Record<string, { path: string; cases: Case[] }> = {
   'radix-ui': {
     path: '/tests/demos/radix-ui/sidebar',
-    cases: [{ cpu: 1, step: 16 }],
+    cases: [
+      { cpu: 1, step: 16 },
+      { cpu: 4, step: 30 },
+    ],
   },
   'vue-reka-ui': {
     path: '/tests/vue-demos/reka-ui/sidebar',

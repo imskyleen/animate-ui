@@ -231,6 +231,20 @@ function quickSubmenuPanel(el: HTMLElement | null) {
   });
 }
 
+/**
+ * Whether a list just mounted has been painted once: its first open lays it
+ * out before the next paint, long enough for a fade started at mount to be
+ * over unseen, so it opens from then.
+ */
+function usePainted() {
+  const [painted, setPainted] = React.useState(false);
+  React.useLayoutEffect(() => {
+    const frame = requestAnimationFrame(() => setPainted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return painted;
+}
+
 export {
   quickSubmenuPanel,
   staggerFromClosed,
@@ -240,5 +254,6 @@ export {
   staggerRows,
   useStaggerOnOpen,
   useStaggerTiming,
+  usePainted,
   type StaggerTiming,
 };

@@ -79,6 +79,7 @@ export type HighlightScope = {
   startOf: (id: string, item: HTMLElement, reduce: boolean) => Start;
   leavingStartOf: (id: string, item: HTMLElement, reduce: boolean) => Start;
   register: (handle: SurfaceHandle) => () => void;
+  carry: (handle: SurfaceHandle) => () => void;
   gone: (opacity: number) => void;
   paint: (surface: Surface) => Surface;
 };
@@ -125,6 +126,7 @@ function createScope(
   const leaving = shallowRef<readonly Leaving[]>([]);
   let surface: SurfaceHandle | null = null;
   const handles = new Map<string, SurfaceHandle>();
+  const carriers = new Set<SurfaceHandle>();
   let key = 0;
   let painted: Surface | null = null;
   const lit = new Map<string, HTMLElement>();
@@ -137,7 +139,11 @@ function createScope(
   const holdStarts = (list: readonly Leaving[]) => {
     for (const other of list) {
       const item = items.get(other.id);
-      if (item) leavingStarts.set(other.id, handOffFrom(item, reduce()));
+      if (item)
+        leavingStarts.set(
+          other.id,
+          handOffFrom(item, reduce(), other.to === null),
+        );
     }
   };
   // Leaving copies remount on each hand-off, so the last one registered can
@@ -153,8 +159,8 @@ function createScope(
     }
     return surface;
   };
-  const handOffFrom = (item: HTMLElement, reduced: boolean) => {
-    const from = current();
+  const handOffFrom = (item: HTMLElement, reduced: boolean, fading = false) => {
+    const from = fading ? mostShown(current(), carriers) : current();
     const start = handOff(from, item, reduced);
     if (!from?.element.isConnected && gone && performance.now() - gone.at < 120)
       return { ...start, opacity: gone.opacity, fresh: false };
@@ -213,7 +219,12 @@ function createScope(
       const k = (key += 1);
       const fading = { id, to: null, key: k };
       holdStarts([fading]);
-      leaving.value = [...without(leaving.value, id), fading];
+      // The copies carrying it there end in the one fading out
+      const item = items.get(id);
+      leaving.value = [
+        ...without(leaving.value, id).filter((other) => other.to !== item),
+        fading,
+      ];
     },
     left: (id) => {
       leaving.value = without(leaving.value, id);
@@ -227,7 +238,8 @@ function createScope(
     leavingStartOf: (id, item, reduced) => {
       const start = leavingStarts.get(id);
       leavingStarts.delete(id);
-      return start ?? handOffFrom(item, reduced);
+      const fading = leaving.value.some((o) => o.id === id && o.to === null);
+      return start ?? handOffFrom(item, reduced, fading);
     },
     register: (handle) => {
       surface = handle;
@@ -235,6 +247,12 @@ function createScope(
       return () => {
         if (surface === handle) surface = null;
         if (handles.get(handle.id) === handle) handles.delete(handle.id);
+      };
+    },
+    carry: (handle) => {
+      carriers.add(handle);
+      return () => {
+        carriers.delete(handle);
       };
     },
     gone: (opacity) => {
@@ -324,8 +342,13 @@ function blendsIn(node: HTMLElement, surface: Surface) {
 
 function readSurface(node: HTMLElement): Surface {
   const cleared = savedStyles.get(node);
-  const transition = save(node, ['transition']);
-  node.style.setProperty('transition', 'none', 'important');
+  // Only a transition on the background has to stop for it to be read: taking
+  // the others off would cancel them (a sidebar button's width as it folds)
+  const stops = /all|background/.test(
+    getComputedStyle(node).transitionProperty,
+  );
+  const transition = stops ? save(node, ['transition']) : null;
+  if (stops) node.style.setProperty('transition', 'none', 'important');
   if (cleared) restore(node, cleared);
   const style = getComputedStyle(node);
   const surface = {
@@ -338,7 +361,7 @@ function readSurface(node: HTMLElement): Surface {
     node.style.setProperty('background-image', 'none', 'important');
   }
   void getComputedStyle(node).backgroundColor;
-  restore(node, transition);
+  if (transition) restore(node, transition);
   return surface;
 }
 
@@ -566,6 +589,25 @@ function velocityOf({ animation, ease, duration, from }: Glide): Offset {
   };
 }
 
+// Carried over from another clipped box, the highlight is shown by the copies
+// leaving for it while it fades in: it fades out from the one shown most
+function mostShown(
+  surface: SurfaceHandle | null,
+  carriers: Set<SurfaceHandle>,
+) {
+  let shown = surface?.element.isConnected ? surface : null;
+  let most = shown ? Number(getComputedStyle(shown.element).opacity) : 0;
+  for (const carrier of carriers) {
+    if (!carrier.element.isConnected) continue;
+    const opacity = Number(getComputedStyle(carrier.element).opacity);
+    if (opacity > most) {
+      shown = carrier;
+      most = opacity;
+    }
+  }
+  return shown ?? surface;
+}
+
 function handOff(
   previous: SurfaceHandle | null,
   item: HTMLElement,
@@ -736,8 +778,10 @@ const SurfaceCopy = defineComponent({
             () => {},
           );
         else scope.left(id);
+        const uncarry = scope.carry({ id, element: el, item, glide: running });
         cleanup = () => {
           for (const animation of animations) animation.cancel();
+          uncarry();
         };
         return;
       }

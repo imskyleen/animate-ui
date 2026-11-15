@@ -1,10 +1,30 @@
 ---
 title: Changelog
 description: What changed in Animate UI.
-version: '2.4.5'
+version: '2.4.6'
 ---
 
 <Changelog>
+
+<ChangelogItem date="2026-11-15">
+  <ChangelogItemVersion>
+
+## 2.4.6
+
+  </ChangelogItemVersion>
+
+<ChangelogItemTitle>Fixes</ChangelogItemTitle>
+
+<ChangelogItemDescription>
+
+- Menu highlights, in React and Vue: carried into another clipped box (a sidebar's submenu, a header) and left before it settled, the highlight fades out where it is seen, then goes on from there, instead of stepping back.
+- Menu highlights, in React and Vue: reading a hovered item's background no longer cancels its other transitions, so a sidebar's buttons and logo glide as it folds and unfolds under the pointer.
+- React Select (Radix UI, Base UI) and Base UI Combobox: the first open fades in like the next ones, instead of popping in.
+- React Select (Radix UI, Base UI) and Base UI Combobox: a `transition` passed in replaces the defaults, the rows' fade included.
+
+</ChangelogItemDescription>
+
+</ChangelogItem>
 
 <ChangelogItem date="2026-11-15">
   <ChangelogItemVersion>
