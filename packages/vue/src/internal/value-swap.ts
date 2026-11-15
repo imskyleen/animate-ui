@@ -129,13 +129,14 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
   let frame = 0;
   let held: (() => void) | null = null;
 
-  /** Under a list, the old text stays, as a copy over the new one, until the swap. */
+  /** The old text stays, as a copy over the new one, until the swap. */
   const hold = () => {
     const parent = el.parentElement!;
     const release = holdPosition(parent);
     const old = copy.cloneNode(true) as HTMLElement;
-    place(el, old, box);
     const { opacity } = el.style;
+    old.style.opacity = opacity;
+    place(el, old, box);
     el.style.opacity = '0';
     return () => {
       old.remove();
@@ -187,9 +188,10 @@ function watchValueText(el: HTMLElement, timing: () => Timing) {
     copy = el.cloneNode(true) as HTMLElement;
     box = boxOf(el);
   };
+  // The old text stays until the frame's check: reka clears a select's label
+  // for a task as its list unmounts, which a frame could paint
   const observer = new MutationObserver(() => {
-    if (!held && el.textContent !== text && el.parentElement && covered(el))
-      held = hold();
+    if (!held && el.textContent !== text && el.parentElement) held = hold();
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(settle);
   });

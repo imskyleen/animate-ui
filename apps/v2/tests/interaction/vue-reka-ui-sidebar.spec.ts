@@ -70,3 +70,74 @@ test('vue sidebar trigger: a click on its icon focuses the button, and Tab skips
   expect((await focused()).tag).not.toBe('svg');
   expect((await focused()).trigger).toBe(false);
 });
+
+// #193: across the gaps between buttons, the highlight left and came back,
+// starting over from an older copy: it stepped back mid-glide
+test('vue sidebar: swept quickly down its buttons, the highlight never steps back', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1100, height: 800 });
+  await page.goto('/tests/vue-demos/reka-ui/sidebar', {
+    waitUntil: 'networkidle',
+  });
+  await page.locator('[data-slot="vue-demo"][data-mounted]').waitFor();
+  const button = (name: string) =>
+    page
+      .locator('[data-sidebar="menu-button"]', { hasText: name })
+      .first()
+      .boundingBox();
+  const top = (await button('Playground'))!;
+  const bottom = (await button('Documentation'))!;
+  const x = top.x + 40;
+  const from = top.y + top.height / 2;
+  const to = bottom.y + bottom.height / 2;
+  for (let pass = 0; pass < 3; pass++) {
+    await page.mouse.move(x, from);
+    await page.waitForTimeout(600);
+    const painted = page.evaluate(
+      () =>
+        new Promise<number[]>((resolve) => {
+          const tops: number[] = [];
+          // A resize observer runs after layout, right before the paint
+          const tick = document.createElement('div');
+          tick.style.cssText =
+            'position:fixed;top:0;left:0;width:1px;height:1px';
+          document.body.append(tick);
+          const observer = new ResizeObserver(() => {
+            const shown = [
+              ...document.querySelectorAll<HTMLElement>(
+                '[data-slot="trigger-highlight"]',
+              ),
+            ].sort(
+              (a, b) =>
+                Number(getComputedStyle(b).opacity) -
+                Number(getComputedStyle(a).opacity),
+            )[0];
+            if (shown) tops.push(shown.getBoundingClientRect().top);
+          });
+          observer.observe(tick);
+          const start = performance.now();
+          const loop = () => {
+            tick.style.width = tick.style.width === '1px' ? '2px' : '1px';
+            if (performance.now() - start < 700) requestAnimationFrame(loop);
+            else {
+              observer.disconnect();
+              tick.remove();
+              resolve(tops);
+            }
+          };
+          requestAnimationFrame(loop);
+        }),
+    );
+    for (let step = 1; step <= 12; step++) {
+      await page.mouse.move(x, from + ((to - from) * step) / 12);
+      await page.waitForTimeout(8);
+    }
+    const tops = await painted;
+    expect(tops.length).toBeGreaterThan(20);
+    for (let i = 1; i < tops.length; i++)
+      expect(tops[i]!, `pass ${pass}, frame ${i}`).toBeGreaterThanOrEqual(
+        tops[i - 1]! - 1,
+      );
+  }
+});

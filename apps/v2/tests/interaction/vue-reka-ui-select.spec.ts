@@ -231,9 +231,7 @@ test.describe('vue-reka-ui select API', () => {
     await expect(trigger).toHaveText('Controlled Cherry');
   });
 
-  test('item-aligned (the default) fades without scaling', async ({
-    page,
-  }) => {
+  test('item-aligned (the default) fades without scaling', async ({ page }) => {
     const probe = await probeFirstFrame(
       page,
       '[data-testid="aligned-content"]',
@@ -316,4 +314,68 @@ test.describe('vue-reka-ui select checks', () => {
       );
     });
   }
+});
+
+// #194: reka cleared the label for a task as the list unmounted, and a frame
+// painted the placeholder in between
+test.describe('vue-reka-ui select value on close', () => {
+  for (const [name, path] of [
+    ['item-aligned', DEMO],
+    ['popper', POPPER],
+  ] as const)
+    test(`${name}: closed without a change, the value never shows the placeholder`, async ({
+      page,
+    }) => {
+      await load(page, path);
+      await openList(page);
+      await option(page, 'Banana').click();
+      await page.waitForTimeout(900);
+      await openList(page);
+      const painted = trigger(page).evaluate(
+        (el) =>
+          new Promise<string[]>((resolve) => {
+            const seen: string[] = [];
+            const visible = () => {
+              const walker = document.createTreeWalker(
+                el,
+                NodeFilter.SHOW_TEXT,
+              );
+              const parts: string[] = [];
+              for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+                let opacity = 1;
+                for (
+                  let p = n.parentElement;
+                  p && p !== el;
+                  p = p.parentElement
+                )
+                  opacity *= Number(getComputedStyle(p).opacity);
+                const text = n.textContent?.trim();
+                if (text && opacity > 0.05) parts.push(text);
+              }
+              return parts.join(' + ');
+            };
+            // A resize observer runs after layout, right before the paint
+            const tick = document.createElement('div');
+            tick.style.cssText =
+              'position:fixed;top:0;left:0;width:1px;height:1px';
+            document.body.append(tick);
+            const observer = new ResizeObserver(() => seen.push(visible()));
+            observer.observe(tick);
+            const start = performance.now();
+            const frame = () => {
+              tick.style.width = tick.style.width === '1px' ? '2px' : '1px';
+              if (performance.now() - start < 1000)
+                requestAnimationFrame(frame);
+              else {
+                observer.disconnect();
+                tick.remove();
+                resolve(seen);
+              }
+            };
+            requestAnimationFrame(frame);
+          }),
+      );
+      await page.mouse.click(10, 10);
+      expect(new Set(await painted)).toEqual(new Set(['Banana']));
+    });
 });

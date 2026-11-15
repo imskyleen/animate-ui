@@ -124,6 +124,7 @@ function createScope(
   const activeId = ref<string | null>(null);
   const leaving = shallowRef<readonly Leaving[]>([]);
   let surface: SurfaceHandle | null = null;
+  const handles = new Map<string, SurfaceHandle>();
   let key = 0;
   let painted: Surface | null = null;
   const lit = new Map<string, HTMLElement>();
@@ -139,13 +140,23 @@ function createScope(
       if (item) leavingStarts.set(other.id, handOffFrom(item, reduce()));
     }
   };
+  // Leaving copies remount on each hand-off, so the last one registered can
+  // be an older copy: the highlight goes on from the lit one, or the one that
+  // left last
+  const current = () => {
+    for (const id of [
+      activeId.value,
+      ...leaving.value.map((other) => other.id).reverse(),
+    ]) {
+      const handle = id === null ? undefined : handles.get(id);
+      if (handle?.element.isConnected) return handle;
+    }
+    return surface;
+  };
   const handOffFrom = (item: HTMLElement, reduced: boolean) => {
-    const start = handOff(surface, item, reduced);
-    if (
-      !surface?.element.isConnected &&
-      gone &&
-      performance.now() - gone.at < 120
-    )
+    const from = current();
+    const start = handOff(from, item, reduced);
+    if (!from?.element.isConnected && gone && performance.now() - gone.at < 120)
       return { ...start, opacity: gone.opacity, fresh: false };
     return start;
   };
@@ -157,7 +168,7 @@ function createScope(
   });
 
   const activate = (id: string, item: HTMLElement) => {
-    const previous = surface;
+    const previous = current();
     starts.set(id, handOffFrom(item, reduce()));
     activeId.value = id;
     const moves =
@@ -220,8 +231,10 @@ function createScope(
     },
     register: (handle) => {
       surface = handle;
+      handles.set(handle.id, handle);
       return () => {
         if (surface === handle) surface = null;
+        if (handles.get(handle.id) === handle) handles.delete(handle.id);
       };
     },
     gone: (opacity) => {
@@ -421,10 +434,12 @@ function useHighlightIn(
           cancelAnimationFrame(frame);
           frame = requestAnimationFrame(sync);
         };
+        // A frame later: across the gap to the next item, the highlight goes
+        // straight there instead of leaving first
         const leave = () => {
           hovered = false;
           cancelAnimationFrame(frame);
-          sync();
+          frame = requestAnimationFrame(sync);
         };
         sync();
         const observer = new MutationObserver(sync);
